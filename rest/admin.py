@@ -1,25 +1,30 @@
 # -*- coding: utf-8 -*-
+""" admin class """
 from django.contrib import admin
 
 # Register your models here.
 from rest.models import Match, Player, Season, Shot, Team
 
 class MatchAdmin(admin.ModelAdmin):
+    """ match admin """
     fields = ['season', 'match_id', 'date', 'date_uts', 'home_team', 'visitor_team']
     list_display = ['season', 'match_id', 'date', 'date_uts', 'home_team', 'visitor_team']
     ordering = ['match_id']
 
 class PlayerAdmin(admin.ModelAdmin):
+    """ player admin """
     fields = ['player_id', 'first_name', 'last_name', 'jersey']
     list_display = ['player_id', 'first_name', 'last_name', 'jersey']
     ordering = ['player_id']
 
 class SeasonAdmin(admin.ModelAdmin):
+    """ season admin """
     fields = ['name']
     list_display = ['name']
     ordering = ['name']
 
 class ShotAdmin(admin.ModelAdmin):
+    """ shots admin """
     fields = [field.name for field in Season._meta.get_fields()]
     list_display = [field.name for field in Shot._meta.get_fields()]
     ordering = ['shot_id']

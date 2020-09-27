@@ -1,11 +1,10 @@
+""" model.py """
 from django.db import models
 
 # Create your models here.
 class Season(models.Model):
     """ season table """
     name = models.CharField(max_length=15)
-    def __unicode__(self):
-        return self.name
     def __str__(self):
         return self.name
 
@@ -14,8 +13,6 @@ class Team(models.Model):
     team_id = models.IntegerField(primary_key=True)
     team_name = models.CharField(max_length=30)
     shortcut = models.CharField(max_length=5)
-    def __unicode__(self):
-        return self.shortcut
     def __str__(self):
         return self.shortcut
 
@@ -27,8 +24,6 @@ class Match(models.Model):
     date_uts = models.IntegerField(default=0)
     home_team = models.ForeignKey(Team, related_name='home_team', on_delete=models.CASCADE)
     visitor_team = models.ForeignKey(Team, related_name='visitor_team', on_delete=models.CASCADE)
-    def __unicode__(self):
-        return '{0} ({1}-{2})'.format(self.match_id, self.home_team, self.visitor_team)
     def __str__(self):
         return '{0} ({1}-{2})'.format(self.match_id, self.home_team, self.visitor_team)
 
@@ -38,8 +33,6 @@ class Player(models.Model):
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
     jersey = models.IntegerField(default=0)
-    def __unicode__(self):
-        return self.last_name
     def __str__(self):
         return self.last_name
 
