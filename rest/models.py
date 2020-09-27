@@ -14,7 +14,7 @@ class Team(models.Model):
     team_name = models.CharField(max_length=30)
     shortcut = models.CharField(max_length=5)
     def __str__(self):
-        return self.shortcut
+        return self.team_name
 
 class Match(models.Model):
     """ match table """
