@@ -1,16 +1,17 @@
+# -*- coding: utf-8 -*-
 from django.contrib import admin
 
 # Register your models here.
 from rest.models import Match, Player, Season, Shot, Team
 
 class MatchAdmin(admin.ModelAdmin):
-    fields = [field.name for field in Match._meta.get_fields()]
-    list_display = [field.name for field in Match._meta.get_fields()]
+    fields = ['season', 'match_id', 'date', 'date_uts', 'home_team', 'visitor_team']
+    list_display = ['season', 'match_id', 'date', 'date_uts', 'home_team', 'visitor_team']
     ordering = ['match_id']
 
 class PlayerAdmin(admin.ModelAdmin):
-    fields = ['id', 'player_id', 'date', 'first_name', 'last_name', 'jersey']
-    list_display = ['id', 'player_id', 'date', 'first_name', 'last_name', 'jersey']
+    fields = ['player_id', 'first_name', 'last_name', 'jersey']
+    list_display = ['player_id', 'first_name', 'last_name', 'jersey']
     ordering = ['player_id']
 
 class SeasonAdmin(admin.ModelAdmin):
@@ -21,12 +22,12 @@ class SeasonAdmin(admin.ModelAdmin):
 class ShotAdmin(admin.ModelAdmin):
     fields = [field.name for field in Season._meta.get_fields()]
     list_display = [field.name for field in Shot._meta.get_fields()]
-    ordering = ['id']
+    ordering = ['shot_id']
 
 class TeamAdmin(admin.ModelAdmin):
     """ teamadmin"""
-    fields = ['home_team', 'visitor_team', 'team_id', 'team_name', 'short_name']
-    list_display = ['team_id', 'home_team', 'visitor_team', 'id', 'team_name', 'short_name']
+    fields = ['team_id', 'team_name', 'shortcut']
+    list_display = ['team_id', 'team_name', 'shortcut']
     ordering = ['team_id']
 
 admin.site.register(Match, MatchAdmin)
