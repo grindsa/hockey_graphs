@@ -34,8 +34,8 @@ class SeasonSerializer(serializers.HyperlinkedModelSerializer):
 
 class ShiftSerializer(serializers.HyperlinkedModelSerializer):
     """ shot serializer """
-    player = PlayerSerializer()
-    match = MatchSerializer()
+    player = serializers.ReadOnlyField(source='player.player_id')
+    match = serializers.ReadOnlyField(source='match.match_id')
     class Meta:
         model = Shift
         fields = ('shift_id', 'match_id', 'match', 'player_id', 'player', 'starttime_sec', 'starttime_realtime', 'endtime_sec', 'endtime_realtime')
