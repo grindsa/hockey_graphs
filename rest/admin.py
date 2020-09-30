@@ -3,7 +3,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from rest.models import Match, Player, Season, Shot, Team
+from rest.models import Match, Player, Season, Shift, Shot, Team
 
 class MatchAdmin(admin.ModelAdmin):
     """ match admin """
@@ -23,9 +23,15 @@ class SeasonAdmin(admin.ModelAdmin):
     list_display = ['name']
     ordering = ['name']
 
+class ShiftAdmin(admin.ModelAdmin):
+    """ shots admin """
+    fields = [field.name for field in Shift._meta.get_fields()]
+    list_display = [field.name for field in Shift._meta.get_fields()]
+    ordering = ['shift_id']
+
 class ShotAdmin(admin.ModelAdmin):
     """ shots admin """
-    fields = [field.name for field in Season._meta.get_fields()]
+    fields = [field.name for field in Shot._meta.get_fields()]
     list_display = [field.name for field in Shot._meta.get_fields()]
     ordering = ['shot_id']
 
@@ -37,6 +43,7 @@ class TeamAdmin(admin.ModelAdmin):
 
 admin.site.register(Match, MatchAdmin)
 admin.site.register(Player, PlayerAdmin)
+admin.site.register(Shift, ShiftAdmin)
 admin.site.register(Shot, ShotAdmin)
 admin.site.register(Season, SeasonAdmin)
 admin.site.register(Team, TeamAdmin)

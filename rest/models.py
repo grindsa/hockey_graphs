@@ -36,6 +36,17 @@ class Player(models.Model):
     def __str__(self):
         return self.last_name
 
+class Shift(models.Model):
+    """ shifts """
+    shift_id = models.IntegerField(primary_key=True)
+    player = models.ForeignKey(Player, on_delete=models.CASCADE)
+    team = models.ForeignKey(Team, on_delete=models.CASCADE)
+    match = models.ForeignKey(Match, on_delete=models.CASCADE)    
+    starttime_sec = models.IntegerField()
+    starttime_realtime = models.CharField(max_length=20)
+    endtime_sec = models.IntegerField()
+    endtime_realtime = models.CharField(max_length=20)
+
 class Shot(models.Model):
     """ player """
     shot_id = models.IntegerField(primary_key=True)

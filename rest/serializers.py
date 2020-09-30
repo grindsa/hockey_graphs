@@ -1,6 +1,6 @@
 """ serializers.py """
 from rest_framework import serializers
-from rest.models import Match, Team, Season, Shot, Player
+from rest.models import Match, Player, Season, Shift, Shot, Team
 from rest.helper import get_url
 
 class PlayerSerializer(serializers.HyperlinkedModelSerializer):
@@ -15,20 +15,30 @@ class MatchSerializer(serializers.HyperlinkedModelSerializer):
     home_team = serializers.ReadOnlyField(source='home_team.team_name')
     visitor_team = serializers.ReadOnlyField(source='visitor_team.team_name')
     shots = serializers.SerializerMethodField('get_shots')
-
+    shifts = serializers.SerializerMethodField('get_shifts')
     def get_shots(self, obj):
         """ get shots url """
         return '{0}/{1}={2}'.format(get_url(self.context['request'].META), 'shots?match_id', obj.match_id)
-
+    def get_shifts(self, obj):
+        """ get shifts url """
+        return '{0}/{1}={2}'.format(get_url(self.context['request'].META), 'shifts?match_id', obj.match_id)
     class Meta:
         model = Match
-        fields = ('match_id', 'season', 'date', 'date_uts', 'home_team', 'visitor_team', 'shots')
+        fields = ('match_id', 'season', 'date', 'date_uts', 'home_team', 'visitor_team', 'shifts', 'shots')
 
 class SeasonSerializer(serializers.HyperlinkedModelSerializer):
     """ season serializer """
     class Meta:
         model = Season
         fields = ('id', 'name', )
+
+class ShiftSerializer(serializers.HyperlinkedModelSerializer):
+    """ shot serializer """
+    player = PlayerSerializer()
+    match = MatchSerializer()
+    class Meta:
+        model = Shift
+        fields = ('shift_id', 'match_id', 'match', 'player_id', 'player', 'starttime_sec', 'starttime_realtime', 'endtime_sec', 'endtime_realtime')
 
 class ShotSerializer(serializers.HyperlinkedModelSerializer):
     """ shot serializer """

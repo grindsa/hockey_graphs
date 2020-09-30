@@ -1,8 +1,8 @@
 """ views.py """
 from django.shortcuts import render
 from rest_framework import viewsets
-from .serializers import MatchSerializer, PlayerSerializer, ShotSerializer, TeamSerializer
-from .models import Match, Player, Shot, Team
+from .serializers import MatchSerializer, PlayerSerializer, ShiftSerializer, ShotSerializer, TeamSerializer
+from .models import Match, Player, Shift, Shot, Team
 
 class MatchViewSet(viewsets.ModelViewSet):
     queryset = Match.objects.all().order_by('match_id')
@@ -11,6 +11,17 @@ class MatchViewSet(viewsets.ModelViewSet):
 class PlayerViewSet(viewsets.ModelViewSet):
     queryset = Player.objects.all().order_by('player_id')
     serializer_class = PlayerSerializer
+
+class ShiftViewSet(viewsets.ModelViewSet):
+    queryset = Shift.objects.all().order_by('shift_id')
+    serializer_class = ShiftSerializer
+
+    def get_queryset(self):
+        queryset = self.queryset
+        match_id = self.request.query_params.get('match_id', None)
+        if match_id:
+            queryset = queryset.filter(match_id=match_id)
+        return queryset
 
 class ShotViewSet(viewsets.ModelViewSet):
     queryset = Shot.objects.all().order_by('shot_id')
