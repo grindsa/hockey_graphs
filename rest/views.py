@@ -15,14 +15,17 @@ class SingleresultsSetPagination(PageNumberPagination):
 class MatchViewSet(viewsets.ModelViewSet):
     queryset = Match.objects.all().order_by('match_id')
     serializer_class = MatchSerializer
+    http_method_names = ['get']
 
 class PlayerViewSet(viewsets.ModelViewSet):
     queryset = Player.objects.all().order_by('player_id')
     serializer_class = PlayerSerializer
+    http_method_names = ['get']
 
 class PeriodeventViewSet(viewsets.ModelViewSet):
     serializer_class = PeriodeventSerializer
     pagination_class = SingleresultsSetPagination
+    http_method_names = ['get']
     def get_queryset(self):
         match_id = self.request.query_params.get('match_id', None)
         if match_id:
@@ -38,6 +41,7 @@ class PeriodeventViewSet(viewsets.ModelViewSet):
 class ShiftViewSet(viewsets.ModelViewSet):
     serializer_class = ShiftSerializer
     pagination_class = SingleresultsSetPagination
+    http_method_names = ['get']
     def get_queryset(self):
         match_id = self.request.query_params.get('match_id', None)
         player_id = self.request.query_params.get('player_id', None)
@@ -53,6 +57,7 @@ class ShiftViewSet(viewsets.ModelViewSet):
 
 class ShotViewSet(viewsets.ModelViewSet):
     serializer_class = ShotSerializer
+    http_method_names = ['get']
     def get_queryset(self):
         match_id = self.request.query_params.get('match_id', None)
         player_id = self.request.query_params.get('player_id', None)
@@ -70,3 +75,4 @@ class ShotViewSet(viewsets.ModelViewSet):
 class TeamViewSet(viewsets.ModelViewSet):
     queryset = Team.objects.all().order_by('team_id')
     serializer_class = TeamSerializer
+    http_method_names = ['get']    
