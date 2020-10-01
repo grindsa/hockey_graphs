@@ -1,5 +1,6 @@
 """ model.py """
 from django.db import models
+import jsonfield
 
 # Create your models here.
 class Season(models.Model):
@@ -24,8 +25,14 @@ class Match(models.Model):
     date_uts = models.IntegerField(default=0)
     home_team = models.ForeignKey(Team, related_name='home_team', on_delete=models.CASCADE)
     visitor_team = models.ForeignKey(Team, related_name='visitor_team', on_delete=models.CASCADE)
+    result = models.CharField(max_length=5, blank=True, null=True)
     def __str__(self):
         return '{0} ({1}-{2})'.format(self.match_id, self.home_team, self.visitor_team)
+
+class Periodevent(models.Model):
+    """ shifts """
+    match = models.ForeignKey(Match, on_delete=models.CASCADE)
+    period_event = jsonfield.JSONField(default=dict)
 
 class Player(models.Model):
     """ player """
@@ -38,14 +45,8 @@ class Player(models.Model):
 
 class Shift(models.Model):
     """ shifts """
-    shift_id = models.IntegerField(primary_key=True)
-    player = models.ForeignKey(Player, on_delete=models.CASCADE)
-    team = models.ForeignKey(Team, on_delete=models.CASCADE)
     match = models.ForeignKey(Match, on_delete=models.CASCADE)
-    starttime_sec = models.IntegerField()
-    starttime_realtime = models.CharField(max_length=20)
-    endtime_sec = models.IntegerField()
-    endtime_realtime = models.CharField(max_length=20, blank=True, null=True)
+    shift = jsonfield.JSONField(default=dict)
 
 class Shot(models.Model):
     """ player """

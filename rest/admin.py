@@ -3,12 +3,18 @@
 from django.contrib import admin
 
 # Register your models here.
-from rest.models import Match, Player, Season, Shift, Shot, Team
+from rest.models import Match, Periodevent, Player, Season, Shift, Shot, Team
 
 class MatchAdmin(admin.ModelAdmin):
     """ match admin """
     fields = ['season', 'match_id', 'date', 'date_uts', 'home_team', 'visitor_team']
     list_display = ['season', 'match_id', 'date', 'date_uts', 'home_team', 'visitor_team']
+    ordering = ['match_id']
+
+class PeriodeventAdmin(admin.ModelAdmin):
+    """ shots admin """
+    fields = ['match', 'period_event']
+    list_display = ['match']
     ordering = ['match_id']
 
 class PlayerAdmin(admin.ModelAdmin):
@@ -25,9 +31,9 @@ class SeasonAdmin(admin.ModelAdmin):
 
 class ShiftAdmin(admin.ModelAdmin):
     """ shots admin """
-    fields = [field.name for field in Shift._meta.get_fields()]
-    list_display = [field.name for field in Shift._meta.get_fields()]
-    ordering = ['shift_id']
+    fields = ['match', 'shift']
+    list_display = ['match']
+    ordering = ['match_id']
 
 class ShotAdmin(admin.ModelAdmin):
     """ shots admin """
@@ -42,6 +48,7 @@ class TeamAdmin(admin.ModelAdmin):
     ordering = ['team_id']
 
 admin.site.register(Match, MatchAdmin)
+admin.site.register(Periodevent, PeriodeventAdmin)
 admin.site.register(Player, PlayerAdmin)
 admin.site.register(Shift, ShiftAdmin)
 admin.site.register(Shot, ShotAdmin)
