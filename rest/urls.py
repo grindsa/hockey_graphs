@@ -3,10 +3,10 @@ from rest_framework import routers
 from . import views
 
 router = routers.DefaultRouter()
-router.register(r'events', views.PeriodeventViewSet)
+router.register(r'events', views.PeriodeventViewSet, basename='Periodevent')
 router.register(r'matches', views.MatchViewSet)
 router.register(r'player', views.PlayerViewSet)
-router.register(r'shifts', views.ShiftViewSet)
+router.register(r'shifts', views.ShiftViewSet, basename='Shift')
 router.register(r'shots', views.ShotViewSet)
 router.register(r'teams', views.TeamViewSet)
 
