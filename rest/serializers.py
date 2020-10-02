@@ -17,6 +17,16 @@ class MatchSerializer(serializers.HyperlinkedModelSerializer):
     events = serializers.SerializerMethodField('get_events')
     shots = serializers.SerializerMethodField('get_shots')
     shifts = serializers.SerializerMethodField('get_shifts')
+
+    # shrink data in overview
+    def __init__(self, *args, **kwargs):
+        # Instantiate the superclass normally
+        super(MatchSerializer, self).__init__(*args, **kwargs)
+        if isinstance(args[0], list):
+            self.fields.pop('events')
+            self.fields.pop('shifts')
+            self.fields.pop('shots')
+
     def get_events(self, obj):
         """ get events url """
         return '{0}/{1}={2}'.format(get_url(self.context['request'].META), 'events?match_id', obj.match_id)
