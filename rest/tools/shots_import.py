@@ -65,11 +65,12 @@ if __name__ == '__main__':
     data_path = '../data/2019/matches'
 
     # get season_id
-    season_id = season_latest_get()
+    season_id = season_latest_get(LOGGER)
 
     # get team_list
     team_list = team_list_get(LOGGER, None, None, ['team_id'])
 
+    sys.exit(0)
     # get list of matches
     match_list = match_list_get(LOGGER, None, None, ['match_id'])
 

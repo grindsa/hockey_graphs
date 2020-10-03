@@ -11,5 +11,12 @@ from rest.models import Season
 
 def season_latest_get(logger):
     """get latest season"""
-    # get season_id
-    return len(Season.objects.values())
+    logger.debug('season_latest_get()')
+    try:
+        result = len(Season.objects.values())
+    except BaseException as err_:
+        logger.critical('error in season_latest_get(): {0}'.format(err_))
+        result = None
+        print('bubu')
+    logger.debug('season_latest_get() ended with {0}'.format(result))
+    return result
