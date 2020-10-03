@@ -19,14 +19,14 @@ def _shoot_coordinates_convert(coordinate_x, coordinate_y):
     meter_y = y2m * coordinate_y
     return(round(meter_x, 2), round(meter_y, 2))
 
-def shot_add(fkey, fvalue, data_dic):
+def shot_add(logger, fkey, fvalue, data_dic):
     """ add team to database """
     # add authorization
     obj, _created = Shot.objects.update_or_create(**{fkey: fvalue}, defaults=data_dic)
     obj.save()
     return obj.shot_id
 
-def zone_name_get(coordinate_x, coordinate_y):
+def zone_name_get(logger, coordinate_x, coordinate_y):
     """ get coordinates """
     (meter_x, meter_y) = _shoot_coordinates_convert(coordinate_x, coordinate_y)
     # constructing shot location

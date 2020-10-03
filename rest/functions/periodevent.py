@@ -9,7 +9,7 @@ import django
 django.setup()
 from rest.models import Periodevent
 
-def periodevent_add(fkey, fvalue, data_dic):
+def periodevent_add(logger, fkey, fvalue, data_dic):
     """ add team to database """
     # add shift
     obj, _created = Periodevent.objects.update_or_create(**{fkey: fvalue}, defaults=data_dic)

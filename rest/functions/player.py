@@ -9,7 +9,7 @@ import django
 django.setup()
 from rest.models import Player
 
-def player_list_get(fkey=None, fvalue=None, vlist=('player_id', 'first_name', 'last_name', 'jersey')):
+def player_list_get(logger, fkey=None, fvalue=None, vlist=('player_id', 'first_name', 'last_name', 'jersey')):
     """ query player(s) from database based with optional filtering """
     if fkey:
         if len(vlist) == 1:
@@ -23,7 +23,7 @@ def player_list_get(fkey=None, fvalue=None, vlist=('player_id', 'first_name', 'l
             player_list = Player.objects.all().order_by('player_id').values(*vlist)
     return list(player_list)
 
-def player_add(fkey, fvalue, data_dic):
+def player_add(logger, fkey, fvalue, data_dic):
     """ add team to database """
     # add authorization
     obj, _created = Player.objects.update_or_create(**{fkey: fvalue}, defaults=data_dic)

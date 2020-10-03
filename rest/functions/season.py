@@ -9,7 +9,7 @@ import django
 django.setup()
 from rest.models import Season
 
-def season_latest_get():
+def season_latest_get(logger):
     """get latest season"""
     # get season_id
     return len(Season.objects.values())

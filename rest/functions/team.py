@@ -9,23 +9,36 @@ import django
 django.setup()
 from rest.models import Team
 
-def team_list_get(fkey=None, fvalue=None, vlist=('team_id', 'team_name', 'short_name')):
+def team_list_get(logger, fkey=None, fvalue=None, vlist=('team_id', 'team_name', 'shortcut')):
     """ query team(s) from database based with optional filtering """
-    if fkey:
-        if len(vlist) == 1:
-            team_list = Team.objects.filter(**{fkey: fvalue}).order_by('team_id').values_list(vlist[0], flat=True)
+    logger.debug('team_list_get({0}:{1})'.format(fkey, fvalue))
+    try:
+        if fkey:
+            if len(vlist) == 1:
+                team_list = Team.objects.filter(**{fkey: fvalue}).order_by('team_id').values_list(vlist[0], flat=True)
+            else:
+                team_list = Team.objects.filter(**{fkey: fvalue}).order_by('team_id').values(*vlist)
         else:
-            team_list = Team.objects.filter(**{fkey: fvalue}).order_by('team_id').values(*vlist)
-    else:
-        if len(vlist) == 1:
-            team_list = Team.objects.all().order_by('team_id').values_list(vlist[0], flat=True)
-        else:
-            team_list = Team.objects.all().order_by('team_id').values(*vlist)
+            if len(vlist) == 1:
+                team_list = Team.objects.all().order_by('team_id').values_list(vlist[0], flat=True)
+            else:
+                team_list = Team.objects.all().order_by('team_id').values(*vlist)
+    except BaseException as err_:
+        logger.critical('error in team_list_get(): {0}'.format(err_))
+        team_list = []
+    logger.debug('team_list_get({0}:{1}) ended with {2}'.format(fkey, fvalue, bool(team_list)))
     return list(team_list)
 
-def team_add(fkey, fvalue, data_dic):
+def team_add(logger, fkey, fvalue, data_dic):
     """ add team to database """
-    # add authorization
-    obj, _created = Team.objects.update_or_create(**{fkey: fvalue}, defaults=data_dic)
-    obj.save()
-    return obj.team_id
+    logger.debug('team_add({0}:{1})'.format(fkey, fvalue))
+    try:
+        # add authorization
+        obj, _created = Team.objects.update_or_create(**{fkey: fvalue}, defaults=data_dic)
+        obj.save()
+        result = obj.team_id
+    except BaseException as err_:
+        logger.critical('error in team_add(): {0}'.format(err_))
+        result = None
+    logger.debug('team_add({0}:{1}) ended with {2}'.format(fkey, fvalue, result))
+    return result

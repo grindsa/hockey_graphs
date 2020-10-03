@@ -9,7 +9,7 @@ import django
 django.setup()
 from rest.models import Match
 
-def match_list_get(fkey=None, fvalue=None, vlist=('match_id', 'secaon', 'date', 'date_uts', 'home_team', 'visitior_team')):
+def match_list_get(logger, fkey=None, fvalue=None, vlist=('match_id', 'secaon', 'date', 'date_uts', 'home_team', 'visitior_team')):
     """ query team(s) from database based with optional filtering """
     if fkey:
         if len(vlist) == 1:
@@ -23,7 +23,7 @@ def match_list_get(fkey=None, fvalue=None, vlist=('match_id', 'secaon', 'date', 
             match_list = Match.objects.all().order_by('match_id').values(*vlist)
     return list(match_list)
 
-def match_add(fkey, fvalue, data_dic):
+def match_add(logger, fkey, fvalue, data_dic):
     """ add team to database """
     # add authorization
     obj, _created = Match.objects.update_or_create(**{fkey: fvalue}, defaults=data_dic)
