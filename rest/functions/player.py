@@ -25,7 +25,6 @@ def player_list_get(logger, fkey=None, fvalue=None, vlist=('player_id', 'first_n
     except BaseException as err_:
         logger.critical('error in player_list_get(): {0}'.format(err_))
         player_list = []
-    print(list(player_list))
     return list(player_list)
 
 def player_add(logger, fkey, fvalue, data_dic):
