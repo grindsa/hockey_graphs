@@ -3,7 +3,7 @@
 # pylint: disable= C0415, W0212
 import sys
 from django.test import TestCase
-from rest.models import Season
+from rest.functions.helper import testdata_load
 
 sys.path.insert(0, '.')
 sys.path.insert(1, '..')
@@ -17,8 +17,7 @@ class TeamTestCase(TestCase):
         logging.basicConfig(level=logging.CRITICAL)
         self.logger = logging.getLogger('test_hockey')
         self.season_latest_get = season_latest_get
-        Season.objects.create(name="Season-1")
-        Season.objects.create(name="Season-2")
+        testdata_load()
 
     def tearDown(self):
         """ teardown test environment """

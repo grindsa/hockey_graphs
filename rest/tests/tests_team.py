@@ -3,7 +3,7 @@
 # pylint: disable= C0415, W0212
 import sys
 from django.test import TestCase
-from rest.models import Team
+from rest.functions.helper import testdata_load
 
 sys.path.insert(0, '.')
 sys.path.insert(1, '..')
@@ -18,9 +18,8 @@ class TeamTestCase(TestCase):
         self.logger = logging.getLogger('test_hockey')
         self.team_list_get = team_list_get
         self.team_add = team_add
-        Team.objects.create(team_id="1", team_name="Team-1", shortcut="T1")
-        Team.objects.create(team_id="2", team_name="Team-2", shortcut="T2")
-        
+        testdata_load()
+
     def tearDown(self):
         """ teardown test environment """
         # Clean up run after every test method.
