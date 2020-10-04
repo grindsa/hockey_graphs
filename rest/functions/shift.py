@@ -11,7 +11,14 @@ from rest.models import Shift
 
 def shift_add(logger, fkey, fvalue, data_dic):
     """ add team to database """
-    # add shift
-    obj, _created = Shift.objects.update_or_create(**{fkey: fvalue}, defaults=data_dic)
-    obj.save()
-    return obj.id
+    logger.debug('shift_add({0}:{1})'.format(fkey, fvalue))
+    try:
+        # add shift
+        obj, _created = Shift.objects.update_or_create(**{fkey: fvalue}, defaults=data_dic)
+        obj.save()
+        result = obj.id
+    except BaseException as err_:
+        logger.critical('error in shift_add(): {0}'.format(err_))
+        result = None
+    logger.debug('shift_add({0}:{1}) ended with {2}'.format(fkey, fvalue, result))
+    return result
