@@ -8,7 +8,7 @@ sys.path.insert(1, '..')
 
 def testdata_load(debug=False):
     """ load testdata for unittests """
-    from rest.models import Match, Player, Periodevent, Season, Shot, Team
+    from rest.models import Match, Player, Periodevent, Shift, Season, Shot, Team
     Season.objects.create(name="Season-1")
     Season.objects.create(name="Season-2")
     Team.objects.create(team_id=1, team_name="Team-1", shortcut="T1")
@@ -19,6 +19,8 @@ def testdata_load(debug=False):
     Player.objects.create(player_id=2, first_name="first_name_2", last_name="last_name_2", jersey=2)
     Periodevent.objects.create(match_id=1, period_event={'foo': 'bar1'})
     Periodevent.objects.create(match_id=2, period_event={'foo': 'bar2'})
+    Shift.objects.create(match_id=1, shift={'foo': 'bar1'})
+    Shift.objects.create(match_id=2, shift={'foo': 'bar2'})
     Shot.objects.create(shot_id=11, player_id=1, team_id=1, match_id=1, match_shot_resutl_id=1, timestamp=11, coordinate_x=11, coordinate_y=11, real_date='real_date_11', polygon='polygon_11', zone='zone_11')
     Shot.objects.create(shot_id=12, player_id=1, team_id=1, match_id=1, match_shot_resutl_id=2, timestamp=12, coordinate_x=12, coordinate_y=12, real_date='real_date_12', polygon='polygon_12', zone='zone_12')
     Shot.objects.create(shot_id=13, player_id=1, team_id=1, match_id=1, match_shot_resutl_id=3, timestamp=13, coordinate_x=13, coordinate_y=13, real_date='real_date_13', polygon='polygon_13', zone='zone_13')
