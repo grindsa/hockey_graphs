@@ -70,9 +70,10 @@ if __name__ == '__main__':
     # get team_list
     team_list = team_list_get(LOGGER, None, None, ['team_id'])
 
-    sys.exit(0)
     # get list of matches
     match_list = match_list_get(LOGGER, None, None, ['match_id'])
+    print(match_list)
+    sys.exit(0)
 
     # get list of players
     player_list = player_list_get(LOGGER, None, None, ['player_id'])

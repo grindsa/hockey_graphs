@@ -20,7 +20,7 @@ class TeamTestCase(TestCase):
         self.team_add = team_add
         Team.objects.create(team_id="1", team_name="Team-1", shortcut="T1")
         Team.objects.create(team_id="2", team_name="Team-2", shortcut="T2")
-
+        
     def tearDown(self):
         """ teardown test environment """
         # Clean up run after every test method.
