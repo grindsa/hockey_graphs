@@ -17,25 +17,27 @@ class MatchSerializer(serializers.HyperlinkedModelSerializer):
     events = serializers.SerializerMethodField('get_events')
     shots = serializers.SerializerMethodField('get_shots')
     shifts = serializers.SerializerMethodField('get_shifts')
-
     # shrink data in overview
     def __init__(self, *args, **kwargs):
         # Instantiate the superclass normally
         super(MatchSerializer, self).__init__(*args, **kwargs)
-        if isinstance(args[0], list):
+        if len(args) > 0 and isinstance(args[0], list):
             self.fields.pop('events')
             self.fields.pop('shifts')
             self.fields.pop('shots')
-
     def get_events(self, obj):
         """ get events url """
-        return '{0}/api/v1/{1}={2}'.format(get_url(self.context['request'].META), 'events?match_id', obj.match_id)
+        if self.context:
+            return '{0}/api/v1/{1}={2}'.format(get_url(self.context['request'].META), 'events?match_id', obj.match_id)
     def get_shots(self, obj):
         """ get shots url """
-        return '{0}/api/v1/{1}={2}'.format(get_url(self.context['request'].META), 'shots?match_id', obj.match_id)
+        if self.context:
+            return '{0}/api/v1/{1}={2}'.format(get_url(self.context['request'].META), 'shots?match_id', obj.match_id)
     def get_shifts(self, obj):
         """ get shifts url """
-        return '{0}/api/v1/{1}={2}'.format(get_url(self.context['request'].META), 'shifts?match_id', obj.match_id)
+        if self.context:
+            print(dict(obj))
+            return '{0}/api/v1/{1}={2}'.format(get_url(self.context['request'].META), 'shifts?match_id', obj.match_id)
     class Meta:
         model = Match
         fields = ('match_id', 'season', 'date', 'date_uts', 'home_team', 'visitor_team', 'shifts', 'shots', 'events')
