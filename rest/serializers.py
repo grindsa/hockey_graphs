@@ -29,13 +29,13 @@ class MatchSerializer(serializers.HyperlinkedModelSerializer):
 
     def get_events(self, obj):
         """ get events url """
-        return '{0}/{1}={2}'.format(get_url(self.context['request'].META), 'events?match_id', obj.match_id)
+        return '{0}/api/v1/{1}={2}'.format(get_url(self.context['request'].META), 'events?match_id', obj.match_id)
     def get_shots(self, obj):
         """ get shots url """
-        return '{0}/{1}={2}'.format(get_url(self.context['request'].META), 'shots?match_id', obj.match_id)
+        return '{0}/api/v1/{1}={2}'.format(get_url(self.context['request'].META), 'shots?match_id', obj.match_id)
     def get_shifts(self, obj):
         """ get shifts url """
-        return '{0}/{1}={2}'.format(get_url(self.context['request'].META), 'shifts?match_id', obj.match_id)
+        return '{0}/api/v1/{1}={2}'.format(get_url(self.context['request'].META), 'shifts?match_id', obj.match_id)
     class Meta:
         model = Match
         fields = ('match_id', 'season', 'date', 'date_uts', 'home_team', 'visitor_team', 'shifts', 'shots', 'events')
