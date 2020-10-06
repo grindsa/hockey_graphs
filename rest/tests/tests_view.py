@@ -58,7 +58,6 @@ class ApiTestCase(TestCase):
 
     def test_005_periodeventview(self):
         """ test periodeventview with valid filter """
-        # url = reverse('Periodevent-list')
         url = '/api/v1/events/'
         data = {'match_id': 1}
         response = self.client.get(url, data)
@@ -69,7 +68,32 @@ class ApiTestCase(TestCase):
     def test_006_periodeventview(self):
         """ test periodeventview with invalid filter """
         url = reverse('Periodevent-list')
-        # url = '/api/v1/events/'
+        data = {'match_id': 3}
+        response = self.client.get(url, data)
+        result = b'[]'
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(result, response.content)
+
+    def test_007_shifteventview(self):
+        """ test shifteventview """
+        url = reverse('Shift-list')
+        response = self.client.get(url)
+        result = b'[]'
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(result, response.content)
+
+    def test_008_shifteventview(self):
+        """ test shifteventview with valid filter """
+        url = reverse('Shift-list')
+        data = {'match_id': 1}
+        response = self.client.get(url, data)
+        result = b'[{"foo":"bar1"}]'
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(result, response.content)
+
+    def test_009_shifteventview(self):
+        """ test shifteventview with invalid filter """
+        url = reverse('Periodevent-list')
         data = {'match_id': 3}
         response = self.client.get(url, data)
         result = b'[]'

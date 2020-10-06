@@ -49,7 +49,6 @@ class ShiftViewSet(viewsets.ModelViewSet):
     http_method_names = ['get']
     def get_queryset(self):
         match_id = self.request.query_params.get('match_id', None)
-        player_id = self.request.query_params.get('player_id', None)
         if match_id:
             queryset = Shift.objects.filter(match_id=match_id).order_by('match_id').values('shift').distinct();
         else:
