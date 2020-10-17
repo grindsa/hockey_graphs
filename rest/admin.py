@@ -7,8 +7,8 @@ from rest.models import Match, Periodevent, Player, Season, Shift, Shot, Team
 
 class MatchAdmin(admin.ModelAdmin):
     """ match admin """
-    fields = ['season', 'match_id', 'date', 'date_uts', 'home_team', 'visitor_team']
-    list_display = ['season', 'match_id', 'date', 'date_uts', 'home_team', 'visitor_team']
+    fields = ['season', 'match_id', 'date', 'date_uts', 'home_team', 'visitor_team', 'result']
+    list_display = ['season', 'match_id', 'date', 'date_uts', 'home_team', 'visitor_team', 'result']
     ordering = ['match_id']
 
 class PeriodeventAdmin(admin.ModelAdmin):

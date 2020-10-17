@@ -39,7 +39,7 @@ class MatchSerializer(serializers.HyperlinkedModelSerializer):
             return '{0}/api/v1/{1}={2}'.format(url_build(self.context['request'].META), 'shifts?match_id', obj.match_id)
     class Meta:
         model = Match
-        fields = ('match_id', 'season', 'date', 'date_uts', 'home_team', 'visitor_team', 'shifts', 'shots', 'events')
+        fields = ('match_id', 'season', 'date', 'date_uts', 'home_team', 'visitor_team', 'result', 'shifts', 'shots', 'events')
 
 class PeriodeventSerializer(serializers.HyperlinkedModelSerializer):
     """ shot Periodevent """
