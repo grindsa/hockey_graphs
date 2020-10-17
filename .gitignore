@@ -133,3 +133,4 @@ dmypy.json
 settings.py
 data
 migrations
+node_modules

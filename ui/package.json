@@ -1,0 +1,29 @@
+{
+  "name": "hockey_graphs_ui",
+  "version": "0.0.1",
+  "description": "react based user interface for hockey_graphs REST api",
+  "main": "index.js",
+  "scripts": {
+    "start": "webpack-dev-server",
+    "compile": "webpack",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "GPL",
+  "devDependencies": {
+    "@babel/core": "^7.12.3",
+    "@babel/preset-react": "^7.12.1",
+    "babel-loader": "^8.1.0",
+    "html-webpack-plugin": "^4.5.0",
+    "webpack": "^4.44.2",
+    "webpack-cli": "^3.3.12",
+    "webpack-dev-server": "^3.11.0"
+  },
+  "dependencies": {
+    "css-loader": "^5.0.0",
+    "ract": "0.0.1",
+    "react": "^16.14.0",
+    "react-dom": "^16.14.0",
+    "style-loader": "^2.0.0"
+  }
+}
