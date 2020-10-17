@@ -23,6 +23,7 @@ schema_view = get_schema_view(
 router = routers.DefaultRouter()
 router.register(r'events', views.PeriodeventViewSet, basename='Periodevent')
 router.register(r'matches', views.MatchViewSet)
+router.register(r'matchdays', views.MatchDayViewSet, basename='matchdays')
 router.register(r'player', views.PlayerViewSet)
 router.register(r'shifts', views.ShiftViewSet, basename='Shift')
 router.register(r'shots', views.ShotViewSet, basename='Shot')
@@ -32,6 +33,8 @@ router.register(r'teams', views.TeamViewSet)
 # Additionally, we include login URLs for the browsable API.
 urlpatterns = [
     path('', include(router.urls)),
+    # url(r'^matchdays/(?P<resource_id>\d+)[/]?$', views.MatchDayViewSet.as_view(), name='MatchDayViewSet'),
+    # url(r'^matchdays[/]?$', views.MatchDayViewSet.as_view(), name='MatchDayViewSet'),
     url(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     url(r'^swagger/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     url(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),

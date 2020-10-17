@@ -1,11 +1,19 @@
 """ views.py """
-from django.shortcuts import render
 from django.db.models import Q
 from rest_framework import viewsets
 from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.pagination import PageNumberPagination
+from rest.functions.matchday import matchdays_get
+from rest.functions.helper import logger_setup
+from rest.version import __version__
 from .serializers import MatchSerializer, PeriodeventSerializer, PlayerSerializer, ShiftSerializer, ShotSerializer, TeamSerializer
 from .models import Match, Periodevent, Player, Shift, Shot, Team
-from rest_framework.pagination import PageNumberPagination
+
+# initialize logger
+DEBUG = True
+LOGGER = logger_setup(DEBUG)
+LOGGER.info('starting hockeys_graphs rest api version %s ', __version__)
 
 class SingleresultsSetPagination(PageNumberPagination):
     """ pagination for special serializers """
@@ -13,18 +21,38 @@ class SingleresultsSetPagination(PageNumberPagination):
     page_size_query_param = 'page_size'
     max_page_size = 20
 
+class MatchDayViewSet(viewsets.ViewSet):
+    """ view for matchdays """
+
+    # pylint: disable=R0201
+    def list(self, request):
+        """ get a list of matchdays and matches per day """
+        result = matchdays_get(LOGGER)
+        response = Response(result, status=status.HTTP_200_OK)
+        return response
+
+    # pylint: disable=R0201, C0103
+    def retrieve(self, request, pk=None):
+        """ filter matches for a single matchday """
+        result = matchdays_get(LOGGER, fkey='date', fvalue=pk)
+        response = Response(result, status=status.HTTP_200_OK)
+        return response
+
+# pylint: disable=R0901
 class MatchViewSet(viewsets.ModelViewSet):
     """ viewset for matches """
     queryset = Match.objects.all().order_by('match_id')
     serializer_class = MatchSerializer
     http_method_names = ['get']
 
+# pylint: disable=R0901
 class PlayerViewSet(viewsets.ModelViewSet):
     """ viewset for players """
     queryset = Player.objects.all().order_by('player_id')
     serializer_class = PlayerSerializer
     http_method_names = ['get']
 
+# pylint: disable=R0901
 class PeriodeventViewSet(viewsets.ModelViewSet):
     """ viewset for periodevents """
     serializer_class = PeriodeventSerializer
@@ -33,32 +61,37 @@ class PeriodeventViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         match_id = self.request.query_params.get('match_id', None)
         if match_id:
-            queryset = Periodevent.objects.filter(match_id=match_id).order_by('match_id').values('period_event').distinct();
+            queryset = Periodevent.objects.filter(match_id=match_id).order_by('match_id').values('period_event').distinct()
         else:
-            queryset =  Periodevent.objects.none();
+            queryset = Periodevent.objects.none()
         return queryset
 
+    # pylint: disable=W0613
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
         return Response(queryset.values_list('period_event', flat=True))
 
+# pylint: disable=R0901
 class ShiftViewSet(viewsets.ModelViewSet):
     """ viewset for shifts """
     serializer_class = ShiftSerializer
     pagination_class = SingleresultsSetPagination
     http_method_names = ['get']
+
     def get_queryset(self):
         match_id = self.request.query_params.get('match_id', None)
         if match_id:
-            queryset = Shift.objects.filter(match_id=match_id).order_by('match_id').values('shift').distinct();
+            queryset = Shift.objects.filter(match_id=match_id).order_by('match_id').values('shift').distinct()
         else:
-            queryset =  Shift.objects.none();
+            queryset = Shift.objects.none()
         return queryset
 
+    # pylint: disable=W0613
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
         return Response(queryset.values_list('shift', flat=True))
 
+# pylint: disable=R0901
 class ShotViewSet(viewsets.ModelViewSet):
     """ viewset for shots """
     serializer_class = ShotSerializer
@@ -77,6 +110,7 @@ class ShotViewSet(viewsets.ModelViewSet):
 
         return queryset
 
+# pylint: disable=R0901
 class TeamViewSet(viewsets.ModelViewSet):
     """ viewset for teams """
     queryset = Team.objects.all().order_by('team_id')

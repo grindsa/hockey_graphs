@@ -3,6 +3,9 @@
 import logging
 # pylint: disable=E0401, C0413
 import sys
+import calendar
+from datetime import datetime
+from dateutil.parser import parse
 sys.path.insert(0, '.')
 sys.path.insert(1, '..')
 
@@ -73,3 +76,36 @@ def logger_setup(debug):
         level=log_mode)
     logger = logging.getLogger('hockey_graph')
     return logger
+
+def uts_now():
+    """ return unixtimestamp in utc """
+    return calendar.timegm(datetime.utcnow().utctimetuple())
+
+def uts_to_date_utc(uts, tformat='%Y-%m-%dT%H:%M:%SZ'):
+    """ convert unix timestamp to date format """
+    return datetime.fromtimestamp(int(uts), tz=pytz.utc).strftime(tformat)
+
+def date_to_uts_utc(date_human, _tformat='%Y-%m-%dT%H:%M:%S'):
+    """ convert date to unix timestamp """
+    if isinstance(date_human, datetime):
+        # we already got an datetime object as input
+        result = calendar.timegm(date_human.timetuple())
+    else:
+        result = int(calendar.timegm(parse(date_human).timetuple()))
+    return result
+
+def date_to_datestr(date, tformat='%Y-%m-%dT%H:%M:%SZ'):
+    """ convert dateobj to datestring """
+    try:
+        result = date.strftime(tformat)
+    except BaseException:
+        result = None
+    return result
+
+def datestr_to_date(datestr, tformat='%Y-%m-%dT%H:%M:%S'):
+    """ convert datestr to dateobj """
+    try:
+        result = datetime.strptime(datestr, tformat)
+    except BaseException:
+        result = None
+    return result
