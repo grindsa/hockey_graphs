@@ -13,7 +13,16 @@ from rest.functions.season import season_latest_get
 from rest.functions.shot import shot_add, zone_name_get
 from rest.functions.team import team_list_get, team_add
 
-def process_match(logger, match_dic):
+def process_header(logger, match_id, header_dic):
+    """ process header """
+
+    if 'results' in header_dic and 'score' in header_dic['results'] and 'final' in header_dic['results']['score']:
+        # there is no result field thus, we need to construct it manually and update the datebase
+        result = '{0}:{1}'.format(header_dic['results']['score']['final']['score_home'], header_dic['results']['score']['final']['score_guest'])
+        print('update match:', match_id, result)
+        match_id = match_add(logger, 'match_id', match_id, {'match_id': match_id, 'result': result})
+
+def process_shots(logger, match_dic):
     """ process match dictionary """
     # add teams if not existing
     if match_dic['home_id'] not in team_list:
@@ -83,10 +92,17 @@ if __name__ == '__main__':
         match_dir = '{0}/{1}'.format(data_path, ele)
         # filter directories
         if os.path.isdir(match_dir):
-            in_file = '{0}/{1}'.format(match_dir, 'shots.json')
+            shot_file = '{0}/{1}'.format(match_dir, 'shots.json')
             match_cnt += 1
-            with open(in_file, encoding='utf8') as json_file:
+            # add shots 
+            with open(shot_file, encoding='utf8') as json_file:
                 match_dic = json.load(json_file)['match']
-                process_match(LOGGER, match_dic)
+                process_shots(LOGGER, match_dic)
+
+            # add data from game header (result)
+            header_file = '{0}/{1}'.format(match_dir, 'game-header.json')
+            with open(header_file, encoding='utf8') as json_file:
+                header_dic = json.load(json_file)
+                process_header(LOGGER, ele, header_dic)
 
     print('counter:', ele_cnt, match_cnt)
