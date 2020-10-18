@@ -17,6 +17,7 @@ def matchdays_get(logger, fkey=None, fvalue=None, vlist=('match_id', 'season', '
     # reuse of an existing function from match
     match_list = match_list_get(logger, fkey, fvalue, vlist)
     matchday_dic = {}
+    matchday_uts_dic = {}
     lastmday_uts = 0
     lastmday_human = ''
 
@@ -37,6 +38,9 @@ def matchdays_get(logger, fkey=None, fvalue=None, vlist=('match_id', 'season', '
                 'matches': [],
                 'displayday': False
             }
+            # we need this dictionary to lookup the previous and next matchdate
+            matchday_uts_dic[match_uts] = match['date']
+
         # rename a few keys to make the output better understandable
         match['home_team'] = match.pop('home_team__shortcut')
         match['visitor_team'] = match.pop('visitor_team__shortcut')
@@ -46,5 +50,29 @@ def matchdays_get(logger, fkey=None, fvalue=None, vlist=('match_id', 'season', '
     # set displayflag to last matchday
     matchday_dic[lastmday_human]['displayday'] = True
 
+    # add references to previous and next matchdate
+    matchday_dic = matchdays_previous_next_add(logger, matchday_dic, matchday_uts_dic)
+
     logger.debug('match_list_get({0}:{1}) ended with {2}'.format(fkey, fvalue, bool(match_list)))
+    return matchday_dic
+
+def matchdays_previous_next_add(logger, matchday_dic, matchday_uts_dic):
+    """ add links for next and previous matches """
+    logger.debug('matchdays_previous_next_add()')
+
+    # create list of uts for faster lookup
+    matchday_uts_list = sorted(matchday_uts_dic.keys())
+
+    for matchday in matchday_dic:
+        matchday_index = matchday_uts_list.index(matchday_dic[matchday]['uts'])
+
+        if matchday_index > 0:
+            # get prevevious match by looking up previous elemnet before in match_uts_list
+            matchday_dic[matchday]['previous'] = matchday_uts_dic[matchday_uts_list[matchday_index-1]]
+
+        if matchday_index < len(matchday_uts_list)-1:
+            # get next match by lookup up next element in match_uts_list
+            matchday_dic[matchday]['next'] = matchday_uts_dic[matchday_uts_list[matchday_index+1]]
+
+    logger.debug('matchdays_previous_next_add() ended')
     return matchday_dic
