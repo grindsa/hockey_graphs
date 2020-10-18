@@ -14,6 +14,7 @@ class Team(models.Model):
     team_id = models.IntegerField(primary_key=True)
     team_name = models.CharField(max_length=30)
     shortcut = models.CharField(max_length=5)
+    logo = models.CharField(max_length=35, blank=True)    
     def __str__(self):
         return self.team_name
 

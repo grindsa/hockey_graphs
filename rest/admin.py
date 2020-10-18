@@ -43,8 +43,8 @@ class ShotAdmin(admin.ModelAdmin):
 
 class TeamAdmin(admin.ModelAdmin):
     """ teamadmin"""
-    fields = ['team_id', 'team_name', 'shortcut']
-    list_display = ['team_id', 'team_name', 'shortcut']
+    fields = ['team_id', 'team_name', 'shortcut', 'logo']
+    list_display = ['team_id', 'team_name', 'shortcut', 'logo']
     ordering = ['team_id']
 
 admin.site.register(Match, MatchAdmin)

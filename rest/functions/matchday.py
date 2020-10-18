@@ -7,10 +7,11 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "hockey_graphs.settings")
 import django
 django.setup()
+from django.conf import settings
 from rest.functions.match import match_list_get
-from rest.functions.helper import date_to_datestr, datestr_to_date, date_to_uts_utc
+from rest.functions.helper import date_to_datestr, datestr_to_date, date_to_uts_utc, url_build
 
-def matchdays_get(logger, fkey=None, fvalue=None, vlist=('match_id', 'season', 'date', 'date_uts', 'home_team__shortcut', 'visitor_team__shortcut', 'result')):
+def matchdays_get(logger, request, fkey=None, fvalue=None, vlist=('match_id', 'season', 'date', 'date_uts', 'home_team__shortcut', 'home_team__logo', 'visitor_team__shortcut', 'visitor_team__logo', 'result')):
     """ matches grouped by days """
     logger.debug('match_list_get({0}:{1})'.format(fkey, fvalue))
 
@@ -20,6 +21,12 @@ def matchdays_get(logger, fkey=None, fvalue=None, vlist=('match_id', 'season', '
     matchday_uts_dic = {}
     lastmday_uts = 0
     lastmday_human = ''
+
+    # we need the url to be added to the logo URL
+    if request.META:
+        base_url = url_build(request.META)
+    else:
+        base_url = ''
 
     # we need to group the list by matchdays
     for match in match_list:
@@ -43,7 +50,9 @@ def matchdays_get(logger, fkey=None, fvalue=None, vlist=('match_id', 'season', '
 
         # rename a few keys to make the output better understandable
         match['home_team'] = match.pop('home_team__shortcut')
+        match['home_team_logo'] = '{0}{1}{2}'.format(base_url, settings.STATIC_URL, match.pop('home_team__logo'))
         match['visitor_team'] = match.pop('visitor_team__shortcut')
+        match['visitor_team_logo'] = '{0}{1}{2}'.format(base_url, settings.STATIC_URL, match.pop('visitor_team__logo'))
 
         matchday_dic[match['date']]['matches'].append(match)
 

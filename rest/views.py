@@ -24,17 +24,15 @@ class SingleresultsSetPagination(PageNumberPagination):
 class MatchDayViewSet(viewsets.ViewSet):
     """ view for matchdays """
 
-    # pylint: disable=R0201
     def list(self, request):
         """ get a list of matchdays and matches per day """
-        result = matchdays_get(LOGGER)
+        result = matchdays_get(LOGGER, request)
         response = Response(result, status=status.HTTP_200_OK)
         return response
 
-    # pylint: disable=R0201, C0103
     def retrieve(self, request, pk=None):
         """ filter matches for a single matchday """
-        result = matchdays_get(LOGGER, fkey='date', fvalue=pk)
+        result = matchdays_get(LOGGER, request, fkey='date', fvalue=pk)
         response = Response(result, status=status.HTTP_200_OK)
         return response
 
