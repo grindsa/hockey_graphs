@@ -50,7 +50,7 @@ export class MatchDayList extends React.Component {
   render() {
     const MatchDay = this.filterMatchDay(this.state.matchdaylist).map((Match, index) =>{
       return(
-        <p key={Match.match_id}>{Match.home_team} {Match.result} {Match.visitor_team}</p>
+        <p key={Match.match_id}>{Match.home_team} <img src={Match.home_team_logo} alt={Match.home_team} />{Match.result} <img src={Match.visitor_team_logo} alt={Match.visitor_team} />{Match.visitor_team}</p>
       )
     });
 
