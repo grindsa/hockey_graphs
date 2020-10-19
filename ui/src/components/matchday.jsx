@@ -2,6 +2,7 @@ import React from 'react';
 import { changeMatchDay }  from './matchdaystateservice';
 import { asyncGET } from './fetch.js';
 
+
 export class MatchDayList extends React.Component {
   /* class which creates and displays list of matches for cert day */
   constructor(props) {
@@ -56,7 +57,13 @@ export class MatchDayList extends React.Component {
   render() {
     const MatchDay = this.filterMatchDay(this.state.matchdaylist).map((Match, index) =>{
       return(
-        <p key={Match.match_id}>{Match.home_team} <img src={Match.home_team_logo} alt={Match.home_team} />{Match.result} <img src={Match.visitor_team_logo} alt={Match.visitor_team} />{Match.visitor_team}</p>
+        <tr key={Match.match_id}>
+          <td className="w3-right-align middle">{Match.home_team_name}</td>
+          <td className="w3-right-align middle"><img src={Match.home_team_logo} alt={Match.home_team_shortcut} width="40px"/></td>
+          <td className="w3-center result middle">{Match.result} </td>
+          <td className="w3-left-align middle"><img src={Match.visitor_team_logo} alt={Match.visitor_team_shortcut} width="40px"/></td>
+          <td className="w3-left-align middle">{Match.visitor_team_name}</td>
+        </tr>
       )
     });
     return (
@@ -67,7 +74,11 @@ export class MatchDayList extends React.Component {
           previous={this.state.previousKeyName}
           onChangeMatchDay={this.handleMatchDayChange}
         />
-        <h3>{MatchDay}</h3>
+        <table className="w3-table-all">
+        <tbody>
+          {MatchDay}
+        </tbody>
+        </table>
       </React.Fragment>
     )
   }
@@ -77,11 +88,13 @@ export class ChangeMatchday extends React.Component {
   /* this class displays a header allowing matchday changes */
   render(){
     return(
-      <p>
-        <a href='#' onClick={() => this.props.onChangeMatchDay(this.props.previous)}>p</a>
-         {this.props.date}
-        <a href='#' onClick={() => this.props.onChangeMatchDay(this.props.next)}>n</a>
-      </p>
+      <div className="w3-container w3-padding-small pcolor w3-section w3-center">
+        <h1>
+          <a href='#' onClick={() => this.props.onChangeMatchDay(this.props.previous)}><i className="w3-margin-right fa fa-arrow-left" /></a>
+           {this.props.date}
+          <a href='#' onClick={() => this.props.onChangeMatchDay(this.props.next)}><i className="w3-margin-left fa fa-arrow-right" /></a>
+        </h1>
+      </div>
     )
   }
 }
