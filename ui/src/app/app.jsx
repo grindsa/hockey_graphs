@@ -1,6 +1,7 @@
 import React from 'react';
 
-import { MatchDayList } from '../components/matchday'
+import { ChangeMatchday, MatchDayList } from '../components/matchday'
+import { GET, POST } from '../components/fetch.js';
 
 // entry url for  backend
 const rest_url = 'http://127.0.0.1:8081/api/v1/';
@@ -11,13 +12,26 @@ export class App extends React.Component {
     super(props);
     this.state = {
       endpoints: [],
+      matchdays: {},
     }
   }
 
-  componentDidMount(){
-    fetch(rest_url)
-    .then(res => res.json())
-    .then(data => this.setState({ endpoints: data }));
+  async componentDidMount(){
+    // get rest endpoints
+    const endpoints = await this.getData(rest_url, 'endpoints')
+    // get matchdays
+    // const matchdays = await this.getData(this.state.endpoints.matchdays, 'matchdays')
+  }
+
+  async getData(apiEndpoint, parameter) {
+    if(apiEndpoint){
+      const { data: Items } = await GET(apiEndpoint);
+      if (Items) {
+        this.setState({[parameter]: Items });
+      }else{
+        // error
+      }
+    }
   }
 
   render() {

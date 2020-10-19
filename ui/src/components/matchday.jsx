@@ -1,26 +1,39 @@
 import React from 'react';
 import { changeMatchDay }  from './matchdaystateservice';
+import { GET, POST } from '../components/fetch.js';
 
 export class MatchDayList extends React.Component {
 
   constructor(props) {
     super(props);
     this.state = {
-      matchdaylist: [],
+      matchdaylist: {},
       date: '',
       currentKeyName: null,
       previousKeyName: null,
       nextKeyName: null,
     };
     this.handleMatchDayChange = this.handleMatchDayChange.bind(this);
+    console.log(this.state.matchdaylist)
   }
 
-  async componentDidMount() {
-    console.log('dismount')
-    fetch('http://127.0.0.1:8081/api/v1/matchdays/')
-    .then(res => res.json())
-    .then(json => this.setState({ matchdaylist: json }))
-    // .then(data => console.log('foo'));
+  componentDidUpdate(prevProps) {
+    if (this.props.url !== prevProps.url) {
+        console.log(this.props.url)
+        // get matchdays
+        const matchdays = this.getData(this.props.url, 'matchdaylist')
+    }
+  }
+
+  async getData(apiEndpoint, parameter) {
+    if(apiEndpoint){
+      const { data: Items } = await GET(apiEndpoint);
+      if (Items) {
+        this.setState({[parameter]: Items });
+      }else{
+        // error
+      }
+    }
   }
 
   filterMatchDay(Dictionary){
