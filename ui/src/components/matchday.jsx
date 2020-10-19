@@ -88,7 +88,7 @@ export class ChangeMatchday extends React.Component {
   /* this class displays a header allowing matchday changes */
   render(){
     return(
-      <div className="w3-container w3-padding-small pcolor w3-section w3-center">
+      <div className="w3-container w3-padding-small scolor w3-center">
         <h1>
           <a href='#' onClick={() => this.props.onChangeMatchDay(this.props.previous)}><i className="w3-margin-right fa fa-arrow-left" /></a>
            {this.props.date}
