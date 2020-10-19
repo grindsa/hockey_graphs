@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { ChangeMatchday, MatchDayList } from '../components/matchday'
+import { LanguageSelector } from '../components/languageselector'
 import { GET, POST, asyncGET } from '../components/fetch.js';
 import '../css/mytheme.css';
 
@@ -13,6 +14,7 @@ export class App extends React.Component {
     super(props);
     this.state = {
       endpoints: [],
+      language: 'EN',
     }
   }
 
@@ -22,10 +24,18 @@ export class App extends React.Component {
     this.setState({endpoints: endpoints });
   }
 
+  toggleLanguage(){
+      let { language } = this.state;
+      this.setState({ language: language === 'DE' ? 'EN' : 'DE' });
+  }
+
   render() {
     return (
       <React.Fragment>
-        <h1> hello world! </h1>
+        <div className="w3-bar w3-padding pcolor">
+          <i className="fa fa-bars fa-lg w3-xlarge  w3-bar-item" />
+          <LanguageSelector langValue={ this.state.language } onClick={() => this.toggleLanguage()} />
+        </div>
         <MatchDayList url={this.state.endpoints.matchdays}/>
       </React.Fragment>
     );
