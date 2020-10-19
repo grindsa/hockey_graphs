@@ -11,7 +11,7 @@ from django.conf import settings
 from rest.functions.match import match_list_get
 from rest.functions.helper import date_to_datestr, datestr_to_date, date_to_uts_utc, url_build
 
-def matchdays_get(logger, request, fkey=None, fvalue=None, vlist=('match_id', 'season', 'date', 'date_uts', 'home_team__shortcut', 'home_team__logo', 'visitor_team__shortcut', 'visitor_team__logo', 'result')):
+def matchdays_get(logger, request, fkey=None, fvalue=None, vlist=('match_id', 'season', 'date', 'date_uts', 'home_team__shortcut', 'home_team__team_name', 'home_team__logo', 'visitor_team__team_name', 'visitor_team__shortcut', 'visitor_team__logo', 'result')):
     """ matches grouped by days """
     logger.debug('match_list_get({0}:{1})'.format(fkey, fvalue))
 
@@ -49,9 +49,11 @@ def matchdays_get(logger, request, fkey=None, fvalue=None, vlist=('match_id', 's
             matchday_uts_dic[match_uts] = match['date']
 
         # rename a few keys to make the output better understandable
-        match['home_team'] = match.pop('home_team__shortcut')
+        match['home_team_shortcut'] = match.pop('home_team__shortcut')
+        match['home_team_name'] = match.pop('home_team__team_name')
         match['home_team_logo'] = '{0}{1}{2}'.format(base_url, settings.STATIC_URL, match.pop('home_team__logo'))
-        match['visitor_team'] = match.pop('visitor_team__shortcut')
+        match['visitor_team_shortcut'] = match.pop('visitor_team__shortcut')
+        match['visitor_team_name'] = match.pop('visitor_team__team_name')        
         match['visitor_team_logo'] = '{0}{1}{2}'.format(base_url, settings.STATIC_URL, match.pop('visitor_team__logo'))
 
         matchday_dic[match['date']]['matches'].append(match)
