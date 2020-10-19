@@ -17,7 +17,9 @@ export class MatchStatistics extends React.Component {
   render() {
     return (
       <React.Fragment>
-        <h1>props: {this.props.match}</h1>
+      <div className="w3-container w3-padding-small scolor w3-center">
+        <h1>props: {this.props.match} <i className="w3-margin-left w3-xxlarge fa fa-arrow-circle-o-left" onClick={() => this.props.reset()} /></h1>
+      </div>
       </React.Fragment>
     );
   }

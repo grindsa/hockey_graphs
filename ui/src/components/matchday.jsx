@@ -17,6 +17,8 @@ export class MatchDayList extends React.Component {
       selectedMatch: null,
     };
     this.handleMatchDayChange = this.handleMatchDayChange.bind(this);
+    this.handleMatchSelect = this.handleMatchSelect.bind(this);
+    this.resetMatchSelect = this.resetMatchSelect.bind(this);
   }
 
   async componentDidUpdate(prevProps) {
@@ -65,6 +67,15 @@ export class MatchDayList extends React.Component {
     })
   }
 
+  resetMatchSelect(){
+    this.setState(currentState => {
+      return {
+        ... currentState,
+        selectedMatch: null
+      }
+    })
+  }
+
   render() {
     if(!this.state.selectedMatch){
       const MatchDay = this.filterMatchDay(this.state.matchdaylist).map((Match, index) =>{
@@ -95,7 +106,7 @@ export class MatchDayList extends React.Component {
       )
     }else{
       return(
-        <MatchStatistics match={this.state.selectedMatch} />
+        <MatchStatistics match={this.state.selectedMatch} reset={this.resetMatchSelect} />
       )
     }
 
