@@ -1,6 +1,6 @@
 import React from 'react';
 import { changeMatchDay }  from './matchdaystateservice';
-import { GET, POST } from '../components/fetch.js';
+import { asyncGET } from './fetch.js';
 
 export class MatchDayList extends React.Component {
 
@@ -14,14 +14,13 @@ export class MatchDayList extends React.Component {
       nextKeyName: null,
     };
     this.handleMatchDayChange = this.handleMatchDayChange.bind(this);
-    console.log(this.state.matchdaylist)
   }
 
-  componentDidUpdate(prevProps) {
+  async componentDidUpdate(prevProps) {
     if (this.props.url !== prevProps.url) {
-        console.log(this.props.url)
         // get matchdays
-        const matchdays = this.getData(this.props.url, 'matchdaylist')
+        const matchdaylist = await asyncGET(this.props.url)
+        this.setState({matchdaylist: matchdaylist });
     }
   }
 
