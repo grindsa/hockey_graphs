@@ -31,7 +31,7 @@ def matchdays_get(logger, request, fkey=None, fvalue=None, vlist=('match_id', 's
     # we need to group the list by matchdays
     for match in match_list:
         dateobj = datestr_to_date(match['date'], '%Y-%m-%d')
-        match_day = date_to_datestr(dateobj, '%d.%m')
+        match_day = date_to_datestr(dateobj, '%d.%m.%Y')
         match_uts = date_to_uts_utc(match['date'], '%Y-%m-%d')
         # we need the last matchday to set the display key to true
         if match_uts > lastmday_uts:
@@ -53,7 +53,7 @@ def matchdays_get(logger, request, fkey=None, fvalue=None, vlist=('match_id', 's
         match['home_team_name'] = match.pop('home_team__team_name')
         match['home_team_logo'] = '{0}{1}{2}'.format(base_url, settings.STATIC_URL, match.pop('home_team__logo'))
         match['visitor_team_shortcut'] = match.pop('visitor_team__shortcut')
-        match['visitor_team_name'] = match.pop('visitor_team__team_name')        
+        match['visitor_team_name'] = match.pop('visitor_team__team_name')
         match['visitor_team_logo'] = '{0}{1}{2}'.format(base_url, settings.STATIC_URL, match.pop('visitor_team__logo'))
 
         matchday_dic[match['date']]['matches'].append(match)
