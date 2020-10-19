@@ -24,8 +24,8 @@
     "css-loader": "^5.0.0",
     "ract": "0.0.1",
     "react": "^16.14.0",
+    "react-cookie": "^4.0.3",
     "react-dom": "^16.14.0",
-    "style-loader": "^2.0.0",
-    "w3-css": "^4.1.0"
+    "style-loader": "^2.0.0"
   }
 }

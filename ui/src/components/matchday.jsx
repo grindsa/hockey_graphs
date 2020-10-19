@@ -1,5 +1,6 @@
 import React from 'react';
 import { changeMatchDay }  from './matchdaystateservice';
+import { MatchStatistics } from './matchstatistics';
 import { asyncGET } from './fetch.js';
 
 
@@ -13,6 +14,7 @@ export class MatchDayList extends React.Component {
       currentKeyName: null,
       previousKeyName: null,
       nextKeyName: null,
+      selectedMatch: null,
     };
     this.handleMatchDayChange = this.handleMatchDayChange.bind(this);
   }
@@ -54,33 +56,49 @@ export class MatchDayList extends React.Component {
     })
   }
 
+  handleMatchSelect(selectedMatch){
+    this.setState(currentState => {
+      return {
+        ... currentState,
+        selectedMatch: selectedMatch
+      }
+    })
+  }
+
   render() {
-    const MatchDay = this.filterMatchDay(this.state.matchdaylist).map((Match, index) =>{
-      return(
-        <tr key={Match.match_id}>
-          <td className="w3-right-align middle">{Match.home_team_name}</td>
-          <td className="w3-right-align middle"><img src={Match.home_team_logo} alt={Match.home_team_shortcut} width="40px"/></td>
-          <td className="w3-center result middle">{Match.result} </td>
-          <td className="w3-left-align middle"><img src={Match.visitor_team_logo} alt={Match.visitor_team_shortcut} width="40px"/></td>
-          <td className="w3-left-align middle">{Match.visitor_team_name}</td>
-        </tr>
+    if(!this.state.selectedMatch){
+      const MatchDay = this.filterMatchDay(this.state.matchdaylist).map((Match, index) =>{
+        return(
+          <tr key={Match.match_id} className="w3-hover-blue" onClick={() => this.handleMatchSelect(Match.match_id)}>
+            <td className="w3-right-align middle">{Match.home_team_name}</td>
+            <td className="w3-right-align middle"><img src={Match.home_team_logo} alt={Match.home_team_shortcut} width="40px"/></td>
+            <td className="w3-center result middle">{Match.result} </td>
+            <td className="w3-left-align middle"><img src={Match.visitor_team_logo} alt={Match.visitor_team_shortcut} width="40px"/></td>
+            <td className="w3-left-align middle">{Match.visitor_team_name}</td>
+          </tr>
+        )
+      });
+      return (
+        <React.Fragment>
+          <ChangeMatchday
+            date={this.state.date}
+            next={this.state.nextKeyName}
+            previous={this.state.previousKeyName}
+            onChangeMatchDay={this.handleMatchDayChange}
+          />
+          <table className="w3-table-all w3-hoverable">
+          <tbody>
+            {MatchDay}
+          </tbody>
+          </table>
+        </React.Fragment>
       )
-    });
-    return (
-      <React.Fragment>
-        <ChangeMatchday
-          date={this.state.date}
-          next={this.state.nextKeyName}
-          previous={this.state.previousKeyName}
-          onChangeMatchDay={this.handleMatchDayChange}
-        />
-        <table className="w3-table-all">
-        <tbody>
-          {MatchDay}
-        </tbody>
-        </table>
-      </React.Fragment>
-    )
+    }else{
+      return(
+        <MatchStatistics match={this.state.selectedMatch} />
+      )
+    }
+
   }
 }
 

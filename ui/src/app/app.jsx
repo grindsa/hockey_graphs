@@ -1,9 +1,12 @@
 import React from 'react';
 
+import Cookies from 'universal-cookie';
 import { ChangeMatchday, MatchDayList } from '../components/matchday'
 import { LanguageSelector } from '../components/languageselector'
 import { GET, POST, asyncGET } from '../components/fetch.js';
 import '../css/mytheme.css';
+
+const app_name = 'hockeygraphs@grinda'
 
 
 // entry url for  backend
@@ -14,7 +17,7 @@ export class App extends React.Component {
     super(props);
     this.state = {
       endpoints: [],
-      language: 'EN',
+      language: 'DE',
     }
   }
 
@@ -22,11 +25,16 @@ export class App extends React.Component {
     // get rest endpoints
     const endpoints = await asyncGET(rest_url, 'endpoints')
     this.setState({endpoints: endpoints });
+    const cookies = new Cookies();
+    const langValue = cookies.get(app_name).language
+    await this.setState({language: langValue });
   }
 
-  toggleLanguage(){
-      let { language } = this.state;
-      this.setState({ language: language === 'DE' ? 'EN' : 'DE' });
+  async toggleLanguage(){
+    let { language } = this.state;
+    await this.setState({ language: language === 'DE' ? 'EN' : 'DE' });
+    const cookies = new Cookies();
+    cookies.set(app_name, {language: this.state.language, foo: 'WannaSeeUrFaceOnceUreadThis'}, { path: '/', maxAge: 2419200 });
   }
 
   render() {
