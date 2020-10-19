@@ -26,8 +26,14 @@ td.middle {
   vertical-align: middle;
 }
 
+.middle {
+  vertical-align: middle;
+}
+
+.pseudohead{font-size:16px;}
+
 .result{
   color : #000034;
   font-weight: bold;
-  font-size:14px;  
+  font-size:14px;
 }

@@ -80,7 +80,7 @@ export class MatchDayList extends React.Component {
     if(!this.state.selectedMatch){
       const MatchDay = this.filterMatchDay(this.state.matchdaylist).map((Match, index) =>{
         return(
-          <tr key={Match.match_id} className="w3-hover-blue" onClick={() => this.handleMatchSelect(Match.match_id)}>
+          <tr key={Match.match_id} className="w3-hover-blue" onClick={() => this.handleMatchSelect(Match)}>
             <td className="w3-right-align middle">{Match.home_team_name}</td>
             <td className="w3-right-align middle"><img src={Match.home_team_logo} alt={Match.home_team_shortcut} width="40px"/></td>
             <td className="w3-center result middle">{Match.result} </td>
