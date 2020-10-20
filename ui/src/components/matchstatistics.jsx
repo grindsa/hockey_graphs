@@ -24,7 +24,6 @@ export class MatchStatistics extends React.Component {
 }
 
 export class MatchHeader extends React.Component {
-
   render() {
     return (
       <div className="w3-container w3-padding-small scolor w3-center">

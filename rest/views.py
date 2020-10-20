@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.pagination import PageNumberPagination
 from rest.functions.matchday import matchdays_get
+from rest.functions.matchstatistics import matchstatistics_get
 from rest.functions.helper import logger_setup
 from rest.version import __version__
 from .serializers import MatchSerializer, PeriodeventSerializer, PlayerSerializer, ShiftSerializer, ShotSerializer, TeamSerializer
@@ -25,6 +26,21 @@ class SingleresultsSetPagination(PageNumberPagination):
     page_size_query_param = 'page_size'
     max_page_size = 20
 
+class MatchStatisticsViewSet(viewsets.ViewSet):
+    """ view for matchdays """
+
+    def list(self, request):
+        """ get a list of matchdays and matches per day """
+        result = matchstatistics_get(LOGGER, request)
+        response = Response(result, status=status.HTTP_200_OK)
+        return response
+
+    def retrieve(self, request, pk=None):
+        """ filter matches for a single matchday """
+        result = matchstatistics_get(LOGGER, request, fkey='date', fvalue=pk)
+        response = Response(result, status=status.HTTP_200_OK)
+        return response
+
 class MatchDayViewSet(viewsets.ViewSet):
     """ view for matchdays """
 
@@ -39,6 +55,8 @@ class MatchDayViewSet(viewsets.ViewSet):
         result = matchdays_get(LOGGER, request, fkey='date', fvalue=pk)
         response = Response(result, status=status.HTTP_200_OK)
         return response
+
+
 
 # pylint: disable=R0901
 class MatchViewSet(viewsets.ModelViewSet):
