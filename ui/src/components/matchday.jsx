@@ -1,6 +1,7 @@
 import React from 'react';
-import { changeMatchDay }  from './matchdaystateservice';
 import { MatchStatistics } from './matchstatistics';
+import { ChangeMatchday } from './matchdaychange';
+import { changeMatchDay }  from './matchdaystateservice';
 import { asyncGET } from './fetch.js';
 
 
@@ -96,12 +97,9 @@ export class MatchDayList extends React.Component {
             next={this.state.nextKeyName}
             previous={this.state.previousKeyName}
             onChangeMatchDay={this.handleMatchDayChange}
+            language={this.props.language}
           />
-          <table className="w3-table-all w3-hoverable">
-          <tbody>
-            {MatchDay}
-          </tbody>
-          </table>
+          <table className="w3-table-all w3-hoverable"><tbody>{MatchDay}</tbody></table>
         </React.Fragment>
       )
     }else{
@@ -109,21 +107,5 @@ export class MatchDayList extends React.Component {
         <MatchStatistics match={this.state.selectedMatch} reset={this.resetMatchSelect} />
       )
     }
-
-  }
-}
-
-export class ChangeMatchday extends React.Component {
-  /* this class displays a header allowing matchday changes */
-  render(){
-    return(
-      <div className="w3-container w3-padding-small scolor w3-center">
-        <h1>
-          <a href='#' onClick={() => this.props.onChangeMatchDay(this.props.previous)}><i className="w3-margin-right fa fa-arrow-left" /></a>
-           {this.props.date}
-          <a href='#' onClick={() => this.props.onChangeMatchDay(this.props.next)}><i className="w3-margin-left fa fa-arrow-right" /></a>
-        </h1>
-      </div>
-    )
   }
 }

@@ -44,7 +44,7 @@ export class App extends React.Component {
           <i className="fa fa-bars fa-lg w3-xlarge  w3-bar-item" />
           <LanguageSelector langValue={ this.state.language } onClick={() => this.toggleLanguage()} />
         </div>
-        <MatchDayList url={this.state.endpoints.matchdays}/>
+        <MatchDayList url={this.state.endpoints.matchdays} language={this.state.language}/>
       </React.Fragment>
     );
   }
