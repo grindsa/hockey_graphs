@@ -7,10 +7,11 @@ import { asyncGET } from './fetch.js';
 
 export class MatchDayList extends React.Component {
   /* class which creates and displays list of matches for cert day */
+
   constructor(props) {
     super(props);
     this.state = {
-      matchdaylist: {},
+      matchdaydic: {},
       date: '',
       currentKeyName: null,
       previousKeyName: null,
@@ -26,13 +27,13 @@ export class MatchDayList extends React.Component {
     /* we get the url to fectch as props and monitor it here */
     if (this.props.url !== prevProps.url) {
         // get matchdays
-        const matchdaylist = await asyncGET(this.props.url)
-        this.setState({matchdaylist: matchdaylist });
+        const matchdaydic = await asyncGET(this.props.url)
+        this.setState({matchdaydic: matchdaydic });
     }
   }
 
   filterMatchDay(Dictionary){
-    /* filter certain matchday out of matchdaylist */
+    /* filter certain matchday out of matchdaydic */
     var MatchDay = []
     for(var keyName in Dictionary){
         /* skip all matchdays with displayday false */
@@ -54,7 +55,8 @@ export class MatchDayList extends React.Component {
     this.setState(currentState => {
       return {
         ... currentState,
-        matchdaylist: changeMatchDay(currentState.matchdaylist, currentState.currentKeyName, newDay)
+        matchdaydic: changeMatchDay(currentState.matchdaydic, currentState.currentKeyName, newDay),
+        currentKeyName: newDay
       }
     })
   }
@@ -79,7 +81,7 @@ export class MatchDayList extends React.Component {
 
   render() {
     if(!this.state.selectedMatch){
-      const MatchDay = this.filterMatchDay(this.state.matchdaylist).map((Match, index) =>{
+      const MatchDay = this.filterMatchDay(this.state.matchdaydic).map((Match, index) =>{
         return(
           <tr key={Match.match_id} className="w3-hover-blue" onClick={() => this.handleMatchSelect(Match)}>
             <td className="w3-right-align middle">{Match.home_team_name}</td>
@@ -98,6 +100,8 @@ export class MatchDayList extends React.Component {
             previous={this.state.previousKeyName}
             onChangeMatchDay={this.handleMatchDayChange}
             language={this.props.language}
+            matchdaylist = {Object.keys(this.state.matchdaydic)}
+            current={this.state.currentKeyName}
           />
           <table className="w3-table-all w3-hoverable"><tbody>{MatchDay}</tbody></table>
         </React.Fragment>

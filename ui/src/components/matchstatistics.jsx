@@ -3,6 +3,7 @@ import { isMobile } from 'react-device-detect';
 
 
 export class MatchStatistics extends React.Component {
+
   constructor(props) {
     super(props);
     if (props.match){
@@ -10,10 +11,6 @@ export class MatchStatistics extends React.Component {
         match: props.match,
       };
     }
-  }
-
-  componentDidMount(){
-    console.log('state', this.state.match)
   }
 
   render() {
@@ -27,7 +24,6 @@ export class MatchStatistics extends React.Component {
 
 export class MatchHeader extends React.Component {
   render() {
-
     var home_team = this.props.match.home_team_name
     var visitor_team = this.props.match.visitor_team_name
     if (isMobile) {
