@@ -29,6 +29,7 @@ export class ChangeMatchday extends React.Component {
             matchdaylist={this.props.matchdaylist}
             current={this.props.current}
             date={this.props.date}
+            handleDayClick = {this.props.handleDayClick}
           />
           <a href='#' onClick={() => this.props.onChangeMatchDay(this.props.previous)}><i className="w3-margin-right fa fa-arrow-left" /></a>
            {this.props.date}

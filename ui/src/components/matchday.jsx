@@ -21,6 +21,7 @@ export class MatchDayList extends React.Component {
     this.handleMatchDayChange = this.handleMatchDayChange.bind(this);
     this.handleMatchSelect = this.handleMatchSelect.bind(this);
     this.resetMatchSelect = this.resetMatchSelect.bind(this);
+    this.handleDayClick = this.handleDayClick.bind(this);
   }
 
   async componentDidUpdate(prevProps) {
@@ -28,7 +29,7 @@ export class MatchDayList extends React.Component {
     if (this.props.url !== prevProps.url) {
         // get matchdays
         const matchdaydic = await asyncGET(this.props.url)
-        this.setState({matchdaydic: matchdaydic });
+        this.setState({matchdaydic: matchdaydic});
     }
   }
 
@@ -62,6 +63,7 @@ export class MatchDayList extends React.Component {
   }
 
   handleMatchSelect(selectedMatch){
+    /* handler triggerd by clickcing on a single match */
     this.setState(currentState => {
       return {
         ... currentState,
@@ -70,7 +72,14 @@ export class MatchDayList extends React.Component {
     })
   }
 
+  async handleDayClick(day) {
+    /* handler triggered when picking a date from calendar */
+    var newDate = day.toISOString().substring(0, 10)
+    await this.handleMatchDayChange(newDate)
+  }
+
   resetMatchSelect(){
+    /* handler triggered by back button in matchstatistics */
     this.setState(currentState => {
       return {
         ... currentState,
@@ -102,6 +111,7 @@ export class MatchDayList extends React.Component {
             language={this.props.language}
             matchdaylist = {Object.keys(this.state.matchdaydic)}
             current={this.state.currentKeyName}
+            handleDayClick = {this.handleDayClick}
           />
           <table className="w3-table-all w3-hoverable"><tbody>{MatchDay}</tbody></table>
         </React.Fragment>
