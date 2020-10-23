@@ -134,3 +134,6 @@ settings.py
 data
 migrations
 node_modules
+static/rest_framework
+static/drf-yasg
+static/admin
