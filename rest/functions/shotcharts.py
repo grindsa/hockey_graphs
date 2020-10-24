@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """ list of functions for shots """
 import math
-from rest.functions.chartparameters import exporting, plotoptions_spline, title, legend, tooltip, labels, font_size, text_color, plotlines_color, chart_color1, chart_color2, chart_color3, chart_color4, chart_color5, chart_color6
+from rest.functions.chartparameters import credits, exporting, plotoptions_spline, title, legend, tooltip, labels, font_size, text_color, plotlines_color, chart_color1, chart_color2, chart_color3, chart_color4, chart_color5, chart_color6
 
 # pylint: disable=R0914
 def shotsumchart_create(logger, shot_sum_dic, shot_min_dic, goal_dic, plotline_list, machinfo_dic):
@@ -52,6 +52,7 @@ def shotsumchart_create(logger, shot_sum_dic, shot_min_dic, goal_dic, plotline_l
         'legend': legend(),
         'tooltip': tooltip('<b>{point.x}.%s</b><br>' % _('min')),
         'plotOptions': plotoptions_spline(),
+        'credits': credits(),
 
         'xAxis': {
             'categories': minute_list,

@@ -15,6 +15,9 @@ chart_color4 = '#68717a'
 chart_color5 = '#e6e6fe'
 chart_color6 = '#f1f2f3'
 
+def credits(text='©2020 GrindSa', href='https://github.com/grindsa/'):
+    """ add credits """
+    return {'text': text, 'href': href}
 
 def labels():
     """ set labels """
