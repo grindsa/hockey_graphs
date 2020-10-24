@@ -11,6 +11,7 @@ from rest.functions.helper import logger_setup
 from rest.version import __version__
 from .serializers import MatchSerializer, PeriodeventSerializer, PlayerSerializer, ShiftSerializer, ShotSerializer, TeamSerializer
 from .models import Match, Periodevent, Player, Shift, Shot, Team
+import gettext
 
 # initialize logger
 DEBUG = settings.DEBUG
@@ -19,6 +20,19 @@ LOGGER = logger_setup(DEBUG)
 LOGGER.info('starting hockeys_graphs rest api version %s ', __version__)
 if DEBUG:
     LOGGER.debug('debug mode enabled')
+
+
+en = gettext.translation('django', localedir='locale', languages=['en'])
+de = gettext.translation('django', localedir='locale', languages=['de'])
+en.install()
+
+def set_language(request):
+    """ select languate based on language id """
+    if 'language' in request.GET:
+        if request.GET['language'].lower() == 'de':
+            de.install()
+        else:
+            en.install()
 
 class SingleresultsSetPagination(PageNumberPagination):
     """ pagination for special serializers """
@@ -37,6 +51,8 @@ class MatchStatisticsViewSet(viewsets.ViewSet):
 
     def retrieve(self, request, pk=None):
         """ filter matches for a single matchday """
+        set_language(request)
+
         result = matchstatistics_get(LOGGER, request, fkey='match', fvalue=pk)
         response = Response(result, status=status.HTTP_200_OK)
         return response

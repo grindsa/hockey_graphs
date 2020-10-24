@@ -3,7 +3,6 @@
 import math
 from rest.functions.chartparameters import exporting, plotoptions_spline, title, legend, tooltip, labels, font_size, text_color, plotlines_color, chart_color1, chart_color2, chart_color3, chart_color4, chart_color5, chart_color6
 
-
 # pylint: disable=R0914
 def shotsumchart_create(logger, shot_sum_dic, shot_min_dic, goal_dic, plotline_list, machinfo_dic):
     """ create shotsum chart """
@@ -51,13 +50,13 @@ def shotsumchart_create(logger, shot_sum_dic, shot_min_dic, goal_dic, plotline_l
         'exporting': exporting(),
         'title': title(''),
         'legend': legend(),
-        'tooltip': tooltip('<b>{point.x}.Minute</b><br>'),
+        'tooltip': tooltip('<b>{point.x}.%s</b><br>' % _('min')),
         'plotOptions': plotoptions_spline(),
 
         'xAxis': {
             'categories': minute_list,
             'title': {
-                'text': 'Minute',
+                'text': _('Game Time'),
                 'style': {'color': text_color, 'font-size': font_size},
             },
             'labels': {'style': {'fontSize': font_size}},
@@ -74,20 +73,20 @@ def shotsumchart_create(logger, shot_sum_dic, shot_min_dic, goal_dic, plotline_l
 
         'yAxis': [
             {
-                'title': title('Schüsse pro Minute', font_size),
+                'title': title(_('Shots per minute'), font_size),
                 #'max': y1_max,
                 'tickInterval': 1,
                 'maxPadding': 0.1,
                 'labels': labels(),
             }, {
-                'title': title('Schüsse gesamt', font_size),
+                'title': title(_('Cumulated shots'), font_size),
                 'opposite': 1,
                 'max': y_right_max,
                 'labels': labels()
             }],
 
         'series': [{
-            'name': '{0} pro min'.format(machinfo_dic['home_team__shortcut']),
+            'name': '{0} {1}'.format(machinfo_dic['home_team__shortcut'], _('per min')),
             'data': home_team_bar,
             'color': chart_color1,
         }, {
