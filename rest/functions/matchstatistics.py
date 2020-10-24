@@ -38,7 +38,7 @@ def _shotspermatch_get(logger, request, fkey, fvalue, matchinfo_dic):
     shot_list = shot_list_get(logger, fkey, fvalue, ['timestamp', 'match_shot_resutl_id', 'team_id', 'player__last_name'])
     shot_table = {}
 
-    title = 'foo'
+    title = _('Shots per minute')
 
     if shot_list:
 

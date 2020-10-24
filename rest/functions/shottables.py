@@ -10,7 +10,7 @@ def shotsperiodtable_get(logger, title, shot_min_dic, matchinfo_dic):
         'visitor_team': {'name': matchinfo_dic['visitor_team__team_name'], 'logo': matchinfo_dic['visitor_team_logo']}
     }
     # head-lines
-    table_dic = {'th': ['', title, '1st', '2nd', '3rd', 'OT', 'Summe'], 'align': [None, 'left', None, None, None, None, None], 'td': []}
+    table_dic = {'th': ['', title, '1st', '2nd', '3rd', 'OT', _('Total')], 'align': [None, 'left', None, None, None, None, None], 'td': []}
     for ele in ('home_team', 'visitor_team'):
         sp1 = 0
         sp2 = 0

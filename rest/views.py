@@ -25,13 +25,16 @@ if DEBUG:
 en = gettext.translation('django', localedir='locale', languages=['en'])
 de = gettext.translation('django', localedir='locale', languages=['de'])
 en.install()
+LCLANG = 'en'
 
-def set_language(request):
+def set_language(logger, request):
     """ select languate based on language id """
     if 'language' in request.GET:
         if request.GET['language'].lower() == 'de':
+            logger.debug('switch language to "de"')
             de.install()
         else:
+            logger.debug('switch language to "en"')
             en.install()
 
 class SingleresultsSetPagination(PageNumberPagination):
@@ -51,7 +54,8 @@ class MatchStatisticsViewSet(viewsets.ViewSet):
 
     def retrieve(self, request, pk=None):
         """ filter matches for a single matchday """
-        set_language(request)
+        set_language(LOGGER, request, LCLANG)
+
 
         result = matchstatistics_get(LOGGER, request, fkey='match', fvalue=pk)
         response = Response(result, status=status.HTTP_200_OK)

@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-10-24 18:23+0200\n"
-"PO-Revision-Date: 2020-10-24 18:23+0200\n"
+"POT-Creation-Date: 2020-10-24 23:36+0200\n"
+"PO-Revision-Date: 2020-10-24 23:37+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -18,6 +18,10 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 2.4.1\n"
 
+#: .\rest\functions\matchstatistics.py:41 .\rest\functions\shotcharts.py:76
+msgid "Shots per minute"
+msgstr "Schüsse pro Minute"
+
 #: .\rest\functions\shotcharts.py:53
 msgid "min"
 msgstr "Minute"
@@ -26,10 +30,6 @@ msgstr "Minute"
 msgid "Game Time"
 msgstr "Spielminute"
 
-#: .\rest\functions\shotcharts.py:76
-msgid "Shots per minute"
-msgstr "Schüsse pro Minute"
-
 #: .\rest\functions\shotcharts.py:82
 msgid "Cumulated shots"
 msgstr "Schüsse gesamt"
@@ -37,6 +37,10 @@ msgstr "Schüsse gesamt"
 #: .\rest\functions\shotcharts.py:89
 msgid "per min"
 msgstr "pro min"
+
+#: .\rest\functions\shottables.py:13
+msgid "Total"
+msgstr "Summe"
 
 #~ msgid "Overall shots"
 #~ msgstr "Schüsse gesamt"
