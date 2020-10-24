@@ -22,7 +22,8 @@ export class MatchStatistics extends React.Component {
 
   async componentDidMount(){
     // get matchstatistics
-    const matchstatistics = await asyncGET(this.props.matchstatistics + this.props.match.match_id)
+    console.log(this.props.language)
+    const matchstatistics = await asyncGET(this.props.matchstatistics + this.props.match.match_id + '?language=' + this.props.language)
     this.setState({matchstatistics: matchstatistics});
   }
 

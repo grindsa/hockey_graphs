@@ -118,7 +118,7 @@ export class MatchDayList extends React.Component {
       )
     }else{
       return(
-        <MatchStatistics match={this.state.selectedMatch} matchstatistics={this.props.matchstatistics} reset={this.resetMatchSelect} />
+        <MatchStatistics match={this.state.selectedMatch} matchstatistics={this.props.matchstatistics} reset={this.resetMatchSelect} language={this.props.language}/>
       )
     }
   }
