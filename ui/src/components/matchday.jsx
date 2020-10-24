@@ -26,9 +26,9 @@ export class MatchDayList extends React.Component {
 
   async componentDidUpdate(prevProps) {
     /* we get the url to fectch as props and monitor it here */
-    if (this.props.url !== prevProps.url) {
+    if (this.props.matchdays !== prevProps.matchdays) {
         // get matchdays
-        const matchdaydic = await asyncGET(this.props.url)
+        const matchdaydic = await asyncGET(this.props.matchdays)
         this.setState({matchdaydic: matchdaydic});
     }
   }
@@ -118,7 +118,7 @@ export class MatchDayList extends React.Component {
       )
     }else{
       return(
-        <MatchStatistics match={this.state.selectedMatch} reset={this.resetMatchSelect} />
+        <MatchStatistics match={this.state.selectedMatch} matchstatistics={this.props.matchstatistics} reset={this.resetMatchSelect} />
       )
     }
   }
