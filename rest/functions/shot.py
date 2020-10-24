@@ -121,6 +121,7 @@ def shotspermin_count(logger, shot_list, matchinfo_dic):
     shot_min_dic = shot_dic_prep(logger, 'min', x_max)
     goal_dic = {'home_team': {}, 'visitor_team': {}}
 
+    ot_reg = None
     for shot in shot_list:
         # get min out of seconds
         min_ = math.ceil(shot['timestamp']/60)

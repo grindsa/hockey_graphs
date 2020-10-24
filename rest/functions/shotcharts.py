@@ -19,9 +19,9 @@ def shotsumchart_create(logger, shot_sum_dic, shot_min_dic, goal_dic, plotline_l
             home_team_spline.append(value)
 
     visitor_team_spline = []
-    for min_, value in shot_sum_dic['home_team'].items():
-        if min_ in goal_dic['home_team'].keys():
-            visitor_team_spline.append({'y' : value, 'marker' : {'enabled': 1, 'width': 22, 'height': 22, 'symbol': 'url({0})'.format(machinfo_dic['visitor_team_logo'])}})
+    for min_, value in shot_sum_dic['visitor_team'].items():
+        if min_ in goal_dic['visitor_team'].keys():
+            visitor_team_spline.append({'y' : value, 'marker' : {'enabled': 1, 'width': 25, 'height': 25, 'symbol': 'url({0})'.format(machinfo_dic['visitor_team_logo'])}})
         else:
             visitor_team_spline.append(value)
 

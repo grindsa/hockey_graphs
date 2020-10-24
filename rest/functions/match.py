@@ -7,6 +7,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "hockey_graphs.settings")
 import django
 django.setup()
+from django.conf import settings
 from rest.models import Match
 from rest.functions.helper import url_build
 
@@ -18,9 +19,10 @@ def match_info_get(logger, match_id, request, vlist=('date', 'result', 'home_tea
     except BaseException:
         match_dic = {}
 
-    url = url_build(request)
-    match_dic['home_team_logo'] = '{0}{1}'.format(url, match_dic['home_team__logo'])
-    match_dic['visitor_team_logo'] = '{0}{1}'.format(url, match_dic['visitor_team__logo'])
+    # change logo link
+    base_url = url_build(request)
+    match_dic['home_team_logo'] = '{0}{1}{2}'.format(base_url, settings.STATIC_URL, match_dic['home_team__logo'])
+    match_dic['visitor_team_logo'] = '{0}{1}{2}'.format(base_url, settings.STATIC_URL, match_dic['visitor_team__logo'])
 
     return match_dic
 
