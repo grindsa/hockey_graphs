@@ -54,9 +54,7 @@ class MatchStatisticsViewSet(viewsets.ViewSet):
 
     def retrieve(self, request, pk=None):
         """ filter matches for a single matchday """
-        set_language(LOGGER, request, LCLANG)
-
-
+        set_language(LOGGER, request)
         result = matchstatistics_get(LOGGER, request, fkey='match', fvalue=pk)
         response = Response(result, status=status.HTTP_200_OK)
         return response
