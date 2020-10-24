@@ -8,6 +8,21 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "hockey_graphs.settings")
 import django
 django.setup()
 from rest.models import Match
+from rest.functions.helper import url_build
+
+def match_info_get(logger, match_id, request, vlist=('date', 'result', 'home_team_id', 'home_team__team_name', 'home_team__shortcut', 'home_team__logo', 'visitor_team_id', 'visitor_team__team_name', 'visitor_team__shortcut', 'visitor_team__logo')):
+    """ get info for a specifc match_id """
+    logger.debug('match_info_get()')
+    try:
+        match_dic = Match.objects.filter(match_id=match_id).values(*vlist)[0]
+    except BaseException:
+        match_dic = {}
+
+    url = url_build(request)
+    match_dic['home_team_logo'] = '{0}{1}'.format(url, match_dic['home_team__logo'])
+    match_dic['visitor_team_logo'] = '{0}{1}'.format(url, match_dic['visitor_team__logo'])
+
+    return match_dic
 
 def match_list_get(logger, fkey=None, fvalue=None, vlist=('match_id', 'season', 'date', 'date_uts', 'home_team', 'visitor_team')):
     """ query team(s) from database based with optional filtering """

@@ -37,7 +37,7 @@ class MatchStatisticsViewSet(viewsets.ViewSet):
 
     def retrieve(self, request, pk=None):
         """ filter matches for a single matchday """
-        result = matchstatistics_get(LOGGER, request, fkey='date', fvalue=pk)
+        result = matchstatistics_get(LOGGER, request, fkey='match', fvalue=pk)
         response = Response(result, status=status.HTTP_200_OK)
         return response
 
@@ -55,8 +55,6 @@ class MatchDayViewSet(viewsets.ViewSet):
         result = matchdays_get(LOGGER, request, fkey='date', fvalue=pk)
         response = Response(result, status=status.HTTP_200_OK)
         return response
-
-
 
 # pylint: disable=R0901
 class MatchViewSet(viewsets.ModelViewSet):

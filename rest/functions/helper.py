@@ -5,6 +5,7 @@ import logging
 import sys
 import calendar
 from datetime import datetime
+import math
 from dateutil.parser import parse
 import pytz
 
@@ -111,3 +112,11 @@ def datestr_to_date(datestr, tformat='%Y-%m-%dT%H:%M:%S'):
     except BaseException:
         result = None
     return result
+
+def maxval_get(input_list, sorter='timestamp', divisor=60, add=1):
+    """ look for a matchvalue form a sorted list """
+    try:
+        x_max = math.ceil(sorted(input_list, key=lambda x: x[sorter])[-1][sorter]/divisor) + add
+    except BaseException:
+        x_max = 61
+    return x_max
