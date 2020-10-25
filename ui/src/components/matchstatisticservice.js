@@ -1,4 +1,5 @@
 import React from 'react';
+import { isEmpty } from './sharedfunctions.js';
 
 export const createTableHeader = function(data){
   /* create database header */
@@ -38,4 +39,22 @@ export const createTableBody = function(data){
     var tablebody = null;
   }
   return tablebody
+}
+
+export const createSelectOptions = function(data){
+  /* create option header */
+  var selectId = 0
+
+  var optionlist = data.map((option, index) => {
+    if (option.display){
+      selectId = index
+    }
+    return(
+      <option value={index} key={`option-${index}`}> {option.title} </option>
+    )
+  });
+
+  console.log(selectId)
+
+  return [optionlist, selectId]
 }

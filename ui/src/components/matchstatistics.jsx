@@ -3,7 +3,7 @@ import { isMobile } from 'react-device-detect';
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
 import HighchartsExporting from 'highcharts/modules/exporting'
-import { createTableHeader, createTableBody } from './matchstatisticservice.js'
+import { createTableHeader, createTableBody, createSelectOptions } from './matchstatisticservice.js'
 import { asyncGET, isEmpty } from './sharedfunctions.js';
 
 
@@ -44,6 +44,7 @@ export class MatchStatistics extends React.Component {
     return (
       <React.Fragment>
       <MatchHeader match={this.props.match} reset={this.props.reset} />
+      <Selector matches={this.state.matchstatistics}/>
       <Chart options={MatchStatistic.chart}/>
       <Table data={MatchStatistic.table}/>
       </React.Fragment>
@@ -51,7 +52,7 @@ export class MatchStatistics extends React.Component {
   }
 }
 
-export class MatchHeader extends React.Component {
+class MatchHeader extends React.Component {
   /* render match header */
   render() {
     var home_team = this.props.match.home_team_name
@@ -75,7 +76,25 @@ export class MatchHeader extends React.Component {
   }
 }
 
-export class Chart extends React.Component{
+class Selector extends React.Component{
+  /* selector for different statistics */
+  render(){
+    if (isEmpty(this.props.matches)){
+      return (<p></p>)
+    }else{
+      const [optionList, selectId] = createSelectOptions(this.props.matches)
+      return (
+        <div className="w3-container w3-padding-small w3-center">
+        <select className="w3-select w3-border" defaultValue={selectId}>
+          {optionList}
+        </select>
+        </div>
+      )
+    }
+  }
+}
+
+class Chart extends React.Component{
   /* block to render chart */
   render() {
     return (
@@ -84,10 +103,9 @@ export class Chart extends React.Component{
   }
 }
 
-export class Table extends React.Component{
+class Table extends React.Component{
   /* render table with data */
   render() {
-    const foo = this.props.data
     if (isEmpty(this.props.data)){
       return (<p></p>)
     }else{
