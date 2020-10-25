@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-10-24 23:36+0200\n"
-"PO-Revision-Date: 2020-10-24 23:37+0200\n"
+"POT-Creation-Date: 2020-10-25 10:44+0100\n"
+"PO-Revision-Date: 2020-10-25 10:45+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -18,25 +18,37 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 2.4.1\n"
 
-#: .\rest\functions\matchstatistics.py:41 .\rest\functions\shotcharts.py:76
-msgid "Shots per minute"
-msgstr "Schüsse pro Minute"
+#: .\rest\functions\matchstatistics.py:31
+msgid "Gameflow"
+msgstr ""
 
-#: .\rest\functions\shotcharts.py:53
+#: .\rest\functions\shotcharts.py:53 .\rest\functions\shotcharts.py:166
 msgid "min"
 msgstr "Minute"
 
-#: .\rest\functions\shotcharts.py:59
+#: .\rest\functions\shotcharts.py:60 .\rest\functions\shotcharts.py:191
 msgid "Game Time"
 msgstr "Spielminute"
 
-#: .\rest\functions\shotcharts.py:82
+#: .\rest\functions\shotcharts.py:77
+msgid "Shots per minute"
+msgstr "Schüsse pro Minute"
+
+#: .\rest\functions\shotcharts.py:83
 msgid "Cumulated shots"
 msgstr "Schüsse gesamt"
 
-#: .\rest\functions\shotcharts.py:89
+#: .\rest\functions\shotcharts.py:90
 msgid "per min"
 msgstr "pro min"
+
+#: .\rest\functions\shotcharts.py:165
+msgid "based on an idea of @DanielT_W"
+msgstr "Nach einer Idee von @DanielT_W"
+
+#: .\rest\functions\shotcharts.py:217
+msgid "Shot attempts per 60min (SH60)"
+msgstr "Schüsse pro 60min (SH60)"
 
 #: .\rest\functions\shottables.py:13
 msgid "Total"

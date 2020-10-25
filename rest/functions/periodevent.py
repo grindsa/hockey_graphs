@@ -9,7 +9,9 @@ import django
 django.setup()
 import math
 from rest.models import Periodevent
+from rest.functions.chartparameters import chart_color5, chart_color6
 
+#
 def periodevent_add(logger, fkey, fvalue, data_dic):
     """ add team to database """
     logger.debug('periodevent_add({0}:{1})'.format(fkey, fvalue))
@@ -33,7 +35,7 @@ def periodevent_get(logger, match_id, vlist=('match_id', 'period_event')):
         event_dic = {}
     return event_dic
 
-def penaltyplotlines_get(logger, matchid, home_color='#e6e6ff', visitor_color='#f1f2f3'):
+def penaltyplotlines_get(logger, matchid, home_color=chart_color5, visitor_color=chart_color6):
     """ create plotlines for penalites """
     logger.debug('penalty_plotlines_get({0})'.format(matchid))
 

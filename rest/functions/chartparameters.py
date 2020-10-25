@@ -14,6 +14,7 @@ chart_color3 = '#030357'
 chart_color4 = '#68717a'
 chart_color5 = '#e6e6fe'
 chart_color6 = '#f1f2f3'
+chart_color7 = '#e9f3fc'
 
 def credits(text='©2020 GrindSa', href='https://github.com/grindsa/'):
     """ add credits """
@@ -35,9 +36,9 @@ def title(text, _font_size=title_font_size):
     """ set title """
     return {'text': text, 'style': {'color': text_color, 'font-size': _font_size}}
 
-def legend():
+def legend(enabled=1):
     """ create legend structure """
-    return {'enabled': 1, 'useHTML': 1, 'itemStyle': {'color': text_color, 'font-size': font_size}, 'verticalAlign': 'bottom', 'symbolRadius': 0}
+    return {'enabled': enabled, 'useHTML': 1, 'itemStyle': {'color': text_color, 'font-size': font_size}, 'verticalAlign': 'bottom', 'symbolRadius': 0}
 
 def tooltip(tooltip):
     """ customize tooltip """

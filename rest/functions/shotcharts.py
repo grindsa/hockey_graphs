@@ -140,7 +140,7 @@ def gameflowchart_create(logger, shot_flow_dic, goal_dic, plotline_list, matchin
     for min_, value in shot_flow_dic['home_team'].items():
         # set marker on graph if there was a goal in this min
         if min_ in goal_dic['home_team'].keys():
-            home_team_list.append({'y' : value * -1, 'marker' : {'fillColor': '#000052', 'enabled': 1, 'radius': 20, 'symbol': 'circle'}, 'dataLabels': {'enabled': 1, 'useHTML': 1, 'color': '#000052', 'format': '{0}'.format(goal_dic['home_team'][min_])}})
+            home_team_list.append({'y' : value * -1, 'marker' : {'fillColor': '#000052', 'enabled': 1, 'radius': 5, 'symbol': 'circle'}, 'dataLabels': {'enabled': 1, 'useHTML': 1, 'color': '#000052', 'format': '{0}'.format(goal_dic['home_team'][min_])}})
         else:
             home_team_list.append(value * -1)
 
@@ -149,7 +149,7 @@ def gameflowchart_create(logger, shot_flow_dic, goal_dic, plotline_list, matchin
     for min_, value in shot_flow_dic['visitor_team'].items():
         # set marker on graph if there was a goal in this min
         if min_ in goal_dic['visitor_team'].keys():
-            visitor_team_list.append({'y' : value, 'marker' : {'fillColor': '#525960', 'enabled': 1, 'radius': 20, 'symbol': 'circle'}, 'dataLabels': {'y': 25, 'enabled': 1, 'useHTML': 1, 'color': '#525960', 'format': '{0}'.format(goal_dic['visitor_team'][min_])}})
+            visitor_team_list.append({'y' : value, 'marker' : {'fillColor': '#525960', 'enabled': 1, 'radius': 5, 'symbol': 'circle'}, 'dataLabels': {'y': 25, 'enabled': 1, 'useHTML': 1, 'color': '#525960', 'format': '{0}'.format(goal_dic['visitor_team'][min_])}})
         else:
             visitor_team_list.append(value)
 
@@ -162,17 +162,34 @@ def gameflowchart_create(logger, shot_flow_dic, goal_dic, plotline_list, matchin
         },
 
         'exporting': exporting(),
-        'title': title(''),
-        'credits': credits('Nach einer Idee von @DanielT_W', 'https://twitter.com/danielt_w'),
+        'credits': credits(_('based on an idea of @DanielT_W'), 'https://twitter.com/danielt_w'),
         'tooltip': tooltip('<b>{point.x}.%s</b><br>' % _('min')),
-        'legend': legend(),
+        'legend': legend(0),
         'plotOptions': plotoptions_marker_disable('areaspline'),
+
+        'title': {
+            'useHTML': 1,
+            'text': '<img src="{0}" width="{1}">'.format(matchinfo_dic['home_team_logo'], 55),
+            'floating': 1,
+            'align': 'left',
+            'x': 100,
+            'y': 80,
+        },
+
+        'subtitle': {
+            'useHTML': 1,
+            'text': '<img src="{0}" width="{1}">'.format(matchinfo_dic['visitor_team_logo'], 55),
+            'floating': 1,
+            'align': 'right',
+            'x': -50,
+            'y': 80,
+        },
 
         'xAxis': {
             'categories': min_list,
             'title': {
-                'text': 'Spielminute',
-                'style': {'color': '#404040', 'font-size': font_size},
+                'text': _('Game Time'),
+                'style': {'color': text_color, 'font-size': font_size},
             },
             'labels': {'style': {'fontSize': font_size},},
             'tickInterval': 5,
@@ -180,15 +197,15 @@ def gameflowchart_create(logger, shot_flow_dic, goal_dic, plotline_list, matchin
             'showLastLabel': 1,
             'breaks': [{'from': 0, 'to': 1, 'breakSize': 0}, {'from': 20, 'to': 21, 'breakSize': 0}, {'from': 40, 'to': 41, 'breakSize': 0}, {'from': 60, 'to': 61, 'breakSize': 0}],
             'plotLines': [{
-                'color': '#d8d9da',
+                'color': plotlines_color,
                 'width': 2,
                 'value': 20,
             }, {
-                'color': '#d8d9da',
+                'color': plotlines_color,
                 'width': 2,
                 'value': 40,
             }, {
-                'color': '#d8d9da',
+                'color': plotlines_color,
                 'width': 2,
                 'value': 60,
             }],
@@ -197,8 +214,8 @@ def gameflowchart_create(logger, shot_flow_dic, goal_dic, plotline_list, matchin
         'yAxis': [
             {
                 'title': {
-                    'text': 'Schüsse pro 60min',
-                    'style': {'color': '#404040', 'font-size': font_size},
+                    'text': _('Shot attempts per 60min (SH60)'),
+                    'style': {'color': text_color, 'font-size': font_size},
                 },
                 'tickInterval': 100,
                 'maxPadding': 0.1,
@@ -206,17 +223,14 @@ def gameflowchart_create(logger, shot_flow_dic, goal_dic, plotline_list, matchin
                 'min': y_min,
                 'max': y_max,
             }],
-
         'series': [{
-            'name': 'left',
+            'name': matchinfo_dic['home_team__shortcut'],
             'data': home_team_list,
             'color': chart_color1,
-            # 'fillOpacity': 1,
         }, {
-            'name': 'right',
+            'name': matchinfo_dic['visitor_team__shortcut'],
             'data': visitor_team_list,
             'color': chart_color2,
-            # 'fillOpacity': 1,
         }]
     }
 

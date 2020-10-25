@@ -12,6 +12,7 @@ from rest.functions.shotcharts import shotsumchart_create, gameflowchart_create
 from rest.functions.shottables import shotsperiodtable_get
 from rest.functions.match import match_info_get
 from rest.functions.periodevent import penaltyplotlines_get
+from rest.functions.chartparameters import chart_color7
 
 def matchstatistics_get(logger, request, fkey=None, fvalue=None):
     """ matchstatistics grouped by days """
@@ -48,7 +49,7 @@ def _gameflow_get(logger, title, request, fkey, fvalue, matchinfo_dic):
         (shot_flow_dic, goal_dic) = shotspersec_count(logger, shot_list, matchinfo_dic)
 
         # create plotlines to be addedd to chart
-        plotline_list = penaltyplotlines_get(logger, fvalue)
+        plotline_list = penaltyplotlines_get(logger, fvalue, chart_color7)
 
         # create the chart
         shot_chart = gameflowchart_create(logger, shot_flow_dic, goal_dic, plotline_list, matchinfo_dic)
