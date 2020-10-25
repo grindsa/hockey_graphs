@@ -2,7 +2,7 @@ import React from 'react';
 import { MatchStatistics } from './matchstatistics';
 import { ChangeMatchday } from './matchdaychange';
 import { changeMatchDay }  from './matchdaystateservice';
-import { asyncGET } from './fetch.js';
+import { asyncGET } from './sharedfunctions.js';
 
 
 export class MatchDayList extends React.Component {

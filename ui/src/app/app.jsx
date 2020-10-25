@@ -3,7 +3,8 @@ import React from 'react';
 import Cookies from 'universal-cookie';
 import { ChangeMatchday, MatchDayList } from '../components/matchday'
 import { LanguageSelector } from '../components/languageselector'
-import { GET, POST, asyncGET } from '../components/fetch.js';
+import { GET, POST } from '../components/fetch.js';
+import { asyncGET } from '../components/sharedfunctions.js';
 import '../css/mytheme.css';
 
 const app_name = 'hockeygraphs@grinda'

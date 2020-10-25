@@ -4,7 +4,7 @@ import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
 import HighchartsExporting from 'highcharts/modules/exporting'
 import { createTableHeader, createTableBody } from './matchstatisticservice.js'
-import { asyncGET } from './fetch.js';
+import { asyncGET, isEmpty } from './sharedfunctions.js';
 
 
 // Load Highcharts modules
@@ -87,20 +87,19 @@ export class Chart extends React.Component{
 export class Table extends React.Component{
   /* render table with data */
   render() {
-    /* create table header and footer */
-    const tableHeader = createTableHeader(this.props.data);
-    const tableBody = createTableBody(this.props.data);
-    return (
-      <table className="w3-table w3-bordered w3-centered">
-      <thead>
-         <tr className="scolor">
-          {tableHeader}
-        </tr>
-      </thead>
-      <tbody>
-        {tableBody}
-      </tbody>
-      </table>
-    );
+    const foo = this.props.data
+    if (isEmpty(this.props.data)){
+      return (<p></p>)
+    }else{
+      /* create table header and footer */
+      const tableHeader = createTableHeader(this.props.data);
+      const tableBody = createTableBody(this.props.data);
+      return (
+        <table className="w3-table w3-bordered w3-centered">
+          <thead><tr className="scolor">{tableHeader}</tr></thead>
+          <tbody>{tableBody}</tbody>
+        </table>
+      );
+    }
   }
 }
