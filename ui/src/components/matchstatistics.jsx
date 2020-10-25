@@ -3,13 +3,15 @@ import { isMobile } from 'react-device-detect';
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
 import HighchartsExporting from 'highcharts/modules/exporting'
+import { createTableHeader, createTableBody } from './matchstatisticservice.js'
 import { asyncGET } from './fetch.js';
+
 
 // Load Highcharts modules
 require("highcharts/modules/exporting")(Highcharts);
 
 export class MatchStatistics extends React.Component {
-
+  /* main component for matchstatistics */
   constructor(props) {
     super(props);
     if (props.match){
@@ -22,11 +24,9 @@ export class MatchStatistics extends React.Component {
 
   async componentDidMount(){
     // get matchstatistics
-    console.log(this.props.language)
     const matchstatistics = await asyncGET(this.props.matchstatistics + this.props.match.match_id + '?language=' + this.props.language)
     this.setState({matchstatistics: matchstatistics});
   }
-
   filterMatchStatistic(statlist){
     var matchstat = {}
     for (let stat of statlist){
@@ -41,18 +41,18 @@ export class MatchStatistics extends React.Component {
   render() {
     /* filter statistic to be displayed */
     const MatchStatistic = this.filterMatchStatistic(this.state.matchstatistics)
-
     return (
       <React.Fragment>
       <MatchHeader match={this.props.match} reset={this.props.reset} />
       <Chart options={MatchStatistic.chart}/>
+      <Table data={MatchStatistic.table}/>
       </React.Fragment>
     );
   }
 }
 
 export class MatchHeader extends React.Component {
-  /* match header */
+  /* render match header */
   render() {
     var home_team = this.props.match.home_team_name
     var visitor_team = this.props.match.visitor_team_name
@@ -60,7 +60,6 @@ export class MatchHeader extends React.Component {
       home_team = this.props.match.home_team_shortcut
       visitor_team = this.props.match.visitor_team_shortcut
     }
-
     return (
       <div className="w3-container w3-padding-small scolor w3-center">
         <h1>
@@ -81,6 +80,27 @@ export class Chart extends React.Component{
   render() {
     return (
       <HighchartsReact highcharts={Highcharts} options={this.props.options} />
+    );
+  }
+}
+
+export class Table extends React.Component{
+  /* render table with data */
+  render() {
+    /* create table header and footer */
+    const tableHeader = createTableHeader(this.props.data);
+    const tableBody = createTableBody(this.props.data);
+    return (
+      <table className="w3-table w3-bordered w3-centered">
+      <thead>
+         <tr className="scolor">
+          {tableHeader}
+        </tr>
+      </thead>
+      <tbody>
+        {tableBody}
+      </tbody>
+      </table>
     );
   }
 }

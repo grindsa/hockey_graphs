@@ -1,5 +1,5 @@
 export const changeMatchDay = function(matchdaylist, currentDay, newDay){
-
+  /* change "displayday" key in data structure to show another matchday */
   for (var key in matchdaylist) {
     if (!matchdaylist.hasOwnProperty(key)) {
         continue;
