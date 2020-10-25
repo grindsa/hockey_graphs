@@ -118,5 +118,5 @@ def maxval_get(input_list, sorter='timestamp', divisor=60, add=1):
     try:
         x_max = math.ceil(sorted(input_list, key=lambda x: x[sorter])[-1][sorter]/divisor) + add
     except BaseException:
-        x_max = 61
+        x_max = divisor + 1
     return x_max

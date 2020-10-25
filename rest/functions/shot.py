@@ -103,7 +103,7 @@ def shot_dic_prep(logger, group_by=False, x_max=61):
         #        shot_min_dic['visitor_team'][pos] = {}
         #        for period in (1, 2, 3, 4):
         #            shot_min_dic['visitor_team'][pos][period] = 0
-        #elif group_by == 'min':
+        # elif group_by == 'min':
         shot_min_dic['home_team'][min_] = 0
         shot_min_dic['visitor_team'][min_] = 0
 
@@ -147,6 +147,40 @@ def shotspermin_count(logger, shot_list, matchinfo_dic):
 
     return (shot_min_dic, goal_dic)
 
+def shotspersec_count(logger, shot_list, matchinfo_dic):
+    """ count shots per second """
+    logger.debug('shotspermin_count()')
+
+    # we need an x_max value for the chart and try to get it from shot_list
+    x_max = maxval_get(shot_list, 'timestamp', 1, 1)
+
+    shot_sec_dic = {'home_team': {}, 'visitor_team': {}}
+    goal_dic = {'home_team': {}, 'visitor_team': {}}
+
+    for shot in shot_list:
+
+        # timestamp of shot
+        sec_ = shot['timestamp']
+        # get min out of seconds
+        min_ = math.ceil(shot['timestamp']/60)
+
+        # we need to differenciate between home and visitor team
+        if shot['team_id'] == matchinfo_dic['home_team_id']:
+            team = 'home_team'
+        else:
+            team = 'visitor_team'
+
+        # count shots and goals but skip shots during the first second
+        if sec_ != 0:
+            shot_sec_dic[team][sec_] = 1
+
+        if shot['match_shot_resutl_id'] == 4:
+            goal_dic[team][min_] = shot['player__last_name']
+
+    shot_flow_dic = gameflow_aggregate(logger, shot_sec_dic, x_max)
+
+    return (shot_flow_dic, goal_dic)
+
 def shotspermin_aggregate(logger, shot_min_dic):
     """ sum up shots per minute """
     logger.debug('shotspermin_aggregate()')
@@ -163,3 +197,43 @@ def shotspermin_aggregate(logger, shot_min_dic):
             shot_sum_dic[key][subkey] = sum(_value_list[:subkey])
 
     return shot_sum_dic
+
+def gameflow_aggregate(logger, shot_sec_dic, x_max):
+    """ sum up shots per seconds """
+    logger.debug('shotspersec_aggregate()')
+
+    shot_flow_dic = {'home_team': {}, 'visitor_team': {}}
+
+    divisor = 0
+    home_team_cnt = 0
+    visitor_team_cnt = 0
+
+    for sec_ in range(0, x_max):
+
+        # reset counter during period start
+        if sec_ in [1201, 2401, 3601]:
+            home_team_cnt = 0
+            visitor_team_cnt = 0
+            divisor = 0
+
+        # increase divisor
+        divisor += 1
+
+        # increase counter in case there is a shot
+        if sec_ in shot_sec_dic['home_team'] and bool(shot_sec_dic['home_team'][sec_]):
+            home_team_cnt += 1
+        if sec_ in shot_sec_dic['visitor_team'] and bool(shot_sec_dic['visitor_team'][sec_]):
+            visitor_team_cnt += 1
+
+        # store counters but only the minute interval
+        if sec_ % 60 == 0:
+            min_ = sec_/60
+            div_ = divisor/60
+            shot_flow_dic['home_team'][min_] = round(home_team_cnt * 60/div_, 0)
+            shot_flow_dic['visitor_team'][min_] = round(visitor_team_cnt * 60/div_, 0)
+
+    # calculate last second
+    shot_flow_dic['home_team'][math.ceil(x_max/60)] = round(home_team_cnt * 60/div_, 0)
+    shot_flow_dic['visitor_team'][math.ceil(x_max/60)] = round(visitor_team_cnt * 60/div_, 0)
+
+    return shot_flow_dic

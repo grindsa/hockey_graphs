@@ -27,9 +27,9 @@ def exporting():
     """ export structure """
     return {'chartOptions': {'plotOptions': {'series': {'dataLabels': {'enabled': 0 }}}}, 'fallbackToExportServer': 0}
 
-def plotoptions_spline():
+def plotoptions_marker_disable(ele):
     """ plotoptions for spline """
-    return {'spline': { 'marker': {'enabled': 0}}}
+    return {ele: { 'marker': {'enabled': 0}}}
 
 def title(text, _font_size=title_font_size):
     """ set title """
