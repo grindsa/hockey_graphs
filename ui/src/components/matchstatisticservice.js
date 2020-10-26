@@ -43,18 +43,10 @@ export const createTableBody = function(data){
 
 export const createSelectOptions = function(data){
   /* create option header */
-  var selectId = 0
-
   var optionlist = data.map((option, index) => {
-    if (option.display){
-      selectId = index
-    }
     return(
       <option value={index} key={`option-${index}`}> {option.title} </option>
     )
   });
-
-  console.log(selectId)
-
-  return [optionlist, selectId]
+  return optionlist
 }

@@ -17,38 +17,55 @@ export class MatchStatistics extends React.Component {
     if (props.match){
       this.state = {
         match: props.match,
-        matchstatistics: []
+        matchstatistics: [],
+        selectedstat: 0,
       };
     }
+    this.handleStatChange = this.handleStatChange.bind(this);
   }
 
   async componentDidMount(){
     // get matchstatistics
     const matchstatistics = await asyncGET(this.props.matchstatistics + this.props.match.match_id + '?language=' + this.props.language)
-    this.setState({matchstatistics: matchstatistics});
-  }
-  filterMatchStatistic(statlist){
-    var matchstat = {}
-    for (let stat of statlist){
-      if (stat.display){
-        matchstat = stat
-        break;
+    /* this.setState(currentState => {
+      return {
+        ... currentState,
+        matchstatistics: matchstatistics
       }
+    });
+    */
+    this.setState({matchstatistics: matchstatistics})
+  }
+
+  handleStatChange(event){
+    const newvalue = event.target.value
+    if (this.state.selectedMatch !== newvalue){
+      /* this.setState({
+        selectedstat: event.target.value,
+      }); */
+      this.setState(currentState => {
+        return {
+        ... currentState,
+        selectedstat: newvalue,
+        }
+      });
     }
-    return matchstat
   }
 
   render() {
-    /* filter statistic to be displayed */
-    const MatchStatistic = this.filterMatchStatistic(this.state.matchstatistics)
-    return (
-      <React.Fragment>
-      <MatchHeader match={this.props.match} reset={this.props.reset} />
-      <Selector matches={this.state.matchstatistics}/>
-      <Chart options={MatchStatistic.chart}/>
-      <Table data={MatchStatistic.table}/>
-      </React.Fragment>
-    );
+    const MatchStatistic = this.state.matchstatistics[this.state.selectedstat]
+    if (!isEmpty(MatchStatistic)){
+      return (
+        <React.Fragment>
+          <MatchHeader match={this.props.match} reset={this.props.reset} />
+          <Selector matches={this.state.matchstatistics}  onChange={this.handleStatChange} value={this.state.selectedstat}/>
+          <Chart options={MatchStatistic.chart}/>
+          <Table data={MatchStatistic.table}/>          
+        </React.Fragment>
+      );
+    }else{
+      return (<p></p>)
+    }
   }
 }
 
@@ -82,10 +99,10 @@ class Selector extends React.Component{
     if (isEmpty(this.props.matches)){
       return (<p></p>)
     }else{
-      const [optionList, selectId] = createSelectOptions(this.props.matches)
+      const optionList = createSelectOptions(this.props.matches)
       return (
         <div className="w3-container w3-padding-small w3-center">
-        <select className="w3-select w3-border" defaultValue={selectId}>
+        <select className="w3-select w3-border" value={this.props.value} onChange={this.props.onChange}>
           {optionList}
         </select>
         </div>
@@ -98,7 +115,7 @@ class Chart extends React.Component{
   /* block to render chart */
   render() {
     return (
-      <HighchartsReact highcharts={Highcharts} options={this.props.options} />
+      <HighchartsReact highcharts={Highcharts} options={this.props.options} immutable={true} />
     );
   }
 }
