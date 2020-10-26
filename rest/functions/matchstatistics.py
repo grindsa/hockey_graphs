@@ -30,6 +30,10 @@ def matchstatistics_get(logger, request, fkey=None, fvalue=None):
         # create shotflowchart
         result.append(_gameflow_get(logger, _('Gameflow'), request, fkey, fvalue, matchinfo_dic))
 
+        # ceate chart for shots per match
+        result.append(_shotspermatch_get(logger, _('new Shots per minute'), request, fkey, fvalue, matchinfo_dic))
+
+
     else:
         result = {'error': 'Please specify a matchid'}
 
@@ -58,10 +62,9 @@ def _gameflow_get(logger, title, request, fkey, fvalue, matchinfo_dic):
         'title': title,
         'chart': shot_chart,
         'table': shot_table,
-        'display': False,
         'tabs': False
     }
-    
+
     return stat_entry
 
 def _shotspermatch_get(logger, title, request, fkey, fvalue, matchinfo_dic):
@@ -91,7 +94,6 @@ def _shotspermatch_get(logger, title, request, fkey, fvalue, matchinfo_dic):
         'title': title,
         'chart': shot_chart,
         'table': shot_table,
-        'display': True,
         'tabs': False
     }
 
