@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-10-25 10:44+0100\n"
-"PO-Revision-Date: 2020-10-25 10:45+0100\n"
+"POT-Creation-Date: 2020-10-27 07:34+0100\n"
+"PO-Revision-Date: 2020-10-27 07:34+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -18,41 +18,75 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 2.4.1\n"
 
-#: .\rest\functions\matchstatistics.py:31
-msgid "Gameflow"
-msgstr ""
-
-#: .\rest\functions\shotcharts.py:53 .\rest\functions\shotcharts.py:166
-msgid "min"
-msgstr "Minute"
-
-#: .\rest\functions\shotcharts.py:60 .\rest\functions\shotcharts.py:191
-msgid "Game Time"
-msgstr "Spielminute"
-
-#: .\rest\functions\shotcharts.py:77
+#: .\rest\functions\matchstatistics.py:31 .\rest\functions\shotcharts.py:78
 msgid "Shots per minute"
 msgstr "Schüsse pro Minute"
 
-#: .\rest\functions\shotcharts.py:83
+#: .\rest\functions\matchstatistics.py:34
+msgid "Gameflow"
+msgstr "Spielfluss"
+
+#: .\rest\functions\matchstatistics.py:37
+msgid "Shots by Result"
+msgstr "Schussstatistik"
+
+#: .\rest\functions\shotcharts.py:54 .\rest\functions\shotcharts.py:167
+#: .\rest\functions\shotcharts.py:269
+msgid "min"
+msgstr "Minute"
+
+#: .\rest\functions\shotcharts.py:61 .\rest\functions\shotcharts.py:192
+#: .\rest\functions\shotcharts.py:284
+msgid "Game Time"
+msgstr "Spielminute"
+
+#: .\rest\functions\shotcharts.py:84 .\rest\functions\shotcharts.py:306
 msgid "Cumulated shots"
 msgstr "Schüsse gesamt"
 
-#: .\rest\functions\shotcharts.py:90
+#: .\rest\functions\shotcharts.py:91
 msgid "per min"
 msgstr "pro min"
 
-#: .\rest\functions\shotcharts.py:165
+#: .\rest\functions\shotcharts.py:166
 msgid "based on an idea of @DanielT_W"
 msgstr "Nach einer Idee von @DanielT_W"
 
-#: .\rest\functions\shotcharts.py:217
+#: .\rest\functions\shotcharts.py:218
 msgid "Shot attempts per 60min (SH60)"
 msgstr "Schüsse pro 60min (SH60)"
 
-#: .\rest\functions\shottables.py:13
+#: .\rest\functions\shotcharts.py:311 .\rest\functions\shottables.py:37
+msgid "missed"
+msgstr "vorbei"
+
+#: .\rest\functions\shotcharts.py:315 .\rest\functions\shottables.py:37
+msgid "blocked"
+msgstr "geblockt"
+
+#: .\rest\functions\shotcharts.py:319
+msgid "Goal"
+msgstr "Tor"
+
+#: .\rest\functions\shotcharts.py:324
+msgid "SOG"
+msgstr "Torschüsse"
+
+#: .\rest\functions\shottables.py:13 .\rest\functions\shottables.py:35
 msgid "Total"
 msgstr "Summe"
+
+#: .\rest\functions\shottables.py:35
+msgid "Shots per Period"
+msgstr "Schüsse pro Minute"
+
+#: .\rest\functions\shottables.py:37
+msgid "Shots on Goal"
+msgstr "Torschüsse"
+
+#: .\rest\functions\shottables.py:37
+msgid "Goals"
+msgstr "Tore"
 
 #~ msgid "Overall shots"
 #~ msgstr "Schüsse gesamt"

@@ -89,11 +89,10 @@ def shot_dic_prep(logger, group_by=False, x_max=61):
             shot_min_dic['visitor_team'][ele] = {}
 
     for min_ in range(0, x_max):
-        #if group_by == 'match_shot_resutl_id':
-        #    for ele in range(1, 5):
-        #        shot_min_dic['home_team'][ele][min_] = 0
-        #        shot_min_dic['visitor_team'][ele][min_] = 0
-
+        if group_by == 'match_shot_resutl_id':
+            for ele in range(1, 5):
+                shot_min_dic['home_team'][ele][min_] = 0
+                shot_min_dic['visitor_team'][ele][min_] = 0
         #elif group_by == 'pos_period':
         #    for pos in ebb_zone:
         #        shot_min_dic['home_team'][pos] = {}
@@ -103,11 +102,49 @@ def shot_dic_prep(logger, group_by=False, x_max=61):
         #        shot_min_dic['visitor_team'][pos] = {}
         #        for period in (1, 2, 3, 4):
         #            shot_min_dic['visitor_team'][pos][period] = 0
-        # elif group_by == 'min':
-        shot_min_dic['home_team'][min_] = 0
-        shot_min_dic['visitor_team'][min_] = 0
+        else:
+            shot_min_dic['home_team'][min_] = 0
+            shot_min_dic['visitor_team'][min_] = 0
 
     return shot_min_dic
+
+def shotstatus_count(logger, shot_list, matchinfo_dic):
+    """ count shots per minutes """
+    logger.debug('shotstatus_count()')
+
+    # we need an x_max value for the chart and try to get it from shot_list
+    x_max = maxval_get(shot_list, 'timestamp', 60, 1)
+
+    # create empty structure of shots per team per minute
+    shot_status_dic = shot_dic_prep(logger, 'match_shot_resutl_id', x_max)
+    goal_dic = {'home_team': {}, 'visitor_team': {}}
+
+    ot_reg = None
+    for shot in shot_list:
+        # get min out of seconds
+        min_ = math.ceil(shot['timestamp']/60)
+
+        # we need additional value in  x-bar if we go for overtime
+        if min_ > 60 and ot_reg is None:
+            # now we registered OT
+            ot_reg = True
+            for val in range(61, 66):
+                for ele in range(1, 5):
+                    shot_status_dic['home_team'][ele][val] = 0
+                    shot_status_dic['visitor_team'][ele][val] = 0
+
+        # we need to differenciate between home and visitor team
+        if shot['team_id'] == matchinfo_dic['home_team_id']:
+            team = 'home_team'
+        else:
+            team = 'visitor_team'
+
+        # count shots
+        shot_status_dic[team][shot['match_shot_resutl_id']][min_] += 1
+        if shot['match_shot_resutl_id'] == 4:
+            goal_dic[team][min_] = shot['player__last_name']
+
+    return(shot_status_dic, goal_dic)
 
 def shotspermin_count(logger, shot_list, matchinfo_dic):
     """ count shots per minutes """
@@ -197,6 +234,22 @@ def shotspermin_aggregate(logger, shot_min_dic):
             shot_sum_dic[key][subkey] = sum(_value_list[:subkey])
 
     return shot_sum_dic
+
+def shotstatus_aggregate(logger, shot_status_dic):
+    """ sum up shots per minute """
+    logger.debug('shotspermin_aggregate()')
+
+    # aggregate shots per min
+    shotsum_dic = {'home_team': {1:{}, 2:{}, 3:{}, 4:{},}, 'visitor_team': {1:{}, 2:{}, 3:{}, 4:{},}}
+    for ele in range(1, 5):
+        home_min_values = list(shot_status_dic['home_team'][ele].values())
+        visitor_min_values = list(shot_status_dic['visitor_team'][ele].values())
+        for min_ in shot_status_dic['home_team'][ele]:
+            shotsum_dic['home_team'][ele][min_] = sum(home_min_values[:min_])
+        for min_ in shot_status_dic['visitor_team'][ele]:
+            shotsum_dic['visitor_team'][ele][min_] = sum(visitor_min_values[:min_])
+
+    return shotsum_dic
 
 def gameflow_aggregate(logger, shot_sec_dic, x_max):
     """ sum up shots per seconds """
