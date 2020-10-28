@@ -42,6 +42,7 @@ select.selectbg {
   background-color:#f1f2f3
 }
 
+.mainwidth { max-width:800px; margin:auto}
 
 .tab-red,.hover-tab-red:hover{border-color:#333333!important}
 
