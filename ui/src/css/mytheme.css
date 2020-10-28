@@ -37,3 +37,12 @@ td.middle {
   font-weight: bold;
   font-size:14px;
 }
+
+select.selectbg {
+  background-color:#f1f2f3
+}
+
+
+.tab-red,.hover-tab-red:hover{border-color:#333333!important}
+
+/* #f44336 */

@@ -29,7 +29,7 @@ def shotsperiodtable_get(logger, title, shot_min_dic, matchinfo_dic):
         table_dic['td'].append([tmp_name_dic[ele]['logo'], tmp_name_dic[ele]['name'], sp1, sp2, sp3, sot, sp1+sp2+sp3+sot])
     return table_dic
 
-def shotstatussumtable_get(logger, _title, shot_min_dic, _matchinfo_dic):
+def shotstatussumtable_get(logger, _title, shot_min_dic, team, _matchinfo_dic):
     """ create shotstat table """
     # pylint: disable=E0602
     logger.debug('shotstatussumtable_get()')
@@ -47,15 +47,15 @@ def shotstatussumtable_get(logger, _title, shot_min_dic, _matchinfo_dic):
         sp2 = 0
         sp3 = 0
         sot = 0
-        for min_ in shot_min_dic['home_team'][ele]:
+        for min_ in shot_min_dic[team][ele]:
             if min_ < 21:
-                sp1 += shot_min_dic['home_team'][ele][min_]
+                sp1 += shot_min_dic[team][ele][min_]
             elif min_ < 41:
-                sp2 += shot_min_dic['home_team'][ele][min_]
+                sp2 += shot_min_dic[team][ele][min_]
             elif min_ < 61:
-                sp3 += shot_min_dic['home_team'][ele][min_]
+                sp3 += shot_min_dic[team][ele][min_]
             else:
-                sot += shot_min_dic['home_team'][ele][min_]
+                sot += shot_min_dic[team][ele][min_]
         table_dic['td'].append([status_dic[ele], sp1, sp2, sp3, sot, sp1+sp2+sp3+sot])
 
     return table_dic

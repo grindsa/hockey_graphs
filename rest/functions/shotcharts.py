@@ -124,7 +124,6 @@ def shotsumchart_create(logger, shot_sum_dic, shot_min_dic, goal_dic, plotline_l
 
     return chart_options
 
-
 def gameflowchart_create(logger, shot_flow_dic, goal_dic, plotline_list, matchinfo_dic):
     """ create flow chart """
     # pylint: disable=E0602
@@ -240,18 +239,18 @@ def gameflowchart_create(logger, shot_flow_dic, goal_dic, plotline_list, matchin
 
     return chart_options
 
-def shotstatussumchart_create(logger, shotsum_dic, _shotstatus_dic, goal_dic, matchinfo_dic):
+def shotstatussumchart_create(logger, shotsum_dic, _shotstatus_dic, goal_dic, team, matchinfo_dic):
     """ create shotstatus chart """
-    # pylint: disable=E0602       
+    # pylint: disable=E0602
     logger.debug('shotstatussumchart_create()')
 
     # build lists
-    min_list = list(shotsum_dic['home_team'][1].keys())
-    shot_list = list(shotsum_dic['home_team'][1].values())
-    missed_list = list(shotsum_dic['home_team'][2].values())
-    block_list = list(shotsum_dic['home_team'][3].values())
+    min_list = list(shotsum_dic[team][1].keys())
+    shot_list = list(shotsum_dic[team][1].values())
+    missed_list = list(shotsum_dic[team][2].values())
+    block_list = list(shotsum_dic[team][3].values())
     goal_list = []
-    for min_, value in shotsum_dic['home_team'][4].items():
+    for min_, value in shotsum_dic[team][4].items():
         # set marker on graph if there was a goal in this min
         if min_ in goal_dic['home_team'].keys():
             goal_list.append({'y' : value, 'marker' : {'enabled': 1, 'width': 25, 'height': 25, 'symbol': 'url({0})'.format(matchinfo_dic['home_team_logo']),}})

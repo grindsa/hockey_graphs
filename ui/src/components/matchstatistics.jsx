@@ -59,12 +59,56 @@ export class MatchStatistics extends React.Component {
         <React.Fragment>
           <MatchHeader match={this.props.match} reset={this.props.reset} />
           <Selector matches={this.state.matchstatistics}  onChange={this.handleStatChange} value={this.state.selectedstat}/>
-          <Chart options={MatchStatistic.chart}/>
-          <Table data={MatchStatistic.table}/>          
+          <MatchData chart={MatchStatistic.chart} table={MatchStatistic.table} match={this.props.match} tabs={MatchStatistic.tabs}/>
         </React.Fragment>
       );
     }else{
       return (<p></p>)
+    }
+  }
+}
+
+class MatchData extends React.Component {
+  constructor(props){
+    super(props);
+    this.state = {
+        activeTab: 0,
+    }
+    this.switchTab = this.switchTab.bind(this);
+  }
+
+  switchTab(newIndex){
+    this.setState({
+      activeTab: newIndex
+    })
+  };
+
+  render(){
+    if(this.props.tabs){
+      if (this.state.activeTab === 0){
+        var home_format = "w3-half tablink w3-bottombar tab-red w3-hover-light-grey w3-padding"
+        var visitor_format = "w3-half tablink w3-bottombar w3-hover-light-grey w3-padding"
+      }else{
+        var visitor_format = "w3-half tablink w3-bottombar tab-red w3-hover-light-grey w3-padding"
+        var home_format = "w3-half tablink w3-bottombar w3-hover-light-grey w3-padding"
+      }
+      return (
+        <React.Fragment>
+          <div className="w3-row">
+            <div className ={home_format} onClick={() => this.switchTab(0)}>{this.props.match.home_team_name}</div>
+            <div className ={visitor_format} onClick={() => this.switchTab(1)}>{this.props.match.visitor_team_name}</div>
+          </div>
+          <Chart options={this.props.chart[this.state.activeTab]} />
+          <Table data={this.props.table[this.state.activeTab]} />
+        </React.Fragment>
+      )
+    }else{
+      return (
+        <React.Fragment>
+          <Chart options={this.props.chart} />
+          <Table data={this.props.table} />
+        </React.Fragment>
+      );
     }
   }
 }
@@ -102,7 +146,7 @@ class Selector extends React.Component{
       const optionList = createSelectOptions(this.props.matches)
       return (
         <div className="w3-container w3-padding-small w3-center">
-        <select className="w3-select w3-border" value={this.props.value} onChange={this.props.onChange}>
+        <select className="w3-select w3-border selectbg" value={this.props.value} onChange={this.props.onChange}>
           {optionList}
         </select>
         </div>

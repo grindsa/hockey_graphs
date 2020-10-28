@@ -85,14 +85,20 @@ def _gameshootstatus_get(logger, title, request, fkey, fvalue, matchinfo_dic, sh
         shotstatussum_dic = shotstatus_aggregate(logger, shotstatus_dic)
 
         # create chart
-        shot_chart = shotstatussumchart_create(logger, shotstatussum_dic, shotstatus_dic, goal_dic, matchinfo_dic)
-        shot_table = shotstatussumtable_get(logger, title, shotstatus_dic, matchinfo_dic)
+        shot_chart = [
+            shotstatussumchart_create(logger, shotstatussum_dic, shotstatus_dic, goal_dic, 'home_team', matchinfo_dic),
+            shotstatussumchart_create(logger, shotstatussum_dic, shotstatus_dic, goal_dic, 'visitor_team', matchinfo_dic),
+        ]
+        shot_table = [
+            shotstatussumtable_get(logger, title, shotstatus_dic, 'home_team', matchinfo_dic),
+            shotstatussumtable_get(logger, title, shotstatus_dic, 'visitor_team', matchinfo_dic)
+        ]
 
     stat_entry = {
         'title': title,
         'chart': shot_chart,
         'table': shot_table,
-        'tabs': False
+        'tabs': True
     }
 
     return stat_entry
