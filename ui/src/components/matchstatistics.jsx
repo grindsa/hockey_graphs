@@ -6,7 +6,6 @@ import HighchartsExporting from 'highcharts/modules/exporting'
 import { createTableHeader, createTableBody, createSelectOptions } from './matchstatisticservice.js'
 import { asyncGET, isEmpty } from './sharedfunctions.js';
 
-
 // Load Highcharts modules
 require("highcharts/modules/exporting")(Highcharts);
 
@@ -40,9 +39,6 @@ export class MatchStatistics extends React.Component {
   handleStatChange(event){
     const newvalue = event.target.value
     if (this.state.selectedMatch !== newvalue){
-      /* this.setState({
-        selectedstat: event.target.value,
-      }); */
       this.setState(currentState => {
         return {
         ... currentState,
@@ -86,11 +82,11 @@ class MatchData extends React.Component {
   render(){
     if(this.props.tabs){
       if (this.state.activeTab === 0){
-        var home_format = "w3-half tablink w3-bottombar tab-red w3-hover-light-grey w3-padding"
-        var visitor_format = "w3-half tablink w3-bottombar w3-hover-light-grey w3-padding"
+        var home_format = "w3-col tablink w3-bottombar tab-red w3-hover-light-grey w3-padding my-half"
+        var visitor_format = "w3-col tablink w3-bottombar w3-hover-light-grey w3-padding my-half"
       }else{
-        var visitor_format = "w3-half tablink w3-bottombar tab-red w3-hover-light-grey w3-padding"
-        var home_format = "w3-half tablink w3-bottombar w3-hover-light-grey w3-padding"
+        var visitor_format = "w3-col tablink w3-bottombar tab-red w3-hover-light-grey w3-padding my-half"
+        var home_format = "w3-col tablink w3-bottombar w3-hover-light-grey w3-padding my-half"
       }
       return (
         <React.Fragment>
@@ -157,6 +153,44 @@ class Selector extends React.Component{
 
 class Chart extends React.Component{
   /* block to render chart */
+
+ /*
+  constructor(props){
+    super(props);
+    this.state = {
+        chartOptions: this.props.options,
+    }
+    this.toggleChart = this.toggleChart.bind(this);
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.options !== prevProps.options) {
+      this.setState({
+        chartOptions: this.props.options,
+      })
+
+    }
+  }
+
+  async toggleChart(){
+    await this.setState(currentState => {
+        return {
+          ... currentState,
+          chartOptions: {
+            ... currentState.chartOptions,
+            plotOptions: {
+              ... currentState.chartOptions.plotOptions,
+              area: {
+                ... currentState.chartOptions.plotOptions.area,
+                stacking: 'percent'
+              }
+            }
+          }
+        }
+      })
+    }
+  */
+
   render() {
     return (
       <HighchartsReact highcharts={Highcharts} options={this.props.options} immutable={true} />
