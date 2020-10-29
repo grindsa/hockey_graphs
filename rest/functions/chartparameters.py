@@ -4,7 +4,13 @@
 
 # size
 font_size = '10px'
+font_size_mobile = '8px'
 title_font_size = '12px'
+title_font_size_mobile = '12px'
+
+# align
+legend_valign = 'bottom'
+legend_valign_mobile = 'top'
 
 # color definition
 text_color = '#404040'
@@ -32,9 +38,11 @@ def labels():
     """ set labels """
     return {'style': {'fontSize': font_size},}
 
-def exporting():
+def exporting(button=None):
     """ export structure """
-    return {'chartOptions': {'plotOptions': {'series': {'dataLabels': {'enabled': 0}}}}, 'fallbackToExportServer': 0}
+    output_dic = {'chartOptions': {'plotOptions': {'series': {'dataLabels': {'enabled': 0}}}}, 'fallbackToExportServer': 0}
+    # output_dic['buttons'] = {'customButton': {'text': button}}
+    return output_dic
 
 def plotoptions_marker_disable(ele):
     """ plotoptions for spline """
@@ -46,8 +54,54 @@ def title(text, _font_size=title_font_size):
 
 def legend(enabled=1):
     """ create legend structure """
-    return {'enabled': enabled, 'useHTML': 1, 'itemStyle': {'color': text_color, 'font-size': font_size}, 'verticalAlign': 'bottom', 'symbolRadius': 0}
+    return {'enabled': enabled, 'useHTML': 1, 'itemStyle': {'color': text_color, 'font-size': font_size}, 'verticalAlign': legend_valign, 'symbolRadius': 0}
+
+
+def responsive_gameflow():
+    """ options for responsiveness """
+    return {
+       'rules': [{
+            'condition': {'maxWidth': 500},
+            'chartOptions': {
+                'xAxis': {'title': {'style': {'font-size': font_size_mobile}}, 'labels': {'style': {'fontSize': font_size_mobile}}},
+                'yAxis': {'title': {'style': {'font-size': font_size_mobile}}, 'labels': {'style': {'fontSize': font_size_mobile}}},
+                'title': {'x': 60, 'y': 40},
+                'subtitle': {'x': -10, 'y': 40},               
+                }
+        }]
+    }
+
+def responsive_y1():
+    """ options for responsiveness """
+    return {
+       'rules': [{
+            'condition': {'maxWidth': 500},
+            'chartOptions': {
+                'legend': {'verticalAlign': legend_valign_mobile, 'layout': 'horizontal', 'itemStyle': {'font-size': font_size_mobile}},
+                'xAxis': {'title': {'style': {'font-size': font_size_mobile}}, 'labels': {'style': {'fontSize': font_size_mobile}}},
+                'yAxis': {'title': {'style': {'font-size': font_size_mobile}}, 'labels': {'style': {'fontSize': font_size_mobile}}},
+                # 'exporting': {'enabled': False},
+                }
+        }]
+    }
+
+def responsive_y2():
+    """ options for responsiveness """
+    return {
+       'rules': [{
+            'condition': {'maxWidth': 500},
+            'chartOptions': {
+                'legend': {'verticalAlign': legend_valign_mobile, 'layout': 'horizontal', 'itemStyle': {'font-size': font_size_mobile}},
+                'xAxis': {'title': {'style': {'font-size': font_size_mobile}}, 'labels': {'style': {'fontSize': font_size_mobile}}},
+                'yAxis': [
+                    {'title': {'style': {'font-size': font_size_mobile}}, 'labels': {'style': {'fontSize': font_size_mobile}}},
+                    {'title': {'style': {'font-size': font_size_mobile}}, 'opposite': 1, 'labels': {'style': {'fontSize': font_size_mobile}}},
+                ],
+                # 'exporting': {'enabled': False},
+                }
+        }]
+    }
 
 def tooltip(text):
     """ customize tooltip """
-    return {'shared': 1, 'useHTML': 1, 'headerFormat': text}
+    return {'shared': 1, 'useHTML': 1, 'headerFormat': text, 'marker': {'enabled': 0}}

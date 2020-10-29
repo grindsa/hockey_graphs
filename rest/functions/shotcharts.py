@@ -2,7 +2,7 @@
 """ list of functions for shots """
 import math
 # pylint: disable=E0401
-from rest.functions.chartparameters import credit, exporting, plotoptions_marker_disable, title, legend, tooltip, labels, font_size
+from rest.functions.chartparameters import credit, exporting, responsive_gameflow, responsive_y1, responsive_y2, plotoptions_marker_disable, title, legend, tooltip, labels, font_size
 from rest.functions.chartparameters import text_color, plotlines_color, chart_color1, chart_color2, chart_color3, chart_color4, chart_color5, chart_color6, chart_color8, chart_color9, shot_missed_color, shot_blocked_color, shot_goal_color, shot_sog_color
 
 # pylint: disable=R0914
@@ -18,14 +18,18 @@ def shotsumchart_create(logger, shot_sum_dic, shot_min_dic, goal_dic, plotline_l
     home_team_spline = []
     for min_, value in shot_sum_dic['home_team'].items():
         if min_ in goal_dic['home_team'].keys():
-            home_team_spline.append({'y' : value, 'marker' : {'enabled': 1, 'width': 25, 'height': 25, 'symbol': 'url({0})'.format(machinfo_dic['home_team_logo'])}})
+            # home_team_spline.append({'y' : value, 'marker' : {'enabled': 1, 'width': 25, 'height': 25, 'symbol': 'url({0})'.format(machinfo_dic['home_team_logo'])}})
+            home_team_spline.append({'y' : value, 'marker' : {'enabled': 1, 'radius': 5, 'symbol': 'circle'}, 'dataLabels': {'enabled': 1, 'color': chart_color3, 'format': '{0}'.format(goal_dic['home_team'][min_])}})
+
         else:
             home_team_spline.append(value)
 
     visitor_team_spline = []
     for min_, value in shot_sum_dic['visitor_team'].items():
         if min_ in goal_dic['visitor_team'].keys():
-            visitor_team_spline.append({'y' : value, 'marker' : {'enabled': 1, 'width': 25, 'height': 25, 'symbol': 'url({0})'.format(machinfo_dic['visitor_team_logo'])}})
+            # visitor_team_spline.append({'y' : value, 'marker' : {'enabled': 1, 'width': 25, 'height': 25, 'symbol': 'url({0})'.format(machinfo_dic['visitor_team_logo'])}})
+            visitor_team_spline.append({'y' : value, 'marker' : {'enabled': 1, 'radius': 5, 'symbol': 'circle'}, 'dataLabels': {'enabled': 1, 'color': chart_color4, 'format': '{0}'.format(goal_dic['visitor_team'][min_])}})
+
         else:
             visitor_team_spline.append(value)
 
@@ -50,12 +54,13 @@ def shotsumchart_create(logger, shot_sum_dic, shot_min_dic, goal_dic, plotline_l
             'alignTicks': 0,
         },
 
-        'exporting': exporting(),
+        # 'exporting': exporting(),
         'title': title(''),
         'legend': legend(),
         'tooltip': tooltip('<b>{point.x}.%s</b><br>' % _('min')),
         'plotOptions': plotoptions_marker_disable('spline'),
         'credits': credit(),
+        'responsive': responsive_y2(),
 
         'xAxis': {
             'categories': minute_list,
@@ -169,6 +174,7 @@ def gameflowchart_create(logger, shot_flow_dic, goal_dic, plotline_list, matchin
         'tooltip': tooltip('<b>{point.x}.%s</b><br>' % _('min')),
         'legend': legend(0),
         'plotOptions': plotoptions_marker_disable('areaspline'),
+        'responsive': responsive_gameflow(),
 
         'title': {
             'useHTML': 1,
@@ -253,9 +259,13 @@ def shotstatussumchart_create(logger, shotsum_dic, _shotstatus_dic, goal_dic, te
     for min_, value in shotsum_dic[team][4].items():
         # set marker on graph if there was a goal in this min
         if min_ in goal_dic['home_team'].keys():
-            goal_list.append({'y' : value, 'marker' : {'enabled': 1, 'width': 25, 'height': 25, 'symbol': 'url({0})'.format(matchinfo_dic['home_team_logo']),}})
+            # goal_list.append({'y' : value, 'marker' : {'enabled': 1, 'width': 25, 'height': 25, 'symbol': 'url({0})'.format(matchinfo_dic['home_team_logo']),}})
+            goal_list.append({'y' : value, 'marker' : {'enabled': 1, 'radius': 5, 'symbol': 'circle', 'fillColor': chart_color3, 'lineWidth': 2, 'lineColor': shot_missed_color}, 'dataLabels': {'enabled': 1, 'color': chart_color3, 'format': '{0}'.format(goal_dic['home_team'][min_])}})
+
         elif min_ in goal_dic['visitor_team'].keys():
-            goal_list.append({'y' : value, 'marker' : {'enabled': 1, 'width': 25, 'height': 25, 'symbol': 'url({0})'.format(matchinfo_dic['visitor_team_logo']),}})
+            # goal_list.append({'y' : value, 'marker' : {'enabled': 1, 'width': 25, 'height': 25, 'symbol': 'url({0})'.format(matchinfo_dic['visitor_team_logo']),}})
+            goal_list.append({'y' : value, 'marker' : {'enabled': 1, 'radius': 5, 'symbol': 'circle', 'fillColor': chart_color4, 'lineWidth': 2, 'lineColor': shot_missed_color}, 'dataLabels': {'enabled': 1, 'color': chart_color4, 'format': '{0}'.format(goal_dic['visitor_team'][min_])}})
+
         else:
             goal_list.append(value)
 
@@ -266,11 +276,12 @@ def shotstatussumchart_create(logger, shotsum_dic, _shotstatus_dic, goal_dic, te
             'height': '60%'
         },
 
-        'exporting': exporting(),
+        'exporting': exporting(button='clickme'),
         'title': title(''),
         'credits': credit(),
         'tooltip': tooltip('<b>{point.x}.%s</b><br>' % _('min')),
         'legend': legend(),
+        'responsive': responsive_y1(),
 
         'plotOptions': {
             'area': {
