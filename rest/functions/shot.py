@@ -79,6 +79,9 @@ def shot_dic_prep(logger, group_by=False, x_max=61):
     """ prepare shot stats """
     logger.debug('shot_dic_prep()')
 
+    # list of zones
+    zone_list = ('slot', 'left', 'right', 'blue_line', 'neutral_zone', 'behind_goal')
+
     # initialize dicionaries
     shot_min_dic = {'home_team': {}, 'visitor_team': {}}
 
@@ -93,15 +96,13 @@ def shot_dic_prep(logger, group_by=False, x_max=61):
             for ele in range(1, 5):
                 shot_min_dic['home_team'][ele][min_] = 0
                 shot_min_dic['visitor_team'][ele][min_] = 0
-        #elif group_by == 'pos_period':
-        #    for pos in ebb_zone:
-        #        shot_min_dic['home_team'][pos] = {}
-        #        for period in (1, 2, 3, 4):
-        #            shot_min_dic['home_team'][pos][period] = 0
-        #    for pos in o_team_zone:
-        #        shot_min_dic['visitor_team'][pos] = {}
-        #        for period in (1, 2, 3, 4):
-        #            shot_min_dic['visitor_team'][pos][period] = 0
+        elif group_by == 'zone':
+            for zone  in zone_list:
+                shot_min_dic['home_team'][zone] = {}
+                shot_min_dic['visitor_team'][zone] = {}
+                for period in (1, 2, 3, 4):
+                    shot_min_dic['home_team'][zone][period] = 0
+                    shot_min_dic['visitor_team'][zone][period] = 0
         else:
             shot_min_dic['home_team'][min_] = 0
             shot_min_dic['visitor_team'][min_] = 0
@@ -290,3 +291,64 @@ def gameflow_aggregate(logger, shot_sec_dic, x_max):
     shot_flow_dic['visitor_team'][math.ceil(x_max/60)] = round(visitor_team_cnt * 60/div_, 0)
 
     return shot_flow_dic
+
+def shotsperzone_count(logger, shot_list, matchinfo_dic):
+    """ shots per zone """
+    logger.debug('shotsperzone_count()')
+
+    # we need an x_max value for the chart and try to get it from shot_list
+    x_max = maxval_get(shot_list, 'timestamp', 60, 1)
+
+    # create empty structure of shots per zone per period
+    shot_zone_dic = shot_dic_prep(logger, 'zone', x_max)
+
+    for shot in shot_list:
+
+        # timestamp of shot
+        sec_ = shot['timestamp']
+        # get min out of seconds
+        min_ = math.ceil(shot['timestamp']/60)
+        # cornercase handling and period
+        if min_ == 0:
+            min_ = 1
+        period = math.ceil(min_/20)
+
+        # we need to differenciate between home and visitor team
+        if shot['team_id'] == matchinfo_dic['home_team_id']:
+            team = 'home_team'
+        else:
+            team = 'visitor_team'
+
+        #  count shots per zone per period
+        shot_zone_dic[team][shot['zone']][period] += 1
+
+    return shot_zone_dic
+
+def shotsperzone_aggregate(logger, shotzone_dic, match_info_dic):
+    """ reformat zone statistics for template processing """
+
+    shotzonesum_dic = {'home_team': {'logo': match_info_dic['home_team_logo']}, 'visitor_team': {'logo': match_info_dic['visitor_team_logo']}}
+
+    # aggregate shots per zone
+    for team in shotzone_dic:
+        for zname in shotzone_dic[team]:
+            if 'sum' not in shotzonesum_dic[team]:
+                shotzonesum_dic[team]['sum'] = {}
+                shotzonesum_dic[team]['sum']['count'] = 0
+            if zname not in shotzonesum_dic[team]:
+                shotzonesum_dic[team][zname] = {}
+                shotzonesum_dic[team][zname]['count'] = 0
+            for period in shotzone_dic[team][zname]:
+                shotzonesum_dic[team][zname]['count'] += shotzone_dic[team][zname][period]
+                shotzonesum_dic[team]['sum']['count'] += shotzone_dic[team][zname][period]
+
+    # add percentage
+    for team in shotzonesum_dic:
+        for zone in shotzonesum_dic[team]:
+            if zone != 'logo':
+                if shotzonesum_dic[team]['sum']['count'] > 0:
+                    shotzonesum_dic[team][zone]['roundpercent'] = round(shotzonesum_dic[team][zone]['count'] / shotzonesum_dic[team]['sum']['count'] * 100)
+                else:
+                    shotzonesum_dic[team][zone]['roundpercent'] = 0
+
+    return shotzonesum_dic

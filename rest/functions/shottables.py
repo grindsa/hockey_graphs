@@ -59,3 +59,37 @@ def shotstatussumtable_get(logger, _title, shot_min_dic, team, _matchinfo_dic):
         table_dic['td'].append([status_dic[ele], sp1, sp2, sp3, sot, sp1+sp2+sp3+sot])
 
     return table_dic
+
+def shotzonetable_get(logger, shot_zone_dic, matchinfo_dic):
+    """ create shotzone table """
+
+    table_dic = {'th': ['Team', 'Schuss-Zonen', '1st', '2nd', '3rd', 'OT', 'Summe'], 'align': [None, 'w3-left-align', None, None, None, None, None], 'td': []}
+
+    slot_dic = {'behind_goal': _('Behind Goal'),
+                'left': _('Left'),
+                'slot': _('Slot'),
+                'blue_line': _('Blueline'),
+                'right': _('Right'),
+                'neutral_zone': _('Neutral Zone')}
+
+    slot_list = ('left', 'right', 'slot', 'blue_line', 'neutral_zone')
+
+    for pos in slot_list:
+        tmp_list = [matchinfo_dic['home_team_logo'], slot_dic[pos]]
+        sum_ = 0
+        for ele in (1, 2, 3, 4):
+            tmp_list.append(shot_zone_dic['home_team'][pos][ele])
+            sum_ += shot_zone_dic['home_team'][pos][ele]
+        tmp_list.append(sum_)
+        table_dic['td'].append(tmp_list)
+
+    for pos in slot_list:
+        tmp_list = [matchinfo_dic['visitor_team_logo'], slot_dic[pos]]
+        sum_ = 0
+        for ele in (1, 2, 3, 4):
+            tmp_list.append(shot_zone_dic['visitor_team'][pos][ele])
+            sum_ += shot_zone_dic['visitor_team'][pos][ele]
+        tmp_list.append(sum_)
+        table_dic['td'].append(tmp_list)
+
+    return table_dic

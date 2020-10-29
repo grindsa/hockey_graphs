@@ -7,12 +7,14 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "hockey_graphs.settings")
 import django
 django.setup()
-from rest.functions.shot import shot_list_get, shotspermin_count, shotspermin_aggregate, shotspersec_count, shotstatus_count, shotstatus_aggregate
+from django.conf import settings
+from rest.functions.shot import shot_list_get, shotspermin_count, shotspermin_aggregate, shotspersec_count, shotstatus_count, shotstatus_aggregate, shotsperzone_count, shotsperzone_aggregate
 from rest.functions.shotcharts import shotsumchart_create, gameflowchart_create, shotstatussumchart_create
-from rest.functions.shottables import shotsperiodtable_get, shotstatussumtable_get
+from rest.functions.shottables import shotsperiodtable_get, shotstatussumtable_get, shotzonetable_get
 from rest.functions.match import match_info_get
 from rest.functions.periodevent import penaltyplotlines_get
 from rest.functions.chartparameters import chart_color7
+from rest.functions.helper import url_build
 
 def matchstatistics_get(logger, request, fkey=None, fvalue=None):
     """ matchstatistics grouped by days """
@@ -24,7 +26,7 @@ def matchstatistics_get(logger, request, fkey=None, fvalue=None):
         matchinfo_dic = match_info_get(logger, fvalue, request.META)
 
         # get list of shots
-        shot_list = shot_list_get(logger, fkey, fvalue, ['timestamp', 'match_shot_resutl_id', 'team_id', 'player__last_name'])
+        shot_list = shot_list_get(logger, fkey, fvalue, ['timestamp', 'match_shot_resutl_id', 'team_id', 'player__last_name', 'zone'])
         result = []
 
         # create chart for shots per match
@@ -38,6 +40,10 @@ def matchstatistics_get(logger, request, fkey=None, fvalue=None):
         # create chart for shotstatus
         # pylint: disable=E0602
         result.append(_gameshootstatus_get(logger, _('Shots by Result'), request, fkey, fvalue, matchinfo_dic, shot_list))
+
+        # create shotzone chart
+        # pylint: disable=E0602        
+        result.append(_gamezoneshots_get(logger, _('Shots per Zone'), request, fkey, fvalue, matchinfo_dic, shot_list))
 
     else:
         result = {'error': 'Please specify a matchid'}
@@ -123,6 +129,29 @@ def _gameshots_get(logger, title, request, fkey, fvalue, matchinfo_dic, shot_lis
 
         shot_chart = shotsumchart_create(logger, shotsum_dic, shotmin_dic, goal_dic, plotline_list, matchinfo_dic)
         shot_table = shotsperiodtable_get(logger, title, shotmin_dic, matchinfo_dic)
+
+    stat_entry = {
+        'title': title,
+        'chart': shot_chart,
+        'table': shot_table,
+        'tabs': False
+    }
+
+    return stat_entry
+
+def _gamezoneshots_get(logger, title, request, fkey, fvalue, matchinfo_dic, shot_list):
+    """ shots per zone """
+    logger.debug('_gamezoneshots_get({0}:{1})'.format(fkey, fvalue))
+
+    shot_table = {}
+    shot_chart = {}
+
+    if shot_list:
+        # get shots and goals per zone
+        shotzone_dic = shotsperzone_count(logger, shot_list, matchinfo_dic)
+        shot_chart = shotsperzone_aggregate(logger, shotzone_dic, matchinfo_dic)
+        shot_chart['background_image'] = '{0}{1}{2}'.format(url_build(request.META), settings.STATIC_URL,'img/shot_zones.png')
+        shot_table = shotzonetable_get(logger, shotzone_dic, matchinfo_dic)
 
     stat_entry = {
         'title': title,
