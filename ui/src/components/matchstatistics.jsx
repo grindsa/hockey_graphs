@@ -26,13 +26,6 @@ export class MatchStatistics extends React.Component {
   async componentDidMount(){
     // get matchstatistics
     const matchstatistics = await asyncGET(this.props.matchstatistics + this.props.match.match_id + '?language=' + this.props.language)
-    /* this.setState(currentState => {
-      return {
-        ... currentState,
-        matchstatistics: matchstatistics
-      }
-    });
-    */
     this.setState({matchstatistics: matchstatistics})
   }
 
@@ -152,49 +145,17 @@ class Selector extends React.Component{
 }
 
 class Chart extends React.Component{
-  /* block to render chart */
-
- /*
-  constructor(props){
-    super(props);
-    this.state = {
-        chartOptions: this.props.options,
-    }
-    this.toggleChart = this.toggleChart.bind(this);
-  }
-
-  componentDidUpdate(prevProps) {
-    if (this.props.options !== prevProps.options) {
-      this.setState({
-        chartOptions: this.props.options,
-      })
-
-    }
-  }
-
-  async toggleChart(){
-    await this.setState(currentState => {
-        return {
-          ... currentState,
-          chartOptions: {
-            ... currentState.chartOptions,
-            plotOptions: {
-              ... currentState.chartOptions.plotOptions,
-              area: {
-                ... currentState.chartOptions.plotOptions.area,
-                stacking: 'percent'
-              }
-            }
-          }
-        }
-      })
-    }
-  */
-
+  /* block to render chart mobile differenciation is done via chartoptions */
   render() {
-    return (
-      <HighchartsReact highcharts={Highcharts} options={this.props.options} immutable={true} />
-    );
+    if (this.props.options.chart){
+      return (
+        <HighchartsReact highcharts={Highcharts} options={this.props.options} immutable={true} />
+      );
+    }else{
+      return (
+        <ZoneChart options={this.props.options} />
+      )
+    }
   }
 }
 
@@ -214,5 +175,39 @@ class Table extends React.Component{
         </table>
       );
     }
+  }
+}
+
+class ZoneChart extends React.Component{
+  /* render table with data differenciation if mobile or not */
+  render() {
+    if (isMobile) {
+      var img_width = 30
+      var shotzone_classes = "shotzone_mobile"
+    } else{
+      var img_width = 50
+      var shotzone_classes = "shotzone"
+    }
+    return (
+      <div className="w3-display-container w3-margin">
+        <img src={this.props.options.background_image} alt="shoot-zones" style={{width:"100%"}} />
+        <div className="w3-display-left w3-container">
+           <div className="w3-margin"><img className="w3-padidng-small middle" src={this.props.options.home_team.logo} alt="logo" width={img_width} /> <span className={shotzone_classes}>{ this.props.options.home_team.left.roundpercent }%</span></div>
+           <div className="w3-margin"><img className="w3-padidng-small middle" src={this.props.options.visitor_team.logo} alt="logo" width={img_width} /> <span className={shotzone_classes}>{ this.props.options.visitor_team.left.roundpercent }%</span></div>
+        </div>
+        <div className="w3-display-middle w3-container">
+          <div className="w3-margin"><img className="w3-padidng-small middle" src={this.props.options.home_team.logo} alt="logo" width={img_width} /> <span className={shotzone_classes}>{ this.props.options.home_team.slot.roundpercent }%</span></div>
+          <div className="w3-margin"><img className="w3-padidng-small middle" src={this.props.options.visitor_team.logo} alt="logo" width={img_width} /> <span className={shotzone_classes}>{ this.props.options.visitor_team.slot.roundpercent }%</span></div>
+        </div>
+        <div className="w3-display-right w3-container">
+          <div className="w3-margin"><img className="w3-padidng-small middle" src={this.props.options.home_team.logo} alt="logo" width={img_width} /> <span className={shotzone_classes}>{ this.props.options.home_team.right.roundpercent }%</span></div>
+          <div className="w3-margin"><img className="w3-padidng-small middle" src={this.props.options.visitor_team.logo} alt="logo" width={img_width} /> <span className={shotzone_classes}>{ this.props.options.visitor_team.right.roundpercent }%</span></div>
+        </div>
+        <div className="w3-display-bottommiddle w3-container">
+          <div className="w3-margin"><img className="w3-padidng-small middle" src={this.props.options.home_team.logo} alt="logo" width={img_width} /> <span className={shotzone_classes}>{ this.props.options.home_team.blue_line.roundpercent }%</span></div>
+          <div className="w3-margin"><img className="w3-padidng-small middle" src={this.props.options.visitor_team.logo} alt="logo" width={img_width} /> <span className={shotzone_classes}>{ this.props.options.visitor_team.blue_line.roundpercent }%</span></div>
+        </div>
+      </div>
+    );
   }
 }

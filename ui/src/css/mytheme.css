@@ -47,5 +47,16 @@ select.selectbg {
 .tab-red,.hover-tab-red:hover{border-color:#333333!important}
 .my-half{ width:50% }
 
+.shotzone {
+  font-weight: bold;
+  font-size:30px;
+  color: #ffffff;
+  vertical-align: middle;    
+}
 
-/* #f44336 */
+.shotzone_mobile {
+  font-weight: bold;
+  font-size:15px;
+  color: #ffffff;
+  vertical-align: middle;
+}
