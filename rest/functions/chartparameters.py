@@ -28,6 +28,7 @@ shot_missed_color = '#d8d9da'
 shot_blocked_color = '#000052'
 shot_goal_color = '#f01a29'
 shot_sog_color = '#7cb5ec'
+line_color = '#c00c18'
 
 
 def credit(text='©2020 GrindSa', href='https://github.com/grindsa/'):
@@ -66,7 +67,7 @@ def responsive_gameflow():
                 'xAxis': {'title': {'style': {'font-size': font_size_mobile}}, 'labels': {'style': {'fontSize': font_size_mobile}}},
                 'yAxis': {'title': {'style': {'font-size': font_size_mobile}}, 'labels': {'style': {'fontSize': font_size_mobile}}},
                 'title': {'x': 60, 'y': 40},
-                'subtitle': {'x': -10, 'y': 40},               
+                'subtitle': {'x': -10, 'y': 40},
                 }
         }]
     }

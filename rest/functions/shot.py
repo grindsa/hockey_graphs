@@ -326,7 +326,7 @@ def shotsperzone_count(logger, shot_list, matchinfo_dic):
 
 def shotsperzone_aggregate(logger, shotzone_dic, match_info_dic):
     """ reformat zone statistics for template processing """
-
+    logger.debug('shotsperzone_aggregate()')
     shotzonesum_dic = {'home_team': {'logo': match_info_dic['home_team_logo']}, 'visitor_team': {'logo': match_info_dic['visitor_team_logo']}}
 
     # aggregate shots per zone
@@ -352,3 +352,34 @@ def shotsperzone_aggregate(logger, shotzone_dic, match_info_dic):
                     shotzonesum_dic[team][zone]['roundpercent'] = 0
 
     return shotzonesum_dic
+
+
+def shotcoordinates_get(logger, shot_list, matchinfo_dic):
+    logger.debug('shotcoordinates_get()')
+
+    shotmap_dic = {'home_team': [], 'visitor_team': []}
+
+    for shot in shot_list:
+
+        (m_x, m_y) = _shoot_coordinates_convert(logger, shot['coordinate_x'], shot['coordinate_y'])
+        shot['meters_x'] = m_x
+        shot['meters_y'] = m_y
+        shot['minute'] = math.ceil(shot['timestamp']/60)
+
+        if shot['team_id'] == matchinfo_dic['home_team_id']:
+            team = 'home_team'
+            # flip counter clockwise for home_game
+            shot['x'] = shot['coordinate_y'] * -1
+            shot['y'] = shot['coordinate_x']
+        else:
+            team = 'visitor_team'
+            # flip clockwise for road_game
+            shot['x'] = shot['coordinate_y']
+            shot['y'] = shot['coordinate_x'] * -1
+
+        shot['name'] = '{0} {1}'.format(shot['player__first_name'], shot['player__last_name'])
+
+        # append to list
+        shotmap_dic[team].append(shot)
+
+    return shotmap_dic

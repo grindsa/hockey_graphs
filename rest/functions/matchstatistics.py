@@ -8,8 +8,8 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "hockey_graphs.settings")
 import django
 django.setup()
 from django.conf import settings
-from rest.functions.shot import shot_list_get, shotspermin_count, shotspermin_aggregate, shotspersec_count, shotstatus_count, shotstatus_aggregate, shotsperzone_count, shotsperzone_aggregate
-from rest.functions.shotcharts import shotsumchart_create, gameflowchart_create, shotstatussumchart_create
+from rest.functions.shot import shot_list_get, shotspermin_count, shotspermin_aggregate, shotspersec_count, shotstatus_count, shotstatus_aggregate, shotsperzone_count, shotsperzone_aggregate, shotcoordinates_get
+from rest.functions.shotcharts import shotsumchart_create, gameflowchart_create, shotstatussumchart_create, shotmapchart_create
 from rest.functions.shottables import shotsperiodtable_get, shotstatussumtable_get, shotzonetable_get
 from rest.functions.match import match_info_get
 from rest.functions.periodevent import penaltyplotlines_get
@@ -26,24 +26,27 @@ def matchstatistics_get(logger, request, fkey=None, fvalue=None):
         matchinfo_dic = match_info_get(logger, fvalue, request.META)
 
         # get list of shots
-        shot_list = shot_list_get(logger, fkey, fvalue, ['timestamp', 'match_shot_resutl_id', 'team_id', 'player__last_name', 'zone'])
+        shot_list = shot_list_get(logger, fkey, fvalue, ['timestamp', 'match_shot_resutl_id', 'team_id', 'player__first_name', 'player__last_name', 'zone', 'coordinate_x', 'coordinate_y', 'player__jersey'])
         result = []
 
         # create chart for shots per match
         # pylint: disable=E0602
-        result.append(_gameshots_get(logger, _('Shots per minute'), request, fkey, fvalue, matchinfo_dic, shot_list))
+        #result.append(_gameshots_get(logger, _('Shots per minute'), request, fkey, fvalue, matchinfo_dic, shot_list))
 
         # create shotflowchart
         # pylint: disable=E0602
-        result.append(_gameflow_get(logger, _('Gameflow'), request, fkey, fvalue, matchinfo_dic, shot_list))
+        #result.append(_gameflow_get(logger, _('Gameflow'), request, fkey, fvalue, matchinfo_dic, shot_list))
 
         # create chart for shotstatus
         # pylint: disable=E0602
-        result.append(_gameshootstatus_get(logger, _('Shots by Result'), request, fkey, fvalue, matchinfo_dic, shot_list))
+        #result.append(_gameshootstatus_get(logger, _('Shots by Result'), request, fkey, fvalue, matchinfo_dic, shot_list))
 
         # create shotzone chart
         # pylint: disable=E0602
-        result.append(_gamezoneshots_get(logger, _('Shots per Zone'), request, fkey, fvalue, matchinfo_dic, shot_list))
+        #result.append(_gamezoneshots_get(logger, _('Shots per Zone'), request, fkey, fvalue, matchinfo_dic, shot_list))
+
+        # shotmap
+        result.append(_gameshotmap_get(logger, _('Game Shotmap'), request, fkey, fvalue, matchinfo_dic, shot_list))
 
     else:
         result = {'error': 'Please specify a matchid'}
@@ -158,6 +161,31 @@ def _gamezoneshots_get(logger, title, request, fkey, fvalue, matchinfo_dic, shot
         'chart': shot_chart,
         'table': shot_table,
         'tabs': False
+    }
+
+    return stat_entry
+
+def _gameshotmap_get(logger, title, request, fkey, fvalue, matchinfo_dic, shot_list):
+    """ get gameshotmap """
+    logger.debug('_gameshotmap_get({0}:{1})'.format(fkey, fvalue))
+
+    shot_table = [None, None]
+    shot_chart = []
+
+    if shot_list:
+        # get shots and goals per min
+        shotmap_dic = shotcoordinates_get(logger, shot_list, matchinfo_dic)
+
+        shot_chart = [
+            shotmapchart_create(logger, shotmap_dic['home_team']),
+            shotmapchart_create(logger, shotmap_dic['visitor_team'])
+        ]
+
+    stat_entry = {
+        'title': title,
+        'chart': shot_chart,
+        'table': shot_table,        
+        'tabs': True
     }
 
     return stat_entry
