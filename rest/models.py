@@ -14,7 +14,7 @@ class Team(models.Model):
     team_id = models.IntegerField(primary_key=True)
     team_name = models.CharField(max_length=30)
     shortcut = models.CharField(max_length=5)
-    logo = models.CharField(max_length=35, blank=True)    
+    logo = models.CharField(max_length=35, blank=True)
     def __str__(self):
         return self.team_name
 
@@ -43,6 +43,11 @@ class Player(models.Model):
     jersey = models.IntegerField(default=0)
     def __str__(self):
         return self.last_name
+
+class Roster(models.Model):
+    """ shifts """
+    match = models.ForeignKey(Match, on_delete=models.CASCADE)
+    roster = jsonfield.JSONField(default=dict)
 
 class Shift(models.Model):
     """ shifts """
