@@ -276,7 +276,7 @@ def shotstatussumchart_create(logger, shotsum_dic, _shotstatus_dic, goal_dic, te
             'height': '60%'
         },
 
-        'exporting': exporting(button='clickme'),
+        'exporting': exporting(),
         'title': title(''),
         'credits': credit(),
         'tooltip': tooltip('<b>{point.x}.%s</b><br>' % _('min')),
@@ -372,93 +372,87 @@ def shotmapchart_create(logger, shotmap_list):
 
     bg_image = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTkwIiBoZWlnaHQ9IjU5NSIgdmlld0JveD0iMCAwIDU5MCA1OTUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjx0aXRsZT5Hcm91cCBDb3B5PC90aXRsZT48ZGVmcz48cGF0aCBkPSJNNzkgMzMwYzIwLjU0IDAgMzctMTYuNTY1IDM3LTM3cy0xNi41NjUtMzctMzctMzd2NzR6IiBpZD0iYSIvPjxtYXNrIGlkPSJiIiB4PSIwIiB5PSIwIiB3aWR0aD0iMzciIGhlaWdodD0iNzQiIGZpbGw9IiNmZmYiPjx1c2UgeGxpbms6aHJlZj0iI2EiLz48L21hc2s+PC9kZWZzPjxnIHRyYW5zZm9ybT0icm90YXRlKDkwIDI5Mi41IDI5NSkiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHBhdGggZD0iTTE0OCAwaDQ0MXY1ODRIMTQ4UzIxLjUwNCA1ODQgLjcwMyA0NDAuNDczVjE0NS4yMDdTMTIuOTIyIDkuOTYxIDE0OCAweiIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjYiIGZpbGw9IiNGRkYiLz48cGF0aCBkPSJNNTg3IDM4MVYyMDVjLTQ4LjYwMSAwLTg4IDM5LjM5OS04OCA4OHMzOS4zOTkgODggODggODh6IiBzdHJva2U9IiMyNTc1RDIiIHN0cm9rZS13aWR0aD0iMyIvPjxwYXRoIGQ9Ik00MTkgMS41djU4MiIgc3Ryb2tlPSIjMjU3NUQyIiBzdHJva2Utd2lkdGg9IjYiIHN0cm9rZS1saW5lY2FwPSJzcXVhcmUiLz48cGF0aCBkPSJNNzkuNSAyMS41djU0MyIgc3Ryb2tlPSIjRUUyQTQyIiBzdHJva2Utd2lkdGg9IjMiIHN0cm9rZS1saW5lY2FwPSJzcXVhcmUiLz48dXNlIHN0cm9rZT0iI0VFMkE0MiIgbWFzaz0idXJsKCNiKSIgc3Ryb2tlLXdpZHRoPSI2IiBmaWxsLW9wYWNpdHk9Ii4zIiBmaWxsPSIjMjU3NUQyIiB4bGluazpocmVmPSIjYSIvPjxwYXRoIGQ9Ik0xNzkuNSA2MC41djIwNy4wMDJNMjE5LjUgNjAuNXYyMDcuMDAyIiBzdHJva2U9IiNFRTJBNDIiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLWxpbmVjYXA9InNxdWFyZSIvPjxjaXJjbGUgc3Ryb2tlPSIjRUUyQTQyIiBzdHJva2Utd2lkdGg9IjMiIGZpbGw9IiNGRkYiIGN4PSIxOTkiIGN5PSIxNjQiIHI9Ijg5Ii8+PHBhdGggZD0iTTE0Ny41IDE1Ni41aDM5TTE0Ny41IDE3MS41aDM5TTIxMi41IDE1Ni41aDM5TTIxMi41IDE3MS41aDM5TTE4Ni41IDEzNC41djIyTTIxMi41IDEzNC41djIyTTE4Ni41IDE3MS41djIyTTIxMi41IDE3MS41djIyIiBzdHJva2U9IiNFRTJBNDIiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLWxpbmVjYXA9InNxdWFyZSIvPjxjaXJjbGUgc3Ryb2tlPSIjRUUyQTQyIiBmaWxsPSIjRUUyQTQyIiBjeD0iMTk5IiBjeT0iMTY0IiByPSI2Ii8+PGNpcmNsZSBzdHJva2U9IiNFRTJBNDIiIGZpbGw9IiNFRTJBNDIiIGN4PSI0NDMiIGN5PSIxNjQiIHI9IjYiLz48cGF0aCBkPSJNMTc5LjUgMzIyLjV2MjA3LjAwMk0yMTkuNSAzMjIuNXYyMDcuMDAyIiBzdHJva2U9IiNFRTJBNDIiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLWxpbmVjYXA9InNxdWFyZSIvPjxjaXJjbGUgc3Ryb2tlPSIjRUUyQTQyIiBzdHJva2Utd2lkdGg9IjMiIGZpbGw9IiNGRkYiIGN4PSIxOTkiIGN5PSI0MjYiIHI9Ijg5Ii8+PHBhdGggZD0iTTE0Ny41IDQxOC41aDM5TTE0Ny41IDQzMy41aDM5TTIxMi41IDQxOC41aDM5TTIxMi41IDQzMy41aDM5TTE4Ni41IDM5Ni41djIyTTIxMi41IDM5Ni41djIyTTE4Ni41IDQzMy41djIyTTIxMi41IDQzMy41djIyIiBzdHJva2U9IiNFRTJBNDIiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLWxpbmVjYXA9InNxdWFyZSIvPjxjaXJjbGUgc3Ryb2tlPSIjRUUyQTQyIiBmaWxsPSIjRUUyQTQyIiBjeD0iMTk5IiBjeT0iNDI2IiByPSI2Ii8+PGNpcmNsZSBzdHJva2U9IiNFRTJBNDIiIGZpbGw9IiNFRTJBNDIiIGN4PSI0NDMiIGN5PSI0MjYiIHI9IjYiLz48cGF0aCBkPSJNMTQ4IDBoNDQxdjU4NEgxNDhTMjEuNTA0IDU4NCAuNzAzIDQ0MC40NzNWMTQ1LjIwN1MxMi45MjIgOS45NjEgMTQ4IDB6IiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iNiIvPjwvZz48L3N2Zz4="
 
-    title = ''
-
     chart_options = {
 
-    'chart': {
-        'type': 'scatter',
-        'plotBorderWidth': 0,
-        'plotBackgroundImage': bg_image,
-        'zoomType': 'xy',
-        'height': '110%'
-    },
+        'chart': {
+            'type': 'scatter',
+            'plotBorderWidth': 0,
+            'plotBackgroundImage': bg_image,
+            'zoomType': 'xy',
+            'height': '110%'
+        },
 
-    'exporting': {
-        'chartOptions': {
-            'plotOptions': {
-                'series': {
-                    'dataLabels': {
-                        'enabled': 0,
-                    },
+        'exporting': exporting(),
+        'title': title(''),
+        'credits': credit(),
+        'legend': legend(),
+
+        'tooltip': {
+            'useHTML': 1,
+            'headerFormat': '<table class="w3-tiny">',
+            'pointFormat': '<tr><td><b>{point.name} ({point.jersey})<b></td></tr>' +
+                           '<tr><td>{point.minute}. %s</td></tr>' % _('min'),
+            'footerFormat': '</table>',
+            'followPointer': 1,
+        },
+
+        'plotOptions': {
+            'series': {
+                'dataLabels': {
+                    'enabled': 1,
+                    'color': '#000000',
+                    'style': {'textShadow': 0, 'textOutline': 0, 'fontSize': font_size},
+                    'y': 13,
+                    'format': '{point.jersey}',
+                    'align': 'center',
+                    'allowOverlap': 1,
                 },
+                'color': shot_sog_color,
+                'lineColor': line_color,
             },
         },
-        'fallbackToExportServer': 0,
-    },
 
-    'legend': {
-        'enabled': 1,
-        'itemStyle': {'color': '#404040', 'font-size': font_size},
-        'verticalAlign': 'bottom',
-        'squareSymbol': 1,
-    },
+        'xAxis': {
+            'visible': 0,
+            'labels': {'enabled': 0},
+            'min': -100,
+            'max': 100,
+            'tickInterval': 0,
+        },
 
-    'title': {
-        'text': title,
-    },
-
-    'tooltip': {
-        'useHTML': 1,
-        'headerFormat': '<table class="w3-tiny">',
-        'pointFormat': '<tr><td><b>{point.name} ({point.jersey})<b></td></tr>' +
-                       '<tr><td>{point.minute}. %s</td></tr>' % _('min'),
-        'footerFormat': '</table>',
-        'followPointer': 1,
-    },
-
-    'plotOptions': {
-        'series': {
-            'dataLabels': {
-                'enabled': 1,
-                'color': '#000000',
-                'style': {'textShadow': 0, 'textOutline': 0, 'fontSize': font_size},
-                'y': 13,
-                'format': '{point.jersey}',
-                'align': 'center',
-                'allowOverlap': 1,
+        'yAxis': {
+            'visible': 0,
+            'gridLineWidth': 0,
+            'title': {
+                'text': '',
             },
-            'color': shot_sog_color,
-            'lineColor': line_color,
+            'labels': {'enabled': 0},
+            'min': 0,
+            'max': 105,
+            'tickInterval': 0,
         },
-    },
 
-    'xAxis': {
-        'visible': 0,
-        'labels': {'enabled': 0},
-        'min': -100,
-        'max': 100,
-        'tickInterval': 0,
-    },
+        'series': [
+            {'name': _('Shots on Goal'), 'color': shot_sog_color, 'data': data_dic[1], 'marker': {'radius': 15, 'symbol': 'circle'}},
+            {'name': _('missed'), 'data': data_dic[2], 'color': shot_missed_color, 'marker': {'symbol': 'circle', 'radius': 15}},
+            {'name': _('blocked'), 'color': shot_blocked_color, 'data': data_dic[3], 'marker': {'symbol': 'circle', 'radius': 15}},
+            {'name': _('Goals'), 'color': shot_goal_color, 'data': data_dic[4], 'marker': {'symbol': 'circle', 'radius': 15}},
+            ],
 
-    'yAxis': {
-        'visible': 0,
-        'gridLineWidth': 0,
-        'title': {
-            'text': '',
-        },
-        'labels': {'enabled': 0},
-        'min': 0,
-        'max': 105,
-        'tickInterval': 0,
-    },
-
-    'series': [
-        {'name': _('Shots on Goal'), 'color': shot_sog_color, 'data': data_dic[1], 'marker': {'radius': 15, 'symbol': 'circle'}},
-        {'name': _('missed'), 'data': data_dic[2], 'color': shot_missed_color, 'marker': {'symbol': 'circle', 'radius': 15}},
-        {'name': _('blocked'), 'color': shot_blocked_color, 'data': data_dic[3], 'marker': {'symbol': 'circle', 'radius': 15}},
-        {'name': _('Goals'), 'color': shot_goal_color, 'data': data_dic[4], 'marker': {'symbol': 'circle', 'radius': 15}},
-        ],
+       'responsive': {
+            'rules': [{
+                'condition': {'maxWidth': 500},
+                'chartOptions': {
+                'series': [
+                    {'name': _('Shots on Goal'), 'color': shot_sog_color, 'data': data_dic[1], 'marker': {'radius': 12, 'symbol': 'circle'}},
+                    {'name': _('missed'), 'data': data_dic[2], 'color': shot_missed_color, 'marker': {'symbol': 'circle', 'radius': 12}},
+                    {'name': _('blocked'), 'color': shot_blocked_color, 'data': data_dic[3], 'marker': {'symbol': 'circle', 'radius': 12}},
+                    {'name': _('Goals'), 'color': shot_goal_color, 'data': data_dic[4], 'marker': {'symbol': 'circle', 'radius': 12}},
+                    ],
+                'plotOptions':{'series': {'dataLabels': {'y': 15}}}
+                }
+            }]
+         }
     }
 
     return chart_options

@@ -53,10 +53,12 @@ def title(text, _font_size=title_font_size):
     """ set title """
     return {'text': text, 'style': {'color': text_color, 'font-size': _font_size}}
 
-def legend(enabled=1):
+def legend(enabled=1, additional_parameters={}):
     """ create legend structure """
-    return {'enabled': enabled, 'useHTML': 1, 'itemStyle': {'color': text_color, 'font-size': font_size}, 'verticalAlign': legend_valign, 'symbolRadius': 0}
-
+    result = {'enabled': enabled, 'useHTML': 1, 'itemStyle': {'color': text_color, 'font-size': font_size}, 'verticalAlign': legend_valign, 'symbolRadius': 0}
+    for key, value in additional_parameters.items():
+        result[key] = value
+    return result
 
 def responsive_gameflow():
     """ options for responsiveness """
