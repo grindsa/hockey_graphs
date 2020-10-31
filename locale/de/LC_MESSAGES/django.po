@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-10-27 07:34+0100\n"
-"PO-Revision-Date: 2020-10-27 07:34+0100\n"
+"POT-Creation-Date: 2020-10-31 20:26+0100\n"
+"PO-Revision-Date: 2020-10-31 20:33+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -18,75 +18,125 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 2.4.1\n"
 
-#: .\rest\functions\matchstatistics.py:31 .\rest\functions\shotcharts.py:78
+#: .\rest\functions\matchstatistics.py:47 .\rest\functions\shotcharts.py:85
 msgid "Shots per minute"
 msgstr "Schüsse pro Minute"
 
-#: .\rest\functions\matchstatistics.py:34
+#: .\rest\functions\matchstatistics.py:51
 msgid "Gameflow"
 msgstr "Spielfluss"
 
-#: .\rest\functions\matchstatistics.py:37
+#: .\rest\functions\matchstatistics.py:55
 msgid "Shots by Result"
 msgstr "Schussstatistik"
 
-#: .\rest\functions\shotcharts.py:54 .\rest\functions\shotcharts.py:167
-#: .\rest\functions\shotcharts.py:269
+#: .\rest\functions\matchstatistics.py:59
+msgid "Shots per Zone"
+msgstr "Schüsse pro Zone"
+
+#: .\rest\functions\matchstatistics.py:62
+msgid "Game Shotmap"
+msgstr "Shotmap des Spiels"
+
+#: .\rest\functions\matchstatistics.py:65
+msgid "Shot attempts at even strength (CF, CA)"
+msgstr "Schüsse bei gleicher Anzahl von Spielern auf dem Eis (CF, CA)"
+
+#: .\rest\functions\shotcharts.py:60 .\rest\functions\shotcharts.py:174
+#: .\rest\functions\shotcharts.py:282 .\rest\functions\shotcharts.py:394
 msgid "min"
 msgstr "Minute"
 
-#: .\rest\functions\shotcharts.py:61 .\rest\functions\shotcharts.py:192
-#: .\rest\functions\shotcharts.py:284
+#: .\rest\functions\shotcharts.py:68 .\rest\functions\shotcharts.py:200
+#: .\rest\functions\shotcharts.py:298
 msgid "Game Time"
 msgstr "Spielminute"
 
-#: .\rest\functions\shotcharts.py:84 .\rest\functions\shotcharts.py:306
+#: .\rest\functions\shotcharts.py:91 .\rest\functions\shotcharts.py:320
 msgid "Cumulated shots"
 msgstr "Schüsse gesamt"
 
-#: .\rest\functions\shotcharts.py:91
+#: .\rest\functions\shotcharts.py:98
 msgid "per min"
 msgstr "pro min"
 
-#: .\rest\functions\shotcharts.py:166
+#: .\rest\functions\shotcharts.py:173
 msgid "based on an idea of @DanielT_W"
 msgstr "Nach einer Idee von @DanielT_W"
 
-#: .\rest\functions\shotcharts.py:218
+#: .\rest\functions\shotcharts.py:226
 msgid "Shot attempts per 60min (SH60)"
 msgstr "Schüsse pro 60min (SH60)"
 
-#: .\rest\functions\shotcharts.py:311 .\rest\functions\shottables.py:37
+#: .\rest\functions\shotcharts.py:325 .\rest\functions\shotcharts.py:437
+#: .\rest\functions\shotcharts.py:448 .\rest\functions\shottables.py:39
 msgid "missed"
 msgstr "vorbei"
 
-#: .\rest\functions\shotcharts.py:315 .\rest\functions\shottables.py:37
+#: .\rest\functions\shotcharts.py:329 .\rest\functions\shotcharts.py:438
+#: .\rest\functions\shotcharts.py:449 .\rest\functions\shottables.py:39
 msgid "blocked"
 msgstr "geblockt"
 
-#: .\rest\functions\shotcharts.py:319
-msgid "Goal"
-msgstr "Tor"
+#: .\rest\functions\shotcharts.py:333 .\rest\functions\shotcharts.py:439
+#: .\rest\functions\shotcharts.py:450 .\rest\functions\shottables.py:39
+msgid "Goals"
+msgstr "Tore"
 
-#: .\rest\functions\shotcharts.py:324
-msgid "SOG"
-msgstr "Torschüsse"
-
-#: .\rest\functions\shottables.py:13 .\rest\functions\shottables.py:35
-msgid "Total"
-msgstr "Summe"
-
-#: .\rest\functions\shottables.py:35
-msgid "Shots per Period"
-msgstr "Schüsse pro Minute"
-
-#: .\rest\functions\shottables.py:37
+#: .\rest\functions\shotcharts.py:338 .\rest\functions\shotcharts.py:436
+#: .\rest\functions\shotcharts.py:447 .\rest\functions\shottables.py:39
 msgid "Shots on Goal"
 msgstr "Torschüsse"
 
+#: .\rest\functions\shotcharts.py:540 .\rest\functions\shotcharts.py:566
+msgid "Shot attempts \"for\" at 5v5"
+msgstr "Torschüsse bei 5v5 (CF)"
+
+#: .\rest\functions\shotcharts.py:541 .\rest\functions\shotcharts.py:578
+msgid "Shot attempts \"against\" at 5v5"
+msgstr "Torschüsse des Gegners bei 5v5 (CA)"
+
+#: .\rest\functions\shottables.py:14 .\rest\functions\shottables.py:37
+msgid "Total"
+msgstr "Summe"
+
 #: .\rest\functions\shottables.py:37
-msgid "Goals"
-msgstr "Tore"
+msgid "Shots per Period"
+msgstr "Schüsse pro Minute"
+
+#: .\rest\functions\shottables.py:70
+msgid "Behind Goal"
+msgstr "Hinter dem Tor"
+
+#: .\rest\functions\shottables.py:71
+msgid "Left"
+msgstr "Links"
+
+#: .\rest\functions\shottables.py:72
+msgid "Slot"
+msgstr "Slot"
+
+#: .\rest\functions\shottables.py:73
+msgid "Blueline"
+msgstr "Blaue Linie"
+
+#: .\rest\functions\shottables.py:74
+msgid "Right"
+msgstr "Rechts"
+
+#: .\rest\functions\shottables.py:75
+msgid "Neutral Zone"
+msgstr "Neutrale Zone"
+
+#: .\rest\functions\shottables.py:104
+msgid "Time on Ice"
+msgstr "Eiszeit"
+
+#~ msgid "Goal"
+#~ msgstr "Tor"
+
+#~ msgid "SOG"
+#~ msgstr "Torschüsse"
 
 #~ msgid "Overall shots"
 #~ msgstr "Schüsse gesamt"
