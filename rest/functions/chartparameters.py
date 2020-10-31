@@ -30,6 +30,12 @@ shot_goal_color = '#f01a29'
 shot_sog_color = '#7cb5ec'
 line_color = '#c00c18'
 
+line1_color = chart_color3
+line2_color = chart_color1
+line3_color = chart_color4
+line4_color = chart_color2
+line5_color = chart_color5
+
 
 def credit(text='©2020 GrindSa', href='https://github.com/grindsa/'):
     """ add credits """
@@ -39,7 +45,7 @@ def labels():
     """ set labels """
     return {'style': {'fontSize': font_size},}
 
-def exporting(button=None):
+def exporting(_button=None):
     """ export structure """
     output_dic = {'chartOptions': {'plotOptions': {'series': {'dataLabels': {'enabled': 0}}}}, 'fallbackToExportServer': 0}
     # output_dic['buttons'] = {'customButton': {'text': button}}
@@ -53,17 +59,18 @@ def title(text, _font_size=title_font_size):
     """ set title """
     return {'text': text, 'style': {'color': text_color, 'font-size': _font_size}}
 
-def legend(enabled=1, additional_parameters={}):
+def legend(enabled=1, additional_parameters=None):
     """ create legend structure """
     result = {'enabled': enabled, 'useHTML': 1, 'itemStyle': {'color': text_color, 'font-size': font_size}, 'verticalAlign': legend_valign, 'symbolRadius': 0}
-    for key, value in additional_parameters.items():
-        result[key] = value
+    if additional_parameters:
+        for key, value in additional_parameters.items():
+            result[key] = value
     return result
 
 def responsive_gameflow():
     """ options for responsiveness """
     return {
-       'rules': [{
+        'rules': [{
             'condition': {'maxWidth': 500},
             'chartOptions': {
                 'xAxis': {'title': {'style': {'font-size': font_size_mobile}}, 'labels': {'style': {'fontSize': font_size_mobile}}},
@@ -77,7 +84,7 @@ def responsive_gameflow():
 def responsive_y1():
     """ options for responsiveness """
     return {
-       'rules': [{
+        'rules': [{
             'condition': {'maxWidth': 500},
             'chartOptions': {
                 'legend': {'verticalAlign': legend_valign_mobile, 'layout': 'horizontal', 'itemStyle': {'font-size': font_size_mobile}},
@@ -91,7 +98,7 @@ def responsive_y1():
 def responsive_y2():
     """ options for responsiveness """
     return {
-       'rules': [{
+        'rules': [{
             'condition': {'maxWidth': 500},
             'chartOptions': {
                 'legend': {'verticalAlign': legend_valign_mobile, 'layout': 'horizontal', 'itemStyle': {'font-size': font_size_mobile}},

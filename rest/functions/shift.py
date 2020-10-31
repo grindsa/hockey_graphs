@@ -22,3 +22,16 @@ def shift_add(logger, fkey, fvalue, data_dic):
         result = None
     logger.debug('shift_add({0}:{1}) ended with {2}'.format(fkey, fvalue, result))
     return result
+
+def shift_get(logger, fkey, fvalue, vlist=('match_id', 'shift')):
+    """ get info for a specifc match_id """
+    logger.debug('shift_get({0}:{1})'.format(fkey, fvalue))
+    try:
+        if len(vlist) == 1:
+            shift_dic = list(Shift.objects.filter(**{fkey: fvalue}).values_list(vlist[0], flat=True))[0]
+        else:
+            shift_dic = Shift.objects.filter(**{fkey: fvalue}).values(*vlist)[0]
+    except BaseException:
+        shift_dic = {}
+
+    return shift_dic

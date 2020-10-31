@@ -62,6 +62,8 @@ def shotstatussumtable_get(logger, _title, shot_min_dic, team, _matchinfo_dic):
 
 def shotzonetable_get(logger, shot_zone_dic, matchinfo_dic):
     """ create shotzone table """
+    # pylint: disable=E0602
+    logger.debug('shotzonetable_get()')
 
     table_dic = {'th': ['Team', 'Schuss-Zonen', '1st', '2nd', '3rd', 'OT', 'Summe'], 'align': [None, 'w3-left-align', None, None, None, None, None], 'td': []}
 
@@ -91,5 +93,19 @@ def shotzonetable_get(logger, shot_zone_dic, matchinfo_dic):
             sum_ += shot_zone_dic['visitor_team'][pos][ele]
         tmp_list.append(sum_)
         table_dic['td'].append(tmp_list)
+
+    return table_dic
+
+def gamecorsi_table(logger, player_corsi_dic, _team, _matchinfo_dic, sorter='corsi'):
+    """ create corsi table """
+    # pylint: disable=E0602
+    logger.debug('gamecorsi_table()')
+
+    table_dic = {'th': ['Name', 'Reihe', '#', 'CF 5v5', 'CA 5v5', 'Corsi', 'CF% 5v5', _('Time on Ice')], 'align': ['w3-left-align', None, None, None, None, None, None, None], 'tooltip': [None, None, 'Schüsse der Eisbären bei Spieler auf dem Eis', 'Schüsse der Gegner bei Spieler auf dem Eis', 'Plus-/Minus-Bilanz aller Schüsse', 'Prozentuale Plus-/Minus-Bilanz aller Schüsse', None, None], 'td': []}
+    for player in sorted(player_corsi_dic.values(), key=lambda x: x[sorter], reverse=True):
+        # small hack
+        if 'line_number' not in player:
+            player['line_number'] = 5
+        table_dic['td'].append([player['name'], 'fa fa-circle fa-lg line{0}'.format(player['line_number']), player['jersey'], player['shots'], player['shots_against'], player['corsi'], '{0}%'.format(player['cf_pctg']), '{0:02d}:{1:02d}'.format(*divmod(player['toi'], 60))])
 
     return table_dic

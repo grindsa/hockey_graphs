@@ -3,7 +3,7 @@
 import math
 # pylint: disable=E0401
 from rest.functions.chartparameters import credit, exporting, responsive_gameflow, responsive_y1, responsive_y2, plotoptions_marker_disable, title, legend, tooltip, labels, font_size
-from rest.functions.chartparameters import text_color, plotlines_color, chart_color1, chart_color2, chart_color3, chart_color4, chart_color5, chart_color6, chart_color8, chart_color9, shot_missed_color, shot_blocked_color, shot_goal_color, shot_sog_color, line_color
+from rest.functions.chartparameters import text_color, plotlines_color, chart_color1, chart_color2, chart_color3, chart_color4, chart_color5, chart_color6, chart_color8, chart_color9, shot_missed_color, shot_blocked_color, shot_goal_color, shot_sog_color, line_color, line1_color, line2_color, line3_color, line4_color, line5_color
 
 # pylint: disable=R0914
 def shotsumchart_create(logger, shot_sum_dic, shot_min_dic, goal_dic, plotline_list, machinfo_dic):
@@ -245,7 +245,7 @@ def gameflowchart_create(logger, shot_flow_dic, goal_dic, plotline_list, matchin
 
     return chart_options
 
-def shotstatussumchart_create(logger, shotsum_dic, _shotstatus_dic, goal_dic, team, matchinfo_dic):
+def shotstatussumchart_create(logger, shotsum_dic, _shotstatus_dic, goal_dic, team, _matchinfo_dic):
     """ create shotstatus chart """
     # pylint: disable=E0602
     logger.debug('shotstatussumchart_create()')
@@ -439,20 +439,164 @@ def shotmapchart_create(logger, shotmap_list):
             {'name': _('Goals'), 'color': shot_goal_color, 'data': data_dic[4], 'marker': {'symbol': 'circle', 'radius': 15}},
             ],
 
-       'responsive': {
+        'responsive': {
             'rules': [{
                 'condition': {'maxWidth': 500},
                 'chartOptions': {
-                'series': [
-                    {'name': _('Shots on Goal'), 'color': shot_sog_color, 'data': data_dic[1], 'marker': {'radius': 12, 'symbol': 'circle'}},
-                    {'name': _('missed'), 'data': data_dic[2], 'color': shot_missed_color, 'marker': {'symbol': 'circle', 'radius': 12}},
-                    {'name': _('blocked'), 'color': shot_blocked_color, 'data': data_dic[3], 'marker': {'symbol': 'circle', 'radius': 12}},
-                    {'name': _('Goals'), 'color': shot_goal_color, 'data': data_dic[4], 'marker': {'symbol': 'circle', 'radius': 12}},
+                    'series': [
+                        {'name': _('Shots on Goal'), 'color': shot_sog_color, 'data': data_dic[1], 'marker': {'radius': 12, 'symbol': 'circle'}},
+                        {'name': _('missed'), 'data': data_dic[2], 'color': shot_missed_color, 'marker': {'symbol': 'circle', 'radius': 12}},
+                        {'name': _('blocked'), 'color': shot_blocked_color, 'data': data_dic[3], 'marker': {'symbol': 'circle', 'radius': 12}},
+                        {'name': _('Goals'), 'color': shot_goal_color, 'data': data_dic[4], 'marker': {'symbol': 'circle', 'radius': 12}},
                     ],
-                'plotOptions':{'series': {'dataLabels': {'y': 15}}}
-                }
+                    'plotOptions':{'series': {'dataLabels': {'y': 15}}}
+                    }
             }]
-         }
+        }
     }
+
+    return chart_options
+
+def gamecorsichart_create(logger, player_corsi_dic):
+    """ create corsi chart for a certain game """
+    # pylint: disable=E0602
+    logger.debug('gamecorsichart_create()')
+
+    # format data series in a way we need it
+    data_list = {}
+    # this dictionary is to create temporary bubble overlaps
+    tmp_pos_dic = {}
+
+    # plotlines will be calculated based on this dictionary
+    shotsum_dic = {'shots': 0, 'shots_against': 0}
+
+    # we scale the bars depending on amout of shots or shots-against
+    scale_max = 0
+
+    for player in sorted(player_corsi_dic.values(), key=lambda x: (x['shots'])):
+        # count shotsum
+        shotsum_dic['shots'] += player['shots']
+        shotsum_dic['shots_against'] += player['shots_against']
+
+        tmp_dic = {
+            'x': player['shots'],
+            'y': player['shots_against'],
+            'mx': player['shots'],
+            'my': player['shots_against'],
+            'z': math.ceil(player['toi']/60),
+            # 'z': 4,
+            'name': player['name'],
+            'mtoi': '{0:02d}:{1:02d}'.format(*divmod(player['toi'], 60)),
+            'jersey': player['jersey'],
+            'labelrank': 1,
+            }
+
+        if scale_max < player['shots']:
+            scale_max = player['shots']
+        if scale_max < player['shots_against']:
+            scale_max = player['shots_against']
+
+        # hack to fix bubble overlaps
+        pos = '{0}:{1} '.format(player['shots'], player['shots_against'])
+        if pos in tmp_pos_dic:
+            tmp_dic['x'] += 0.5
+            tmp_dic['y'] += 0.5
+            tmp_pos_dic[pos] = '{0}:{1} '.format(tmp_dic['x'], tmp_dic['y'])
+        else:
+            tmp_pos_dic[pos] = 1
+
+        if 'line_number' in player:
+            if player['line_number'] not in data_list:
+                data_list[player['line_number']] = []
+            tmp_dic['labelrank'] = 5 - player['line_number']
+            data_list[player['line_number']].append(tmp_dic)
+        else:
+            tmp_dic['labelrank'] = 1
+            if 4 not in data_list:
+                data_list[4] = []
+            data_list[4].append(tmp_dic)
+
+    shotsum_dic['shots_avg'] = round(shotsum_dic['shots'] / len(player_corsi_dic.keys()), 0)
+    shotsum_dic['shots_against_avg'] = round(shotsum_dic['shots_against'] / len(player_corsi_dic.keys()), 0)
+
+    chart_options = {
+
+        'chart': {
+            'type': 'bubble',
+            'plotBorderWidth': 1,
+            'zoomType': 'xy',
+            'height': '105%',
+        },
+
+        'exporting': exporting(),
+        'title': title(''),
+        'credits': credit(),
+        'legend': legend(),
+
+        'tooltip': {
+            'useHTML': 1,
+            'headerFormat': '<table class="w3-tiny">',
+            'pointFormat': '<tr><td colspan="3"><b>{point.name} ({point.jersey})<b></td></tr>' +
+                           '<tr><td>%s:</td><td>{point.mx}</td></tr>' % _('Shot attempts "for" at 5v5') +
+                           '<tr><td>%s:</td><td>{point.my}</td></tr>' % _('Shot attempts "against" at 5v5') +
+                           '<tr><td>Eiszeit:</td><td>{point.mtoi}m</td></tr>',
+            'footerFormat': '</table>',
+            'followPointer': 1,
+        },
+
+        'plotOptions': {
+            'series': {
+                'dataLabels': {
+                    'enabled': 1,
+                    'style': {'textShadow': 0, 'textOutline': 0, 'fontSize': font_size},
+                    'format': '{point.jersey}',
+                },
+                'color': 'rgba(189, 191, 193, 6)',
+                'lineColor': line_color,
+            },
+            'bubble': {
+                'minSize': 3,
+                'maxSize': 50,
+            }
+        },
+
+        'xAxis': {
+            'gridLineWidth': 1,
+            'title': {
+                'text': _('Shot attempts "for" at 5v5'),
+                'style': {'color': text_color, 'font-size': font_size},
+            },
+            'labels': {'style': {'fontSize': font_size}},
+            'plotLines': [{'color': plotlines_color, 'width': 2, 'value': shotsum_dic['shots_avg']}],
+            'min': 0,
+            'tickInterval': 1,
+            'showFirstLabel': 1,
+            'showLastLabel': 1,
+        },
+        'yAxis': {
+            'title': {
+                'text': _('Shot attempts "against" at 5v5'),
+                'style': {'color': text_color, 'font-size': font_size},
+            },
+            'labels': {'style': {'fontSize': font_size},},
+            'plotLines': [{'color': plotlines_color, 'width': 2, 'value': shotsum_dic['shots_against_avg']}],
+            'min': 0,
+            'reversed': 1,
+            'tickInterval': 1,
+            'showFirstLabel': 1,
+            'showLastLabel': 1,
+        },
+
+        'series': [],
+    }
+
+    # data_dic = {1: '#333333', 2: '#595959', 3: '#8c8c8c', 4: '#bfbfbf', 5: '#f2f2f2'}
+    data_dic = {1: line1_color, 2: line2_color, 3: line3_color, 4: line4_color, 5: line5_color}
+    if len(data_list) == 1:
+        chart_options['series'].append({'name': 'Spieler', 'data': list(data_list.values())[0], 'zIndex': 1, 'marker': {'fillOpacity': 0.7}})
+    else:
+        for line in sorted(data_dic.keys()):
+            if line in data_list:
+                chart_options['series'].append({'name': '{0}. Reihe'.format(line), 'data': data_list[line], 'zIndex': 5-line, 'color': data_dic[line], 'marker': {'fillOpacity': 0.7}})
 
     return chart_options
