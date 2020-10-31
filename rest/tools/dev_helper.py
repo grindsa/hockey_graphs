@@ -31,7 +31,7 @@ if __name__ == '__main__':
     request.META = {'foo': 'bar'}
 
     FKEY = 'match_id'
-    FVALUE = 1428
+    FVALUE = 1786
 
 
     result = matchstatistics_get(LOGGER, request, FKEY, FVALUE)
