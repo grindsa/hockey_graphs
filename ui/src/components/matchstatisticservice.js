@@ -21,9 +21,14 @@ export const createTableBody = function(data){
     var tablebody = data.td.map((tr, index) =>{
       var trow = tr.map((td, index) =>{
         const image = td.toString().includes("img")
+        const icon = td.toString().includes("fa fa-")
         if (image){
           return(
             <td key={`td-${index}`}><img src={td} width='25' /></td>
+          )
+        }else if(icon){
+          return(
+            <td key={`td-${index}`}><i className={td} /></td>
           )
         }else{
           return(

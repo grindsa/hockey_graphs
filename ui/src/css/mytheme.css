@@ -51,7 +51,7 @@ select.selectbg {
   font-weight: bold;
   font-size:30px;
   color: #ffffff;
-  vertical-align: middle;    
+  vertical-align: middle;
 }
 
 .shotzone_mobile {
@@ -60,3 +60,9 @@ select.selectbg {
   color: #ffffff;
   vertical-align: middle;
 }
+
+.line1 {color: #030357;}
+.line2 {color: #7cb5ec;}
+.line3 {color: #68717a;}
+.line4 {color: #b0b3b5;}
+.line5 {color: #e6e6fe;}
