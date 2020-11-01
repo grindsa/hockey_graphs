@@ -44,6 +44,12 @@ class Player(models.Model):
     def __str__(self):
         return self.last_name
 
+class Playerstat(models.Model):
+    """ shifts """
+    match = models.ForeignKey(Match, on_delete=models.CASCADE)
+    home = jsonfield.JSONField(default=dict)
+    visitor = jsonfield.JSONField(default=dict)
+
 class Roster(models.Model):
     """ shifts """
     match = models.ForeignKey(Match, on_delete=models.CASCADE)
