@@ -81,6 +81,20 @@ def responsive_gameflow():
         }]
     }
 
+def responsive_bubble():
+    """ options for responsiveness """
+    return {
+        'rules': [{
+            'condition': {'maxWidth': 500},
+            'chartOptions': {
+                'legend': {'verticalAlign': legend_valign_mobile, 'layout': 'horizontal', 'itemStyle': {'font-size': font_size_mobile}},
+                'xAxis': {'title': {'style': {'font-size': font_size_mobile}}, 'labels': {'style': {'fontSize': font_size_mobile}}},
+                'yAxis': {'title': {'style': {'font-size': font_size_mobile}}, 'labels': {'style': {'fontSize': font_size_mobile}}},
+                'plotOptions': {'bubble': {'minSize': 3, 'maxSize': 35}}
+                }
+        }]
+    }
+
 def responsive_y1():
     """ options for responsiveness """
     return {

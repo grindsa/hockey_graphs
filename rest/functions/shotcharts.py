@@ -2,7 +2,7 @@
 """ list of functions for shots """
 import math
 # pylint: disable=E0401
-from rest.functions.chartparameters import credit, exporting, responsive_gameflow, responsive_y1, responsive_y2, plotoptions_marker_disable, title, legend, tooltip, labels, font_size
+from rest.functions.chartparameters import credit, exporting, responsive_gameflow, responsive_y1, responsive_y2, responsive_bubble, plotoptions_marker_disable, title, legend, tooltip, labels, font_size
 from rest.functions.chartparameters import text_color, plotlines_color, chart_color1, chart_color2, chart_color3, chart_color4, chart_color5, chart_color6, chart_color8, chart_color9, shot_missed_color, shot_blocked_color, shot_goal_color, shot_sog_color, line_color, line1_color, line2_color, line3_color, line4_color, line5_color
 
 # pylint: disable=R0914
@@ -532,7 +532,7 @@ def gamecorsichart_create(logger, player_corsi_dic):
         'title': title(''),
         'credits': credit(),
         'legend': legend(),
-        'responsive': responsive_y1(),
+        'responsive': responsive_bubble(),
 
         'tooltip': {
             'useHTML': 1,
@@ -676,6 +676,7 @@ def gamecorsippctgchart_create(logger, player_corsi_dic):
 
 def puckpossessionchart_create(logger, shotsum_dic, goal_dic, matchinfo_dic):
     """ create area chart showing puck possession """
+    # pylint: disable=E0602    
     logger.debug('puckpossessionchart_create()')
 
     min_list = list(shotsum_dic['home_team'].keys())
