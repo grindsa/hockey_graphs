@@ -3,6 +3,7 @@
 # pylint: disable=E0401, C0413
 import sys
 import os
+import math
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "hockey_graphs.settings")
 import django
@@ -33,5 +34,31 @@ def shift_get(logger, fkey, fvalue, vlist=('match_id', 'shift')):
             shift_dic = Shift.objects.filter(**{fkey: fvalue}).values(*vlist)[0]
     except BaseException:
         shift_dic = {}
+
+    return shift_dic
+
+def toifromshifts_get(logger, matchinfo_dic, shift_list):
+    """ get time on ice per player"""
+    logger.debug('toifromshifts_get()')
+
+    # inititialize dictionaries to store the data
+    shift_dic = {'home_team': {1: {}, 2: {}, 3: {}, 4: {}}, 'visitor_team': {1: {}, 2: {}, 3: {}, 4: {}}}
+
+    for shift in shift_list:
+        if shift['team']['id'] == matchinfo_dic['home_team_id']:
+            team_name = 'home_team'
+        else:
+            team_name = 'visitor_team'
+
+        # get the shift data we need
+        player_name = shift['player']['name']
+        period = math.ceil(shift['endTime']['time']/1200)
+        shift_duration = (shift['endTime']['time'] - shift['startTime']['time'])
+
+        # create entry if does not exist and add sum
+        if player_name not in shift_dic[team_name][period]:
+            shift_dic[team_name][period][player_name] = 0
+
+        shift_dic[team_name][period][player_name] += shift_duration
 
     return shift_dic

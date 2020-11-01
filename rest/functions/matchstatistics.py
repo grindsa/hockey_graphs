@@ -11,11 +11,14 @@ from django.conf import settings
 from rest.functions.corsi import gamecorsi_get
 from rest.functions.shot import shot_list_get, shotspermin_count, shotspermin_aggregate, shotspersec_count, shotstatus_count, shotstatus_aggregate, shotsperzone_count, shotsperzone_aggregate, shotcoordinates_get
 from rest.functions.shotcharts import shotsumchart_create, gameflowchart_create, shotstatussumchart_create, shotmapchart_create, gamecorsichart_create, gamecorsippctgchart_create, puckpossessionchart_create
+from rest.functions.toicharts import gametoichart_create
 from rest.functions.shottables import shotsperiodtable_get, shotstatussumtable_get, shotzonetable_get, gamecorsi_table
+from rest.functions.toitables import gametoi_table
 from rest.functions.match import match_info_get
-from rest.functions.shift import shift_get
+from rest.functions.shift import shift_get, toifromshifts_get
 from rest.functions.roster import roster_get
 from rest.functions.periodevent import periodevent_get, penaltyplotlines_get
+from rest.functions.playerstat import playerstat_get, toifromplayerstats_get
 from rest.functions.chartparameters import chart_color7
 from rest.functions.helper import url_build
 
@@ -69,6 +72,10 @@ def matchstatistics_get(logger, request, fkey=None, fvalue=None):
         # puck possession
         # pylint: disable=E0602
         result.append(_gamepuckpossession_get(logger, _('Puck possession'), request, fkey, fvalue, matchinfo_dic, shot_list))
+
+        # time on ice per player
+        # pylint: disable=E0602
+        result.append(_gametoi_get(logger, _('Time on Ice per Player'), request, fkey, fvalue, matchinfo_dic, shift_list))
 
     else:
         result = {'error': 'Please specify a matchid'}
@@ -287,3 +294,41 @@ def _gamecorsi_get(logger, request, fkey, fvalue, matchinfo_dic, shot_list, shif
         })
 
     return stat_entry_list
+
+def _gametoi_get(logger, title, request, fkey, fvalue, matchinfo_dic, shift_list):
+    """ get corsi """
+    logger.debug('_gametoi_get({0}:{1})'.format(fkey, fvalue))
+
+    toi_table = [None, None]
+    toi_chart = []
+    toi_dic = {}
+
+    if shift_list:
+        # get time-on-ice based on shifts
+        toi_dic = toifromshifts_get(logger, matchinfo_dic, shift_list)
+
+    if not toi_dic:
+        # get time-on-ice based on playerstats - THIS IS UNTESTED
+        playerstat_dic = playerstat_get(logger, fkey, fvalue, ['home', 'visitor'])
+        toi_dic = toifromplayerstats_get(logger, matchinfo_dic, playerstat_dic)
+
+    if toi_dic:
+        # create chart and table
+        toi_chart = [
+            gametoichart_create(logger, toi_dic['home_team']),
+            gametoichart_create(logger, toi_dic['visitor_team']),
+        ]
+
+        toi_table = [
+            gametoi_table(logger, toi_dic['home_team']),
+            gametoi_table(logger, toi_dic['visitor_team']),
+        ]
+
+    stat_entry = {
+        'title': title,
+        'chart': toi_chart,
+        'table': toi_table,
+        'tabs': True
+    }
+
+    return stat_entry
