@@ -6,7 +6,7 @@ export const createTableHeader = function(data){
   if (data){
     var tableheader = data.th.map((th, index) =>{
       return(
-        <th key={index} className={data.align[index]}>{th}</th>
+        <th key={index} className="w3-tooltip {data.align[index]}">{th} <span className="w3-text w3-tag w3-round-xlarge mytooltip pcolor">{data.tooltip[index]}</span></th>
       )
     });
   }else{
