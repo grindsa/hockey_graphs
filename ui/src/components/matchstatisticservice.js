@@ -21,14 +21,15 @@ export const createTableBody = function(data){
     var tablebody = data.td.map((tr, index) =>{
       var trow = tr.map((td, index) =>{
         const image = td.toString().includes("img")
-        const icon = td.toString().includes("fa fa-")
+        const badge = td.toString().includes("w3-badge line")
         if (image){
           return(
             <td key={`td-${index}`}><img src={td} width='25' /></td>
           )
-        }else if(icon){
+        }else if(badge){
+          var value =td.replace("w3-badge line", "");
           return(
-            <td key={`td-${index}`}><i className={td} /></td>
+            <td key={`td-${index}`}><span className={td}>{value}</span></td>
           )
         }else{
           return(

@@ -61,10 +61,10 @@ select.selectbg {
   vertical-align: middle;
 }
 
-.line1 {color: #030357;}
-.line2 {color: #7cb5ec;}
-.line3 {color: #68717a;}
-.line4 {color: #b0b3b5;}
-.line5 {color: #e6e6fe;}
+.line1 {background-color: #030357;}
+.line2 {background-color: #7cb5ec;}
+.line3 {background-color: #68717a;}
+.line4 {background-color: #b0b3b5;}
+.line5 {background-color: #e6e6fe;}
 
 .mytooltip {position:absolute; left:0; bottom:18px; z-index:1;}
