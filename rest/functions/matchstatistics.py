@@ -10,7 +10,7 @@ django.setup()
 from django.conf import settings
 from rest.functions.corsi import gamecorsi_get
 from rest.functions.shot import shot_list_get, shotspermin_count, shotspermin_aggregate, shotspersec_count, shotstatus_count, shotstatus_aggregate, shotsperzone_count, shotsperzone_aggregate, shotcoordinates_get
-from rest.functions.shotcharts import shotsumchart_create, gameflowchart_create, shotstatussumchart_create, shotmapchart_create, gamecorsichart_create
+from rest.functions.shotcharts import shotsumchart_create, gameflowchart_create, shotstatussumchart_create, shotmapchart_create, gamecorsichart_create, gamecorsippctgchart_create
 from rest.functions.shottables import shotsperiodtable_get, shotstatussumtable_get, shotzonetable_get, gamecorsi_table
 from rest.functions.match import match_info_get
 from rest.functions.shift import shift_get
@@ -44,25 +44,25 @@ def matchstatistics_get(logger, request, fkey=None, fvalue=None):
 
         # create chart for shots per match
         # pylint: disable=E0602
-        result.append(_gameshots_get(logger, _('Shots per minute'), request, fkey, fvalue, matchinfo_dic, shot_list))
+        #result.append(_gameshots_get(logger, _('Shots per minute'), request, fkey, fvalue, matchinfo_dic, shot_list))
 
         # create shotflowchart
         # pylint: disable=E0602
-        result.append(_gameflow_get(logger, _('Gameflow'), request, fkey, fvalue, matchinfo_dic, shot_list))
+        #result.append(_gameflow_get(logger, _('Gameflow'), request, fkey, fvalue, matchinfo_dic, shot_list))
 
         # create chart for shotstatus
         # pylint: disable=E0602
-        result.append(_gameshootstatus_get(logger, _('Shots by Result'), request, fkey, fvalue, matchinfo_dic, shot_list))
+        #result.append(_gameshootstatus_get(logger, _('Shots by Result'), request, fkey, fvalue, matchinfo_dic, shot_list))
 
         # create shotzone chart
         # pylint: disable=E0602
-        result.append(_gamezoneshots_get(logger, _('Shots per Zone'), request, fkey, fvalue, matchinfo_dic, shot_list))
+        #result.append(_gamezoneshots_get(logger, _('Shots per Zone'), request, fkey, fvalue, matchinfo_dic, shot_list))
 
         # shotmap
-        result.append(_gameshotmap_get(logger, _('Game Shotmap'), request, fkey, fvalue, matchinfo_dic, shot_list))
+        #result.append(_gameshotmap_get(logger, _('Game Shotmap'), request, fkey, fvalue, matchinfo_dic, shot_list))
 
         # player corsi
-        result.append(_gamecorsi_get(logger, _('Shot attempts at even strength (CF, CA)'), request, fkey, fvalue, matchinfo_dic, shot_list, shift_list, periodevent_list, roster_list))
+        result.extend(_gamecorsi_get(logger, request, fkey, fvalue, matchinfo_dic, shot_list, shift_list, periodevent_list, roster_list))
 
     else:
         result = {'error': 'Please specify a matchid'}
@@ -206,31 +206,48 @@ def _gameshotmap_get(logger, title, request, fkey, fvalue, matchinfo_dic, shot_l
 
     return stat_entry
 
-def _gamecorsi_get(logger, title, request, fkey, fvalue, matchinfo_dic, shot_list, shift_list, periodevent_list, roster_list):
+def _gamecorsi_get(logger, request, fkey, fvalue, matchinfo_dic, shot_list, shift_list, periodevent_list, roster_list):
     """ get corsi """
     logger.debug('_gamecorsi_get({0}:{1})'.format(fkey, fvalue))
 
-    corsi_table = [None, None]
-    corsi_chart = [None, None]
+    stat_entry_list = []
 
     if shot_list:
         # get corsi values per player for a certain match
         game_corsi_dic = gamecorsi_get(logger, shot_list, shift_list, periodevent_list, matchinfo_dic, roster_list)
-        corsi_chart = [
+
+        # corsi absolute chart and table
+        corsi_chart_abs = [
             gamecorsichart_create(logger, game_corsi_dic['home_team']),
             gamecorsichart_create(logger, game_corsi_dic['visitor_team'])
         ]
-
-        corsi_table = [
+        corsi_table_abs = [
             gamecorsi_table(logger, game_corsi_dic['home_team'], 'home_team', matchinfo_dic),
             gamecorsi_table(logger, game_corsi_dic['visitor_team'], 'visitor_team', matchinfo_dic)
         ]
+        # pylint: disable=E0602
+        stat_entry_list.append({
+            'title': _('Shot attempts at even strength (CF, CA)'),
+            'chart': corsi_chart_abs,
+            'table': corsi_table_abs,
+            'tabs': True
+        })
 
-    stat_entry = {
-        'title': title,
-        'chart': corsi_chart,
-        'table': corsi_table,
-        'tabs': True
-    }
+        # corsi percentage chart and table
+        corsi_chart_pctg = [
+            gamecorsippctgchart_create(logger, game_corsi_dic['home_team']),
+            gamecorsippctgchart_create(logger, game_corsi_dic['visitor_team'])
+        ]
+        corsi_table_pctg = [
+            gamecorsi_table(logger, game_corsi_dic['home_team'], 'home_team', matchinfo_dic, 'cf_pctg'),
+            gamecorsi_table(logger, game_corsi_dic['visitor_team'], 'visitor_team', matchinfo_dic, 'cf_pctg')
+        ]
+        # pylint: disable=E0602
+        stat_entry_list.append({
+            'title': '{0} %'.format(_('Shot attempts at even strength (CF, CA)')),
+            'chart': corsi_chart_pctg,
+            'table': corsi_table_pctg,
+            'tabs': True
+        })
 
-    return stat_entry
+    return stat_entry_list

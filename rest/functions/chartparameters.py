@@ -55,9 +55,9 @@ def plotoptions_marker_disable(ele):
     """ plotoptions for spline """
     return {ele: {'marker': {'enabled': 0}}}
 
-def title(text, _font_size=title_font_size):
+def title(text, font_size_=title_font_size):
     """ set title """
-    return {'text': text, 'style': {'color': text_color, 'font-size': _font_size}}
+    return {'text': text, 'style': {'color': text_color, 'font-size': font_size_}}
 
 def legend(enabled=1, additional_parameters=None):
     """ create legend structure """

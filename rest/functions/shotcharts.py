@@ -562,10 +562,7 @@ def gamecorsichart_create(logger, player_corsi_dic):
 
         'xAxis': {
             'gridLineWidth': 1,
-            'title': {
-                'text': _('Shot attempts "for" at 5v5'),
-                'style': {'color': text_color, 'font-size': font_size},
-            },
+            'title': title(_('Shot attempts "for" at 5v5'), font_size),
             'labels': {'style': {'fontSize': font_size}},
             'plotLines': [{'color': plotlines_color, 'width': 2, 'value': shotsum_dic['shots_avg']}],
             'min': 0,
@@ -574,10 +571,7 @@ def gamecorsichart_create(logger, player_corsi_dic):
             'showLastLabel': 1,
         },
         'yAxis': {
-            'title': {
-                'text': _('Shot attempts "against" at 5v5'),
-                'style': {'color': text_color, 'font-size': font_size},
-            },
+            'title': title(_('Shot attempts "against" at 5v5'), font_size),
             'labels': {'style': {'fontSize': font_size},},
             'plotLines': [{'color': plotlines_color, 'width': 2, 'value': shotsum_dic['shots_against_avg']}],
             'min': 0,
@@ -599,4 +593,81 @@ def gamecorsichart_create(logger, player_corsi_dic):
             if line in data_list:
                 chart_options['series'].append({'name': '{0}. Reihe'.format(line), 'data': data_list[line], 'zIndex': 5-line, 'color': data_dic[line], 'marker': {'fillOpacity': 0.7}})
 
+    return chart_options
+
+def gamecorsippctgchart_create(logger, player_corsi_dic):
+    """ create corsi chart for a certain game """
+    # pylint: disable=E0602
+    logger.debug('gamecorsippctgchart_create()')
+
+    # create x axis with player names
+    x_list = []
+    y_dic = {'shots': [], 'shots_against': []}
+
+    shot_sum = 0
+    count = 0
+    for player in sorted(player_corsi_dic.values(), key=lambda x: x['cf_pctg'], reverse=True):
+
+        x_list.append(player['name'])
+        y_dic['shots'].append(player['cf_pctg'])
+        y_dic['shots_against'].append(100 - player['cf_pctg'])
+        count += 1
+        shot_sum = shot_sum + player['cf_pctg']
+
+    chart_options = {
+
+        'chart': {
+            'type': 'bar',
+            'height': '120%',
+            'alignTicks': 0,
+        },
+
+        'exporting': exporting(),
+        'title': title(''),
+        'credits': credit(),
+        'legend': legend(),
+        'tooltip': {'enabled': 0},
+
+        'plotOptions': {
+            'bar': {
+                'stacking': 'percent',
+                'dataLabels': {
+                    'enabled': 1,
+                    'color': '#FFFFFF',
+                    'format': '{y} %',
+                    'useHTML': 1
+                }
+            }
+        },
+
+        'xAxis': {
+            'categories': x_list,
+            'title': title(''),
+            'labels': {'style': {'fontSize': font_size},},
+            'tickInterval': 1,
+            'showFirstLabel': 1,
+            'showLastLabel': 1,
+        },
+
+        'yAxis':
+            {
+                'title': title(_('Shot attempts (Percentage)'), font_size),
+                'reversedStacks': 0,
+                'tickInterval': 25,
+                'maxPadding': 0.1,
+                'labels': {'style': {'fontSize': font_size}},
+                'plotLines': [{'color': plotlines_color, 'width': 3, 'value': int(shot_sum/count)}]
+            },
+
+        'series': [{
+            'name': '{0} 5v5 (%)'.format(_('Shot attempts "for" at 5v5')),
+            'data': y_dic['shots'],
+            'color': chart_color3
+        }, {
+            'name': '{0} 5v5 (%)'.format(_('Shot attempts "against" at 5v5')),
+            'data': y_dic['shots_against'],
+            'color': chart_color2,
+            'dataLabels': 0,
+        }]
+    }
     return chart_options
