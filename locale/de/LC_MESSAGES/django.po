@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-10-31 20:26+0100\n"
-"PO-Revision-Date: 2020-10-31 20:33+0100\n"
+"POT-Creation-Date: 2020-11-01 08:15+0100\n"
+"PO-Revision-Date: 2020-11-01 08:16+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -89,10 +89,12 @@ msgid "Shots on Goal"
 msgstr "Torschüsse"
 
 #: .\rest\functions\shotcharts.py:540 .\rest\functions\shotcharts.py:566
+#: .\rest\functions\shottables.py:107
 msgid "Shot attempts \"for\" at 5v5"
 msgstr "Torschüsse bei 5v5 (CF)"
 
 #: .\rest\functions\shotcharts.py:541 .\rest\functions\shotcharts.py:578
+#: .\rest\functions\shottables.py:107
 msgid "Shot attempts \"against\" at 5v5"
 msgstr "Torschüsse des Gegners bei 5v5 (CA)"
 
@@ -128,9 +130,17 @@ msgstr "Rechts"
 msgid "Neutral Zone"
 msgstr "Neutrale Zone"
 
-#: .\rest\functions\shottables.py:104
+#: .\rest\functions\shottables.py:105
 msgid "Time on Ice"
 msgstr "Eiszeit"
+
+#: .\rest\functions\shottables.py:107
+msgid "Plus/Minus of Shot attempts and Shot attempts \"against\""
+msgstr "Plus-/Minus-Bilanz aller Schussversuche"
+
+#: .\rest\functions\shottables.py:107
+msgid "Percentage Shot attempts/Shot attempts \"against\""
+msgstr "Prozentuale Plus-/Minus-Bilanz aller Schussversuche"
 
 #~ msgid "Goal"
 #~ msgstr "Tor"

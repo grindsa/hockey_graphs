@@ -101,7 +101,12 @@ def gamecorsi_table(logger, player_corsi_dic, _team, _matchinfo_dic, sorter='cor
     # pylint: disable=E0602
     logger.debug('gamecorsi_table()')
 
-    table_dic = {'th': ['Name', 'Reihe', '#', 'CF 5v5', 'CA 5v5', 'Corsi', 'CF% 5v5', _('Time on Ice')], 'align': ['w3-left-align', None, None, None, None, None, None, None], 'tooltip': [None, None, 'Schüsse der Eisbären bei Spieler auf dem Eis', 'Schüsse der Gegner bei Spieler auf dem Eis', 'Plus-/Minus-Bilanz aller Schüsse', 'Prozentuale Plus-/Minus-Bilanz aller Schüsse', None, None], 'td': []}
+    table_dic = {
+        'th': ['Name', 'Reihe', '#', 'CF 5v5', 'CA 5v5', 'Corsi', 'CF% 5v5', _('Time on Ice')],
+        'align': ['w3-left-align', None, None, None, None, None, None, None],
+        'tooltip': [None, None, None, _('Shot attempts "for" at 5v5'), _('Shot attempts "against" at 5v5'), _('Plus/Minus of Shot attempts and Shot attempts "against"'), _('Percentage Shot attempts/Shot attempts "against"'), None, None],
+        'td': []}
+
     for player in sorted(player_corsi_dic.values(), key=lambda x: x[sorter], reverse=True):
         # small hack
         if 'line_number' not in player:
