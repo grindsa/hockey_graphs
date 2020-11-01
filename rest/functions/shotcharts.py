@@ -532,6 +532,7 @@ def gamecorsichart_create(logger, player_corsi_dic):
         'title': title(''),
         'credits': credit(),
         'legend': legend(),
+        'responsive': responsive_y1(),
 
         'tooltip': {
             'useHTML': 1,
@@ -626,6 +627,7 @@ def gamecorsippctgchart_create(logger, player_corsi_dic):
         'title': title(''),
         'credits': credit(),
         'legend': legend(),
+        'responsive': responsive_y1(),
         'tooltip': {'enabled': 0},
 
         'plotOptions': {
@@ -669,5 +671,83 @@ def gamecorsippctgchart_create(logger, player_corsi_dic):
             'color': chart_color2,
             'dataLabels': 0,
         }]
+    }
+    return chart_options
+
+def puckpossessionchart_create(logger, shotsum_dic, goal_dic, matchinfo_dic):
+    """ create area chart showing puck possession """
+    logger.debug('puckpossessionchart_create()')
+
+    min_list = list(shotsum_dic['home_team'].keys())
+
+    y1_list = []
+    for min_, value in shotsum_dic['home_team'].items():
+        # set marker on graph if there was a goal in this min
+        if min_ in goal_dic['home_team']:
+            y1_list.append({'y' : value, 'marker' : {'enabled': 1, 'width': 25, 'height': 25, 'symbol': 'url({0})'.format(matchinfo_dic['home_team_logo'])}})
+            # y1_list.append({'y' : value, 'marker' : {'enabled': 1, 'radius': 7, 'symbol': 'circle', 'fillColor': chart_color1, 'lineWidth': 2, 'lineColor': '#ffffff'}, 'dataLabels': {'enabled': 1, 'color': text_color, 'format': '{0}'.format(goal_dic['home_team'][min_])}})
+        elif min_ in goal_dic['visitor_team']:
+            y1_list.append({'y' : value, 'marker' : {'enabled': 1, 'width': 25, 'height': 25, 'symbol': 'url({0})'.format(matchinfo_dic['visitor_team_logo'])}})
+            # y1_list.append({'y' : value, 'marker' : {'enabled': 1, 'radius': 7, 'symbol': 'circle', 'fillColor': chart_color2, 'lineWidth': 2, 'lineColor': '#ffffff'}, 'dataLabels': {'enabled': 1, 'color': text_color, 'format': '{0}'.format(goal_dic['visitor_team'][min_])}})
+        else:
+            y1_list.append(value)
+
+    y2_list = list(shotsum_dic['visitor_team'].values())
+
+    chart_options = {
+
+        'chart': {
+            'type': 'area',
+            'height': '60%'
+        },
+
+        'exporting': exporting(),
+        'title': title(''),
+        'credits': credit('Nach einer Idee von @h_modes', 'https://twitter.com/h_modes'),
+        'legend': legend(),
+        'responsive': responsive_y1(),
+
+        'tooltip': {
+            'pointFormat': '<span style="color:{series.color}">{series.name}</span>: <b>{point.percentage:.1f}%</b> ({point.y:,.0f} shots)<br/>',
+            'split': 1,
+        },
+
+        'plotOptions': {
+            'area': {
+                'stacking': 'percent',
+                'lineColor': '#ffffff',
+                'lineWidth': 2,
+                'marker': {
+                    'enabled': 0,
+                    'symbol': 'diamond'},
+                },
+            },
+        'xAxis': {
+            'categories': min_list,
+            'title': title(_('Game Time'), font_size),
+            'labels': {'style': {'fontSize': font_size},},
+            'tickInterval': 5,
+            'showFirstLabel': 1,
+            'showLastLabel': 1,
+            'plotLines': [
+                {'color': plotlines_color, 'width': 2, 'value': 20},
+                {'color': plotlines_color, 'width': 2, 'value': 40},
+                {'color': plotlines_color, 'width': 2, 'value': 60}
+            ],
+        },
+
+        'yAxis': [
+            {
+                'title': title(_('Puck Posession (%)'), font_size),
+                'plotLines': [{'color': plotlines_color, 'width': 2, 'value': 50}],
+                'tickInterval': 25,
+                'maxPadding': 0.1,
+                'labels': {'style': {'fontSize': font_size},},
+                'reversedStacks': 0,
+            }],
+        'series': [
+            {'name': '{0}'.format(matchinfo_dic['home_team__shortcut']), 'data': y1_list, 'color': '#7cb5ec', 'zIndex': 2},
+            {'name': '{0}'.format(matchinfo_dic['visitor_team__shortcut']), 'data': y2_list, 'color': '#b0b3b5', 'zIndex': 1}
+        ]
     }
     return chart_options

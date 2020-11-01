@@ -10,7 +10,7 @@ django.setup()
 from django.conf import settings
 from rest.functions.corsi import gamecorsi_get
 from rest.functions.shot import shot_list_get, shotspermin_count, shotspermin_aggregate, shotspersec_count, shotstatus_count, shotstatus_aggregate, shotsperzone_count, shotsperzone_aggregate, shotcoordinates_get
-from rest.functions.shotcharts import shotsumchart_create, gameflowchart_create, shotstatussumchart_create, shotmapchart_create, gamecorsichart_create, gamecorsippctgchart_create
+from rest.functions.shotcharts import shotsumchart_create, gameflowchart_create, shotstatussumchart_create, shotmapchart_create, gamecorsichart_create, gamecorsippctgchart_create, puckpossessionchart_create
 from rest.functions.shottables import shotsperiodtable_get, shotstatussumtable_get, shotzonetable_get, gamecorsi_table
 from rest.functions.match import match_info_get
 from rest.functions.shift import shift_get
@@ -44,25 +44,31 @@ def matchstatistics_get(logger, request, fkey=None, fvalue=None):
 
         # create chart for shots per match
         # pylint: disable=E0602
-        #result.append(_gameshots_get(logger, _('Shots per minute'), request, fkey, fvalue, matchinfo_dic, shot_list))
+        result.append(_gameshots_get(logger, _('Shots per minute'), request, fkey, fvalue, matchinfo_dic, shot_list))
 
         # create shotflowchart
         # pylint: disable=E0602
-        #result.append(_gameflow_get(logger, _('Gameflow'), request, fkey, fvalue, matchinfo_dic, shot_list))
+        result.append(_gameflow_get(logger, _('Gameflow'), request, fkey, fvalue, matchinfo_dic, shot_list))
 
         # create chart for shotstatus
         # pylint: disable=E0602
-        #result.append(_gameshootstatus_get(logger, _('Shots by Result'), request, fkey, fvalue, matchinfo_dic, shot_list))
+        result.append(_gameshootstatus_get(logger, _('Shots by Result'), request, fkey, fvalue, matchinfo_dic, shot_list))
 
         # create shotzone chart
         # pylint: disable=E0602
-        #result.append(_gamezoneshots_get(logger, _('Shots per Zone'), request, fkey, fvalue, matchinfo_dic, shot_list))
+        result.append(_gamezoneshots_get(logger, _('Shots per Zone'), request, fkey, fvalue, matchinfo_dic, shot_list))
 
         # shotmap
-        #result.append(_gameshotmap_get(logger, _('Game Shotmap'), request, fkey, fvalue, matchinfo_dic, shot_list))
+        # pylint: disable=E0602
+        result.append(_gameshotmap_get(logger, _('Game Shotmap'), request, fkey, fvalue, matchinfo_dic, shot_list))
 
         # player corsi
+        # pylint: disable=E0602
         result.extend(_gamecorsi_get(logger, request, fkey, fvalue, matchinfo_dic, shot_list, shift_list, periodevent_list, roster_list))
+
+        # puck possession
+        # pylint: disable=E0602
+        result.append(_gamepuckpossession_get(logger, _('Puck possession'), request, fkey, fvalue, matchinfo_dic, shot_list))
 
     else:
         result = {'error': 'Please specify a matchid'}
@@ -94,6 +100,35 @@ def _gameflow_get(logger, title, request, fkey, fvalue, matchinfo_dic, shot_list
     }
 
     return stat_entry
+
+def _gamepuckpossession_get(logger, title, request, fkey, fvalue, matchinfo_dic, shot_list):
+    """ create chart for puck possession """
+    logger.debug('_gamepuckpossession_get({0}:{1})'.format(fkey, fvalue))
+
+    shot_table = {}
+    shot_chart = {}
+
+    if shot_list:
+
+        # get shots and goals per min
+        (shotmin_dic, goal_dic) = shotspermin_count(logger, shot_list, matchinfo_dic)
+
+        # aggregate shots per min
+        shotsum_dic = shotspermin_aggregate(logger, shotmin_dic)
+
+        shot_chart = puckpossessionchart_create(logger, shotsum_dic, goal_dic, matchinfo_dic)
+        # pylint: disable=E0602
+        shot_table = shotsperiodtable_get(logger, _('Shots per period'), shotmin_dic, matchinfo_dic)
+
+    stat_entry = {
+        'title': title,
+        'chart': shot_chart,
+        'table': shot_table,
+        'tabs': False
+    }
+
+    return stat_entry
+
 
 def _gameshootstatus_get(logger, title, request, fkey, fvalue, matchinfo_dic, shot_list):
     """ shot status """
@@ -147,7 +182,8 @@ def _gameshots_get(logger, title, request, fkey, fvalue, matchinfo_dic, shot_lis
         plotline_list = penaltyplotlines_get(logger, fkey, fvalue)
 
         shot_chart = shotsumchart_create(logger, shotsum_dic, shotmin_dic, goal_dic, plotline_list, matchinfo_dic)
-        shot_table = shotsperiodtable_get(logger, title, shotmin_dic, matchinfo_dic)
+        # pylint: disable=E0602
+        shot_table = shotsperiodtable_get(logger, _('Shots per period'), shotmin_dic, matchinfo_dic)
 
     stat_entry = {
         'title': title,
