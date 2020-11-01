@@ -111,6 +111,6 @@ def gamecorsi_table(logger, player_corsi_dic, _team, _matchinfo_dic, sorter='cor
         # small hack
         if 'line_number' not in player:
             player['line_number'] = 5
-        table_dic['td'].append([player['name'], 'fa fa-circle fa-lg line{0}'.format(player['line_number']), player['jersey'], player['shots'], player['shots_against'], player['corsi'], '{0}%'.format(player['cf_pctg']), '{0:02d}:{1:02d}'.format(*divmod(player['toi'], 60))])
+        table_dic['td'].append([player['name'], 'w3-badge line{0}'.format(player['line_number']), player['jersey'], player['shots'], player['shots_against'], player['corsi'], '{0}%'.format(player['cf_pctg']), '{0:02d}:{1:02d}'.format(*divmod(player['toi'], 60))])
 
     return table_dic
