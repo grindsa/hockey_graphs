@@ -540,7 +540,7 @@ def gamecorsichart_create(logger, player_corsi_dic):
             'pointFormat': '<tr><td colspan="3"><b>{point.name} ({point.jersey})<b></td></tr>' +
                            '<tr><td>%s:</td><td>{point.mx}</td></tr>' % _('Shot attempts "for" at 5v5') +
                            '<tr><td>%s:</td><td>{point.my}</td></tr>' % _('Shot attempts "against" at 5v5') +
-                           '<tr><td>Eiszeit:</td><td>{point.mtoi}m</td></tr>',
+                           '<tr><td>%s:</td><td>{point.mtoi}m</td></tr>' % _('Time on Ice'),
             'footerFormat': '</table>',
             'followPointer': 1,
         },
@@ -585,14 +585,16 @@ def gamecorsichart_create(logger, player_corsi_dic):
         'series': [],
     }
 
+    line_dic = {1: _('1st line'), 2: _('2nd line'), 3: _('3rd line'), 4: _('4th line'), 5: _('5th line')}
+
     # data_dic = {1: '#333333', 2: '#595959', 3: '#8c8c8c', 4: '#bfbfbf', 5: '#f2f2f2'}
     data_dic = {1: line1_color, 2: line2_color, 3: line3_color, 4: line4_color, 5: line5_color}
     if len(data_list) == 1:
-        chart_options['series'].append({'name': 'Spieler', 'data': list(data_list.values())[0], 'zIndex': 1, 'marker': {'fillOpacity': 0.7}})
+        chart_options['series'].append({'name': _('Player'), 'data': list(data_list.values())[0], 'zIndex': 1, 'marker': {'fillOpacity': 0.7}})
     else:
         for line in sorted(data_dic.keys()):
             if line in data_list:
-                chart_options['series'].append({'name': '{0}. Reihe'.format(line), 'data': data_list[line], 'zIndex': 5-line, 'color': data_dic[line], 'marker': {'fillOpacity': 0.7}})
+                chart_options['series'].append({'name': '{0}'.format(line_dic[line]), 'data': data_list[line], 'zIndex': 5-line, 'color': data_dic[line], 'marker': {'fillOpacity': 0.7}})
 
     return chart_options
 
@@ -676,7 +678,7 @@ def gamecorsippctgchart_create(logger, player_corsi_dic):
 
 def puckpossessionchart_create(logger, shotsum_dic, goal_dic, matchinfo_dic):
     """ create area chart showing puck possession """
-    # pylint: disable=E0602    
+    # pylint: disable=E0602
     logger.debug('puckpossessionchart_create()')
 
     min_list = list(shotsum_dic['home_team'].keys())

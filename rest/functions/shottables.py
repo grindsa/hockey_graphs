@@ -102,7 +102,7 @@ def gamecorsi_table(logger, player_corsi_dic, _team, _matchinfo_dic, sorter='cor
     logger.debug('gamecorsi_table()')
 
     table_dic = {
-        'th': ['Name', 'Reihe', '#', 'CF 5v5', 'CA 5v5', 'Corsi', 'CF% 5v5', _('Time on Ice')],
+        'th': ['Name', _('Line'), '#', 'CF 5v5', 'CA 5v5', 'Corsi', 'CF% 5v5', _('Time on Ice')],
         'align': ['w3-left-align', None, None, None, None, None, None, None],
         'tooltip': [None, None, None, _('Shot attempts "for" at 5v5'), _('Shot attempts "against" at 5v5'), _('Plus/Minus of Shot attempts and Shot attempts "against"'), _('Percentage Shot attempts/Shot attempts "against"'), None, None],
         'td': []}
