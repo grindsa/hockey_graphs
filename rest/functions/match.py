@@ -10,6 +10,7 @@ django.setup()
 from django.conf import settings
 from rest.models import Match
 from rest.functions.helper import url_build
+from rest.functions.teamstat import teamstat_get
 
 def match_info_get(logger, match_id, request, vlist=('date', 'result', 'home_team_id', 'home_team__team_name', 'home_team__shortcut', 'home_team__logo', 'visitor_team_id', 'visitor_team__team_name', 'visitor_team__shortcut', 'visitor_team__logo')):
     """ get info for a specifc match_id """
@@ -59,3 +60,32 @@ def match_add(logger, fkey, fvalue, data_dic):
         result = None
     logger.debug('match_add({0}:{1}) ended with {2}'.format(fkey, fvalue, result))
     return result
+
+def matchstats_get(logger, match_id):
+    """ get matchstatistics """
+
+    matchstat_dic = teamstat_get(logger, 'match', match_id)
+
+    stat_dic = {
+        'home_team': {
+            'shotsOnGoal': matchstat_dic['home']['shotsOnGoal'],
+            'saves': matchstat_dic['home']['saves'],
+            'faceOffsWon': matchstat_dic['home']['faceOffsWon'],
+            'penaltyMinutes': matchstat_dic['home']['penaltyMinutes'],
+            'powerPlaySeconds': matchstat_dic['home']['powerPlaySeconds'],
+            'ppGoals': matchstat_dic['home']['ppGoals'],
+            'shGoals': matchstat_dic['home']['shGoals'],
+            'puckpossession': int(matchstat_dic['home']['shotsAttempts'] * 100 / (matchstat_dic['home']['shotsAttempts'] + matchstat_dic['home']['shotsAttempts']))
+        },
+        'visitor_team': {
+            'shotsOnGoal': matchstat_dic['visitor']['shotsOnGoal'],
+            'saves': matchstat_dic['visitor']['saves'],
+            'faceOffsWon': matchstat_dic['visitor']['faceOffsWon'],
+            'penaltyMinutes': matchstat_dic['visitor']['penaltyMinutes'],
+            'powerPlaySeconds': matchstat_dic['visitor']['powerPlaySeconds'],
+            'ppGoals': matchstat_dic['visitor']['ppGoals'],
+            'shGoals': matchstat_dic['visitor']['shGoals'],
+            'puckpossession': int(matchstat_dic['visitor']['shotsAttempts'] * 100 / (matchstat_dic['home']['shotsAttempts'] + matchstat_dic['home']['shotsAttempts']))
+        }
+    }
+    return stat_dic

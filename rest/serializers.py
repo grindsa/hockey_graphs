@@ -1,7 +1,13 @@
 """ serializers.py """
+from django.conf import settings
 from rest_framework import serializers
 from rest.models import Match, Periodevent, Player, Season, Shift, Shot, Team
-from rest.functions.helper import url_build
+from rest.functions.helper import url_build, logger_setup
+from rest.functions.match import matchstats_get
+
+# initialize logger
+DEBUG = settings.DEBUG
+LOGGER = logger_setup(DEBUG)
 
 class PlayerSerializer(serializers.HyperlinkedModelSerializer):
     """ player serializer """
@@ -17,6 +23,7 @@ class MatchSerializer(serializers.HyperlinkedModelSerializer):
     events = serializers.SerializerMethodField('get_events')
     shots = serializers.SerializerMethodField('get_shots')
     shifts = serializers.SerializerMethodField('get_shifts')
+    stats = serializers.SerializerMethodField('get_stats')
     # shrink data in overview
     def __init__(self, *args, **kwargs):
         # Instantiate the superclass normally
@@ -37,9 +44,14 @@ class MatchSerializer(serializers.HyperlinkedModelSerializer):
         """ get shifts url """
         if self.context:
             return '{0}/api/v1/{1}={2}'.format(url_build(self.context['request'].META), 'shifts?match_id', obj.match_id)
+    def get_stats(self, obj):
+        """ get stats """
+        if self.context:
+            return matchstats_get(LOGGER, obj.match_id)
+            
     class Meta:
         model = Match
-        fields = ('match_id', 'season', 'date', 'date_uts', 'home_team', 'visitor_team', 'result', 'shifts', 'shots', 'events')
+        fields = ('match_id', 'season', 'date', 'date_uts', 'home_team', 'visitor_team', 'result', 'shifts', 'shots', 'events', 'stats')
 
 class PeriodeventSerializer(serializers.HyperlinkedModelSerializer):
     """ shot Periodevent """

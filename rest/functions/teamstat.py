@@ -8,8 +8,6 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "hockey_graphs.settings")
 import django
 django.setup()
 from rest.models import Teamstat
-from rest.functions.timeline import skatersonice_get, penalties_include
-from rest.functions.lineup import lineup_sort
 
 def teamstat_add(logger, fkey, fvalue, data_dic):
     """ add team to database """
@@ -25,9 +23,9 @@ def teamstat_add(logger, fkey, fvalue, data_dic):
     logger.debug('teamstat_add({0}:{1}) ended with {2}'.format(fkey, fvalue, result))
     return result
 
-def teamstat_get(logger, fkey, fvalue, vlist=('match_id', 'home', 'visitor')):
+def teamstat_get(_logger, fkey, fvalue, vlist=('match_id', 'home', 'visitor')):
     """ get info for a specifc match_id """
-    logger.debug('teamstat_get({0}:{1})'.format(fkey, fvalue))
+    # logger.debug('teamstat_get({0}:{1})'.format(fkey, fvalue))
     try:
         if len(vlist) == 1:
             teamstat_dic = list(Teamstat.objects.filter(**{fkey: fvalue}).values_list(vlist[0], flat=True))[0]
