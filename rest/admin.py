@@ -3,7 +3,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from rest.models import Match, Periodevent, Player, Season, Shift, Shot, Team
+from rest.models import Match, Periodevent, Player, Playerstat, Season, Shift, Shot, Team, Teamstat
 
 class MatchAdmin(admin.ModelAdmin):
     """ match admin """
@@ -22,6 +22,12 @@ class PlayerAdmin(admin.ModelAdmin):
     fields = ['player_id', 'first_name', 'last_name', 'jersey']
     list_display = ['player_id', 'first_name', 'last_name', 'jersey']
     ordering = ['player_id']
+
+class PlayerstatAdmin(admin.ModelAdmin):
+    """ shots admin """
+    fields = ['match', 'home', 'visitor']
+    list_display = ['match', 'home', 'visitor']
+    ordering = ['match_id']
 
 class SeasonAdmin(admin.ModelAdmin):
     """ season admin """
@@ -47,10 +53,18 @@ class TeamAdmin(admin.ModelAdmin):
     list_display = ['team_id', 'team_name', 'shortcut', 'logo']
     ordering = ['team_id']
 
+class TeamstatAdmin(admin.ModelAdmin):
+    """ shots admin """
+    fields = ['match', 'home', 'visitor']
+    list_display = ['match', 'home', 'visitor']
+    ordering = ['match_id']
+
 admin.site.register(Match, MatchAdmin)
 admin.site.register(Periodevent, PeriodeventAdmin)
 admin.site.register(Player, PlayerAdmin)
+admin.site.register(Playerstat, PlayerstatAdmin)
 admin.site.register(Shift, ShiftAdmin)
 admin.site.register(Shot, ShotAdmin)
 admin.site.register(Season, SeasonAdmin)
 admin.site.register(Team, TeamAdmin)
+admin.site.register(Teamstat, TeamstatAdmin)

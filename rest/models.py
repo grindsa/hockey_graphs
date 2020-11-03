@@ -73,3 +73,9 @@ class Shot(models.Model):
     real_date = models.CharField(max_length=20)
     polygon = models.CharField(max_length=20)
     zone = models.CharField(max_length=20)
+
+class Teamstat(models.Model):
+    """ shifts """
+    match = models.ForeignKey(Match, on_delete=models.CASCADE)
+    home = jsonfield.JSONField(default=dict)
+    visitor = jsonfield.JSONField(default=dict)
