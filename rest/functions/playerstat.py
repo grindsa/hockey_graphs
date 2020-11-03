@@ -8,6 +8,8 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "hockey_graphs.settings")
 import django
 django.setup()
 from rest.models import Playerstat
+from rest.functions.timeline import skatersonice_get, penalties_include
+from rest.functions.lineup import lineup_sort
 
 def playerstat_add(logger, fkey, fvalue, data_dic):
     """ add team to database """
@@ -62,3 +64,16 @@ def toifromplayerstats_get(logger, _matchinfo_dic, playerstat_dic):
                     tmp_toi_sum_dic[team_name][player['name']] = player['statistics']['timeOnIce']
 
     return toi_dic
+
+def matchupmatrix_get(logger, matchinfo_dic, shift_list, roster_list, five_filter=True):
+    """ get player matchup - time players spend on ice together """
+    logger.debug('matchupmatrix_get()')
+
+    # soi = seconds on ice
+    (soi_dic, toi_dic) = skatersonice_get(logger, shift_list, matchinfo_dic)
+
+    # get lineup in a sorted way
+    lineup_dic = lineup_sort(logger, roster_list)
+
+    # get playerstat dic
+    # playerstat_dic = playerstat_get(logger, 'match_id', )
