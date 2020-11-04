@@ -88,4 +88,11 @@ def matchstats_get(logger, match_id):
             'puckpossession': int(matchstat_dic['visitor']['shotsAttempts'] * 100 / (matchstat_dic['home']['shotsAttempts'] + matchstat_dic['home']['shotsAttempts']))
         }
     }
-    return stat_dic
+
+    stat_entry = {
+        'title': 'foo',
+        'gamestats': stat_dic,
+        'tabs': False
+    }
+
+    return stat_entry

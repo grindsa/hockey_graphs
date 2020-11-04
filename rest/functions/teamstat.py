@@ -9,7 +9,7 @@ import django
 django.setup()
 from rest.models import Teamstat
 
-def teamstat_add(logger, fkey, fvalue, data_dic):
+def teamstat_add(logger, fkey=None, fvalue=None, data_dic=None):
     """ add team to database """
     logger.debug('teamstat_add({0}:{1})'.format(fkey, fvalue))
     try:
@@ -23,14 +23,20 @@ def teamstat_add(logger, fkey, fvalue, data_dic):
     logger.debug('teamstat_add({0}:{1}) ended with {2}'.format(fkey, fvalue, result))
     return result
 
-def teamstat_get(_logger, fkey, fvalue, vlist=('match_id', 'home', 'visitor')):
+def teamstat_get(_logger, fkey=None, fvalue=None, vlist=('match_id', 'home', 'visitor')):
     """ get info for a specifc match_id """
     # logger.debug('teamstat_get({0}:{1})'.format(fkey, fvalue))
     try:
-        if len(vlist) == 1:
-            teamstat_dic = list(Teamstat.objects.filter(**{fkey: fvalue}).values_list(vlist[0], flat=True))[0]
+        if fkey:
+            if len(vlist) == 1:
+                teamstat_dic = list(Teamstat.objects.filter(**{fkey: fvalue}).values_list(vlist[0], flat=True))[0]
+            else:
+                teamstat_dic = Teamstat.objects.filter(**{fkey: fvalue}).values(*vlist)[0]
         else:
-            teamstat_dic = Teamstat.objects.filter(**{fkey: fvalue}).values(*vlist)[0]
+            if len(vlist) == 1:
+                teamstat_dic = Teamstat.objects.all().order_by('match_id').values_list(vlist[0], flat=True)
+            else:
+                teamstat_dic = Teamstat.objects.all().order_by('match_id').values(*vlist)
     except BaseException:
         teamstat_dic = {}
 
