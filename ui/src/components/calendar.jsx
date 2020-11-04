@@ -16,8 +16,21 @@ export class Calendar extends React.Component{
     }
   }
 
+  componentDidMount(){
+    const disabledDaysList = this.createdisabledDaysList(this.props.matchdaylist.sort())
+    if (this.props.matchdaylist.length > 0){
+      this.setState({
+        firstMatchDay: this.props.matchdaylist[0],
+        lastMatchDay: this.props.matchdaylist[this.props.matchdaylist.length - 1],
+        currentMatchDay: this.props.current,
+        showCalendar: true,
+        disabledDaysList: disabledDaysList
+      });
+    }
+  }
+
   async componentDidUpdate(prevProps){
-    if (this.props.matchdaylist > prevProps.matchdaylist) {
+    if (this.props.matchdaylist !== prevProps.matchdaylist) {
       const disabledDaysList = this.createdisabledDaysList(this.props.matchdaylist.sort())
       if (this.props.matchdaylist.length > 0){
         await this.setState({
@@ -25,7 +38,6 @@ export class Calendar extends React.Component{
           lastMatchDay: this.props.matchdaylist[this.props.matchdaylist.length - 1],
           currentMatchDay: this.props.current,
           showCalendar: true,
-          // disabledDaysList: [{ after: new Date('2020-02-09'), before: new Date('2020-03-11')}]
           disabledDaysList: disabledDaysList
         });
       }
@@ -64,7 +76,6 @@ export class Calendar extends React.Component{
     const WEEKDAYS_LONG = { DE: ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag']};
     const FIRST_DAY_OF_WEEK = { DE: 1};
     const LABELS = {DE: { nextMonth: 'Nächster Monat', previousMonth: 'vorheriger Monat' }};
-
     return (
       <div className="w3-modal" style={{display: this.props.display}}>
         <div className="w3-modal-content w3-white w3-card-4" style={{width: 350}}>
