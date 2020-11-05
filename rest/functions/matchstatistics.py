@@ -48,7 +48,7 @@ def matchstatistics_get(logger, request, fkey=None, fvalue=None):
         # get matchstatistics
         result.append(matchstats_get(logger, fvalue))
 
-        # create chart for shots per match
+        # create chart for shots per match 
         # pylint: disable=E0602
         # result.append(_gameshots_get(logger, _('Shots per minute'), request, fkey, fvalue, matchinfo_dic, shot_list))
 
