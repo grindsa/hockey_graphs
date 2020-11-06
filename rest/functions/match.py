@@ -91,7 +91,7 @@ def matchstats_get(logger, match_id):
 
     stat_entry = {
         'title': 'foo',
-        'gamestats': stat_dic,
+        'chart': stat_dic,
         'tabs': False
     }
 
