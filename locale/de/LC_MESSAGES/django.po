@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-11-02 08:40+0100\n"
-"PO-Revision-Date: 2020-11-02 08:39+0100\n"
+"POT-Creation-Date: 2020-11-07 14:13+0100\n"
+"PO-Revision-Date: 2020-11-07 14:17+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -18,41 +18,55 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 2.4.1\n"
 
-#: .\rest\functions\matchstatistics.py:50 .\rest\functions\shotcharts.py:85
+#: .\rest\functions\match.py:70 .\rest\functions\shotcharts.py:338
+#: .\rest\functions\shotcharts.py:436 .\rest\functions\shotcharts.py:447
+#: .\rest\functions\shottables.py:39
+msgid "Shots on Goal"
+msgstr "Torschüsse"
+
+#: .\rest\functions\match.py:71
+msgid "Saves"
+msgstr "Gehaltene Schüsse"
+
+#: .\rest\functions\match.py:72
+msgid "Penalties in Minutes"
+msgstr "Anzahl Strafminute"
+
+#: .\rest\functions\match.py:73
+msgid "Powerplay Goals"
+msgstr "Überzahltore"
+
+#: .\rest\functions\match.py:74
+msgid "Shorthanded Goals"
+msgstr "Tore in Unterzahl"
+
+#: .\rest\functions\match.py:75
+msgid "Faceoff Win"
+msgstr "Gewonnene Bullys"
+
+#: .\rest\functions\match.py:76
+msgid "Puck Possession"
+msgstr "Puckbesitz"
+
+#: .\rest\functions\match.py:77
+msgid "Time in Powerplay"
+msgstr "Zeit im Powerplay"
+
+#: .\rest\functions\matchstatistics.py:53 .\rest\functions\shotcharts.py:85
 msgid "Shots per minute"
 msgstr "Schüsse pro Minute"
 
-#: .\rest\functions\matchstatistics.py:54
+#: .\rest\functions\matchstatistics.py:57
 msgid "Gameflow"
 msgstr "Spielfluss"
 
-#: .\rest\functions\matchstatistics.py:58
-msgid "Shots by Result"
-msgstr "Schussstatistik"
-
-#: .\rest\functions\matchstatistics.py:62
-msgid "Shots per Zone"
-msgstr "Schüsse pro Zone"
-
-#: .\rest\functions\matchstatistics.py:66
-msgid "Game Shotmap"
-msgstr "Shotmap des Spiels"
-
-#: .\rest\functions\matchstatistics.py:74
-msgid "Puck possession"
-msgstr "Puckbesitz"
-
-#: .\rest\functions\matchstatistics.py:78
-msgid "Time on Ice per Player"
-msgstr "Eiszeit pro Spieler"
-
-#: .\rest\functions\matchstatistics.py:128
-#: .\rest\functions\matchstatistics.py:193
+#: .\rest\functions\matchstatistics.py:134
+#: .\rest\functions\matchstatistics.py:199
 msgid "Shots per period"
 msgstr "Schüsse pro Minute"
 
-#: .\rest\functions\matchstatistics.py:273
-#: .\rest\functions\matchstatistics.py:290
+#: .\rest\functions\matchstatistics.py:279
+#: .\rest\functions\matchstatistics.py:296
 msgid "Shot attempts at even strength (CF, CA)"
 msgstr "Schüsse bei gleicher Anzahl von Spielern auf dem Eis (CF, CA)"
 
@@ -97,11 +111,6 @@ msgstr "geblockt"
 #: .\rest\functions\shotcharts.py:450 .\rest\functions\shottables.py:39
 msgid "Goals"
 msgstr "Tore"
-
-#: .\rest\functions\shotcharts.py:338 .\rest\functions\shotcharts.py:436
-#: .\rest\functions\shotcharts.py:447 .\rest\functions\shottables.py:39
-msgid "Shots on Goal"
-msgstr "Torschüsse"
 
 #: .\rest\functions\shotcharts.py:541 .\rest\functions\shotcharts.py:566
 #: .\rest\functions\shotcharts.py:667 .\rest\functions\shottables.py:107
@@ -209,6 +218,15 @@ msgstr "3. Drittel"
 #: .\rest\functions\toicharts.py:77 .\rest\functions\toitables.py:9
 msgid "OT"
 msgstr "OT"
+
+#~ msgid "Shots by Result"
+#~ msgstr "Schussstatistik"
+
+#~ msgid "Shots per Zone"
+#~ msgstr "Schüsse pro Zone"
+
+#~ msgid "Game Shotmap"
+#~ msgstr "Shotmap des Spiels"
 
 #~ msgid "Goal"
 #~ msgstr "Tor"
