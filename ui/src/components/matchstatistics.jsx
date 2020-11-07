@@ -137,7 +137,7 @@ class Selector extends React.Component{
     }else{
       const optionList = createSelectOptions(this.props.matches)
       return (
-        <div className="w3-container w3-padding-small w3-center">
+        <div className="w3-center my-padding-4">
         <select className="w3-select w3-border selectbg" value={this.props.value} onChange={this.props.onChange}>
           {optionList}
         </select>
