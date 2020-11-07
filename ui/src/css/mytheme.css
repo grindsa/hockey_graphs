@@ -68,3 +68,5 @@ select.selectbg {
 .line5 {background-color: #e6e6fe;}
 
 .mytooltip {position:absolute; left:0; bottom:18px; z-index:1;}
+
+.nopadding {padding:0}

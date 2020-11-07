@@ -153,12 +153,61 @@ class Chart extends React.Component{
     if (this.props.options.chart){
       return (
         <HighchartsReact highcharts={Highcharts} options={this.props.options} immutable={true} />
-      );
+      )
+    }else if (this.props.options.home_team){
+      return(
+        <MatchOverview options={this.props.options} />
+      )
     }else{
       return (
         <ZoneChart options={this.props.options} />
       )
     }
+  }
+}
+
+class MatchOverview extends React.Component{
+    render(){
+      const stats = this.props.options
+      return(
+        <table id="itable" className="w3-table w3-border w3-centered">
+          <tbody>
+            <TableRow statname={stats.shotsOnGoal} leftvalue = {stats.home_team.shotsOnGoal} rightvalue = {stats.visitor_team.shotsOnGoal} leftwidth = {stats.home_team.shotsOnGoal_pctg} rightwidth = {stats.visitor_team.shotsOnGoal_pctg} />
+            <TableRow statname={stats.saves} leftvalue = {stats.home_team.saves} rightvalue = {stats.visitor_team.saves} leftwidth = {stats.home_team.saves_pctg} rightwidth = {stats.visitor_team.saves_pctg} />
+            <TableRow statname={stats.puckpossession} leftvalue = {stats.home_team.puckpossession} rightvalue = {stats.visitor_team.puckpossession} leftwidth = {stats.home_team.puckpossession_pctg} rightwidth = {stats.visitor_team.puckpossession_pctg} />
+            <TableRow statname={stats.penaltyMinutes} leftvalue = {stats.home_team.penaltyMinutes} rightvalue = {stats.visitor_team.penaltyMinutes} leftwidth = {stats.home_team.penaltyMinutes_pctg} rightwidth = {stats.visitor_team.penaltyMinutes_pctg} />
+            <TableRow statname={stats.powerplaymin} leftvalue = {stats.home_team.powerplaymin} rightvalue = {stats.visitor_team.powerplaymin} leftwidth = {stats.home_team.powerplaymin_pctg} rightwidth = {stats.visitor_team.powerplaymin_pctg} />
+            <TableRow statname={stats.ppGoals} leftvalue = {stats.home_team.ppGoals} rightvalue = {stats.visitor_team.ppGoals} leftwidth = {stats.home_team.ppGoals_pctg} rightwidth = {stats.visitor_team.ppGoals_pctg} />
+            <TableRow statname={stats.shGoals} leftvalue = {stats.home_team.shGoals} rightvalue = {stats.visitor_team.shGoals} leftwidth = {stats.home_team.shGoals_pctg} rightwidth = {stats.visitor_team.shGoals_pctg} />
+            <TableRow statname={stats.faceOffsWon} leftvalue = {stats.home_team.faceOffsWon} rightvalue = {stats.visitor_team.faceOffsWon} leftwidth = {stats.home_team.faceOffsWon_pctg} rightwidth = {stats.visitor_team.faceOffsWon_pctg} />
+          </tbody>
+        </table>
+      )
+    }
+}
+
+class TableRow extends React.Component {
+  /* single row in matchstats we need to assing color classes based on values */
+  render(){
+    if(this.props.leftvalue > this.props.rightvalue) {
+      var leftClassNames = 'w3-container pcolor w3-blue w3-right-align w3-right'
+      var rightClassNames = 'w3-container scolor w3-blue w3-left-align'
+    }else if(this.props.leftvalue === this.props.rightvalue) {
+      var leftClassNames = 'w3-container scolor w3-blue w3-right-align w3-right'
+      var rightClassNames = 'w3-container scolor w3-blue w3-left-align'
+    }else{
+      var leftClassNames = 'w3-container scolor w3-blue w3-right-align w3-right'
+      var rightClassNames = 'w3-container pcolor w3-blue w3-left-align'
+    }
+    return (
+      <React.Fragment>
+        <tr><td colSpan="2" className="w3-small"><b>{this.props.statname}</b></td></tr>
+        <tr>
+            <td><div className="w3-container w3-light-grey w3-tiny nopadding"><div className={leftClassNames} style={{width:this.props.leftwidth}}>{this.props.leftvalue}</div></div></td>
+            <td><div className="w3-container w3-light-grey w3-tiny nopadding"><div className={rightClassNames} style={{width:this.props.rightwidth}}>{this.props.rightvalue}</div></div></td>
+        </tr>
+      </React.Fragment>
+    )
   }
 }
 

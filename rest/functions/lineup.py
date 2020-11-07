@@ -6,5 +6,5 @@ def lineup_sort(logger, roster_list):
 
     lineup_dic = {'home_team': {}, 'guest_team': {}}
 
-    from pprint import pprint
-    pprint(roster_list)
+    # from pprint import pprint
+    # pprint(roster_list)
