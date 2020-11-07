@@ -64,3 +64,38 @@ export const createSelectOptions = function(data){
   });
   return optionlist
 }
+
+export const overviewClassnames = function(leftValue, rightValue){
+  /* specify classes for matchstat overview*/
+
+  if (leftValue === 0 && rightValue !== 0){
+    /*  cases like ppgoal visitor_team) */
+    var leftcolor = ''
+    var rightcolor = ' pcolor'
+  }else if (leftValue !== 0 && rightValue === 0){
+    /*  cases like ppgoal home_team) */
+    var leftcolor = ' pcolor'
+    var rightcolor = ''
+  }else if (leftValue === 0 && rightValue === 0){
+    /* both values */
+    var leftcolor = ''
+    var rightcolor = ''
+  }else if(leftValue === rightValue) {
+    /* equal values but not zero */
+    var leftcolor = ' scolor'
+    var rightcolor = ' scolor'
+  }else if(leftValue > rightValue) {
+    /* home team has better value than visitor */
+    var leftcolor = ' pcolor'
+    var rightcolor = ' scolor'
+  }else{
+    /* vistior team does better than home_team */
+    var leftcolor = ' scolor'
+    var rightcolor = ' pcolor'
+  }
+  /* final classnames */
+  var leftClassNames = 'w3-container w3-right-align w3-right' + leftcolor
+  var rightClassNames = 'w3-container w3-left-align' + rightcolor
+
+ return [leftClassNames, rightClassNames]
+}

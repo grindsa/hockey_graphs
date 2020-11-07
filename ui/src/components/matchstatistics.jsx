@@ -4,7 +4,7 @@ import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
 import HighchartsMore from 'highcharts/highcharts-more';
 import HighchartsExporting from 'highcharts/modules/exporting'
-import { createTableHeader, createTableBody, createSelectOptions } from './matchstatisticservice.js'
+import { createTableHeader, createTableBody, createSelectOptions, overviewClassnames } from './matchstatisticservice.js'
 import { asyncGET, isEmpty } from './sharedfunctions.js';
 
 // Load Highcharts modules
@@ -152,7 +152,9 @@ class Chart extends React.Component{
   render() {
     if (this.props.options.chart){
       return (
-        <HighchartsReact highcharts={Highcharts} options={this.props.options} immutable={true} />
+        <div className="w3-border">
+          <HighchartsReact highcharts={Highcharts} options={this.props.options} immutable={true} />
+        </div>
       )
     }else if (this.props.options.home_team){
       return(
@@ -170,7 +172,7 @@ class MatchOverview extends React.Component{
     render(){
       const stats = this.props.options
       return(
-        <table id="itable" className="w3-table w3-border w3-centered">
+        <table className="w3-table w3-border w3-centered">
           <tbody>
             <TableRow statname={stats.shotsOnGoal} leftvalue = {stats.home_team.shotsOnGoal} rightvalue = {stats.visitor_team.shotsOnGoal} leftwidth = {stats.home_team.shotsOnGoal_pctg} rightwidth = {stats.visitor_team.shotsOnGoal_pctg} />
             <TableRow statname={stats.saves} leftvalue = {stats.home_team.saves} rightvalue = {stats.visitor_team.saves} leftwidth = {stats.home_team.saves_pctg} rightwidth = {stats.visitor_team.saves_pctg} />
@@ -189,16 +191,7 @@ class MatchOverview extends React.Component{
 class TableRow extends React.Component {
   /* single row in matchstats we need to assing color classes based on values */
   render(){
-    if(this.props.leftvalue > this.props.rightvalue) {
-      var leftClassNames = 'w3-container pcolor w3-blue w3-right-align w3-right'
-      var rightClassNames = 'w3-container scolor w3-blue w3-left-align'
-    }else if(this.props.leftvalue === this.props.rightvalue) {
-      var leftClassNames = 'w3-container scolor w3-blue w3-right-align w3-right'
-      var rightClassNames = 'w3-container scolor w3-blue w3-left-align'
-    }else{
-      var leftClassNames = 'w3-container scolor w3-blue w3-right-align w3-right'
-      var rightClassNames = 'w3-container pcolor w3-blue w3-left-align'
-    }
+    var [leftClassNames, rightClassNames] = overviewClassnames(this.props.leftvalue, this.props.rightvalue)
     return (
       <React.Fragment>
         <tr><td colSpan="2" className="w3-small"><b>{this.props.statname}</b></td></tr>
