@@ -115,16 +115,16 @@ class MatchHeader extends React.Component {
       visitor_team = this.props.match.visitor_team_shortcut
     }
     return (
-      <div className="w3-container w3-padding-small scolor w3-center">
-        <h1>
-          <span className="w3-padding-small pseudohead">{home_team}</span>
-          <span className="w3-padding-small middle"><img src={this.props.match.home_team_logo} alt={this.props.match.home_team_shortcut} width="40px"/></span>
-          <span className="w3-padding-small">{this.props.match.result}</span>
-          <span className="w3-padding-small middle"><img src={this.props.match.visitor_team_logo} alt={this.props.match.visitor_team_logo} width="40px"/></span>
-          <span className="w3-padding-small pseudohead">{visitor_team}</span>
-          <span className="w3-padding-small"><i className="w3-margin-right w3-xxlarge fa fa-arrow-circle-o-left w3-right" onClick={() => this.props.reset()} /></span>
-        </h1>
-      </div>
+        <div className="w3-container w3-row middle scolor pseudohead w3-padding">
+          <div className="w3-col" style={{width:'45%'}}>
+            <span className="w3-padding-small w3-right"><span className="w3-padding-small">{home_team}</span><img src={this.props.match.home_team_logo} className="middle" alt={this.props.match.home_team_shortcut} width="40px"/></span>
+          </div>
+          <div className="w3-col w3-center w3-padding-top" style={{width:'10%'}}>{this.props.match.result}</div>
+          <div className="w3-col" style={{width:'45%'}}>
+            <span className="w3-padding-small w3-left"><img src={this.props.match.visitor_team_logo} className="middle" alt={this.props.match.visitor_team_logo} width="40px"/><span className="w3-padding-small">{visitor_team}</span></span>
+            <i className="w3-padding-top w3-margin-right w3-xlarge fa fa-arrow-circle-o-left w3-right" onClick={() => this.props.reset()} />
+          </div>
+        </div>
     );
   }
 }
@@ -196,8 +196,8 @@ class TableRow extends React.Component {
       <React.Fragment>
         <tr><td colSpan="2" className="w3-small"><b>{this.props.statname}</b></td></tr>
         <tr>
-            <td><div className="w3-container w3-light-grey w3-tiny nopadding"><div className={leftClassNames} style={{width:this.props.leftwidth}}>{this.props.leftvalue}</div></div></td>
-            <td><div className="w3-container w3-light-grey w3-tiny nopadding"><div className={rightClassNames} style={{width:this.props.rightwidth}}>{this.props.rightvalue}</div></div></td>
+            <td style={{width:'50%'}}><div className="w3-container w3-light-grey w3-tiny nopadding"><div className={leftClassNames} style={{width:this.props.leftwidth}}>{this.props.leftvalue}</div></div></td>
+            <td style={{width:'50%'}}><div className="w3-container w3-light-grey w3-tiny nopadding"><div className={rightClassNames} style={{width:this.props.rightwidth}}>{this.props.rightvalue}</div></div></td>
         </tr>
       </React.Fragment>
     )

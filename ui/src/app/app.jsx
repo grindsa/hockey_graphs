@@ -43,7 +43,7 @@ export class App extends React.Component {
       <div className="mainwidth">
         <div className="w3-bar w3-padding pcolor">
           <i className="fa fa-bars fa-lg w3-xlarge  w3-bar-item" />
-          <LanguageSelector langValue={ this.state.language } onClick={() => this.toggleLanguage()} />
+          <LanguageSelector langValue={ this.state.language } onClick={() => this.toggleLanguage()} />     
         </div>
         <MatchDayList matchdays={this.state.endpoints.matchdays} matchstatistics={this.state.endpoints.matchstatistics} language={this.state.language}/>
       </div>
