@@ -120,3 +120,18 @@ def maxval_get(input_list, sorter='timestamp', divisor=60, add=1):
     except BaseException:
         x_max = divisor + 1
     return x_max
+
+def pctg_get(part, base):
+    """ calculate percentage value and return ans string """
+    # catch division by zero exceptions
+    if base != 0:
+        pctg_value = '{0}%'.format(round(part*100/base,0))
+    else:
+        pctg_value = '0%'
+    return pctg_value
+
+def min2sec(sec_value):
+    """ convert seconds to mm:ss """
+    (min, sec) = divmod(sec_value, 60)
+    min_value = '{:02d}:{:02d}'.format(min, sec)
+    return min_value
