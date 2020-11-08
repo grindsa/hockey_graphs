@@ -43,7 +43,6 @@ def lineup_sort(logger, roster_list):
                 # skip goalies
                 _tmp_dic[_id] = roster_id
 
-
         # store entries sorted by key( new player_id) and initialize counter for faster access
         cnt = 0
         for key in sorted(_tmp_dic):

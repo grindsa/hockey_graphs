@@ -11,6 +11,47 @@ from rest.models import Playerstat
 from rest.functions.timeline import skatersonice_get, penalties_include
 from rest.functions.lineup import lineup_sort
 
+def _matchupmatrix_initialize(logger, lineup_dic):
+    """ add team to database """
+    logger.debug('_matchupmatrix_initialize()')
+    matchup_matrix = {}
+    for hplayer in lineup_dic['home_team']:
+        matchup_matrix[hplayer] = {}
+        for vplayer in lineup_dic['visitor_team']:
+            matchup_matrix[hplayer][vplayer] = 0
+
+    return matchup_matrix
+
+def _five_filter(five_filter, hteam, vteam):
+    """ check if there is no penalty """
+    process_it = False
+    if five_filter:
+        if 'penalty' not in hteam and vteam:
+            process_it = True
+    else:
+        process_it = True
+
+    return process_it
+
+def _matchupmatrix_gen(logger, soi_dic, lineup_dic, player_dic, five_filter=False):
+    """ create matrix of players and ice_times """
+
+    # generate empty matrix to collect data
+    matchup_matrix = _matchupmatrix_initialize(logger, lineup_dic)
+
+    for sec in soi_dic['home_team']:
+        # 5v5 check
+        process_sec = _five_filter(five_filter, soi_dic['home_team'][sec], soi_dic['visitor_team'][sec])
+        if process_sec:
+            for hplayer_id in soi_dic['home_team'][sec]['player_list']:
+                for vplayer_id in soi_dic['visitor_team'][sec]['player_list']:
+                    # print(sec, player_dic[hplayer_id], player_dic[vplayer_id])
+                    matchup_matrix[player_dic[hplayer_id]][player_dic[vplayer_id]] += 1
+            # print(sec, five_filter, soi_dic['home_team'][sec]['player_list'])
+            # print(sec, five_filter, soi_dic['visitor_team'][sec]['player_list'])
+
+    return(matchup_matrix)
+
 def playerstat_add(logger, fkey, fvalue, data_dic):
     """ add team to database """
     logger.debug('playerstat_add({0}:{1})'.format(fkey, fvalue))
@@ -65,15 +106,19 @@ def toifromplayerstats_get(logger, _matchinfo_dic, playerstat_dic):
 
     return toi_dic
 
-def matchupmatrix_get(logger, matchinfo_dic, shift_list, roster_list, five_filter=True):
+def matchupmatrix_get(logger, matchinfo_dic, shift_list, roster_list, periodevent_list, five_filter=True):
     """ get player matchup - time players spend on ice together """
     logger.debug('matchupmatrix_get()')
 
     # soi = seconds on ice
-    (soi_dic, toi_dic) = skatersonice_get(logger, shift_list, matchinfo_dic)
+    (soi_dic, _toi_dic) = skatersonice_get(logger, shift_list, matchinfo_dic, True)
+
+    # add penalties to filter 5v5
+    soi_dic = penalties_include(logger, soi_dic, periodevent_list)
 
     # get lineup in a sorted way
-    lineup_dic = lineup_sort(logger, roster_list)
+    (lineup_dic, player_dic) = lineup_sort(logger, roster_list)
 
-    # get playerstat dic
-    # playerstat_dic = playerstat_get(logger, 'match_id', )
+    matchup_matrix = _matchupmatrix_gen(logger, soi_dic, lineup_dic, player_dic, five_filter=True)
+
+    return(lineup_dic, matchup_matrix)

@@ -2,7 +2,7 @@
 """ list of functions for shots """
 # pylint: disable=E0401, C0413
 
-def skatersonice_get(logger, shift_list, matchinfo_dic):
+def skatersonice_get(logger, shift_list, matchinfo_dic, add_id=False):
     """ get skaters on ice for a certain match """
     logger.debug('skatersonice_get()')
     skaters_on_ice_dic = {'home_team': {}, 'visitor_team': {}}
@@ -36,7 +36,11 @@ def skatersonice_get(logger, shift_list, matchinfo_dic):
         toi_dic[team_name][player_name] += shift_duration
 
         for second_ in range(shift['startTime']['time']+1, shift['endTime']['time']+1):
-            skaters_on_ice_dic[team_name][second_]['player_list'].append(player_name)
+            # add player_ids or names
+            if add_id:
+                skaters_on_ice_dic[team_name][second_]['player_list'].append(shift['player']['id'])
+            else:
+                skaters_on_ice_dic[team_name][second_]['player_list'].append(player_name)
             skaters_on_ice_dic[team_name][second_]['count'] += 1
 
     return (skaters_on_ice_dic, toi_dic)

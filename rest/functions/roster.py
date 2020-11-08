@@ -26,6 +26,11 @@ def roster_add(logger, fkey, fvalue, data_dic):
 def roster_get(logger, fkey, fvalue, vlist=('match_id', 'roster')):
     """ get info for a specifc match_id """
     logger.debug('roster_get({0}:{1})'.format(fkey, fvalue))
+
+    # 1st number indicates player position (1 = goalie, 2 = defense, 3 = forward)
+    # 2nd number indicates line (1 = 1st line, 2 = 2nd line etc.)
+    # 3rd number indicates position on the line (1 = left, 2 = center, 3 = right)
+
     try:
         if len(vlist) == 1:
             roster_dic = list(Roster.objects.filter(**{fkey: fvalue}).values_list(vlist[0], flat=True))[0]
