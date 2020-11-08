@@ -50,7 +50,7 @@ def _matchupmatrix_gen(logger, soi_dic, lineup_dic, player_dic, five_filter=Fals
             # print(sec, five_filter, soi_dic['home_team'][sec]['player_list'])
             # print(sec, five_filter, soi_dic['visitor_team'][sec]['player_list'])
 
-    return(matchup_matrix)
+    return matchup_matrix
 
 def playerstat_add(logger, fkey, fvalue, data_dic):
     """ add team to database """
@@ -117,8 +117,8 @@ def matchupmatrix_get(logger, matchinfo_dic, shift_list, roster_list, periodeven
     soi_dic = penalties_include(logger, soi_dic, periodevent_list)
 
     # get lineup in a sorted way
-    (lineup_dic, player_dic) = lineup_sort(logger, roster_list)
+    (lineup_dic, player_dic, plotline_dic) = lineup_sort(logger, roster_list)
 
-    matchup_matrix = _matchupmatrix_gen(logger, soi_dic, lineup_dic, player_dic, five_filter=True)
+    matchup_matrix = _matchupmatrix_gen(logger, soi_dic, lineup_dic, player_dic, five_filter=five_filter)
 
-    return(lineup_dic, matchup_matrix)
+    return(lineup_dic, matchup_matrix, plotline_dic)

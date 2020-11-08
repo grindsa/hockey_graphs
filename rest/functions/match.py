@@ -63,60 +63,64 @@ def match_add(logger, fkey, fvalue, data_dic):
 
 def matchstats_get(logger, match_id):
     """ get matchstatistics """
-
+    # pylint: disable=E0602
     matchstat_dic = teamstat_get(logger, 'match', match_id)
-
-    stat_dic = {
-        'shotsOnGoal': _('Shots on Goal'),
-        'saves': _('Saves'),
-        'penaltyMinutes': _('Penalties in Minutes'),
-        'ppGoals': _('Powerplay Goals'),
-        'shGoals': _('Shorthanded Goals'),
-        'faceOffsWon': _('Faceoff Win'),
-        'puckpossession': _('Puck Possession'),
-        'powerplaymin': _('Time in Powerplay'),
-        'home_team': {
-            'shotsOnGoal': matchstat_dic['home']['shotsOnGoal'],
-            'shotsOnGoal_pctg': pctg_get(matchstat_dic['home']['shotsOnGoal'], (matchstat_dic['home']['shotsOnGoal'] + matchstat_dic['visitor']['shotsOnGoal'])),
-            'saves': matchstat_dic['home']['saves'],
-            'saves_pctg': pctg_get(matchstat_dic['home']['saves'], (matchstat_dic['home']['saves'] + matchstat_dic['visitor']['saves'])),
-            'faceOffsWon': matchstat_dic['home']['faceOffsWon'],
-            'faceOffsWon_pctg': pctg_get(matchstat_dic['home']['faceOffsWon'], (matchstat_dic['home']['faceOffsWon'] + matchstat_dic['visitor']['faceOffsWon'])),
-            'penaltyMinutes': matchstat_dic['home']['penaltyMinutes'],
-            'penaltyMinutes_pctg': pctg_get(matchstat_dic['home']['penaltyMinutes'], (matchstat_dic['home']['penaltyMinutes'] + matchstat_dic['visitor']['penaltyMinutes'])),
-            'powerplaymin': min2sec(matchstat_dic['home']['powerPlaySeconds']),
-            'powerplaymin_pctg': pctg_get(matchstat_dic['home']['powerPlaySeconds'], (matchstat_dic['home']['powerPlaySeconds'] + matchstat_dic['visitor']['powerPlaySeconds'])),
-            'ppGoals': matchstat_dic['home']['ppGoals'],
-            'ppGoals_pctg': pctg_get(matchstat_dic['home']['ppGoals'], (matchstat_dic['home']['ppGoals'] + matchstat_dic['visitor']['ppGoals'])),
-            'shGoals': matchstat_dic['home']['shGoals'],
-            'shGoals_pctg': pctg_get(matchstat_dic['home']['shGoals'], (matchstat_dic['home']['shGoals'] + matchstat_dic['visitor']['shGoals'])),
-            'puckpossession': '{0}%'.format(int(matchstat_dic['home']['shotsAttempts'] * 100 / (matchstat_dic['home']['shotsAttempts'] + matchstat_dic['home']['shotsAttempts']))),
-            'puckpossession_pctg': '{0}%'.format(int(matchstat_dic['home']['shotsAttempts'] * 100 / (matchstat_dic['home']['shotsAttempts'] + matchstat_dic['home']['shotsAttempts'])))
-        },
-        'visitor_team': {
-            'shotsOnGoal': matchstat_dic['visitor']['shotsOnGoal'],
-            'shotsOnGoal_pctg': pctg_get(matchstat_dic['visitor']['shotsOnGoal'], (matchstat_dic['home']['shotsOnGoal'] + matchstat_dic['visitor']['shotsOnGoal'])),
-            'saves': matchstat_dic['visitor']['saves'],
-            'saves_pctg': pctg_get(matchstat_dic['visitor']['saves'], (matchstat_dic['home']['saves'] + matchstat_dic['visitor']['saves'])),
-            'faceOffsWon': matchstat_dic['visitor']['faceOffsWon'],
-            'faceOffsWon_pctg': pctg_get(matchstat_dic['visitor']['faceOffsWon'], (matchstat_dic['home']['faceOffsWon'] + matchstat_dic['visitor']['faceOffsWon'])),
-            'penaltyMinutes': matchstat_dic['visitor']['penaltyMinutes'],
-            'penaltyMinutes_pctg': pctg_get(matchstat_dic['visitor']['penaltyMinutes'], (matchstat_dic['home']['penaltyMinutes'] + matchstat_dic['visitor']['penaltyMinutes'])),
-            'powerplaymin': min2sec(matchstat_dic['visitor']['powerPlaySeconds']),
-            'powerplaymin_pctg': pctg_get(matchstat_dic['visitor']['powerPlaySeconds'], (matchstat_dic['home']['powerPlaySeconds'] + matchstat_dic['visitor']['powerPlaySeconds'])),
-            'ppGoals': matchstat_dic['visitor']['ppGoals'],
-            'ppGoals_pctg': pctg_get(matchstat_dic['visitor']['ppGoals'], (matchstat_dic['home']['ppGoals'] + matchstat_dic['visitor']['ppGoals'])),
-            'shGoals': matchstat_dic['visitor']['shGoals'],
-            'shGoals_pctg': pctg_get(matchstat_dic['visitor']['shGoals'], (matchstat_dic['home']['shGoals'] + matchstat_dic['visitor']['shGoals'])),
-            'puckpossession': '{0}%'.format(int(matchstat_dic['visitor']['shotsAttempts'] * 100 / (matchstat_dic['home']['shotsAttempts'] + matchstat_dic['home']['shotsAttempts']))),
-            'puckpossession_pctg': '{0}%'.format(int(matchstat_dic['visitor']['shotsAttempts'] * 100 / (matchstat_dic['home']['shotsAttempts'] + matchstat_dic['home']['shotsAttempts'])))
+    if matchstat_dic:
+        stat_dic = {
+            'shotsOnGoal': _('Shots on Goal'),
+            'saves': _('Saves'),
+            'penaltyMinutes': _('Penalties in Minutes'),
+            'ppGoals': _('Powerplay Goals'),
+            'shGoals': _('Shorthanded Goals'),
+            'faceOffsWon': _('Faceoff Win'),
+            'puckpossession': _('Puck Possession'),
+            'powerplaymin': _('Time in Powerplay'),
+            'home_team': {
+                'shotsOnGoal': matchstat_dic['home']['shotsOnGoal'],
+                'shotsOnGoal_pctg': pctg_get(matchstat_dic['home']['shotsOnGoal'], (matchstat_dic['home']['shotsOnGoal'] + matchstat_dic['visitor']['shotsOnGoal'])),
+                'saves': matchstat_dic['home']['saves'],
+                'saves_pctg': pctg_get(matchstat_dic['home']['saves'], (matchstat_dic['home']['saves'] + matchstat_dic['visitor']['saves'])),
+                'faceOffsWon': matchstat_dic['home']['faceOffsWon'],
+                'faceOffsWon_pctg': pctg_get(matchstat_dic['home']['faceOffsWon'], (matchstat_dic['home']['faceOffsWon'] + matchstat_dic['visitor']['faceOffsWon'])),
+                'penaltyMinutes': matchstat_dic['home']['penaltyMinutes'],
+                'penaltyMinutes_pctg': pctg_get(matchstat_dic['home']['penaltyMinutes'], (matchstat_dic['home']['penaltyMinutes'] + matchstat_dic['visitor']['penaltyMinutes'])),
+                'powerplaymin': min2sec(matchstat_dic['home']['powerPlaySeconds']),
+                'powerplaymin_pctg': pctg_get(matchstat_dic['home']['powerPlaySeconds'], (matchstat_dic['home']['powerPlaySeconds'] + matchstat_dic['visitor']['powerPlaySeconds'])),
+                'ppGoals': matchstat_dic['home']['ppGoals'],
+                'ppGoals_pctg': pctg_get(matchstat_dic['home']['ppGoals'], (matchstat_dic['home']['ppGoals'] + matchstat_dic['visitor']['ppGoals'])),
+                'shGoals': matchstat_dic['home']['shGoals'],
+                'shGoals_pctg': pctg_get(matchstat_dic['home']['shGoals'], (matchstat_dic['home']['shGoals'] + matchstat_dic['visitor']['shGoals'])),
+                'puckpossession': '{0}%'.format(int(matchstat_dic['home']['shotsAttempts'] * 100 / (matchstat_dic['home']['shotsAttempts'] + matchstat_dic['home']['shotsAttempts']))),
+                'puckpossession_pctg': '{0}%'.format(int(matchstat_dic['home']['shotsAttempts'] * 100 / (matchstat_dic['home']['shotsAttempts'] + matchstat_dic['home']['shotsAttempts'])))
+            },
+            'visitor_team': {
+                'shotsOnGoal': matchstat_dic['visitor']['shotsOnGoal'],
+                'shotsOnGoal_pctg': pctg_get(matchstat_dic['visitor']['shotsOnGoal'], (matchstat_dic['home']['shotsOnGoal'] + matchstat_dic['visitor']['shotsOnGoal'])),
+                'saves': matchstat_dic['visitor']['saves'],
+                'saves_pctg': pctg_get(matchstat_dic['visitor']['saves'], (matchstat_dic['home']['saves'] + matchstat_dic['visitor']['saves'])),
+                'faceOffsWon': matchstat_dic['visitor']['faceOffsWon'],
+                'faceOffsWon_pctg': pctg_get(matchstat_dic['visitor']['faceOffsWon'], (matchstat_dic['home']['faceOffsWon'] + matchstat_dic['visitor']['faceOffsWon'])),
+                'penaltyMinutes': matchstat_dic['visitor']['penaltyMinutes'],
+                'penaltyMinutes_pctg': pctg_get(matchstat_dic['visitor']['penaltyMinutes'], (matchstat_dic['home']['penaltyMinutes'] + matchstat_dic['visitor']['penaltyMinutes'])),
+                'powerplaymin': min2sec(matchstat_dic['visitor']['powerPlaySeconds']),
+                'powerplaymin_pctg': pctg_get(matchstat_dic['visitor']['powerPlaySeconds'], (matchstat_dic['home']['powerPlaySeconds'] + matchstat_dic['visitor']['powerPlaySeconds'])),
+                'ppGoals': matchstat_dic['visitor']['ppGoals'],
+                'ppGoals_pctg': pctg_get(matchstat_dic['visitor']['ppGoals'], (matchstat_dic['home']['ppGoals'] + matchstat_dic['visitor']['ppGoals'])),
+                'shGoals': matchstat_dic['visitor']['shGoals'],
+                'shGoals_pctg': pctg_get(matchstat_dic['visitor']['shGoals'], (matchstat_dic['home']['shGoals'] + matchstat_dic['visitor']['shGoals'])),
+                'puckpossession': '{0}%'.format(int(matchstat_dic['visitor']['shotsAttempts'] * 100 / (matchstat_dic['home']['shotsAttempts'] + matchstat_dic['home']['shotsAttempts']))),
+                'puckpossession_pctg': '{0}%'.format(int(matchstat_dic['visitor']['shotsAttempts'] * 100 / (matchstat_dic['home']['shotsAttempts'] + matchstat_dic['home']['shotsAttempts'])))
+            }
         }
-    }
 
-    stat_entry = {
-        'title': 'foo',
-        'chart': stat_dic,
-        'tabs': False
-    }
+        stat_entry = {
+            'title': _('Overview'),
+            'chart': stat_dic,
+            'tabs': False
+        }
+
+    else:
+        stat_entry = {}
+
 
     return stat_entry

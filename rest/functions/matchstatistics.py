@@ -11,7 +11,7 @@ from django.conf import settings
 from rest.functions.corsi import gamecorsi_get
 from rest.functions.shot import shot_list_get, shotspermin_count, shotspermin_aggregate, shotspersec_count, shotstatus_count, shotstatus_aggregate, shotsperzone_count, shotsperzone_aggregate, shotcoordinates_get
 from rest.functions.shotcharts import shotsumchart_create, gameflowchart_create, shotstatussumchart_create, shotmapchart_create, gamecorsichart_create, gamecorsippctgchart_create, puckpossessionchart_create
-from rest.functions.toicharts import gametoichart_create
+from rest.functions.toicharts import gametoichart_create, gamematchupchart_create
 from rest.functions.shottables import shotsperiodtable_get, shotstatussumtable_get, shotzonetable_get, gamecorsi_table
 from rest.functions.toitables import gametoi_table
 from rest.functions.match import match_info_get, matchstats_get
@@ -46,9 +46,9 @@ def matchstatistics_get(logger, request, fkey=None, fvalue=None):
         result = []
 
         # get matchstatistics
-        result.append(matchstats_get(logger, fvalue))
+        # result.append(matchstats_get(logger, fvalue))
 
-        # create chart for shots per match 
+        # create chart for shots per match
         # pylint: disable=E0602
         # result.append(_gameshots_get(logger, _('Shots per minute'), request, fkey, fvalue, matchinfo_dic, shot_list))
 
@@ -81,7 +81,7 @@ def matchstatistics_get(logger, request, fkey=None, fvalue=None):
         # result.append(_gametoi_get(logger, _('Time on Ice per Player'), request, fkey, fvalue, matchinfo_dic, shift_list))
 
         # pylint: disable=E0602
-        # result.append(_gamematchup_get(logger, _('5v5 Matchup'), request, fkey, fvalue, matchinfo_dic, shift_list, roster_list))
+        result.append(_gamematchup_get(logger, _('5v5 Matchup'), request, fkey, fvalue, matchinfo_dic, shift_list, roster_list, periodevent_list))
 
     else:
         result = {'error': 'Please specify a matchid'}
@@ -340,16 +340,19 @@ def _gametoi_get(logger, title, request, fkey, fvalue, matchinfo_dic, shift_list
     return stat_entry
 
 
-def _gamematchup_get(logger, title, request, fkey, fvalue, matchinfo_dic, shift_list, roster_list):
+def _gamematchup_get(logger, title, request, _fkey, _fvalue, matchinfo_dic, shift_list, roster_list, periodevent_list):
     """ game matchup """
 
     matchup_table = {}
     matchup_chart = {}
 
     if shift_list:
-        matchup_matrix = matchupmatrix_get(logger, matchinfo_dic, shift_list, roster_list)
 
+        # get matrix showing the different player relations
+        (lineup_dic, matchup_matrix, plotline_dic) = matchupmatrix_get(logger, matchinfo_dic, shift_list, roster_list, periodevent_list)
 
+        # generate_chart
+        matchup_chart = gamematchupchart_create(logger, lineup_dic, matchup_matrix, plotline_dic)
 
     stat_entry = {
         'title': title,

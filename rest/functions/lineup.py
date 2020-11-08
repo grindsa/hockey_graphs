@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
+""" functions for lineup """
+import math
 
-def _rosterid_rebuild(logger, roster_id):
+def _rosterid_rebuild(_logger, roster_id):
     """ created sorted lineup from roster_list """
     # logger.debug('_rosterid_rebuild({0})'.format(player_id))
 
@@ -26,6 +28,7 @@ def lineup_sort(logger, roster_list):
 
     lineup_dic = {'home_team': {}, 'visitor_team': {}}
     player_dic = {}
+    plotlines_dic = {'home_team': [], 'visitor_team': []}
 
     for team in roster_list:
 
@@ -45,11 +48,18 @@ def lineup_sort(logger, roster_list):
 
         # store entries sorted by key( new player_id) and initialize counter for faster access
         cnt = 0
+        initial_line = 1
         for key in sorted(_tmp_dic):
-            cnt += 1
+            line = math.floor(key/100)
+            if line != initial_line:
+                # line flip
+                plotlines_dic[team_name].append(cnt)
+                initial_line = line
+
             lineup_dic[team_name][cnt] = roster_list[team][_tmp_dic[key]]
             # hope thats correct we need a dictionary to lookup the position in lineup-dic based on player_id
             player_dic[roster_list[team][_tmp_dic[key]]['playerId']] = cnt
             # print(roster_list[team][_tmp_dic[key]]['playerId'], cnt)
+            cnt += 1
 
-    return (lineup_dic, player_dic)
+    return (lineup_dic, player_dic, plotlines_dic)
