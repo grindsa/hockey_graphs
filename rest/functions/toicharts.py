@@ -13,7 +13,6 @@ def gametoichart_create(logger, toi_dic):
     x_list = []
     y_dic = {1: [], 2: [], 3: [], 4: []}
 
-
     # we need two iterations of the dictionary
     # first one is to create the list of playernames
     for period in toi_dic:
@@ -77,9 +76,7 @@ def gametoichart_create(logger, toi_dic):
             {'name': _('OT'), 'data': y_dic[4], 'color': chart_color4}
         ]
     }
-
     return chart_options
-
 
 def gamematchupchart_create(logger, lineup_dic, matchup_matrix, plotline_dic):
     """ create matchup heatmeap """
@@ -173,5 +170,4 @@ def gamematchupchart_create(logger, lineup_dic, matchup_matrix, plotline_dic):
             }
         }],
     }
-
     return chart_options
