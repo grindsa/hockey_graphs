@@ -33,14 +33,42 @@ export class ChangeMatchday extends React.Component {
             />
         </div>
         <div className="w3-col w3-center" style={{width:'80%'}}>
-          <h1>
-            <a href='#' onClick={() => this.props.onChangeMatchDay(this.props.previous)}><i className="w3-margin-right fa fa-arrow-left" /></a>
-             {this.props.date}
-            <a href='#' onClick={() => this.props.onChangeMatchDay(this.props.next)}><i className="w3-margin-left fa fa-arrow-right" /></a>
-          </h1>
+        <HeadBar next={this.props.next}  previous={this.props.previous} date={this.props.date} onChangeMatchDay={this.props.onChangeMatchDay} />
         </div>
         <div className="w3-col w3-left" style={{width:'10%'}}></div>
     </div>
     )
+  }
+}
+
+class HeadBar extends React.Component {
+  render(){
+    return(
+      <h1>
+         <HeadPrevious previous={this.props.previous} onChangeMatchDay={this.props.onChangeMatchDay} />
+         {this.props.date}
+         <HeadNext next={this.props.next} onChangeMatchDay={this.props.onChangeMatchDay} />
+      </h1>
+    )
+  }
+}
+
+class HeadPrevious extends React.Component {
+  render(){
+    if (this.props.previous){
+      return(<a href='#' onClick={() => this.props.onChangeMatchDay(this.props.previous)}><i className="w3-margin-right fa fa-arrow-left" /></a>)
+    }else{
+      return(<i className="w3-margin-right fa fa-arrow-left w3-opacity-max" />)
+    }
+  }
+}
+
+class HeadNext extends React.Component {
+  render(){
+    if (this.props.next){
+      return(<a href='#' onClick={() => this.props.onChangeMatchDay(this.props.next)}><i className="w3-margin-left fa fa-arrow-right" /></a>)
+    }else{
+      return(<i className="w3-margin-left fa fa-arrow-right w3-opacity-max" />)
+    }
   }
 }
