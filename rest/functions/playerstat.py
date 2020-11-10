@@ -18,8 +18,7 @@ def _matchupmatrix_initialize(logger, lineup_dic):
     for hplayer in lineup_dic['home_team']:
         matchup_matrix[hplayer] = {}
         for vplayer in lineup_dic['visitor_team']:
-            matchup_matrix[hplayer][vplayer] = 0
-
+            matchup_matrix[hplayer][vplayer] = {'seconds': 0, 'home_shots': 0, 'visitor_shots': 0}
     return matchup_matrix
 
 def _five_filter(five_filter, hteam, vteam):
@@ -46,7 +45,7 @@ def _matchupmatrix_gen(logger, soi_dic, lineup_dic, player_dic, five_filter=Fals
             for hplayer_id in soi_dic['home_team'][sec]['player_list']:
                 for vplayer_id in soi_dic['visitor_team'][sec]['player_list']:
                     # print(sec, player_dic[hplayer_id], player_dic[vplayer_id])
-                    matchup_matrix[player_dic[hplayer_id]][player_dic[vplayer_id]] += 1
+                    matchup_matrix[player_dic[hplayer_id]][player_dic[vplayer_id]]['seconds'] += 1
             # print(sec, five_filter, soi_dic['home_team'][sec]['player_list'])
             # print(sec, five_filter, soi_dic['visitor_team'][sec]['player_list'])
 

@@ -88,11 +88,11 @@ def gamematchupchart_create(logger, lineup_dic, matchup_matrix, plotline_dic):
         for vpid in matchup_matrix[hpid]:
             # data_list.append([hpid, vpid, round(matchup_matrix[hpid][vpid]/60, 0)])
             data_list.append({
-                'x': hpid, 'y': vpid, 'value': round(matchup_matrix[hpid][vpid]/60, 3),
-                'minsec': '{0:02d}:{1:02d}'.format(*divmod(matchup_matrix[hpid][vpid], 60)),
+                'x': hpid, 'y': vpid, 'value': round(matchup_matrix[hpid][vpid]['seconds']/60, 3),
+                'minsec': '{0:02d}:{1:02d}'.format(*divmod(matchup_matrix[hpid][vpid]['seconds'], 60)),
                 'home_name': '{0} {1}'.format(lineup_dic['home_team'][hpid]['name'], lineup_dic['home_team'][hpid]['surname']),
                 'visitor_name': '{0} {1}'.format(lineup_dic['visitor_team'][vpid]['name'], lineup_dic['visitor_team'][vpid]['surname']),
-                'dataLabels': {'format': '{0}:{1:02d}'.format(*divmod(matchup_matrix[hpid][vpid], 60))}
+                'dataLabels': {'format': '{0}:{1:02d}'.format(*divmod(matchup_matrix[hpid][vpid]['seconds'], 60))}
             })
 
     x_list = []
