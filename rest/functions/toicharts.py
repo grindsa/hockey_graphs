@@ -78,7 +78,7 @@ def gametoichart_create(logger, toi_dic):
     }
     return chart_options
 
-def gamematchupchart_create(logger, lineup_dic, matchup_matrix, plotline_dic):
+def gamematchupchart_create(logger, lineup_dic, matchup_matrix, plotline_dic, matchinfo_dic):
     """ create matchup heatmeap """
     logger.debug('gamematchupchart_create()')
 
@@ -88,11 +88,14 @@ def gamematchupchart_create(logger, lineup_dic, matchup_matrix, plotline_dic):
         for vpid in matchup_matrix[hpid]:
             # data_list.append([hpid, vpid, round(matchup_matrix[hpid][vpid]/60, 0)])
             data_list.append({
-                'x': hpid, 'y': vpid, 'value': round(matchup_matrix[hpid][vpid]['seconds']/60, 3),
+                'x': hpid, 'y': vpid,
+                'value': round(matchup_matrix[hpid][vpid]['seconds']/60, 3),
                 'minsec': '{0:02d}:{1:02d}'.format(*divmod(matchup_matrix[hpid][vpid]['seconds'], 60)),
                 'home_name': '{0} {1}'.format(lineup_dic['home_team'][hpid]['name'], lineup_dic['home_team'][hpid]['surname']),
                 'visitor_name': '{0} {1}'.format(lineup_dic['visitor_team'][vpid]['name'], lineup_dic['visitor_team'][vpid]['surname']),
-                'dataLabels': {'format': '{0}:{1:02d}'.format(*divmod(matchup_matrix[hpid][vpid]['seconds'], 60))}
+                'dataLabels': {'format': '{0}:{1:02d}'.format(*divmod(matchup_matrix[hpid][vpid]['seconds'], 60))},
+                'home_shots': matchup_matrix[hpid][vpid]['home_shots'],
+                'visitor_shots': matchup_matrix[hpid][vpid]['visitor_shots'],
             })
 
     x_list = []
@@ -113,6 +116,10 @@ def gamematchupchart_create(logger, lineup_dic, matchup_matrix, plotline_dic):
     for plot in plotline_dic['visitor_team']:
         y_plotlines.append({'color': '#ffffff', 'width': 4, 'value': plot - .5, 'zIndex': 4})
 
+
+    homeshot_string = '{0} {1}'.format(_('Shots'), matchinfo_dic['home_team__shortcut'])
+    visitorshot_string = '{0} {1}'.format(_('Shots'), matchinfo_dic['visitor_team__shortcut'])
+
     chart_options = {
 
         'chart': {
@@ -127,7 +134,7 @@ def gamematchupchart_create(logger, lineup_dic, matchup_matrix, plotline_dic):
         'tooltip': {
             'useHTML': 0,
             'headerFormat': None,
-            'pointFormat': '<span><b>{point.home_name} vs, {point.visitor_name}</b></span><br><span style="color:{point.color}">\u25CF</span> <span style="font-size: %s"> {series.name}: {point.minsec} %s</span><br/>' % (font_size, _('min')),
+            'pointFormat': '<span><b>{point.home_name} vs, {point.visitor_name}</b></span><br/> <span style="font-size: %(fontsize)s"> {series.name}: {point.minsec} %(min)s</span><br /><span style="font-size: %(fontsize)s"><b>%(headline)s:</b><br /><span style="font-size: %(fontsize)s"> %(homeshots)s: {point.home_shots}</span><br/> <span style="font-size: %(fontsize)s"> %(visitorshots)s: {point.visitor_shots}</span><br/>' % {'fontsize': font_size, 'min': 'min', 'headline': _('Shots while players on Ice'), 'homeshots': matchinfo_dic['home_team__shortcut'], 'visitorshots': matchinfo_dic['visitor_team__shortcut']},
         },
 
         'xAxis': {
@@ -159,7 +166,7 @@ def gamematchupchart_create(logger, lineup_dic, matchup_matrix, plotline_dic):
         },
 
         'series': [{
-            'name': 'Eiszeit',
+            'name': _('Time on Ice'),
             'borderWidth': 1,
             'data': data_list,
             'dataLabels': {

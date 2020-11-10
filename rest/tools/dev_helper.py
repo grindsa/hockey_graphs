@@ -36,5 +36,5 @@ if __name__ == '__main__':
 
     result = matchstatistics_get(LOGGER, request, FKEY, FVALUE)
 
-    from pprint import pprint
-    pprint(result)
+    #from pprint import pprint
+    #pprint(result)

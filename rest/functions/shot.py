@@ -185,6 +185,24 @@ def shotspermin_count(logger, shot_list, matchinfo_dic):
 
     return (shot_min_dic, goal_dic)
 
+def shotpersecondlist_get(logger, matchinfo_dic, shot_list):
+    """ count shots per second """
+    logger.debug('shotpersecondlist_get()')
+
+    shot_sec_dic = {'home_team': [], 'visitor_team': []}
+    for shot in shot_list:
+        # timestamp of shot
+        sec_ = shot['timestamp']
+        # we need to differenciate between home and visitor team
+        if shot['team_id'] == matchinfo_dic['home_team_id']:
+            team = 'home_team'
+        else:
+            team = 'visitor_team'
+
+        shot_sec_dic[team].append(sec_)
+
+    return shot_sec_dic
+
 def shotspersec_count(logger, shot_list, matchinfo_dic):
     """ count shots per second """
     logger.debug('shotspermin_count()')

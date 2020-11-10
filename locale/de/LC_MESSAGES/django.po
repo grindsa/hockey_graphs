@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-11-07 14:13+0100\n"
-"PO-Revision-Date: 2020-11-07 14:17+0100\n"
+"POT-Creation-Date: 2020-11-10 18:32+0100\n"
+"PO-Revision-Date: 2020-11-10 18:35+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -52,13 +52,13 @@ msgstr "Puckbesitz"
 msgid "Time in Powerplay"
 msgstr "Zeit im Powerplay"
 
-#: .\rest\functions\matchstatistics.py:53 .\rest\functions\shotcharts.py:85
-msgid "Shots per minute"
-msgstr "Schüsse pro Minute"
+#: .\rest\functions\match.py:117
+msgid "Overview"
+msgstr "Übersicht"
 
-#: .\rest\functions\matchstatistics.py:57
-msgid "Gameflow"
-msgstr "Spielfluss"
+#: .\rest\functions\matchstatistics.py:84
+msgid "5v5 Matchup"
+msgstr "Spielergegenüberstellung bei 5v5"
 
 #: .\rest\functions\matchstatistics.py:134
 #: .\rest\functions\matchstatistics.py:199
@@ -72,7 +72,7 @@ msgstr "Schüsse bei gleicher Anzahl von Spielern auf dem Eis (CF, CA)"
 
 #: .\rest\functions\shotcharts.py:60 .\rest\functions\shotcharts.py:174
 #: .\rest\functions\shotcharts.py:282 .\rest\functions\shotcharts.py:394
-#: .\rest\functions\toicharts.py:53
+#: .\rest\functions\toicharts.py:52
 msgid "min"
 msgstr "Minute"
 
@@ -80,6 +80,10 @@ msgstr "Minute"
 #: .\rest\functions\shotcharts.py:298 .\rest\functions\shotcharts.py:730
 msgid "Game Time"
 msgstr "Spielminute"
+
+#: .\rest\functions\shotcharts.py:85
+msgid "Shots per minute"
+msgstr "Schüsse pro Minute"
 
 #: .\rest\functions\shotcharts.py:91 .\rest\functions\shotcharts.py:320
 msgid "Cumulated shots"
@@ -123,7 +127,7 @@ msgid "Shot attempts \"against\" at 5v5"
 msgstr "Torschüsse des Gegners bei 5v5 (CA)"
 
 #: .\rest\functions\shotcharts.py:543 .\rest\functions\shottables.py:105
-#: .\rest\functions\toicharts.py:66
+#: .\rest\functions\toicharts.py:65 .\rest\functions\toicharts.py:164
 msgid "Time on Ice"
 msgstr "Eiszeit"
 
@@ -203,21 +207,32 @@ msgstr "Plus-/Minus-Bilanz aller Schussversuche"
 msgid "Percentage Shot attempts/Shot attempts \"against\""
 msgstr "Prozentuale Plus-/Minus-Bilanz aller Schussversuche"
 
-#: .\rest\functions\toicharts.py:74 .\rest\functions\toitables.py:9
+#: .\rest\functions\toicharts.py:73 .\rest\functions\toitables.py:9
 msgid "1st Period"
 msgstr "1. Drittel"
 
-#: .\rest\functions\toicharts.py:75 .\rest\functions\toitables.py:9
+#: .\rest\functions\toicharts.py:74 .\rest\functions\toitables.py:9
 msgid "2nd Period"
 msgstr "2 Drittel"
 
-#: .\rest\functions\toicharts.py:76 .\rest\functions\toitables.py:9
+#: .\rest\functions\toicharts.py:75 .\rest\functions\toitables.py:9
 msgid "3rd Period"
 msgstr "3. Drittel"
 
-#: .\rest\functions\toicharts.py:77 .\rest\functions\toitables.py:9
+#: .\rest\functions\toicharts.py:76 .\rest\functions\toitables.py:9
 msgid "OT"
 msgstr "OT"
+
+#: .\rest\functions\toicharts.py:132
+msgid "Homeshots"
+msgstr "Schüsse des Heimteams"
+
+#: .\rest\functions\toicharts.py:132
+msgid "Visitorshots"
+msgstr "Schüsse der  Auswärtsteams"
+
+#~ msgid "Gameflow"
+#~ msgstr "Spielfluss"
 
 #~ msgid "Shots by Result"
 #~ msgstr "Schussstatistik"

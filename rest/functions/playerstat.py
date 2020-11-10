@@ -10,6 +10,7 @@ django.setup()
 from rest.models import Playerstat
 from rest.functions.timeline import skatersonice_get, penalties_include
 from rest.functions.lineup import lineup_sort
+from rest.functions.shot import shotpersecondlist_get
 
 def _matchupmatrix_initialize(logger, lineup_dic):
     """ add team to database """
@@ -32,7 +33,7 @@ def _five_filter(five_filter, hteam, vteam):
 
     return process_it
 
-def _matchupmatrix_gen(logger, soi_dic, lineup_dic, player_dic, five_filter=False):
+def _matchupmatrix_gen(logger, shotpersec_list, soi_dic, lineup_dic, player_dic, five_filter=False):
     """ create matrix of players and ice_times """
 
     # generate empty matrix to collect data
@@ -44,11 +45,12 @@ def _matchupmatrix_gen(logger, soi_dic, lineup_dic, player_dic, five_filter=Fals
         if process_sec:
             for hplayer_id in soi_dic['home_team'][sec]['player_list']:
                 for vplayer_id in soi_dic['visitor_team'][sec]['player_list']:
-                    # print(sec, player_dic[hplayer_id], player_dic[vplayer_id])
                     matchup_matrix[player_dic[hplayer_id]][player_dic[vplayer_id]]['seconds'] += 1
-            # print(sec, five_filter, soi_dic['home_team'][sec]['player_list'])
-            # print(sec, five_filter, soi_dic['visitor_team'][sec]['player_list'])
-
+                    # print(shotpersec_list['home_team'].count(sec), shotpersec_list['visitor_team'].count(sec))
+                    if shotpersec_list['home_team'].count(sec) > 0:
+                        matchup_matrix[player_dic[hplayer_id]][player_dic[vplayer_id]]['home_shots'] += shotpersec_list['home_team'].count(sec)
+                    if shotpersec_list['visitor_team'].count(sec) > 0:
+                        matchup_matrix[player_dic[hplayer_id]][player_dic[vplayer_id]]['visitor_shots'] += shotpersec_list['visitor_team'].count(sec)
     return matchup_matrix
 
 def playerstat_add(logger, fkey, fvalue, data_dic):
@@ -105,9 +107,12 @@ def toifromplayerstats_get(logger, _matchinfo_dic, playerstat_dic):
 
     return toi_dic
 
-def matchupmatrix_get(logger, matchinfo_dic, shift_list, roster_list, periodevent_list, five_filter=True):
+def matchupmatrix_get(logger, matchinfo_dic, shot_list, shift_list, roster_list, periodevent_list, five_filter=True):
     """ get player matchup - time players spend on ice together """
     logger.debug('matchupmatrix_get()')
+
+    # shot list prepar
+    shotpersec_list = shotpersecondlist_get(logger, matchinfo_dic, shot_list)
 
     # soi = seconds on ice
     (soi_dic, _toi_dic) = skatersonice_get(logger, shift_list, matchinfo_dic, True)
@@ -118,6 +123,6 @@ def matchupmatrix_get(logger, matchinfo_dic, shift_list, roster_list, periodeven
     # get lineup in a sorted way
     (lineup_dic, player_dic, plotline_dic) = lineup_sort(logger, roster_list)
 
-    matchup_matrix = _matchupmatrix_gen(logger, soi_dic, lineup_dic, player_dic, five_filter=five_filter)
+    matchup_matrix = _matchupmatrix_gen(logger, shotpersec_list, soi_dic, lineup_dic, player_dic, five_filter=five_filter)
 
     return(lineup_dic, matchup_matrix, plotline_dic)

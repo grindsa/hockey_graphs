@@ -81,7 +81,7 @@ def matchstatistics_get(logger, request, fkey=None, fvalue=None):
         # result.append(_gametoi_get(logger, _('Time on Ice per Player'), request, fkey, fvalue, matchinfo_dic, shift_list))
 
         # pylint: disable=E0602
-        result.append(_gamematchup_get(logger, _('5v5 Matchup'), request, fkey, fvalue, matchinfo_dic, shift_list, roster_list, periodevent_list))
+        result.append(_gamematchup_get(logger, _('5v5 Matchup'), request, fkey, fvalue, matchinfo_dic, shot_list, shift_list, roster_list, periodevent_list))
 
     else:
         result = {'error': 'Please specify a matchid'}
@@ -340,7 +340,7 @@ def _gametoi_get(logger, title, request, fkey, fvalue, matchinfo_dic, shift_list
     return stat_entry
 
 
-def _gamematchup_get(logger, title, request, _fkey, _fvalue, matchinfo_dic, shift_list, roster_list, periodevent_list):
+def _gamematchup_get(logger, title, request, _fkey, _fvalue, matchinfo_dic, shot_list, shift_list, roster_list, periodevent_list):
     """ game matchup """
 
     matchup_table = {}
@@ -349,10 +349,10 @@ def _gamematchup_get(logger, title, request, _fkey, _fvalue, matchinfo_dic, shif
     if shift_list:
 
         # get matrix showing the different player relations
-        (lineup_dic, matchup_matrix, plotline_dic) = matchupmatrix_get(logger, matchinfo_dic, shift_list, roster_list, periodevent_list)
+        (lineup_dic, matchup_matrix, plotline_dic) = matchupmatrix_get(logger, matchinfo_dic, shot_list, shift_list, roster_list, periodevent_list)
 
         # generate_chart
-        matchup_chart = gamematchupchart_create(logger, lineup_dic, matchup_matrix, plotline_dic)
+        matchup_chart = gamematchupchart_create(logger, lineup_dic, matchup_matrix, plotline_dic, matchinfo_dic)
 
     stat_entry = {
         'title': title,
