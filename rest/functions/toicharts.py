@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """ time on ice charts """
 # pylint: disable=E0401
-from rest.functions.chartparameters import credit, exporting, responsive_y1, title, legend, font_size
-from rest.functions.chartparameters import chart_color1, chart_color2, chart_color3, chart_color4, text_color
+from rest.functions.chartparameters import credit, exporting, responsive_y1, title, legend, font_size, legend_valign_mobile
+from rest.functions.chartparameters import chart_color1, chart_color2, chart_color3, chart_color4, text_color, font_size_mobile
 
 def gametoichart_create(logger, toi_dic):
     # pylint: disable=E0602
@@ -84,27 +84,42 @@ def gamematchupchart_create(logger, lineup_dic, matchup_matrix, plotline_dic, ma
 
 
     data_list = []
+    data_list_mobile = []
     for hpid in matchup_matrix:
         for vpid in matchup_matrix[hpid]:
             # data_list.append([hpid, vpid, round(matchup_matrix[hpid][vpid]/60, 0)])
-            data_list.append({
+            tmp_dic = {
                 'x': hpid, 'y': vpid,
                 'value': round(matchup_matrix[hpid][vpid]['seconds']/60, 3),
                 'minsec': '{0:02d}:{1:02d}'.format(*divmod(matchup_matrix[hpid][vpid]['seconds'], 60)),
                 'home_name': '{0} {1}'.format(lineup_dic['home_team'][hpid]['name'], lineup_dic['home_team'][hpid]['surname']),
                 'visitor_name': '{0} {1}'.format(lineup_dic['visitor_team'][vpid]['name'], lineup_dic['visitor_team'][vpid]['surname']),
-                'dataLabels': {'format': '{0}:{1:02d}'.format(*divmod(matchup_matrix[hpid][vpid]['seconds'], 60))},
+                # 'dataLabels': {'format': '{0}:{1:02d}'.format(*divmod(matchup_matrix[hpid][vpid]['seconds'], 60))},
+                # 'dataLabels':  {'format': '{0}'.format(matchup_matrix[hpid][vpid]['home_shots'] - matchup_matrix[hpid][vpid]['visitor_shots'])},
+                # 'delta': matchup_matrix[hpid][vpid]['home_shots'] - matchup_matrix[hpid][vpid]['visitor_shots'],
                 'home_shots': matchup_matrix[hpid][vpid]['home_shots'],
                 'visitor_shots': matchup_matrix[hpid][vpid]['visitor_shots'],
-            })
+            }
+            if matchup_matrix[hpid][vpid]['home_shots'] - matchup_matrix[hpid][vpid]['visitor_shots'] > 0:
+                tmp_dic['delta'] = '{0}{1}'.format('\u2BC5', matchup_matrix[hpid][vpid]['home_shots'] - matchup_matrix[hpid][vpid]['visitor_shots'])
+                tmp_dic['dataLabels'] = {'format': '{0}{1}'.format('\u2BC5', matchup_matrix[hpid][vpid]['home_shots'] - matchup_matrix[hpid][vpid]['visitor_shots'])}
+            else:
+                tmp_dic['delta'] = '{0}{1}'.format('\u2BC7', matchup_matrix[hpid][vpid]['visitor_shots'] - matchup_matrix[hpid][vpid]['home_shots'])
+                tmp_dic['dataLabels'] = {'format': '{0}{1}'.format('\u2BC7', matchup_matrix[hpid][vpid]['visitor_shots'] - matchup_matrix[hpid][vpid]['home_shots'])}                
+            data_list.append(tmp_dic)
 
     x_list = []
+    x_list_mobile = []
     for player in lineup_dic['home_team']:
         x_list.append('{0} {1}'.format(lineup_dic['home_team'][player]['name'], lineup_dic['home_team'][player]['surname']))
+        x_list_mobile.append('{0}. {1}'.format(lineup_dic['home_team'][player]['name'][0], lineup_dic['home_team'][player]['surname']))
+
 
     y_list = []
+    y_list_mobile = []
     for player in lineup_dic['visitor_team']:
         y_list.append('{0} {1}'.format(lineup_dic['visitor_team'][player]['name'], lineup_dic['visitor_team'][player]['surname']))
+        y_list_mobile.append('{0}. {1}'.format(lineup_dic['visitor_team'][player]['name'][0], lineup_dic['visitor_team'][player]['surname']))
 
     # x_plotlines
     x_plotlines = []
@@ -134,13 +149,14 @@ def gamematchupchart_create(logger, lineup_dic, matchup_matrix, plotline_dic, ma
         'tooltip': {
             'useHTML': 0,
             'headerFormat': None,
-            'pointFormat': '<span><b>{point.home_name} vs, {point.visitor_name}</b></span><br/> <span style="font-size: %(fontsize)s"> {series.name}: {point.minsec} %(min)s</span><br /><span style="font-size: %(fontsize)s"><b>%(headline)s:</b><br /><span style="font-size: %(fontsize)s"> %(homeshots)s: {point.home_shots}</span><br/> <span style="font-size: %(fontsize)s"> %(visitorshots)s: {point.visitor_shots}</span><br/>' % {'fontsize': font_size, 'min': 'min', 'headline': _('Shots while players on Ice'), 'homeshots': matchinfo_dic['home_team__shortcut'], 'visitorshots': matchinfo_dic['visitor_team__shortcut']},
+            'pointFormat': '<span><b>{point.home_name} vs, {point.visitor_name}</b></span><br/> <span style="font-size: %(fontsize)s"> {series.name}: {point.minsec} %(min)s</span><br /><span style="font-size: %(fontsize)s"><b>%(headline)s:</b><br /><span style="font-size: %(fontsize)s"> %(homeshots)s: {point.home_shots}</span><br/> <span style="font-size: %(fontsize)s"> %(visitorshots)s: {point.visitor_shots}</span><br/><span style="font-size: %(fontsize)s"> delta: {point.delta}<br />' % {'fontsize': font_size, 'min': 'min', 'headline': _('Shots while players on Ice'), 'homeshots': matchinfo_dic['home_team__shortcut'], 'visitorshots': matchinfo_dic['visitor_team__shortcut']},
         },
 
         'xAxis': {
             'categories': x_list,
             'opposite':1,
             'plotLines': x_plotlines,
+            'labels': {'step': 1, 'rotation': -45}
         },
 
         'yAxis': {
@@ -148,21 +164,22 @@ def gamematchupchart_create(logger, lineup_dic, matchup_matrix, plotline_dic, ma
             'title': '',
             'reversed': True,
             'plotLines': y_plotlines,
+            'labels': {'step': 1}
+        },
+
+        'legend': {
+            'title': title(_('Time on Ice'), '10px'),
+            'align': 'center',
+            'layout': 'horizontal',
+            'verticalAlign': 'bottom',
+            'useHTML': 1,
+            'itemStyle': {'color': text_color, 'font-size': font_size},
         },
 
         'colorAxis': {
             'min': 0,
             'minColor': '#FFFFFF',
-            'maxColor': chart_color1
-        },
-
-        'legend': {
-            'align': 'right',
-            'layout': 'vertical',
-            'margin': 0,
-            'verticalAlign': 'middle',
-            'y': 25,
-            'symbolHeight': 280
+            'maxColor': chart_color1,
         },
 
         'series': [{
@@ -176,5 +193,16 @@ def gamematchupchart_create(logger, lineup_dic, matchup_matrix, plotline_dic, ma
                 'style': {'fontSize': '8px', 'textOutline': 0, 'color': text_color}
             }
         }],
+
+        'responsive': {
+            'rules': [{
+                'condition': {'maxWidth': 500},
+                'chartOptions': {
+                    'chart': {'height': '110%'},
+                    'xAxis': {'categories': x_list_mobile, 'labels': {'style': {'fontSize': font_size_mobile}}},
+                    'yAxis': {'categories': y_list_mobile, 'labels': {'style': {'fontSize': font_size_mobile}}},
+                }
+            }]
+        }
     }
     return chart_options
