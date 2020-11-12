@@ -13,7 +13,7 @@ class HelperTestCase(unittest.TestCase):
     """ player test class """
     def setUp(self):
         """ setup test environment """
-        from rest.functions.helper import min2sec, uts_to_date_utc, date_to_uts_utc, pctg_get
+        from rest.functions.helper import min2sec, uts_to_date_utc, date_to_uts_utc, pctg_get, url_build
         import logging
         logging.basicConfig(level=logging.CRITICAL)
         self.logger = logging.getLogger('test_hockey')
@@ -21,6 +21,7 @@ class HelperTestCase(unittest.TestCase):
         self.date_to_uts_utc = date_to_uts_utc
         self.uts_to_date_utc = uts_to_date_utc
         self.pctg_get = pctg_get
+        self.url_build = url_build
 
     def tearDown(self):
         """ teardown test environment """
@@ -86,6 +87,51 @@ class HelperTestCase(unittest.TestCase):
     def test_015_helper_pctg_get(self):
         """ test pctg_get - test in base  """
         self.assertEqual('0%', self.pctg_get(6, 'base'))
+
+    def test_016_helper_url_build(self):
+        """ url_build https """
+        data_dic = {'HTTP_HOST': 'http_host', 'SERVER_PORT': 443, 'PATH_INFO': 'path_info'}
+        self.assertEqual('https://http_host', self.url_build(data_dic, False))
+
+    def test_017_helper_url_build(self):
+        """ url_build http """
+        data_dic = {'HTTP_HOST': 'http_host', 'SERVER_PORT': 80, 'PATH_INFO': 'path_info'}
+        self.assertEqual('http://http_host', self.url_build(data_dic, False))
+
+    def test_018_helper_url_build(self):
+        """ url_build http wsgi.scheme """
+        data_dic = {'HTTP_HOST': 'http_host', 'SERVER_PORT': 80, 'PATH_INFO': 'path_info', 'wsgi.url_scheme': 'wsgi.url_scheme'}
+        self.assertEqual('wsgi.url_scheme://http_host', self.url_build(data_dic, False))
+
+    def test_019_helper_url_build(self):
+        """ url_build https include_path true bot no pathinfo"""
+        data_dic = {'HTTP_HOST': 'http_host', 'SERVER_PORT': 443}
+        self.assertEqual('https://http_host', self.url_build(data_dic, True))
+
+    def test_020_helper_url_build(self):
+        """ url_build https and path info"""
+        data_dic = {'HTTP_HOST': 'http_host', 'SERVER_PORT': 443, 'PATH_INFO': 'path_info'}
+        self.assertEqual('https://http_hostpath_info', self.url_build(data_dic, True))
+
+    def test_21_helper_url_build(self):
+        """ url_build wsgi.url and pathinfo """
+        data_dic = {'HTTP_HOST': 'http_host', 'SERVER_PORT': 80, 'PATH_INFO': 'path_info', 'wsgi.url_scheme': 'wsgi.url_scheme'}
+        self.assertEqual('wsgi.url_scheme://http_hostpath_info', self.url_build(data_dic, True))
+
+    def test_022_helper_url_build(self):
+        """ url_build http and pathinfo"""
+        data_dic = {'HTTP_HOST': 'http_host', 'SERVER_PORT': 80, 'PATH_INFO': 'path_info'}
+        self.assertEqual('http://http_hostpath_info', self.url_build(data_dic, True))
+
+    def test_023_helper_url_build(self):
+        """ url_build without hostinfo """
+        data_dic = {'SERVER_PORT': 80, 'PATH_INFO': 'path_info'}
+        self.assertEqual('http://localhost', self.url_build(data_dic, False))
+
+    def test_024_helper_url_build(self):
+        """ url_build without SERVER_PORT """
+        data_dic = {'HTTP_HOST': 'http_host'}
+        self.assertEqual('http://http_host', self.url_build(data_dic, True))
 
 if __name__ == '__main__':
     unittest.main()
