@@ -52,14 +52,14 @@ def match_add(logger, fkey, fvalue, data_dic):
     logger.debug('match_add({0}:{1})'.format(fkey, fvalue))
     try:
         # add match
-        obj, _created = Match.objects.update_or_create(**{fkey: fvalue}, defaults=data_dic)
+        obj, created = Match.objects.update_or_create(**{fkey: fvalue}, defaults=data_dic)
         obj.save()
         result = obj.match_id
     except BaseException as err_:
         logger.critical('error in match_add(): {0}'.format(err_))
         result = None
     logger.debug('match_add({0}:{1}) ended with {2}'.format(fkey, fvalue, result))
-    return result
+    return (result, created)
 
 def matchstats_get(logger, match_id):
     """ get matchstatistics """

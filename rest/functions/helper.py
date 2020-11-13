@@ -7,7 +7,6 @@ import calendar
 import configparser
 from datetime import datetime
 import math
-import os
 from dateutil.parser import parse
 import pytz
 
@@ -22,7 +21,6 @@ def config_load(logger=None, mfilter=None, cfg_file='hockeygraphs.cfg'):
     config.optionxform = str
     config.read(cfg_file)
     return config
-
 
 def url_build(environ, include_path=False):
     """ get url """
@@ -125,6 +123,15 @@ def datestr_to_date(datestr, tformat='%Y-%m-%dT%H:%M:%S'):
         result = None
     return result
 
+def list2dic(logger, input_list, pkey=None):
+    """ convert a list to a dicitionary """
+    logger.debug('list2dic({0})'.format(pkey))
+    output_dict = {}
+    if pkey:
+        for ele in input_list:
+            output_dict[ele[pkey]] = ele
+    return output_dict
+
 def maxval_get(input_list, sorter='timestamp', divisor=60, add=1):
     """ look for a matchvalue form a sorted list """
     try:
@@ -138,7 +145,7 @@ def pctg_get(part, base):
     # catch division by zero exceptions
     try:
         if base != 0:
-            pctg_value = '{0}%'.format(round(part*100/base,0))
+            pctg_value = '{0}%'.format(round(part*100/base, 0))
         else:
             pctg_value = '0%'
     except BaseException:
@@ -149,8 +156,8 @@ def pctg_get(part, base):
 def min2sec(sec_value):
     """ convert seconds to mm:ss """
     try:
-        (min, sec) = divmod(sec_value, 60)
-        min_value = '{:02d}:{:02d}'.format(min, sec)
+        (min_, sec) = divmod(sec_value, 60)
+        min_value = '{:02d}:{:02d}'.format(min_, sec)
     except BaseException:
         min_value = None
 
