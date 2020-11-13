@@ -4,13 +4,25 @@ import logging
 # pylint: disable=E0401, C0413
 import sys
 import calendar
+import configparser
 from datetime import datetime
 import math
+import os
 from dateutil.parser import parse
 import pytz
 
 sys.path.insert(0, '.')
 sys.path.insert(1, '..')
+
+def config_load(logger=None, mfilter=None, cfg_file='hockeygraphs.cfg'):
+    """ small configparser wrappter to load a config file """
+    if logger:
+        logger.debug('config_load({1}:{0})'.format(mfilter, cfg_file))
+    config = configparser.RawConfigParser()
+    config.optionxform = str
+    config.read(cfg_file)
+    return config
+
 
 def url_build(environ, include_path=False):
     """ get url """
@@ -131,7 +143,7 @@ def pctg_get(part, base):
             pctg_value = '0%'
     except BaseException:
         pctg_value = '0%'
-                
+
     return pctg_value
 
 def min2sec(sec_value):
