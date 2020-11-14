@@ -9,11 +9,14 @@ import django
 django.setup()
 from django.conf import settings
 from rest.functions.match import match_list_get
-from rest.functions.helper import date_to_datestr, datestr_to_date, date_to_uts_utc, url_build
+from rest.functions.helper import date_to_datestr, datestr_to_date, date_to_uts_utc, url_build, uts_now
 
 def matchdays_get(logger, request, fkey=None, fvalue=None, vlist=('match_id', 'season', 'date', 'date_uts', 'home_team__shortcut', 'home_team__team_name', 'home_team__logo', 'visitor_team__team_name', 'visitor_team__shortcut', 'visitor_team__logo', 'result')):
     """ matches grouped by days """
     logger.debug('match_list_get({0}:{1})'.format(fkey, fvalue))
+
+
+    uts = uts_now()
 
     # reuse of an existing function from match
     match_list = match_list_get(logger, fkey, fvalue, vlist)
@@ -33,10 +36,12 @@ def matchdays_get(logger, request, fkey=None, fvalue=None, vlist=('match_id', 's
         dateobj = datestr_to_date(match['date'], '%Y-%m-%d')
         match_day = date_to_datestr(dateobj, '%d.%m.%Y')
         match_uts = date_to_uts_utc(match['date'], '%Y-%m-%d')
-        # we need the last matchday to set the display key to true
-        if match_uts > lastmday_uts:
-            lastmday_uts = match_uts
-            lastmday_human = match['date']
+
+        # we need the completed matchday to set the display key to true
+        if match_uts-86400 > lastmday_uts:
+            if uts > match_uts:
+                lastmday_uts = match_uts
+                lastmday_human = match['date']
 
         if match['date'] not in matchday_dic:
             matchday_dic[match['date']] = {

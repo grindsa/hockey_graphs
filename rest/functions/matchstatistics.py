@@ -46,7 +46,7 @@ def matchstatistics_get(logger, request, fkey=None, fvalue=None):
         result = []
 
         # get matchstatistics
-        # result.append(matchstats_get(logger, fvalue))
+        result.append(matchstats_get(logger, fvalue))
 
         # create chart for shots per match
         # pylint: disable=E0602
