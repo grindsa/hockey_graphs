@@ -55,9 +55,9 @@ def matchdays_get(logger, request, fkey=None, fvalue=None, vlist=('match_id', 's
         match_uts = date_to_uts_utc(match['date'], '%Y-%m-%d')
 
         # we need the completed matchday to set the display key to true
-        if match_uts-86400 > lastmday_uts:
-            if uts_now() > match_uts:
-                lastmday_uts = match_uts
+        if match['date_uts'] > lastmday_uts:
+            if uts_now() >  match['date_uts']:
+                lastmday_uts =  match['date_uts']
                 lastmday_human = match['date']
 
         if match['date'] not in matchday_dic:

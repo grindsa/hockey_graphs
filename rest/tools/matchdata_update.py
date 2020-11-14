@@ -99,8 +99,8 @@ if __name__ == '__main__':
             teamstat_add(LOGGER, 'match_id', match_id, {'match_id': match_id, 'home': home_dic, 'visitor': visitor_dic})
 
             # get shifts
-            shift_dic = del_app_helper.shifts_get(match_id)
-            shift_add(LOGGER, 'match_id', match_id, {'match_id': match_id, 'shift': shift_dic})
+            # shift_dic = del_app_helper.shifts_get(match_id)
+            # shift_add(LOGGER, 'match_id', match_id, {'match_id': match_id, 'shift': shift_dic})
 
             # get shots
             shots_dic = del_app_helper.shots_get(match_id)
