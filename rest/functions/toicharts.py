@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """ time on ice charts """
 # pylint: disable=E0401
-from rest.functions.chartparameters import credit, exporting, responsive_y1, title, legend, font_size, legend_valign_mobile
+from rest.functions.chartparameters import credit, exporting, responsive_y1, title, legend, font_size
 from rest.functions.chartparameters import chart_color1, chart_color2, chart_color3, chart_color4, text_color, font_size_mobile
 
 def gametoichart_create(logger, toi_dic):
@@ -81,10 +81,9 @@ def gametoichart_create(logger, toi_dic):
 def gamematchupchart_create(logger, lineup_dic, matchup_matrix, plotline_dic, matchinfo_dic):
     """ create matchup heatmeap """
     logger.debug('gamematchupchart_create()')
-
+    # pylint: disable=E0602, R0914
 
     data_list = []
-    data_list_mobile = []
     for hpid in matchup_matrix:
         for vpid in matchup_matrix[hpid]:
             # data_list.append([hpid, vpid, round(matchup_matrix[hpid][vpid]/60, 0)])
@@ -103,9 +102,12 @@ def gamematchupchart_create(logger, lineup_dic, matchup_matrix, plotline_dic, ma
             if matchup_matrix[hpid][vpid]['home_shots'] - matchup_matrix[hpid][vpid]['visitor_shots'] > 0:
                 tmp_dic['delta'] = '{0}{1}'.format('\u2BC5', matchup_matrix[hpid][vpid]['home_shots'] - matchup_matrix[hpid][vpid]['visitor_shots'])
                 tmp_dic['dataLabels'] = {'format': '{0}{1}'.format('\u2BC5', matchup_matrix[hpid][vpid]['home_shots'] - matchup_matrix[hpid][vpid]['visitor_shots'])}
+            elif  matchup_matrix[hpid][vpid]['home_shots'] - matchup_matrix[hpid][vpid]['visitor_shots'] == 0:
+                tmp_dic['delta'] = '{0}'.format(matchup_matrix[hpid][vpid]['home_shots'] - matchup_matrix[hpid][vpid]['visitor_shots'])
+                tmp_dic['dataLabels'] = {'format': '{0}'.format(matchup_matrix[hpid][vpid]['home_shots'] - matchup_matrix[hpid][vpid]['visitor_shots'])}
             else:
                 tmp_dic['delta'] = '{0}{1}'.format('\u2BC7', matchup_matrix[hpid][vpid]['visitor_shots'] - matchup_matrix[hpid][vpid]['home_shots'])
-                tmp_dic['dataLabels'] = {'format': '{0}{1}'.format('\u2BC7', matchup_matrix[hpid][vpid]['visitor_shots'] - matchup_matrix[hpid][vpid]['home_shots'])}                
+                tmp_dic['dataLabels'] = {'format': '{0}{1}'.format('\u2BC7', matchup_matrix[hpid][vpid]['visitor_shots'] - matchup_matrix[hpid][vpid]['home_shots'])}
             data_list.append(tmp_dic)
 
     x_list = []
@@ -130,10 +132,6 @@ def gamematchupchart_create(logger, lineup_dic, matchup_matrix, plotline_dic, ma
     y_plotlines = []
     for plot in plotline_dic['visitor_team']:
         y_plotlines.append({'color': '#ffffff', 'width': 4, 'value': plot - .5, 'zIndex': 4})
-
-
-    homeshot_string = '{0} {1}'.format(_('Shots'), matchinfo_dic['home_team__shortcut'])
-    visitorshot_string = '{0} {1}'.format(_('Shots'), matchinfo_dic['visitor_team__shortcut'])
 
     chart_options = {
 
