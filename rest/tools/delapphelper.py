@@ -246,7 +246,7 @@ class DelAppHelper():
 
     def periodevents_get(self, match_id):
         """ get periodevents from del.org """
-        self.logger.debug('DelAppHelper.periodevents_get({0})\n'.format(match_id))
+        self.logger.debug('DelAppHelper.periodevents_get({0}) from del.org\n'.format(match_id))
 
         url = '{0}/matches/{1}/period-events.json'.format(self.base_url, match_id)
         return requests.get(url, headers=self.headers, verify=False).json()
@@ -354,7 +354,7 @@ class DelAppHelper():
 
     def roster_get(self, match_id):
         """ get match statistics per player """
-        self.logger.debug('DelAppHelper.roster_get({0})\n'.format(match_id))
+        self.logger.debug('DelAppHelper.roster_get({0}) from del.org\n'.format(match_id))
         url = '{0}/matches/{1}/roster.json'.format(self.base_url, match_id)
         return requests.get(url, headers=self.headers, verify=False).json()
 
@@ -396,6 +396,15 @@ class DelAppHelper():
                 'noc': team_name,
                 'lastUpdate': 0}
         return self.api_post(self.mobile_api, data)
+
+    def teamstats_get(self, match_id, home):
+        """ get teamstats_get from del.org """
+        self.logger.debug('DelAppHelper.teamstats_get({0}:{1})\n'.format(match_id, home))
+        if home:
+            url = '{0}/matches/{1}/team-stats-home.json'.format(self.base_url, match_id)
+        else:
+            url = '{0}/matches/{1}/team-stats-guest.json'.format(self.base_url, match_id)
+        return requests.get(url, headers=self.headers, verify=False).json()
 
     def teamstandings_get(self):
         """ get games """

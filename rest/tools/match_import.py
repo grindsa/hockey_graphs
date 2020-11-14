@@ -28,7 +28,6 @@ if __name__ == '__main__':
     # get team_list
     TEAM_DIC = list2dic(LOGGER, list(team_list_get(LOGGER, None, None, ['team_id', 'shortcut'])), 'shortcut')
 
-
     with DelAppHelper(DEVICE_ID, DEBUG) as del_app_helper:
         game_dic = del_app_helper.games_get(TOURNAMENT_ID)
         for match in game_dic:
