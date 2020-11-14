@@ -27,7 +27,7 @@ class Match(models.Model):
     home_team = models.ForeignKey(Team, related_name='home_team', on_delete=models.CASCADE)
     visitor_team = models.ForeignKey(Team, related_name='visitor_team', on_delete=models.CASCADE)
     result = models.CharField(max_length=5, blank=True, null=True)
-    finish = models.BooleanField(default=False)    
+    finish = models.BooleanField(default=False)
     def __str__(self):
         return '{0} ({1}-{2})'.format(self.match_id, self.home_team, self.visitor_team)
 
@@ -50,6 +50,11 @@ class Playerstat(models.Model):
     match = models.ForeignKey(Match, on_delete=models.CASCADE)
     home = jsonfield.JSONField(default=dict)
     visitor = jsonfield.JSONField(default=dict)
+
+class Gameheader(models.Model):
+    """ shifts """
+    match = models.ForeignKey(Match, on_delete=models.CASCADE)
+    gameheader = jsonfield.JSONField(default=dict)
 
 class Roster(models.Model):
     """ shifts """

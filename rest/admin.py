@@ -3,12 +3,12 @@
 from django.contrib import admin
 
 # Register your models here.
-from rest.models import Match, Periodevent, Player, Playerstat, Season, Shift, Shot, Team, Teamstat
+from rest.models import Gameheader, Match, Periodevent, Player, Playerstat, Roster, Season, Shift, Shot, Team, Teamstat
 
 class MatchAdmin(admin.ModelAdmin):
     """ match admin """
-    fields = ['season', 'match_id', 'date', 'date_uts', 'home_team', 'visitor_team', 'result']
-    list_display = ['season', 'match_id', 'date', 'date_uts', 'home_team', 'visitor_team', 'result']
+    fields = ['season', 'match_id', 'date', 'date_uts', 'home_team', 'visitor_team', 'result', 'finish']
+    list_display = ['season', 'match_id', 'date', 'date_uts', 'home_team', 'visitor_team', 'result', 'finish']
     ordering = ['match_id']
 
 class PeriodeventAdmin(admin.ModelAdmin):
@@ -26,7 +26,19 @@ class PlayerAdmin(admin.ModelAdmin):
 class PlayerstatAdmin(admin.ModelAdmin):
     """ shots admin """
     fields = ['match', 'home', 'visitor']
-    list_display = ['match', 'home', 'visitor']
+    list_display = ['match']
+    ordering = ['match_id']
+
+class GameheaderAdmin(admin.ModelAdmin):
+    """ gameheader admin """
+    fields = ['match', 'gameheader']
+    list_display = ['match', 'gameheader']
+    ordering = ['match_id']
+
+class RosterAdmin(admin.ModelAdmin):
+    """ Roster admin """
+    fields = ['match', 'roster']
+    list_display = ['match']
     ordering = ['match_id']
 
 class SeasonAdmin(admin.ModelAdmin):
@@ -63,6 +75,8 @@ admin.site.register(Match, MatchAdmin)
 admin.site.register(Periodevent, PeriodeventAdmin)
 admin.site.register(Player, PlayerAdmin)
 admin.site.register(Playerstat, PlayerstatAdmin)
+admin.site.register(Roster, RosterAdmin)
+admin.site.register(Gameheader, GameheaderAdmin)
 admin.site.register(Shift, ShiftAdmin)
 admin.site.register(Shot, ShotAdmin)
 admin.site.register(Season, SeasonAdmin)
