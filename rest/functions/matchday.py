@@ -10,14 +10,27 @@ django.setup()
 from django.conf import settings
 from rest.functions.match import match_list_get
 from rest.functions.helper import date_to_datestr, datestr_to_date, date_to_uts_utc, url_build, uts_now
+from rest.functions.season import season_latest_get
 
 def matchdays_get(logger, request, fkey=None, fvalue=None, vlist=('match_id', 'season', 'date', 'date_uts', 'home_team__shortcut', 'home_team__team_name', 'home_team__logo', 'visitor_team__team_name', 'visitor_team__shortcut', 'visitor_team__logo', 'result')):
     """ matches grouped by days """
     logger.debug('match_list_get({0}:{1})'.format(fkey, fvalue))
 
-
     uts = uts_now()
 
+    if not fkey:
+        # no filter has been passed, lets use season_id
+        if 'season_id' in request.GET:
+            try:
+                fkey = 'season_id'
+                fvalue = int(request.GET['season_id'])
+            except:
+                fkey = 'season_id'
+                fvalue = season_latest_get(logger)
+        else:
+            fkey = 'season_id'
+            fvalue = season_latest_get(logger)
+    
     # reuse of an existing function from match
     match_list = match_list_get(logger, fkey, fvalue, vlist)
     matchday_dic = {}
