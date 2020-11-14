@@ -9,8 +9,8 @@ from rest.functions.matchday import matchdays_get
 from rest.functions.matchstatistics import matchstatistics_get
 from rest.functions.helper import logger_setup
 from rest.version import __version__
-from .serializers import MatchSerializer, PeriodeventSerializer, PlayerSerializer, ShiftSerializer, ShotSerializer, TeamSerializer
-from .models import Match, Periodevent, Player, Shift, Shot, Team
+from .serializers import MatchSerializer, PeriodeventSerializer, PlayerSerializer, SeasonSerializer, ShiftSerializer, ShotSerializer, TeamSerializer
+from .models import Match, Periodevent, Player, Season, Shift, Shot, Team
 import gettext
 
 # initialize logger
@@ -106,6 +106,13 @@ class PeriodeventViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
         return Response(queryset.values_list('period_event', flat=True))
+
+# pylint: disable=R0901
+class SeasonViewSet(viewsets.ModelViewSet):
+    """ viewset for players """
+    queryset = Season.objects.all().order_by('id')
+    serializer_class = SeasonSerializer
+    http_method_names = ['get']
 
 # pylint: disable=R0901
 class ShiftViewSet(viewsets.ModelViewSet):

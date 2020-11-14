@@ -48,7 +48,7 @@ class MatchSerializer(serializers.HyperlinkedModelSerializer):
         """ get stats """
         if self.context:
             return matchstats_get(LOGGER, obj.match_id)
-            
+
     class Meta:
         model = Match
         fields = ('match_id', 'season', 'date', 'date_uts', 'home_team', 'visitor_team', 'result', 'shifts', 'shots', 'events', 'stats')
@@ -64,7 +64,7 @@ class SeasonSerializer(serializers.HyperlinkedModelSerializer):
     """ season serializer """
     class Meta:
         model = Season
-        fields = ('id', 'name', )
+        fields = ('id', 'name', 'shortcut')
 
 class ShiftSerializer(serializers.HyperlinkedModelSerializer):
     """ shot serializer """

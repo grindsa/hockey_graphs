@@ -43,8 +43,8 @@ class RosterAdmin(admin.ModelAdmin):
 
 class SeasonAdmin(admin.ModelAdmin):
     """ season admin """
-    fields = ['name']
-    list_display = ['name']
+    fields = ['name', 'shortcut']
+    list_display = ['name', 'shortcut']
     ordering = ['name']
 
 class ShiftAdmin(admin.ModelAdmin):

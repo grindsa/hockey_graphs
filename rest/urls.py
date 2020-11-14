@@ -27,6 +27,7 @@ router.register(r'matchdays', views.MatchDayViewSet, basename='matchdays')
 router.register(r'matchstatistics', views.MatchStatisticsViewSet, basename='matchstatistics')
 router.register(r'player', views.PlayerViewSet)
 router.register(r'shifts', views.ShiftViewSet, basename='Shift')
+router.register(r'season', views.SeasonViewSet)
 router.register(r'shots', views.ShotViewSet, basename='Shot')
 router.register(r'teams', views.TeamViewSet)
 
