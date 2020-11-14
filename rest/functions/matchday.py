@@ -81,7 +81,8 @@ def matchdays_get(logger, request, fkey=None, fvalue=None, vlist=('match_id', 's
         matchday_dic[match['date']]['matches'].append(match)
 
     # set displayflag to last matchday
-    matchday_dic[lastmday_human]['displayday'] = True
+    if matchday_dic:
+        matchday_dic[lastmday_human]['displayday'] = True
 
     # add references to previous and next matchdate
     matchday_dic = matchdays_previous_next_add(logger, matchday_dic, matchday_uts_dic)
