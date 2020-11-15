@@ -2,7 +2,7 @@
 
 const prod = {
   url: {
-    API_URL: 'http://localhost:8081/api/v1/'
+    API_URL: 'https://hockeygraphs.dynamop.de/api/v1/'
   }
 };
 
