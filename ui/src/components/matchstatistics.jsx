@@ -123,7 +123,7 @@ class MatchHeader extends React.Component {
           <div className="w3-col w3-center w3-padding-top" style={{width:'10%'}}>{this.props.match.result}</div>
           <div className="w3-col" style={{width:'45%'}}>
             <span className="w3-padding-small w3-left"><img src={this.props.match.visitor_team_logo} className="middle" alt={this.props.match.visitor_team_logo} width="40px"/><span className="w3-padding-small">{visitor_team}</span></span>
-            <i className="w3-padding-top w3-margin-right w3-xlarge fa fa-arrow-circle-o-left w3-right" onClick={() => this.props.reset()} />
+            <i className="w3-padding-top w3-margin-right w3-xlarge fa fa-arrow-alt-circle-left w3-right" onClick={() => this.props.reset()} />
           </div>
         </div>
     );

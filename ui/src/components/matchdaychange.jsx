@@ -21,7 +21,7 @@ export class ChangeMatchday extends React.Component {
     return(
       <div className="w3-container w3-padding scolor">
         <div className="w3-col w3-left w3-padding-top" style={{width:'10%'}}>
-            <i className="w3-padding-top fa fa-calendar w3-large fa-lg w3-margin-left w3-left" onClick={() => this.toggleCalendar()}/>
+            <i className="w3-padding-top fa fa-calendar-day w3-large fa-lg w3-margin-left w3-left" onClick={() => this.toggleCalendar()}/>
             <Calendar
               display={this.state.showCalendar}
               toggleCalendar={this.toggleCalendar}
