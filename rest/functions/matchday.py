@@ -15,10 +15,10 @@ from rest.functions.season import season_latest_get
 def _seasonid_get(logger, request):
     logger.debug('_seasonid_get()')
     # no filter has been passed, lets use season_id
-    if 'season_id' in request.GET:
+    if 'season' in request.GET:
         try:
             fkey = 'season_id'
-            fvalue = int(request.GET['season_id'])
+            fvalue = int(request.GET['season'])
         except BaseException:
             fkey = 'season_id'
             fvalue = season_latest_get(logger)
