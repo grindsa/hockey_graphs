@@ -1,7 +1,7 @@
 import React from 'react';
 import { MatchStatistics } from './matchstatistics';
 import { ChangeMatchday } from './matchdaychange';
-import { changeMatchDay }  from './matchdaystateservice';
+import { changeMatchDay, checkMatchdayUpdate }  from './matchdaystateservice';
 import { asyncGET } from './sharedfunctions.js';
 
 
@@ -26,9 +26,10 @@ export class MatchDayList extends React.Component {
 
   async componentDidUpdate(prevProps) {
     /* we get the url to fectch as props and monitor it here */
-    if (this.props.matchdays !== prevProps.matchdays) {
+    const matchdaysupdate = checkMatchdayUpdate(this.props.matchdays, prevProps.matchdays, this.props.season, prevProps.season)
+    if (matchdaysupdate){
         // get matchdays
-        const matchdaydic = await asyncGET(this.props.matchdays)
+        const matchdaydic = await asyncGET(this.props.matchdays + '?season=' + this.props.season)
         this.setState({matchdaydic: matchdaydic});
     }
   }

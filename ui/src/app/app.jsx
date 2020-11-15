@@ -39,7 +39,6 @@ export class App extends React.Component {
       var seasonid = this.state.seasonlist.results[this.state.seasonlist.count-1].id
       await this.setState({selectedSeason: seasonid});
     }
-
     // parse cookie
     const cookies = new Cookies();
     const langValue = cookies.get(app_name).language
@@ -75,7 +74,12 @@ export class App extends React.Component {
           <SeasonSelector seasonValue={this.state.selectedSeason} seasonlist={ this.state.seasonlist.results } onchangeSeason={ this.changeSeason } />
           <LanguageSelector langValue={ this.state.language } onClick={() => this.toggleLanguage()} />
         </div>
-        <MatchDayList matchdays={this.state.endpoints.matchdays} matchstatistics={this.state.endpoints.matchstatistics} language={this.state.language}/>
+        <MatchDayList
+          matchdays={this.state.endpoints.matchdays}
+          matchstatistics={this.state.endpoints.matchstatistics}
+          language={this.state.language}
+          season={this.state.selectedSeason}
+          />
       </div>
     );
   }

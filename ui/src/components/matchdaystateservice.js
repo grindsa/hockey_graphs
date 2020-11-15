@@ -14,3 +14,16 @@ export const changeMatchDay = function(matchdaylist, currentDay, newDay){
   }
   return matchdaylist
 }
+
+export const checkMatchdayUpdate = function(matchdays, prevmatchdays, season, prevseason){
+  /* this is to check if we have to fetch matchdays list from rest */
+  // console.log(matchdays, prevmatchdays, season, prevseason)
+  var mupdate = false
+  if (matchdays !== prevmatchdays && season !== 0) {
+    mupdate = true
+  }
+  if (season !== prevseason && season !== 0){
+    mupdate = true
+  }
+  return mupdate
+}
