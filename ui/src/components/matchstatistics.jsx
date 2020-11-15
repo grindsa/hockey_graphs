@@ -152,16 +152,19 @@ class Chart extends React.Component{
   /* block to render chart mobile differenciation is done via chartoptions */
   render() {
     if (this.props.options.chart){
+      console.log('chart')
       return (
         <div className="w3-border">
           <HighchartsReact highcharts={Highcharts} options={this.props.options} immutable={true} />
         </div>
       )
-    }else if (this.props.options.home_team){
+    }else if (this.props.options.shotsOnGoal){
+      console.log('overview')
       return(
         <MatchOverview options={this.props.options} />
       )
     }else{
+      console.log('zoneshart')
       return (
         <ZoneChart options={this.props.options} />
       )
