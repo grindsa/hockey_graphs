@@ -1,7 +1,7 @@
 import React from 'react';
-import { MatchStatistics } from './matchstatistics';
-import { ChangeMatchday } from './matchdaychange';
-import { changeMatchDay, checkMatchdayUpdate }  from './matchdaystateservice';
+import { MatchStatistics } from './matchday/matchstatistics';
+import { ChangeMatchday } from './matchday/matchdaychange';
+import { changeMatchDay, checkMatchdayUpdate }  from './matchday/matchdaystateservice';
 import { asyncGET } from './sharedfunctions.js';
 
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { isEmpty } from './sharedfunctions.js';
+import { isEmpty } from '../sharedfunctions.js';
 
 export const createTableHeader = function(data){
   /* create database header */
