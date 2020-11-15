@@ -4,15 +4,15 @@ import Cookies from 'universal-cookie';
 import { ChangeMatchday, MatchDayList } from '../components/matchday';
 import { LanguageSelector } from '../components/languageselector';
 import { SeasonSelector } from '../components/seasonselector';
-import { GET, POST } from '../components/fetch.js';
 import { asyncGET } from '../components/sharedfunctions.js';
+import { config } from '../components/constants.js';
 import '../css/mytheme.css';
 
 const app_name = 'hockeygraphs@grinda'
 
 
 // entry url for  backend
-const rest_url = 'http://127.0.0.1:8081/api/v1/';
+const rest_url = config.url.API_URL
 
 export class App extends React.Component {
   constructor(props) {
