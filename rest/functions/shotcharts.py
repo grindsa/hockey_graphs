@@ -2,11 +2,11 @@
 """ list of functions for shots """
 import math
 # pylint: disable=E0401
-from rest.functions.chartparameters import credit, exporting, responsive_gameflow, responsive_y1, responsive_y2, responsive_bubble, plotoptions_marker_disable, title, legend, tooltip, labels, font_size
+from rest.functions.chartparameters import credit, exporting, responsive_gameflow, responsive_y1, responsive_y2, responsive_bubble, plotoptions_marker_disable, title, legend, tooltip, labels, font_size,font_size_mobile, legend_valign_mobile
 from rest.functions.chartparameters import text_color, plotlines_color, chart_color1, chart_color2, chart_color3, chart_color4, chart_color5, chart_color6, chart_color8, chart_color9, shot_missed_color, shot_blocked_color, shot_goal_color, shot_sog_color, line_color, line1_color, line2_color, line3_color, line4_color, line5_color
 
 # pylint: disable=R0914
-def shotsumchart_create(logger, shot_sum_dic, shot_min_dic, goal_dic, plotline_list, machinfo_dic):
+def shotsumchart_create(logger, shot_sum_dic, shot_min_dic, goal_dic, plotline_list, machinfo_dic, ctitle):
     # pylint: disable=E0602
     """ create shotsum chart """
     logger.debug('shotsumchart_create()')
@@ -54,7 +54,7 @@ def shotsumchart_create(logger, shot_sum_dic, shot_min_dic, goal_dic, plotline_l
             'alignTicks': 0,
         },
 
-        # 'exporting': exporting(),
+        'exporting': exporting(filename=ctitle),
         'title': title(''),
         'legend': legend(),
         'tooltip': tooltip('<b>{point.x}.%s</b><br>' % _('min')),
@@ -129,7 +129,7 @@ def shotsumchart_create(logger, shot_sum_dic, shot_min_dic, goal_dic, plotline_l
 
     return chart_options
 
-def gameflowchart_create(logger, shot_flow_dic, goal_dic, plotline_list, matchinfo_dic):
+def gameflowchart_create(logger, shot_flow_dic, goal_dic, plotline_list, matchinfo_dic, ctitle):
     """ create flow chart """
     # pylint: disable=E0602
     logger.debug('gameflowchart_create()')
@@ -169,7 +169,7 @@ def gameflowchart_create(logger, shot_flow_dic, goal_dic, plotline_list, matchin
             'alignTicks': 0,
         },
 
-        'exporting': exporting(),
+        'exporting': exporting(filename=ctitle),
         'credits': credit(_('based on an idea of @DanielT_W'), 'https://twitter.com/danielt_w'),
         'tooltip': tooltip('<b>{point.x}.%s</b><br>' % _('min')),
         'legend': legend(0),
@@ -245,7 +245,7 @@ def gameflowchart_create(logger, shot_flow_dic, goal_dic, plotline_list, matchin
 
     return chart_options
 
-def shotstatussumchart_create(logger, shotsum_dic, _shotstatus_dic, goal_dic, team, _matchinfo_dic):
+def shotstatussumchart_create(logger, shotsum_dic, _shotstatus_dic, goal_dic, team, _matchinfo_dic, ctitle):
     """ create shotstatus chart """
     # pylint: disable=E0602
     logger.debug('shotstatussumchart_create()')
@@ -276,7 +276,7 @@ def shotstatussumchart_create(logger, shotsum_dic, _shotstatus_dic, goal_dic, te
             'height': '60%'
         },
 
-        'exporting': exporting(),
+        'exporting': exporting(filename=ctitle),
         'title': title(''),
         'credits': credit(),
         'tooltip': tooltip('<b>{point.x}.%s</b><br>' % _('min')),
@@ -342,7 +342,7 @@ def shotstatussumchart_create(logger, shotsum_dic, _shotstatus_dic, goal_dic, te
     }
     return chart_options
 
-def shotmapchart_create(logger, shotmap_list):
+def shotmapchart_create(logger, shotmap_list, ctitle):
     """ create shotmap """
     # pylint: disable=E0602
     logger.debug('shotmapchart_create()')
@@ -382,7 +382,7 @@ def shotmapchart_create(logger, shotmap_list):
             'height': '110%'
         },
 
-        'exporting': exporting(),
+        'exporting': exporting(filename=ctitle),
         'title': title(''),
         'credits': credit(),
         'legend': legend(),
@@ -433,10 +433,10 @@ def shotmapchart_create(logger, shotmap_list):
         },
 
         'series': [
-            {'name': _('Shots on Goal'), 'color': shot_sog_color, 'data': data_dic[1], 'marker': {'radius': 15, 'symbol': 'circle'}},
-            {'name': _('missed'), 'data': data_dic[2], 'color': shot_missed_color, 'marker': {'symbol': 'circle', 'radius': 15}},
-            {'name': _('blocked'), 'color': shot_blocked_color, 'data': data_dic[3], 'marker': {'symbol': 'circle', 'radius': 15}},
-            {'name': _('Goals'), 'color': shot_goal_color, 'data': data_dic[4], 'marker': {'symbol': 'circle', 'radius': 15}},
+            {'name': _('missed'), 'zIndex': 1, 'data': data_dic[2], 'color': shot_missed_color, 'marker': {'symbol': 'circle', 'radius': 15}},
+            {'name': _('Shots on Goal'), 'color': shot_sog_color, 'zIndex': 2, 'data': data_dic[1], 'marker': {'radius': 15, 'symbol': 'circle'}},
+            {'name': _('blocked'), 'zIndex': 3, 'color': shot_blocked_color, 'data': data_dic[3], 'marker': {'symbol': 'circle', 'radius': 15}},
+            {'name': _('Goals'), 'zIndex': 3, 'color': shot_goal_color, 'data': data_dic[4], 'marker': {'symbol': 'circle', 'radius': 15}},
             ],
 
         'responsive': {
@@ -444,10 +444,10 @@ def shotmapchart_create(logger, shotmap_list):
                 'condition': {'maxWidth': 500},
                 'chartOptions': {
                     'series': [
-                        {'name': _('Shots on Goal'), 'color': shot_sog_color, 'data': data_dic[1], 'marker': {'radius': 12, 'symbol': 'circle'}},
-                        {'name': _('missed'), 'data': data_dic[2], 'color': shot_missed_color, 'marker': {'symbol': 'circle', 'radius': 12}},
-                        {'name': _('blocked'), 'color': shot_blocked_color, 'data': data_dic[3], 'marker': {'symbol': 'circle', 'radius': 12}},
-                        {'name': _('Goals'), 'color': shot_goal_color, 'data': data_dic[4], 'marker': {'symbol': 'circle', 'radius': 12}},
+                        {'name': _('missed'), 'zIndex': 1, 'data': data_dic[2], 'color': shot_missed_color, 'marker': {'symbol': 'circle', 'radius': 12}},
+                        {'name': _('Shots on Goal'), 'zIndex': 2, 'color': shot_sog_color, 'data': data_dic[1], 'marker': {'radius': 12, 'symbol': 'circle'}},
+                        {'name': _('blocked'), 'zIndex': 3, 'color': shot_blocked_color, 'data': data_dic[3], 'marker': {'symbol': 'circle', 'radius': 12}},
+                        {'name': _('Goals'), 'zIndex': 4, 'color': shot_goal_color, 'data': data_dic[4], 'marker': {'symbol': 'circle', 'radius': 12}},
                     ],
                     'plotOptions':{'series': {'dataLabels': {'y': 15}}}
                     }
@@ -457,7 +457,7 @@ def shotmapchart_create(logger, shotmap_list):
 
     return chart_options
 
-def gamecorsichart_create(logger, player_corsi_dic):
+def gamecorsichart_create(logger, player_corsi_dic, ctitle):
     """ create corsi chart for a certain game """
     # pylint: disable=E0602
     logger.debug('gamecorsichart_create()')
@@ -528,7 +528,7 @@ def gamecorsichart_create(logger, player_corsi_dic):
             'height': '105%',
         },
 
-        'exporting': exporting(),
+        'exporting': exporting(filename=ctitle),
         'title': title(''),
         'credits': credit(),
         'legend': legend(),
@@ -598,7 +598,7 @@ def gamecorsichart_create(logger, player_corsi_dic):
 
     return chart_options
 
-def gamecorsippctgchart_create(logger, player_corsi_dic):
+def gamecorsippctgchart_create(logger, player_corsi_dic, ctitle):
     """ create corsi chart for a certain game """
     # pylint: disable=E0602
     logger.debug('gamecorsippctgchart_create()')
@@ -625,11 +625,10 @@ def gamecorsippctgchart_create(logger, player_corsi_dic):
             'alignTicks': 0,
         },
 
-        'exporting': exporting(),
+        'exporting': exporting(filename=ctitle),
         'title': title(''),
         'credits': credit(),
         'legend': legend(),
-        'responsive': responsive_y1(),
         'tooltip': {'enabled': 0},
 
         'plotOptions': {
@@ -637,9 +636,9 @@ def gamecorsippctgchart_create(logger, player_corsi_dic):
                 'stacking': 'percent',
                 'dataLabels': {
                     'enabled': 1,
-                    'color': '#FFFFFF',
                     'format': '{y} %',
-                    'useHTML': 1
+                    'useHTML': 0,
+                    'style': {'fontSize': font_size, 'textOutline': 0, 'color': '#ffffff',  'fontWeight': 0}
                 }
             }
         },
@@ -670,13 +669,25 @@ def gamecorsippctgchart_create(logger, player_corsi_dic):
         }, {
             'name': '{0} 5v5 (%)'.format(_('Shot attempts "against" at 5v5')),
             'data': y_dic['shots_against'],
-            'color': chart_color2,
+            'color': chart_color1,
             'dataLabels': 0,
-        }]
+        }],
+
+        'responsive': {
+            'rules': [{
+                'condition': {'maxWidth': 500},
+                'chartOptions': {
+                    'legend': {'verticalAlign': legend_valign_mobile, 'layout': 'horizontal', 'itemStyle': {'font-size': font_size_mobile}},
+                    'xAxis': {'title': {'style': {'font-size': font_size_mobile}}, 'labels': {'style': {'fontSize': font_size_mobile}}},
+                    'yAxis': {'title': {'style': {'font-size': font_size_mobile}}, 'labels': {'style': {'fontSize': font_size_mobile}}},
+                    'plotOptions': {'bar': {'dataLabels': {'style': {'fontSize': '7px', 'textOutline': 0, 'color': '#ffffff', 'fontWeight': 0}}}}
+                }
+            }]
+        }
     }
     return chart_options
 
-def puckpossessionchart_create(logger, shotsum_dic, goal_dic, matchinfo_dic):
+def puckpossessionchart_create(logger, shotsum_dic, goal_dic, matchinfo_dic, ctitle):
     """ create area chart showing puck possession """
     # pylint: disable=E0602
     logger.debug('puckpossessionchart_create()')
@@ -704,7 +715,7 @@ def puckpossessionchart_create(logger, shotsum_dic, goal_dic, matchinfo_dic):
             'height': '60%'
         },
 
-        'exporting': exporting(),
+        'exporting': exporting(filename=ctitle),
         'title': title(''),
         'credits': credit('Nach einer Idee von @h_modes', 'https://twitter.com/h_modes'),
         'legend': legend(),

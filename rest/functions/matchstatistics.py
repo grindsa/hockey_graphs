@@ -103,7 +103,7 @@ def _gameflow_get(logger, title, request, fkey, fvalue, matchinfo_dic, shot_list
         plotline_list = penaltyplotlines_get(logger, fkey, fvalue, chart_color7)
 
         # create the chart
-        shot_chart = gameflowchart_create(logger, shotflow_dic, goal_dic, plotline_list, matchinfo_dic)
+        shot_chart = gameflowchart_create(logger, shotflow_dic, goal_dic, plotline_list, matchinfo_dic, title)
 
     stat_entry = {
         'title': title,
@@ -129,7 +129,7 @@ def _gamepuckpossession_get(logger, title, request, fkey, fvalue, matchinfo_dic,
         # aggregate shots per min
         shotsum_dic = shotspermin_aggregate(logger, shotmin_dic)
 
-        shot_chart = puckpossessionchart_create(logger, shotsum_dic, goal_dic, matchinfo_dic)
+        shot_chart = puckpossessionchart_create(logger, shotsum_dic, goal_dic, matchinfo_dic, title)
         # pylint: disable=E0602
         shot_table = shotsperiodtable_get(logger, _('Shots per period'), shotmin_dic, matchinfo_dic)
 
@@ -159,8 +159,8 @@ def _gameshootstatus_get(logger, title, request, fkey, fvalue, matchinfo_dic, sh
 
         # create chart
         shot_chart = [
-            shotstatussumchart_create(logger, shotstatussum_dic, shotstatus_dic, goal_dic, 'home_team', matchinfo_dic),
-            shotstatussumchart_create(logger, shotstatussum_dic, shotstatus_dic, goal_dic, 'visitor_team', matchinfo_dic),
+            shotstatussumchart_create(logger, shotstatussum_dic, shotstatus_dic, goal_dic, 'home_team', matchinfo_dic, title),
+            shotstatussumchart_create(logger, shotstatussum_dic, shotstatus_dic, goal_dic, 'visitor_team', matchinfo_dic, title),
         ]
         shot_table = [
             shotstatussumtable_get(logger, title, shotstatus_dic, 'home_team', matchinfo_dic),
@@ -194,7 +194,7 @@ def _gameshots_get(logger, title, request, fkey, fvalue, matchinfo_dic, shot_lis
         # create plotlines to be addedd to chart
         plotline_list = penaltyplotlines_get(logger, fkey, fvalue)
 
-        shot_chart = shotsumchart_create(logger, shotsum_dic, shotmin_dic, goal_dic, plotline_list, matchinfo_dic)
+        shot_chart = shotsumchart_create(logger, shotsum_dic, shotmin_dic, goal_dic, plotline_list, matchinfo_dic, title)
         # pylint: disable=E0602
         shot_table = shotsperiodtable_get(logger, _('Shots per period'), shotmin_dic, matchinfo_dic)
 
@@ -242,8 +242,8 @@ def _gameshotmap_get(logger, title, request, fkey, fvalue, matchinfo_dic, shot_l
         shotmap_dic = shotcoordinates_get(logger, shot_list, matchinfo_dic)
 
         shot_chart = [
-            shotmapchart_create(logger, shotmap_dic['home_team']),
-            shotmapchart_create(logger, shotmap_dic['visitor_team'])
+            shotmapchart_create(logger, shotmap_dic['home_team'], title),
+            shotmapchart_create(logger, shotmap_dic['visitor_team'], title)
         ]
 
     stat_entry = {
@@ -262,13 +262,15 @@ def _gamecorsi_get(logger, request, fkey, fvalue, matchinfo_dic, shot_list, shif
     stat_entry_list = []
 
     if shot_list:
+
         # get corsi values per player for a certain match
         game_corsi_dic = gamecorsi_get(logger, shot_list, shift_list, periodevent_list, matchinfo_dic, roster_list)
 
+        title = _('Shot attempts at even strength (CF, CA)')
         # corsi absolute chart and table
         corsi_chart_abs = [
-            gamecorsichart_create(logger, game_corsi_dic['home_team']),
-            gamecorsichart_create(logger, game_corsi_dic['visitor_team'])
+            gamecorsichart_create(logger, game_corsi_dic['home_team'], title),
+            gamecorsichart_create(logger, game_corsi_dic['visitor_team'], title)
         ]
         corsi_table_abs = [
             gamecorsi_table(logger, game_corsi_dic['home_team'], 'home_team', matchinfo_dic),
@@ -276,16 +278,17 @@ def _gamecorsi_get(logger, request, fkey, fvalue, matchinfo_dic, shot_list, shif
         ]
         # pylint: disable=E0602
         stat_entry_list.append({
-            'title': _('Shot attempts at even strength (CF, CA)'),
+            'title': title,
             'chart': corsi_chart_abs,
             'table': corsi_table_abs,
             'tabs': True
         })
 
+        title = _('Shot attempts at even strength (CF, CA)')
         # corsi percentage chart and table
         corsi_chart_pctg = [
-            gamecorsippctgchart_create(logger, game_corsi_dic['home_team']),
-            gamecorsippctgchart_create(logger, game_corsi_dic['visitor_team'])
+            gamecorsippctgchart_create(logger, game_corsi_dic['home_team'], title),
+            gamecorsippctgchart_create(logger, game_corsi_dic['visitor_team'], title)
         ]
         corsi_table_pctg = [
             gamecorsi_table(logger, game_corsi_dic['home_team'], 'home_team', matchinfo_dic, 'cf_pctg'),
@@ -293,7 +296,7 @@ def _gamecorsi_get(logger, request, fkey, fvalue, matchinfo_dic, shot_list, shif
         ]
         # pylint: disable=E0602
         stat_entry_list.append({
-            'title': '{0} %'.format(_('Shot attempts at even strength (CF, CA)')),
+            'title': '{0} %'.format(title),
             'chart': corsi_chart_pctg,
             'table': corsi_table_pctg,
             'tabs': True
@@ -321,8 +324,8 @@ def _gametoi_get(logger, title, request, fkey, fvalue, matchinfo_dic, shift_list
     if toi_dic:
         # create chart and table
         toi_chart = [
-            gametoichart_create(logger, toi_dic['home_team']),
-            gametoichart_create(logger, toi_dic['visitor_team']),
+            gametoichart_create(logger, toi_dic['home_team'], title),
+            gametoichart_create(logger, toi_dic['visitor_team'], title),
         ]
 
         toi_table = [
@@ -352,7 +355,7 @@ def _gamematchup_get(logger, title, request, _fkey, _fvalue, matchinfo_dic, shot
         (lineup_dic, matchup_matrix, plotline_dic) = matchupmatrix_get(logger, matchinfo_dic, shot_list, shift_list, roster_list, periodevent_list)
 
         # generate_chart
-        matchup_chart = gamematchupchart_create(logger, lineup_dic, matchup_matrix, plotline_dic, matchinfo_dic)
+        matchup_chart = gamematchupchart_create(logger, lineup_dic, matchup_matrix, plotline_dic, matchinfo_dic, title)
 
     stat_entry = {
         'title': title,

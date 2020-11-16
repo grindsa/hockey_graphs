@@ -4,7 +4,7 @@
 from rest.functions.chartparameters import credit, exporting, responsive_y1, title, legend, font_size
 from rest.functions.chartparameters import chart_color1, chart_color2, chart_color3, chart_color4, text_color, font_size_mobile
 
-def gametoichart_create(logger, toi_dic):
+def gametoichart_create(logger, toi_dic, ctitle):
     # pylint: disable=E0602
     """ create time-on-ice chart """
     logger.debug('gametoichart_create()')
@@ -37,7 +37,7 @@ def gametoichart_create(logger, toi_dic):
             'alignTicks': 0,
         },
 
-        'exporting': exporting(),
+        'exporting': exporting(filename=ctitle),
         'title': title(''),
         'credits': credit(),
         'legend': legend(),
@@ -78,7 +78,7 @@ def gametoichart_create(logger, toi_dic):
     }
     return chart_options
 
-def gamematchupchart_create(logger, lineup_dic, matchup_matrix, plotline_dic, matchinfo_dic):
+def gamematchupchart_create(logger, lineup_dic, matchup_matrix, plotline_dic, matchinfo_dic, ctitle):
     """ create matchup heatmeap """
     logger.debug('gamematchupchart_create()')
     # pylint: disable=E0602, R0914
@@ -140,7 +140,7 @@ def gamematchupchart_create(logger, lineup_dic, matchup_matrix, plotline_dic, ma
             'height': '90%',
         },
 
-        'exporting': exporting(),
+        'exporting': exporting(filename=ctitle),
         'title': title(''),
         'credits': credit(),
 
