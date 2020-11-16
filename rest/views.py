@@ -1,4 +1,5 @@
 """ views.py """
+import os
 from django.db.models import Q
 from django.conf import settings
 from rest_framework import viewsets
@@ -21,9 +22,15 @@ LOGGER.info('starting hockeys_graphs rest api version %s ', __version__)
 if DEBUG:
     LOGGER.debug('debug mode enabled')
 
+# ugly hack to set localdir correctly
+if os.path.exists('/var/www/hockey_graphs/locale'):
+    localedir = '/var/www/hockey_graphs/locale'
+else:
+    localedir = 'locale'
+LOGGER.debug('set localedir to: {0}'.format(localedir))
 
-en = gettext.translation('django', localedir='locale', languages=['en'])
-de = gettext.translation('django', localedir='locale', languages=['de'])
+en = gettext.translation('django', localedir=localedir, languages=['en'])
+de = gettext.translation('django', localedir=localedir, languages=['de'])
 en.install()
 LCLANG = 'en'
 
