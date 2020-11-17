@@ -46,7 +46,7 @@ class DelAppHelper():
 
     def _config_load(self):
         """" load config from file """
-        self.logger.debug('Certificate._config_load()')
+        self.logger.debug('_config_load()')
         config_dic = config_load(cfg_file=os.path.dirname(__file__)+'/'+'hockeygraphs.cfg')
         if 'Tools' in config_dic:
             if 'base_url' in config_dic['Tools']:
@@ -55,7 +55,7 @@ class DelAppHelper():
                 self.mobile_api = config_dic['Tools']['mobile_api']
             if 'del_api' in config_dic['Tools']:
                 self.del_api = config_dic['Tools']['del_api']
-        self.logger.debug('Certificate._config_load() ended.')
+        self.logger.debug('_config_load() ended.')
 
     def api_post(self, url, data):
         """ generic wrapper for an API post call """

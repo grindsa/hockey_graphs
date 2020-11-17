@@ -2,9 +2,11 @@
 # -*- coding: utf-8 -*-
 """ import shots to database """
 # pylint: disable=E0401, C0413
+import os
 import sys
-sys.path.insert(0, '..')
-sys.path.insert(0, '../../')
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir, os.path.pardir)))
+
 from rest.functions.gameheader import gameheader_add
 from rest.functions.helper import logger_setup, uts_now
 from rest.functions.match import openmatch_list_get, match_add
@@ -99,8 +101,8 @@ if __name__ == '__main__':
             teamstat_add(LOGGER, 'match_id', match_id, {'match_id': match_id, 'home': home_dic, 'visitor': visitor_dic})
 
             # get shifts
-            shift_dic = del_app_helper.shifts_get(match_id)
-            shift_add(LOGGER, 'match_id', match_id, {'match_id': match_id, 'shift': shift_dic})
+            # shift_dic = del_app_helper.shifts_get(match_id)
+            # shift_add(LOGGER, 'match_id', match_id, {'match_id': match_id, 'shift': shift_dic})
 
             # get shots
             shots_dic = del_app_helper.shots_get(match_id)
