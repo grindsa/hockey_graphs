@@ -10,7 +10,7 @@ The project is under heavy development.  So far charts for single del-matches wi
 
 In case you are missing a certain chart you would like to see let me know. Just create an [issue](https://github.com/grindsa/hockey_graphs/issues/new) or drop me an email to <grindelsack@gmail.com>. Suggestions and objective criticism those refer to this project are welcome at any time.
 
-If you are interested in raw statistics please visit [leaffan.net](https://www.leaffan.net/del/#!/home).
+If you are interested in raw but much more detailed statistics please visit [leaffan.net](https://www.leaffan.net/del/#!/home).
 
 ## Disclaimer
 
