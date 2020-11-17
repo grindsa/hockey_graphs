@@ -30,20 +30,21 @@ def _seasonid_get(logger, request):
 
 def matchdays_get(logger, request, fkey=None, fvalue=None, vlist=('match_id', 'season', 'date', 'date_uts', 'home_team__shortcut', 'home_team__team_name', 'home_team__logo', 'visitor_team__team_name', 'visitor_team__shortcut', 'visitor_team__logo', 'result')):
     """ matches grouped by days """
-    logger.debug('match_list_get({0}:{1})'.format(fkey, fvalue))
+    logger.debug('matchdays_get({0}:{1})'.format(fkey, fvalue))
 
     if not fkey:
         (fkey, fvalue) = _seasonid_get(logger, request)
 
     # reuse of an existing function from match
     match_list = match_list_get(logger, fkey, fvalue, vlist)
+
     matchday_dic = {}
     matchday_uts_dic = {}
     lastmday_uts = 0
     lastmday_human = ''
 
     # we need the url to be added to the logo URL
-    if request.META:
+    if request and request.META:
         base_url = url_build(request.META)
     else:
         base_url = ''
@@ -81,7 +82,7 @@ def matchdays_get(logger, request, fkey=None, fvalue=None, vlist=('match_id', 's
         matchday_dic[match['date']]['matches'].append(match)
 
     # set displayflag to last matchday
-    if matchday_dic:
+    if matchday_dic and lastmday_human:
         matchday_dic[lastmday_human]['displayday'] = True
 
     # add references to previous and next matchdate

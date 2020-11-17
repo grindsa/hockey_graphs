@@ -9,7 +9,7 @@ import django
 django.setup()
 from django.conf import settings
 from rest.models import Match
-from rest.functions.helper import url_build, pctg_get, min2sec
+from rest.functions.helper import url_build, pctg_get, min2sec, uts_now
 from rest.functions.teamstat import teamstat_get
 
 def match_info_get(logger, match_id, request, vlist=('date', 'result', 'home_team_id', 'home_team__team_name', 'home_team__shortcut', 'home_team__logo', 'visitor_team_id', 'visitor_team__team_name', 'visitor_team__shortcut', 'visitor_team__logo')):
@@ -123,6 +123,35 @@ def matchstats_get(logger, match_id):
         stat_entry = {}
 
     return stat_entry
+
+def last_match_get(logger, season_id, uts):
+    """ get information of upcoming match """
+    logger.debug('next_match_get({0}:{1})'.format(season_id, uts))
+    match_list = match_list_get(logger, 'season_id', season_id, ('match_id', 'date_uts', 'date', 'result', 'home_team_id', 'home_team__team_name', 'home_team__shortcut', 'home_team__logo', 'visitor_team_id', 'visitor_team__team_name', 'visitor_team__shortcut', 'visitor_team__logo'))
+    match_info_dic = {}
+    match_id = None
+    for match in match_list:
+        if match['date_uts'] <= uts:
+            match_info_dic = match
+            match_id = match['match_id']
+
+    logger.debug('next_match_get() ended with: {0}'.format(match_id))
+    return(match_id, match_info_dic)
+
+def next_match_get(logger, season_id, uts):
+    """ get information of upcoming match """
+    logger.debug('next_match_get({0}:{1})'.format(season_id, uts))
+    match_list = match_list_get(logger, 'season_id', season_id, ('match_id', 'date_uts', 'date', 'result', 'home_team_id', 'home_team__team_name', 'home_team__shortcut', 'home_team__logo', 'visitor_team_id', 'visitor_team__team_name', 'visitor_team__shortcut', 'visitor_team__logo'))
+
+    match_info_dic = {}
+    match_id = None
+    for match in match_list:
+        if uts <= match['date_uts']:
+            match_info_dic = match
+            match_id = match['match_id']
+            break
+    logger.debug('next_match_get() ended with: {0}'.format(match_id))
+    return(match_id, match_info_dic)
 
 def openmatch_list_get(logger, season_id, uts=0, vlist=('match_id', 'season', 'date', 'date_uts', 'home_team', 'visitor_team')):
     """ get a list of non finished matches from past """
