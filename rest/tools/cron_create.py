@@ -9,13 +9,13 @@ import time
 from datetime import datetime
 from crontab import CronTab
 from pytz import timezone
-sys.path.insert(0, '..')
-sys.path.insert(0, '../../')
 
 # import django
 import django
 # we need this to load the django environment
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir, os.path.pardir)))
+
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "hockey_graphs.settings")
 django.setup()
 
@@ -91,7 +91,7 @@ def create_cron_entries(logger, tzone):
 if __name__ == "__main__":
 
     # initialize debug mode and logger
-    DEBUG = True
+    DEBUG = False
     LOGGER = logger_setup(DEBUG)
 
     TIMEZONE = timezone('Europe/Berlin')
