@@ -14,6 +14,7 @@ RUN mkdir -p /tmp/rest/functions
 RUN mkdir -p /tmp/rest/tools
 
 COPY ui /tmp/ui
+COPY locale /tmp/locale
 COPY rest/functions/*.py /tmp/rest/functions/
 COPY rest/*.py /tmp/rest/
 COPY rest/tools/*.py /tmp/rest/tools/

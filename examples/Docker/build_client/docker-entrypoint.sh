@@ -13,6 +13,7 @@ if [ $1 = "deploy" ]; then
     # sync data to prod
     cd /tmp
     rsync -avze 'ssh -i id_ed25519 -o "StrictHostKeyChecking=no"' ./rest hockeygraphs@hockeygraphs.dynamop.de:~
+    rsync -avze 'ssh -i id_ed25519 -o "StrictHostKeyChecking=no"' ./locale hockeygraphs@hockeygraphs.dynamop.de:~    
     rsync -avze 'ssh -i id_ed25519 -o "StrictHostKeyChecking=no"' ./ui/dist hockeygraphs@hockeygraphs.dynamop.de:ui
 
     # apply schema migrations
