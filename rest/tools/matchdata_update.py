@@ -12,7 +12,7 @@ from rest.functions.helper import logger_setup, uts_now
 from rest.functions.match import openmatch_list_get, match_add
 from rest.functions.periodevent import periodevent_add
 from rest.functions.player import player_list_get, player_add
-from rest.functions.playerstat import playerstat_add
+from rest.functions.playerstat import playerstat_add, playerstat_get
 from rest.functions.roster import roster_add
 from rest.functions.season import season_latest_get
 from rest.functions.shift import shift_add
@@ -20,7 +20,24 @@ from rest.functions.shot import shot_add, zone_name_get
 from rest.functions.teamstat import teamstat_add
 from delapphelper import DelAppHelper
 
-def match_update(logger, match_id_, header_dic):
+def _playerstats_process(logger, match_id, period, home_dic, visitor_dic):
+    """ update match with result and finish flag """
+    playerstat_list = playerstat_get(logger, 'match_id', match_id)
+
+    if 'home' in playerstat_list:
+        homestat_dic = playerstat_list['home']
+    else:
+        homestat_dic = {}
+    if 'visitor' in playerstat_list:
+        visitorstat_dic = playerstat_list['visitor']
+    else:
+        visitorstat_dic = {}
+    homestat_dic[period] = home_dic
+    visitorstat_dic[period] = visitor_dic
+    playerstat_add(LOGGER, 'match_id', match_id, {'match_id': match_id, 'home': homestat_dic, 'visitor': visitorstat_dic})
+
+
+def _match_update(logger, match_id_, header_dic):
     """ update match with result and finish flag """
     data_dic = {'match_id': match_id_}
     if 'results' in header_dic and 'score' in header_dic['results'] and 'final' in header_dic['results']['score']:
@@ -67,7 +84,7 @@ def shots_process(logger, match_dic):
 
 if __name__ == '__main__':
 
-    DEBUG = True
+    DEBUG = False
 
     # initialize logger
     LOGGER = logger_setup(DEBUG)
@@ -76,24 +93,34 @@ if __name__ == '__main__':
     # unix timestamp
     UTS = uts_now()
 
+    from pprint import pprint
+
     # Get list of matches to be updated (selection current season, status finish_false, date lt_uts)
     match_list = openmatch_list_get(LOGGER, SEASON_ID, UTS, ['match_id'])
 
     with DelAppHelper(None, DEBUG) as del_app_helper:
         for match_id in match_list:
 
+            # get matchheader
+            gameheader_dic = del_app_helper.gameheader_get(match_id)
+            gameheader_add(LOGGER, 'match_id', match_id, {'match_id': match_id, 'gameheader': gameheader_dic})
+            _match_update(LOGGER, match_id, gameheader_dic)
+
+            if 'actualTimeAlias' in gameheader_dic:
+                period = gameheader_dic['actualTimeAlias']
+                home_dic = del_app_helper.playerstats_get(match_id, True)
+                visitor_dic = del_app_helper.playerstats_get(match_id, False)
+                _playerstats_process(LOGGER, match_id, period, home_dic, visitor_dic)
+
+
             # get and store periodevents
             event_dic = del_app_helper.periodevents_get(match_id)
+            # pprint(event_dic)
             periodevent_add(LOGGER, 'match_id', match_id, {'match_id': match_id, 'period_event': event_dic})
 
             # get and store rosters
             roster_dic = del_app_helper.roster_get(match_id)
             roster_add(LOGGER, 'match_id', match_id, {'match_id': match_id, 'roster': roster_dic})
-
-            # get and store playerstats
-            home_dic = del_app_helper.playerstats_get(match_id, True)
-            visitor_dic = del_app_helper.playerstats_get(match_id, False)
-            playerstat_add(LOGGER, 'match_id', match_id, {'match_id': match_id, 'home': home_dic, 'visitor': visitor_dic})
 
             # get teamstat
             home_dic = del_app_helper.teamstats_get(match_id, True)
@@ -107,8 +134,3 @@ if __name__ == '__main__':
             # get shots
             shots_dic = del_app_helper.shots_get(match_id)
             shots_process(LOGGER, shots_dic['match'])
-
-            # get matchheader
-            gameheader_dic = del_app_helper.gameheader_get(match_id)
-            gameheader_add(LOGGER, 'match_id', match_id, {'match_id': match_id, 'gameheader': gameheader_dic})
-            match_update(LOGGER, match_id, gameheader_dic)

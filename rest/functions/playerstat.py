@@ -89,7 +89,6 @@ def toifromplayerstats_get(logger, _matchinfo_dic, playerstat_dic):
     tmp_toi_sum_dic = {'home_team': {}, 'visitor_team': {}}
 
     for team in playerstat_dic:
-        print(team)
         if team == 'home':
             team_name = 'home_team'
         else:
@@ -102,7 +101,7 @@ def toifromplayerstats_get(logger, _matchinfo_dic, playerstat_dic):
                 if player['name'] not in tmp_toi_sum_dic:
                     tmp_toi_sum_dic[team_name][player['name']] = 0
                 if player['statistics']['timeOnIce'] > 0:
-                    toi_dic[team_name]['ebb'][int(period)][player['name']] = player['statistics']['timeOnIce'] - tmp_toi_sum_dic[team_name][player['name']]
+                    toi_dic[team_name][int(period)][player['name']] = player['statistics']['timeOnIce'] - tmp_toi_sum_dic[team_name][player['name']]
                     tmp_toi_sum_dic[team_name][player['name']] = player['statistics']['timeOnIce']
 
     return toi_dic
