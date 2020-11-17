@@ -80,9 +80,8 @@ def gametoichart_create(logger, toi_dic, ctitle):
 
 def gamematchupchart_create(logger, lineup_dic, matchup_matrix, plotline_dic, matchinfo_dic, ctitle):
     """ create matchup heatmeap """
-    logger.debug('gamematchupchart_create()')
     # pylint: disable=E0602, R0914
-
+    logger.debug('gamematchupchart_create()')
     data_list = []
     for hpid in matchup_matrix:
         for vpid in matchup_matrix[hpid]:
@@ -93,9 +92,6 @@ def gamematchupchart_create(logger, lineup_dic, matchup_matrix, plotline_dic, ma
                 'minsec': '{0:02d}:{1:02d}'.format(*divmod(matchup_matrix[hpid][vpid]['seconds'], 60)),
                 'home_name': '{0} {1}'.format(lineup_dic['home_team'][hpid]['name'], lineup_dic['home_team'][hpid]['surname']),
                 'visitor_name': '{0} {1}'.format(lineup_dic['visitor_team'][vpid]['name'], lineup_dic['visitor_team'][vpid]['surname']),
-                # 'dataLabels': {'format': '{0}:{1:02d}'.format(*divmod(matchup_matrix[hpid][vpid]['seconds'], 60))},
-                # 'dataLabels':  {'format': '{0}'.format(matchup_matrix[hpid][vpid]['home_shots'] - matchup_matrix[hpid][vpid]['visitor_shots'])},
-                # 'delta': matchup_matrix[hpid][vpid]['home_shots'] - matchup_matrix[hpid][vpid]['visitor_shots'],
                 'home_shots': matchup_matrix[hpid][vpid]['home_shots'],
                 'visitor_shots': matchup_matrix[hpid][vpid]['visitor_shots'],
             }
