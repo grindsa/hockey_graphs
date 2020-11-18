@@ -161,9 +161,13 @@ class Chart extends React.Component{
       return(
         <MatchOverview options={this.props.options} />
       )
-    }else{
+    }else if (this.props.options.hometeam){
       return (
         <ZoneChart options={this.props.options} />
+      )
+    }else{
+      return (
+        <div className="w3-padding-16 nodata w3-center">No data to render chart.</div>
       )
     }
   }
