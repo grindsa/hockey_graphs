@@ -54,54 +54,58 @@ def gamecorsi_get(logger, shot_list, shift_list, periodevent_list, matchinfo_dic
     # soi = seconds on ice
     (soi_dic, toi_dic) = skatersonice_get(logger, shift_list, matchinfo_dic)
 
-    # add penalties to filter 5v5
-    soi_dic = penalties_include(logger, soi_dic, periodevent_list)
+    if toi_dic['home_team'] and toi_dic['visitor_team']:
 
-    # get scorers from events
-    scorer_dic = scorersfromevents_get(logger, periodevent_list)
+        # add penalties to filter 5v5
+        soi_dic = penalties_include(logger, soi_dic, periodevent_list)
 
-    player_corsi_dic = {'home_team': {}, 'visitor_team': {}}
+        # get scorers from events
+        scorer_dic = scorersfromevents_get(logger, periodevent_list)
 
-    for shot in shot_list:
+        player_corsi_dic = {'home_team': {}, 'visitor_team': {}}
 
-        # skip goals
-        # if shot['match_shot_resutl_id'] == 4:
-        #    continue
+        for shot in shot_list:
 
-        # do we have to count the shot
-        if five_filter:
-            # so far a bid uncliear we only count 5vs5
-            # 5v5 is ok we can count it
-            if soi_dic['home_team'][shot['timestamp']]['count'] == 5 and soi_dic['visitor_team'][shot['timestamp']]['count'] == 5:
-            # if soi_dict['EBB'][shot['time']]['count'] == soi_dict[oteam_name][shot['time']]['count']:
+            # skip goals
+            # if shot['match_shot_resutl_id'] == 4:
+            #    continue
+
+            # do we have to count the shot
+            if five_filter:
+                # so far a bid uncliear we only count 5vs5
+                # 5v5 is ok we can count it
+                if soi_dic['home_team'][shot['timestamp']]['count'] == 5 and soi_dic['visitor_team'][shot['timestamp']]['count'] == 5:
+                # if soi_dict['EBB'][shot['time']]['count'] == soi_dict[oteam_name][shot['time']]['count']:
+                    count_it = True
+                # elif soi_dict['EBB'][shot['time']]['count'] == 4 and soi_dict[oteam_name][shot['time']]['count'] == 4:
+                #     count_it = True
+                else:
+                    count_it = False
+            else:
                 count_it = True
-            # elif soi_dict['EBB'][shot['time']]['count'] == 4 and soi_dict[oteam_name][shot['time']]['count'] == 4:
-            #     count_it = True
-            else:
-                count_it = False
-        else:
-            count_it = True
 
-        if count_it:
+            if count_it:
 
-            # we need to differenciate between home and visitor team
-            if shot['team_id'] == matchinfo_dic['home_team_id']:
-                for_team = 'home_team'
-                against_team = 'visitor_team'
-            else:
-                against_team = 'home_team'
-                for_team = 'visitor_team'
+                # we need to differenciate between home and visitor team
+                if shot['team_id'] == matchinfo_dic['home_team_id']:
+                    for_team = 'home_team'
+                    against_team = 'visitor_team'
+                else:
+                    against_team = 'home_team'
+                    for_team = 'visitor_team'
 
-            for player in soi_dic[for_team][shot['timestamp']]['player_list']:
-                if player not in player_corsi_dic[for_team]:
-                    player_corsi_dic[for_team][player] = {'shots': 0, 'shots_against': 0, 'name': player}
-                player_corsi_dic[for_team][player]['shots'] += 1
+                for player in soi_dic[for_team][shot['timestamp']]['player_list']:
+                    if player not in player_corsi_dic[for_team]:
+                        player_corsi_dic[for_team][player] = {'shots': 0, 'shots_against': 0, 'name': player}
+                    player_corsi_dic[for_team][player]['shots'] += 1
 
-            for player in soi_dic[against_team][shot['timestamp']]['player_list']:
-                if player not in player_corsi_dic[against_team]:
-                    player_corsi_dic[against_team][player] = {'shots': 0, 'shots_against': 0, 'name': player}
-                player_corsi_dic[against_team][player]['shots_against'] += 1
+                for player in soi_dic[against_team][shot['timestamp']]['player_list']:
+                    if player not in player_corsi_dic[against_team]:
+                        player_corsi_dic[against_team][player] = {'shots': 0, 'shots_against': 0, 'name': player}
+                    player_corsi_dic[against_team][player]['shots_against'] += 1
 
-    player_corsi_dic = _rosterinformation_add(logger, player_corsi_dic, toi_dic, scorer_dic, roster_list)
+        player_corsi_dic = _rosterinformation_add(logger, player_corsi_dic, toi_dic, scorer_dic, roster_list)
+    else:
+        player_corsi_dic = {}
 
     return player_corsi_dic

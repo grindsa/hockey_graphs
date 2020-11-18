@@ -267,15 +267,20 @@ def _gamecorsi_get(logger, request, fkey, fvalue, matchinfo_dic, shot_list, shif
         game_corsi_dic = gamecorsi_get(logger, shot_list, shift_list, periodevent_list, matchinfo_dic, roster_list)
 
         title = _('Shot attempts at even strength (CF, CA)')
-        # corsi absolute chart and table
-        corsi_chart_abs = [
-            gamecorsichart_create(logger, game_corsi_dic['home_team'], title),
-            gamecorsichart_create(logger, game_corsi_dic['visitor_team'], title)
-        ]
-        corsi_table_abs = [
-            gamecorsi_table(logger, game_corsi_dic['home_team'], 'home_team', matchinfo_dic),
-            gamecorsi_table(logger, game_corsi_dic['visitor_team'], 'visitor_team', matchinfo_dic)
-        ]
+        if game_corsi_dic:
+            # corsi absolute chart and table
+            corsi_chart_abs = [
+                gamecorsichart_create(logger, game_corsi_dic['home_team'], title),
+                gamecorsichart_create(logger, game_corsi_dic['visitor_team'], title)
+            ]
+            corsi_table_abs = [
+                gamecorsi_table(logger, game_corsi_dic['home_team'], 'home_team', matchinfo_dic),
+                gamecorsi_table(logger, game_corsi_dic['visitor_team'], 'visitor_team', matchinfo_dic)
+            ]
+        else:
+            corsi_chart_abs = [{}, {}]
+            corsi_table_abs = []
+
         # pylint: disable=E0602
         stat_entry_list.append({
             'title': title,
@@ -285,15 +290,20 @@ def _gamecorsi_get(logger, request, fkey, fvalue, matchinfo_dic, shot_list, shif
         })
 
         title = _('Shot attempts at even strength (CF, CA)')
-        # corsi percentage chart and table
-        corsi_chart_pctg = [
-            gamecorsippctgchart_create(logger, game_corsi_dic['home_team'], title),
-            gamecorsippctgchart_create(logger, game_corsi_dic['visitor_team'], title)
-        ]
-        corsi_table_pctg = [
-            gamecorsi_table(logger, game_corsi_dic['home_team'], 'home_team', matchinfo_dic, 'cf_pctg'),
-            gamecorsi_table(logger, game_corsi_dic['visitor_team'], 'visitor_team', matchinfo_dic, 'cf_pctg')
-        ]
+        if game_corsi_dic:
+            # corsi percentage chart and table
+            corsi_chart_pctg = [
+                gamecorsippctgchart_create(logger, game_corsi_dic['home_team'], title),
+                gamecorsippctgchart_create(logger, game_corsi_dic['visitor_team'], title)
+            ]
+            corsi_table_pctg = [
+                gamecorsi_table(logger, game_corsi_dic['home_team'], 'home_team', matchinfo_dic, 'cf_pctg'),
+                gamecorsi_table(logger, game_corsi_dic['visitor_team'], 'visitor_team', matchinfo_dic, 'cf_pctg')
+            ]
+        else:
+            corsi_chart_pctg = [{}, {}]
+            corsi_table_pctg = [{}, {}]
+
         # pylint: disable=E0602
         stat_entry_list.append({
             'title': '{0} %'.format(title),
