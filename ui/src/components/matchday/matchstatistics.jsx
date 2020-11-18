@@ -5,7 +5,7 @@ import HighchartsReact from 'highcharts-react-official';
 import HighchartsMore from 'highcharts/highcharts-more';
 import HighchartsExporting from 'highcharts/modules/exporting';
 import Heatmap from 'highcharts/modules/heatmap.js';
-import { createTableHeader, createTableBody, createSelectOptions, overviewClassnames } from './matchstatisticservice.js'
+import { createTableHeader, createTableBody, createSelectOptions, overviewClassnames, createnostatMessage, createnoChartMessage } from './matchstatisticservice.js'
 import { asyncGET, isEmpty } from '../sharedfunctions.js';
 
 // Load Highcharts modules
@@ -52,11 +52,17 @@ export class MatchStatistics extends React.Component {
         <React.Fragment>
           <MatchHeader match={this.props.match} reset={this.props.reset} />
           <Selector matches={this.state.matchstatistics}  onChange={this.handleStatChange} value={this.state.selectedstat}/>
-          <MatchData chart={MatchStatistic.chart} table={MatchStatistic.table} match={this.props.match} tabs={MatchStatistic.tabs}/>
+          <MatchData language={this.props.language} chart={MatchStatistic.chart} table={MatchStatistic.table} match={this.props.match} tabs={MatchStatistic.tabs}/>
         </React.Fragment>
       );
     }else{
-      return (<p></p>)
+      const nostatmessage = createnostatMessage(this.props.language)
+      // <div className="w3-padding-16 w3-center">{nostatmessage}</div>
+      return (
+        <React.Fragment>
+          <MatchHeader match={this.props.match} reset={this.props.reset} />
+        </React.Fragment>
+      )
     }
   }
 }
@@ -91,14 +97,14 @@ class MatchData extends React.Component {
             <div className ={home_format} onClick={() => this.switchTab(0)}>{this.props.match.home_team_name}</div>
             <div className ={visitor_format} onClick={() => this.switchTab(1)}>{this.props.match.visitor_team_name}</div>
           </div>
-          <Chart options={this.props.chart[this.state.activeTab]} />
+          <Chart options={this.props.chart[this.state.activeTab]} language={this.props.language} />
           <Table data={this.props.table[this.state.activeTab]} />
         </React.Fragment>
       )
     }else{
       return (
         <React.Fragment>
-          <Chart options={this.props.chart} />
+          <Chart options={this.props.chart} language={this.props.language} />
           <Table data={this.props.table} />
         </React.Fragment>
       );
@@ -166,8 +172,9 @@ class Chart extends React.Component{
         <ZoneChart options={this.props.options} />
       )
     }else{
+      const nochartdata = createnoChartMessage(this.props.language)
       return (
-        <div className="w3-padding-16 nodata w3-center">No data to render chart.</div>
+        <div className="w3-padding-16 nodata w3-center">{nochartdata}</div>
       )
     }
   }
