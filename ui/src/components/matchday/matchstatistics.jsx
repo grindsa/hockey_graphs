@@ -4,12 +4,14 @@ import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import HighchartsMore from 'highcharts/highcharts-more';
 import HighchartsExporting from 'highcharts/modules/exporting';
+import HighchartsOfflineExporting from "highcharts/modules/offline-exporting";
 import Heatmap from 'highcharts/modules/heatmap.js';
 import { createTableHeader, createTableBody, createSelectOptions, overviewClassnames, createnostatMessage, createnoChartMessage } from './matchstatisticservice.js'
 import { asyncGET, isEmpty } from '../sharedfunctions.js';
 
 // Load Highcharts modules
-require("highcharts/modules/exporting")(Highcharts);
+HighchartsExporting(Highcharts);
+HighchartsOfflineExporting(Highcharts);
 HighchartsMore(Highcharts);
 Heatmap(Highcharts);
 
@@ -157,6 +159,7 @@ class Selector extends React.Component{
 class Chart extends React.Component{
   /* block to render chart mobile differenciation is done via chartoptions */
   render() {
+    console.log(this.props.options)
     if (this.props.options.chart){
       return (
         <div className="w3-border">
@@ -167,12 +170,13 @@ class Chart extends React.Component{
       return(
         <MatchOverview options={this.props.options} />
       )
-    }else if (this.props.options.hometeam){
+    }else if (this.props.options.home_team){
       return (
         <ZoneChart options={this.props.options} />
       )
     }else{
       const nochartdata = createnoChartMessage(this.props.language)
+      console.log('foo')
       return (
         <div className="w3-padding-16 nodata w3-center">{nochartdata}</div>
       )
