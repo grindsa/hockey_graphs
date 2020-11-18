@@ -5,6 +5,7 @@
 import os
 import sys
 import time
+from datetime import datetime
 from pytz import timezone
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir, os.path.pardir)))
@@ -43,8 +44,8 @@ if __name__ == '__main__':
 
     # get matches of the day
     # print('today manipuliert')
-    TODAY = '2020-11-15'
-    # TODAY = datetime.fromtimestamp(uts_now, tz=TIMEZONE).strftime("%Y-%m-%d")
+    # TODAY = '2020-11-15'
+    TODAY = datetime.fromtimestamp(uts_now, tz=TIMEZONE).strftime("%Y-%m-%d")
 
     # Get list of matches to be updated and compile a list of corresponding match_ids as this is input for the update loop
     matchday_list = matchdays_get(LOGGER, None, 'date', TODAY)
