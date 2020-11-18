@@ -15,7 +15,7 @@ from rest.functions.player import player_list_get, player_add
 from rest.functions.playerstat import playerstat_add, playerstat_get
 from rest.functions.roster import roster_add
 from rest.functions.season import season_latest_get
-from rest.functions.shift import shift_add
+# from rest.functions.shift import shift_add
 from rest.functions.shot import shot_add, zone_name_get
 from rest.functions.teamstat import teamstat_add
 from delapphelper import DelAppHelper
@@ -93,8 +93,6 @@ if __name__ == '__main__':
     # unix timestamp
     UTS = uts_now()
 
-    from pprint import pprint
-
     # Get list of matches to be updated (selection current season, status finish_false, date lt_uts)
     match_list = openmatch_list_get(LOGGER, SEASON_ID, UTS, ['match_id'])
 
@@ -114,23 +112,35 @@ if __name__ == '__main__':
 
 
             # get and store periodevents
-            event_dic = del_app_helper.periodevents_get(match_id)
-            # pprint(event_dic)
-            periodevent_add(LOGGER, 'match_id', match_id, {'match_id': match_id, 'period_event': event_dic})
+            try:
+                event_dic = del_app_helper.periodevents_get(match_id)
+                # pprint(event_dic)
+                periodevent_add(LOGGER, 'match_id', match_id, {'match_id': match_id, 'period_event': event_dic})
+            except BaseException:
+                LOGGER.debug('ERROR: periodevents_get() failed.')
 
-            # get and store rosters
-            roster_dic = del_app_helper.roster_get(match_id)
-            roster_add(LOGGER, 'match_id', match_id, {'match_id': match_id, 'roster': roster_dic})
+            try:
+                # get and store rosters
+                roster_dic = del_app_helper.roster_get(match_id)
+                roster_add(LOGGER, 'match_id', match_id, {'match_id': match_id, 'roster': roster_dic})
+            except BaseException:
+                LOGGER.debug('ERROR: roster_get() failed.')
 
-            # get teamstat
-            home_dic = del_app_helper.teamstats_get(match_id, True)
-            visitor_dic = del_app_helper.teamstats_get(match_id, False)
-            teamstat_add(LOGGER, 'match_id', match_id, {'match_id': match_id, 'home': home_dic, 'visitor': visitor_dic})
+            try:
+                # get teamstat
+                home_dic = del_app_helper.teamstats_get(match_id, True)
+                visitor_dic = del_app_helper.teamstats_get(match_id, False)
+                teamstat_add(LOGGER, 'match_id', match_id, {'match_id': match_id, 'home': home_dic, 'visitor': visitor_dic})
+            except BaseException:
+                LOGGER.debug('ERROR: teamstats_get() failed.')
 
             # get shifts
             # shift_dic = del_app_helper.shifts_get(match_id)
             # shift_add(LOGGER, 'match_id', match_id, {'match_id': match_id, 'shift': shift_dic})
 
-            # get shots
-            shots_dic = del_app_helper.shots_get(match_id)
-            shots_process(LOGGER, shots_dic['match'])
+            try:
+                # get shots
+                shots_dic = del_app_helper.shots_get(match_id)
+                shots_process(LOGGER, shots_dic['match'])
+            except BaseException:
+                LOGGER.debug('ERROR: shots_get() failed.')
