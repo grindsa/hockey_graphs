@@ -45,10 +45,10 @@ def labels():
     """ set labels """
     return {'style': {'fontSize': font_size},}
 
-def exporting(_button=None, filename=None):
+def exporting(_button=None, filename=None, allowhtml=1):
     """ export structure """
     # output_dic = {'chartOptions': {'plotOptions': {'series': {'dataLabels': {'enabled': 0}}}}, 'fallbackToExportServer': 0}
-    output_dic = {'fallbackToExportServer': 0, 'allowHTML': 1}
+    output_dic = {'fallbackToExportServer': 0, 'allowHTML': allowhtml}
     # output_dic['buttons'] = {'customButton': {'text': button}}
     if filename:
         output_dic['filename'] = filename

@@ -136,7 +136,7 @@ def gamematchupchart_create(logger, lineup_dic, matchup_matrix, plotline_dic, ma
             'height': '90%',
         },
 
-        'exporting': exporting(filename=ctitle),
+        'exporting': exporting(filename=ctitle, allowhtml=0),
         'title': title(''),
         'credits': credit(),
 
