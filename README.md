@@ -1,6 +1,6 @@
 # hockey_graphs
 
-hockey_graphs is personal software project to create a set of tools rendering harts based on statistics from [(P-)DEL](https://www.penny-del.org/)
+hockey_graphs is personal software project to create a set of tools rendering harts based on statistics from [Penny-DEL](https://www.penny-del.org/)
 
 The current version is hosted at [http://hockeygraphs.dynamop.de/](https://hockeygraphs.dynamop.de/) and already contains charts based on data from
 - 2019/2020 season
@@ -10,15 +10,15 @@ The current version is hosted at [http://hockeygraphs.dynamop.de/](https://hocke
 
 The project is under heavy development.  So far charts for single del-matches will be provided. Team-statistics, team benchmarking and player statistics are on my todo-list and will hopefully follow soon.
 
-In case you are missing a certain chart you would like to see let me know. Just create an [issue](https://github.com/grindsa/hockey_graphs/issues/new) or drop me an email to <grindelsack@gmail.com>. Suggestions and objective criticism those refer to this project are welcome at any time.
+In case you are missing a certain chart you would like to see let me know. Just create an [issue](https://github.com/grindsa/hockey_graphs/issues/new) or drop an email to <grindelsack@gmail.com>. Suggestions for improvements and objective criticism are welcome at any time.
 
-If you are interested in raw (but much more detailed statistics) please visit [leaffan.net](https://www.leaffan.net/del/#!/home). I am sure you will find everything you'll need there.
+If you are interested in raw (but much more detailed statistics) please visit [leaffan.net](https://www.leaffan.net/del/#!/home). That's by far the best page for advanced statistics of Penny-DEL.   
 
 ## Disclaimer
 
-I am not a professional software developer. Main aim was to do something useful while stuck in COVID prison. Keep this in mind while laughing about my code and don’t forget to send patches.
+I am not a professional software developer. Main aim for this project was to do something useful while being stuck in COVID prison. Keep this in mind while laughing about my code and don’t forget to send patches.
 
-I am neither working for (P-)DEL or any related organisation nor for any of the German hockey clubs. I just found the raw data while checking [penny-del.org](https://www.penny-del.org/) and started playing with it.
+I do neither for (P-)DEL nor any of the German hockey clubs. I just found the raw data while checking [penny-del.org](https://www.penny-del.org/) and started playing with it.
 
 ## Architecture
 
