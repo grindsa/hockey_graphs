@@ -70,7 +70,7 @@ export class App extends React.Component {
     return (
       <div className="mainwidth">
         <div className="w3-bar w3-padding pcolor">
-          <i className="fas fa-bars fa-lg w3-xlarge  w3-bar-item" />
+          <i className="far fa-square fa-lg w3-xlarge  w3-bar-item" />
           <SeasonSelector seasonValue={this.state.selectedSeason} seasonlist={ this.state.seasonlist.results } onchangeSeason={ this.changeSeason } />
           <a href="https://github.com/grindsa/hockey_graphs"><span className="w3-button w3-round pcolor w3-right">?</span></a>
           <LanguageSelector langValue={ this.state.language } onClick={() => this.toggleLanguage()} />
