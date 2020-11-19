@@ -24,17 +24,21 @@ def _playerstats_process(logger, match_id, period, home_dic, visitor_dic):
     """ update match with result and finish flag """
     playerstat_list = playerstat_get(logger, 'match_id', match_id)
 
-    if 'home' in playerstat_list:
-        homestat_dic = playerstat_list['home']
-    else:
-        homestat_dic = {}
-    if 'visitor' in playerstat_list:
-        visitorstat_dic = playerstat_list['visitor']
-    else:
-        visitorstat_dic = {}
-    homestat_dic[period] = home_dic
-    visitorstat_dic[period] = visitor_dic
-    playerstat_add(LOGGER, 'match_id', match_id, {'match_id': match_id, 'home': homestat_dic, 'visitor': visitorstat_dic})
+    # filter only allowed periods
+    periods_allowed = ['1', '2', '3', 'P']
+    if period in periods_allowed:
+
+        if 'home' in playerstat_list:
+            homestat_dic = playerstat_list['home']
+        else:
+            homestat_dic = {}
+        if 'visitor' in playerstat_list:
+            visitorstat_dic = playerstat_list['visitor']
+        else:
+            visitorstat_dic = {}
+        homestat_dic[period] = home_dic
+        visitorstat_dic[period] = visitor_dic
+        playerstat_add(LOGGER, 'match_id', match_id, {'match_id': match_id, 'home': homestat_dic, 'visitor': visitorstat_dic})
 
 
 def _match_update(logger, match_id_, header_dic):

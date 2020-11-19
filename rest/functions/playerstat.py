@@ -88,6 +88,8 @@ def toifromplayerstats_get(logger, _matchinfo_dic, playerstat_dic):
     toi_dic = {'home_team': {1: {}, 2: {}, 3: {}, 4: {}}, 'visitor_team': {1: {}, 2: {}, 3: {}, 4: {}}}
     tmp_toi_sum_dic = {'home_team': {}, 'visitor_team': {}}
 
+    # filter only allowed periods
+    periods_allowed = {'1': 1, '2': 2, '3': 3, 'P': 4}
     for team in playerstat_dic:
         if team == 'home':
             team_name = 'home_team'
@@ -95,15 +97,16 @@ def toifromplayerstats_get(logger, _matchinfo_dic, playerstat_dic):
             team_name = 'visitor_team'
 
         # build dictionary based on playerstats (this is live - hopefully)
-        for period in sorted(playerstat_dic[team]):
-            for player in playerstat_dic[team][period]:
-                # store values in a temporary dic as playerstats contains aggregated values only
-                if player['name'] not in tmp_toi_sum_dic:
-                    tmp_toi_sum_dic[team_name][player['name']] = 0
-                if player['statistics']['timeOnIce'] > 0:
-                    toi_dic[team_name][int(period)][player['name']] = player['statistics']['timeOnIce'] - tmp_toi_sum_dic[team_name][player['name']]
-                    tmp_toi_sum_dic[team_name][player['name']] = player['statistics']['timeOnIce']
-
+        for period in periods_allowed:
+            if period in playerstat_dic[team]:
+                for player in playerstat_dic[team][period]:
+                    # if player['name'] == 'Michael Moore':
+                    # store values in a temporary dic as playerstats contains aggregated values only
+                    if player['name'] not in tmp_toi_sum_dic[team_name]:
+                        tmp_toi_sum_dic[team_name][player['name']] = 0
+                    if player['statistics']['timeOnIce'] > 0:
+                        toi_dic[team_name][periods_allowed[period]][player['name']] = player['statistics']['timeOnIce'] - tmp_toi_sum_dic[team_name][player['name']]
+                        tmp_toi_sum_dic[team_name][player['name']] = player['statistics']['timeOnIce']
     return toi_dic
 
 def matchupmatrix_get(logger, matchinfo_dic, shot_list, shift_list, roster_list, periodevent_list, five_filter=True):
