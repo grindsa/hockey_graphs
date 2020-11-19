@@ -1,8 +1,10 @@
 # hockey_graphs
 
-hockey_graphs is personal software project to create a yet another set of tools to render charts based on statistics from (P-)DEL
+hockey_graphs is personal software project to create a set of tools rendering harts based on statistics from [(P-)DEL](https://www.penny-del.org/)
 
-[Sneak Preview](https://hockeygraphs.dynamop.de/) of 2019/2020 season as well as Magenta Sport Hockey Cup.
+The current version is hosted at [http://hockeygraphs.dynamop.de/](https://hockeygraphs.dynamop.de/) and already contains charts based on data from
+- 2019/2020 season
+- [Magenta Sport Hockey Cup](https://www.magentasport.de/eishockey/magentasportcup)
 
 ## Project status
 
@@ -10,7 +12,7 @@ The project is under heavy development.  So far charts for single del-matches wi
 
 In case you are missing a certain chart you would like to see let me know. Just create an [issue](https://github.com/grindsa/hockey_graphs/issues/new) or drop me an email to <grindelsack@gmail.com>. Suggestions and objective criticism those refer to this project are welcome at any time.
 
-If you are interested in raw but much more detailed statistics please visit [leaffan.net](https://www.leaffan.net/del/#!/home).
+If you are interested in raw (but much more detailed statistics) please visit [leaffan.net](https://www.leaffan.net/del/#!/home). I am sure you will find everything you'll need there.
 
 ## Disclaimer
 
