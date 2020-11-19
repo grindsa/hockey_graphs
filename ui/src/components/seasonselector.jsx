@@ -29,7 +29,7 @@ export class SeasonSelector extends React.Component {
     const [seasonname, classNames] = this.getShortcut(this.props.seasonValue, this.props.seasonlist)
     return (
       <div className = "w3-dropdown-hover w3-left">
-        <button className = "w3-button">
+        <button className = "w3-button pcolor">
           <span className={classNames}>{seasonname}</span>
         </button>
         <SeasonList seasonlist={ this.props.seasonlist } onchangeSeason={ this.props.onchangeSeason }/>
