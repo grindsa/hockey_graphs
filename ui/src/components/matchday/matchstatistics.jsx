@@ -159,7 +159,6 @@ class Selector extends React.Component{
 class Chart extends React.Component{
   /* block to render chart mobile differenciation is done via chartoptions */
   render() {
-    console.log(this.props.options)
     if (this.props.options.chart){
       return (
         <div className="w3-border">
@@ -176,7 +175,6 @@ class Chart extends React.Component{
       )
     }else{
       const nochartdata = createnoChartMessage(this.props.language)
-      console.log('foo')
       return (
         <div className="w3-padding-16 nodata w3-center">{nochartdata}</div>
       )
