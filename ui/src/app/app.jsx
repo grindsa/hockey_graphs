@@ -4,6 +4,7 @@ import Cookies from 'universal-cookie';
 import { ChangeMatchday, MatchDayList } from '../components/matchday';
 import { LanguageSelector } from '../components/languageselector';
 import { SeasonSelector } from '../components/seasonselector';
+import { StatSelector } from '../components/statselector';
 import { asyncGET } from '../components/sharedfunctions.js';
 import { config } from '../components/constants.js';
 import '../css/mytheme.css';
@@ -70,9 +71,10 @@ export class App extends React.Component {
     // <i className="far fa-square fa-lg w3-xlarge  w3-bar-item" />
     return (
       <div className="mainwidth">
-        <div className="w3-bar w3-padding pcolor">
+        <div className="w3-bar pcolor">
           <SeasonSelector seasonValue={this.state.selectedSeason} seasonlist={ this.state.seasonlist.results } onchangeSeason={ this.changeSeason } />
-          <a href="https://github.com/grindsa/hockey_graphs"><span className="w3-button w3-round pcolor w3-right">?</span></a>
+          <StatSelector />
+          <a href="https://github.com/grindsa/hockey_graphs"><span className="w3-margin-right w3-round pcolor w3-right w3-margin-top">?</span></a>
           <LanguageSelector langValue={ this.state.language } onClick={() => this.toggleLanguage()} />
 
         </div>
