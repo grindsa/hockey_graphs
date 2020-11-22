@@ -86,3 +86,17 @@ class Teamstat(models.Model):
     match = models.ForeignKey(Match, on_delete=models.CASCADE)
     home = jsonfield.JSONField(default=dict)
     visitor = jsonfield.JSONField(default=dict)
+
+class Teammatchstat(models.Model):
+    match = models.ForeignKey(Match, on_delete=models.CASCADE)
+    cf = models.IntegerField(default=0)
+    cf_60 = models.FloatField(default=0)
+    ca = models.IntegerField(default=0)
+    ca_60 = models.FloatField(default=0)
+    sh = models.IntegerField(default=0)
+    sh_pctg = models.FloatField(default=0)
+    sh_5v5 = models.IntegerField(default=0)
+    sa = models.IntegerField(default=0)
+    sa_5v5 = models.IntegerField(default=0)
+    sv = models.IntegerField(default=0)
+    sv_pct = models.FloatField(default=0)
