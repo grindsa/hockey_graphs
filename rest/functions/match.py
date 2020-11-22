@@ -9,7 +9,7 @@ import django
 django.setup()
 from django.conf import settings
 from rest.models import Match
-from rest.functions.helper import url_build, pctg_get, min2sec, uts_now
+from rest.functions.helper import url_build, pctg_get, min2sec
 from rest.functions.teamstat import teamstat_get
 
 def match_info_get(logger, match_id, request, vlist=('date', 'result', 'home_team_id', 'home_team__team_name', 'home_team__shortcut', 'home_team__logo', 'visitor_team_id', 'visitor_team__team_name', 'visitor_team__shortcut', 'visitor_team__logo')):
@@ -21,7 +21,11 @@ def match_info_get(logger, match_id, request, vlist=('date', 'result', 'home_tea
         match_dic = {}
 
     # change logo link
-    base_url = url_build(request)
+    try:
+        base_url = url_build(request)
+    except BaseException:
+        base_url = None
+
     match_dic['home_team_logo'] = '{0}{1}{2}'.format(base_url, settings.STATIC_URL, match_dic['home_team__logo'])
     match_dic['visitor_team_logo'] = '{0}{1}{2}'.format(base_url, settings.STATIC_URL, match_dic['visitor_team__logo'])
 
