@@ -88,7 +88,10 @@ class Teamstat(models.Model):
     visitor = jsonfield.JSONField(default=dict)
 
 class Teammatchstat(models.Model):
-    match = models.ForeignKey(Match, on_delete=models.CASCADE)
+    match = models.ForeignKey(Match, on_delete=models.CASCADE, default=0)
+    team = models.ForeignKey(Team, on_delete=models.CASCADE, default=0)
+    gf = models.IntegerField(default=0)
+    ga = models.IntegerField(default=0)
     cf = models.IntegerField(default=0)
     cf_60 = models.FloatField(default=0)
     ca = models.IntegerField(default=0)
