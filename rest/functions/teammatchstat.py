@@ -8,7 +8,9 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "hockey_graphs.settings")
 import django
 django.setup()
 from rest.models import Teammatchstat
+from rest.functions.gameheader import gameheader_get
 from rest.functions.match import match_info_get
+from rest.functions.corsi import gamecorsisum_get
 
 def teammatchstat_add(logger, match_dic):
     """ add team to database """
@@ -28,14 +30,28 @@ def teammatchstat_add(logger, match_dic):
             o_team = 'home'
             team_id = match_info_dic['visitor_team_id']
 
+        # get corsi statistics
+        (corsi_for, corsi_for_5, corsi_against, corsi_against_5) = gamecorsisum_get(logger, match_id, match_info_dic, team)
+
+        game_header = gameheader_get(logger, 'match_id', match_id, ['gameheader'])
+        if 'lastEventTime' in game_header:
+            lasteventtime = game_header['lastEventTime']
+        else:
+            lasteventtime = 3600
+
         data_dic = {
             'match_id': match_id,
+            'matchduration': lasteventtime,
             'team_id': team_id,
             'goals_for': match_dic[team]['goals'],
             'goals_against': match_dic[o_team]['goals'],
             'goals_pp': match_dic[team]['ppGoals'],
             'goals_sh': match_dic[team]['shGoals'],
             'shots_for': match_dic[team]['shotsAttempts'],
+            'corsi_for': corsi_for,
+            'corsi_for_5v5': corsi_for_5,
+            'corsi_against': corsi_against,
+            'corsi_for_5v5': corsi_against_5,
             'shots_against': match_dic[o_team]['shotsAttempts'],
             'shots_ongoal_for': match_dic[team]['shotsOnGoal'],
             'shots_ongoal_against': match_dic[o_team]['shotsOnGoal'],

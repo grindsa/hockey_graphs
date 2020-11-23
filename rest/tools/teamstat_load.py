@@ -29,5 +29,4 @@ if __name__ == '__main__':
 
         # get matchid and add data add function
         teammatchstat_add(LOGGER, match)
-
-        break
+        # break

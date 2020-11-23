@@ -3,6 +3,8 @@
 # pylint: disable=E0401, C0413
 from rest.functions.timeline import skatersonice_get, penalties_include
 from rest.functions.periodevent import scorersfromevents_get
+from rest.functions.shift import shift_get, toifromshifts_get
+from rest.functions.shot import shot_list_get
 
 def _rosterinformation_add(logger, player_corsi_dic, toi_dic, scorer_dic, roster_list):
     """ enrich corsi dictionary with roster information like time-on-ice or line-number """
@@ -109,3 +111,47 @@ def gamecorsi_get(logger, shot_list, shift_list, periodevent_list, matchinfo_dic
         player_corsi_dic = {}
 
     return player_corsi_dic
+
+def gamecorsisum_get(logger, match_id, match_info_dic, team):
+
+        # get shifts and shots
+        shot_list = shot_list_get(logger, 'match_id', match_id, ['timestamp', 'match_shot_resutl_id', 'team_id', 'player__first_name', 'player__last_name', 'zone', 'coordinate_x', 'coordinate_y', 'player__jersey'])
+        shift_list = shift_get(logger, 'match_id', match_id, ['shift'])
+
+        # soi = seconds on ice
+        (soi_dic, toi_dic) = skatersonice_get(logger, shift_list, match_info_dic)
+
+        corsi_for = 0
+        corsi_for_5 = 0
+        corsi_against = 0
+        corsi_against_5 = 0
+
+        for shot in shot_list:
+            home_count = soi_dic['home_team'][shot['timestamp']]['count']
+            visitor_count = soi_dic['visitor_team'][shot['timestamp']]['count']
+            # count only shots at even strength
+            if home_count == visitor_count:
+                if team == 'home':
+                    # we count from perspectiv of the come team
+                    if shot['team_id'] == match_info_dic['home_team_id']:
+                        # this is a shot of the come_team
+                        corsi_for += 1
+                        if home_count == 5:
+                            corsi_for_5 += 1
+                    else:
+                        corsi_against +=1
+                        if home_count == 5:
+                            corsi_against_5 += 1
+                else:
+                    # we count from perpsective of visitor team
+                    # we count from perspectiv of the come team
+                    if shot['team_id'] == match_info_dic['home_team_id']:
+                        # this is a shot of the come_team
+                        corsi_against += 1
+                        if home_count == 5:
+                            corsi_against_5 += 1
+                    else:
+                        corsi_for +=1
+                        if home_count == 5:
+                            corsi_for_5 += 1
+        return (corsi_for, corsi_for_5, corsi_against, corsi_against_5)
