@@ -8,6 +8,7 @@ from rest_framework import status
 from rest_framework.pagination import PageNumberPagination
 from rest.functions.matchday import matchdays_get
 from rest.functions.matchstatistics import matchstatistics_get
+from rest.functions.teamcomparison import teamcomparison_get
 from rest.functions.helper import logger_setup
 from rest.version import __version__
 from .serializers import MatchSerializer, PeriodeventSerializer, PlayerSerializer, SeasonSerializer, ShiftSerializer, ShotSerializer, TeamSerializer
@@ -65,6 +66,23 @@ class MatchStatisticsViewSet(viewsets.ViewSet):
         result = matchstatistics_get(LOGGER, request, fkey='match', fvalue=pk)
         response = Response(result, status=status.HTTP_200_OK)
         return response
+
+class TeamComparisonViewSet(viewsets.ViewSet):
+    """ view for matchdays """
+
+    def list(self, request):
+        """ get a benchmarking charts """
+        result = teamcomparison_get(LOGGER, request)
+        response = Response(result, status=status.HTTP_200_OK)
+        return response
+
+    def retrieve(self, request, pk=None):
+        """ get a single benchmark """
+        # result = matchdays_get(LOGGER, request, fkey='date', fvalue=pk)
+        result = teamcomparison_get(LOGGER, request, fkey='chart', fvalue=pk)
+        response = Response(result, status=status.HTTP_200_OK)
+        return response
+
 
 class MatchDayViewSet(viewsets.ViewSet):
     """ view for matchdays """

@@ -20,3 +20,19 @@ def season_latest_get(logger):
         print('bubu')
     logger.debug('season_latest_get() ended with {0}'.format(result))
     return result
+
+def seasonid_get(logger, request):
+    logger.debug('_seasonid_get()')
+    # no filter has been passed, lets use season_id
+    if 'season' in request.GET:
+        try:
+            fkey = 'season_id'
+            fvalue = int(request.GET['season'])
+        except BaseException:
+            fkey = 'season_id'
+            fvalue = season_latest_get(logger)
+    else:
+        fkey = 'season_id'
+        fvalue = season_latest_get(logger)
+    logger.debug('_seasonid_get() ended with: {0}'.format(fvalue))
+    return (fkey, fvalue)
