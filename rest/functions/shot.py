@@ -141,9 +141,10 @@ def shotstatus_count(logger, shot_list, matchinfo_dic):
             team = 'visitor_team'
 
         # count shots
-        shot_status_dic[team][shot['match_shot_resutl_id']][min_] += 1
-        if shot['match_shot_resutl_id'] == 4:
-            goal_dic[team][min_] = shot['player__last_name']
+        if shot['match_shot_resutl_id'] <= 4:
+            shot_status_dic[team][shot['match_shot_resutl_id']][min_] += 1
+            if shot['match_shot_resutl_id'] == 4:
+                goal_dic[team][min_] = shot['player__last_name']
 
     return(shot_status_dic, goal_dic)
 
