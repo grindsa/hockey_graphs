@@ -1,5 +1,6 @@
 import React from 'react';
-import { ChangeMatchday, MatchDayList } from '../components/matchday';
+import { MatchDayList } from '../components/matchday';
+import { TeamComparison } from '../components/teamcomparison';
 
 export class Canvas extends React.Component {
 
@@ -15,9 +16,11 @@ export class Canvas extends React.Component {
       );
     }else{
       return (
-        <h1> foo </h1>
+        <TeamComparison
+          language={this.props.state.language}
+          season={this.props.state.selectedSeason}
+          />
       )
     }
-
   }
 }
