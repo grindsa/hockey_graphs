@@ -9,7 +9,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.
 
 from rest.functions.gameheader import gameheader_add
 from rest.functions.helper import logger_setup, uts_now
-from rest.functions.match import openmatch_list_get, match_add
+from rest.functions.match import openmatch_list_get, match_add, pastmatch_list_get
 from rest.functions.periodevent import periodevent_add
 from rest.functions.player import player_list_get, player_add
 from rest.functions.playerstat import playerstat_add, playerstat_get
@@ -88,7 +88,7 @@ def shots_process(logger, match_dic):
 
 if __name__ == '__main__':
 
-    DEBUG = False
+    DEBUG = True
 
     # initialize logger
     LOGGER = logger_setup(DEBUG)
@@ -99,6 +99,7 @@ if __name__ == '__main__':
 
     # Get list of matches to be updated (selection current season, status finish_false, date lt_uts)
     match_list = openmatch_list_get(LOGGER, SEASON_ID, UTS, ['match_id'])
+    # match_list = pastmatch_list_get(LOGGER, SEASON_ID, UTS, ['match_id'])
 
     with DelAppHelper(None, DEBUG) as del_app_helper:
         for match_id in match_list:
