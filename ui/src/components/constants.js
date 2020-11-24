@@ -19,7 +19,7 @@ export const creatstatList = function(language){
   if (language == 'DE'){
     var statlist = [{id: 0, name: 'Spielstatistiken'}, {id: 1, name: 'Teamvergleich'}]
   }else{
-    var statlist = [{id: 0, name: 'Match statistics'}, {id: 1, name: 'Team benchmarking'}]
+    var statlist = [{id: 0, name: 'Match statistics'}, {id: 1, name: 'Team benchmarks'}]
   }
   return statlist
 }
