@@ -1,10 +1,10 @@
 import React from 'react';
 
 import Cookies from 'universal-cookie';
-import { ChangeMatchday, MatchDayList } from '../components/matchday';
 import { LanguageSelector } from '../components/languageselector';
 import { SeasonSelector } from '../components/seasonselector';
 import { StatSelector } from '../components/statselector';
+import { Canvas } from '../components/canvas';
 import { asyncGET } from '../components/sharedfunctions.js';
 import { config } from '../components/constants.js';
 import '../css/mytheme.css';
@@ -23,9 +23,12 @@ export class App extends React.Component {
       seasonlist: [],
       language: 'DE',
       selectedSeason: 0,
+      StatList: [{id: 0, name:  'Match statistics'}, {id: 1, name: 'Team benchmarking'}],
+      selectedStat: 0
     }
 
     this.changeSeason = this.changeSeason.bind(this);
+    this.changeStat = this.changeStat.bind(this);
   }
 
   async componentDidMount(){
@@ -58,6 +61,14 @@ export class App extends React.Component {
     cookies.set(app_name, {language: this.state.language, selectedSeason: this.state.selectedSeason, foo: 'WannaSeeUrFaceOnceUreadThis'}, { path: '/', maxAge: 2419200 });
   }
 
+  async changeStat(newStat){
+    // change stat
+    await this.setState({selectedStat: newStat})
+    // update cookie
+    // const cookies = new Cookies();
+    // cookies.set(app_name, {language: this.state.language, selectedSeason: this.state.selectedSeason, foo: 'WannaSeeUrFaceOnceUreadThis'}, { path: '/', maxAge: 2419200 });
+  }
+
   async toggleLanguage(){
     let { language } = this.state;
     // change language
@@ -73,17 +84,11 @@ export class App extends React.Component {
       <div className="mainwidth">
         <div className="w3-bar pcolor">
           <SeasonSelector seasonValue={this.state.selectedSeason} seasonlist={ this.state.seasonlist.results } onchangeSeason={ this.changeSeason } />
-          <StatSelector />
+          <StatSelector statlist={this.state.StatList} statValue={this.state.selectedStat} onchangeStat={ this.changeStat }/>
           <a href="https://github.com/grindsa/hockey_graphs"><span className="w3-margin-right w3-round pcolor w3-right w3-margin-top">?</span></a>
           <LanguageSelector langValue={ this.state.language } onClick={() => this.toggleLanguage()} />
-
         </div>
-        <MatchDayList
-          matchdays={this.state.endpoints.matchdays}
-          matchstatistics={this.state.endpoints.matchstatistics}
-          language={this.state.language}
-          season={this.state.selectedSeason}
-          />
+        <Canvas state={this.state} />
       </div>
     );
   }
