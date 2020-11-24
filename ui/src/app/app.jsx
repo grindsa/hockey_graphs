@@ -6,11 +6,10 @@ import { SeasonSelector } from '../components/seasonselector';
 import { StatSelector } from '../components/statselector';
 import { Canvas } from '../components/canvas';
 import { asyncGET } from '../components/sharedfunctions.js';
-import { config } from '../components/constants.js';
+import { config, creatstatList } from '../components/constants.js';
 import '../css/mytheme.css';
 
 const app_name = 'hockeygraphs@grinda'
-
 
 // entry url for  backend
 const rest_url = config.url.API_URL
@@ -23,7 +22,7 @@ export class App extends React.Component {
       seasonlist: [],
       language: 'DE',
       selectedSeason: 0,
-      StatList: [{id: 0, name:  'Match statistics'}, {id: 1, name: 'Team benchmarking'}],
+      StatList: [{id: 0, name: 'Spielstatistiken'}, {id: 1, name: 'Teamvergleich'}],
       selectedStat: 0
     }
 
@@ -32,6 +31,7 @@ export class App extends React.Component {
   }
 
   async componentDidMount(){
+
     // get rest endpoints
     const endpoints = await asyncGET(rest_url, 'endpoints')
     this.setState({endpoints: endpoints });
@@ -51,6 +51,9 @@ export class App extends React.Component {
       await this.setState({selectedSeason: selectedSeason});
     }
     await this.setState({language: langValue });
+    // create list of stat based on language preferences
+    const statlist = creatstatList(this.state.language)
+    this.setState({StatList: statlist });
   }
 
   async changeSeason(newSeason){
@@ -76,6 +79,9 @@ export class App extends React.Component {
     // update cookie
     const cookies = new Cookies();
     cookies.set(app_name, {language: this.state.language, selectedSeason: this.state.selectedSeason, foo: 'WannaSeeUrFaceOnceUreadThis'}, { path: '/', maxAge: 2419200 });
+    // create list of stat based on language preferences
+    const statlist = creatstatList(this.state.language)
+    this.setState({StatList: statlist });
   }
 
   render() {
