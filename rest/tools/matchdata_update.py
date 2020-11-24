@@ -88,7 +88,7 @@ def shots_process(logger, match_dic):
 
 if __name__ == '__main__':
 
-    DEBUG = False
+    DEBUG = True
 
     # initialize logger
     LOGGER = logger_setup(DEBUG)
