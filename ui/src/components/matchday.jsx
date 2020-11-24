@@ -24,6 +24,14 @@ export class MatchDayList extends React.Component {
     this.handleDayClick = this.handleDayClick.bind(this);
   }
 
+  async componentDidMount(){
+    if (this.props.matchdays && this.props.season) {
+      // get matchdays
+      const matchdaydic = await asyncGET(this.props.matchdays + '?season=' + this.props.season)
+      this.setState({matchdaydic: matchdaydic});
+    }
+  }
+
   async componentDidUpdate(prevProps) {
     /* we get the url to fectch as props and monitor it here */
     const matchdaysupdate = checkMatchdayUpdate(this.props.matchdays, prevProps.matchdays, this.props.season, prevProps.season)
