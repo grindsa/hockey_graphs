@@ -99,23 +99,3 @@ export const overviewClassnames = function(leftValue, rightValue){
 
  return [leftClassNames, rightClassNames]
 }
-
-export const createnostatMessage = function(language){
-  /* build no message based on language setting */
-  if (language == 'DE'){
-    var nostatmessage = 'Keine Statistiken verfügbar'
-  }else{
-    var nostatmessage = 'No statistics available.'
-  }
-  return nostatmessage
-}
-
-export const createnoChartMessage = function(language){
-  /* build no message based on language setting */
-  if (language == 'DE'){
-    var nostatmessage = 'Keine Daten verfügbar.'
-  }else{
-    var nostatmessage = 'No data to render chart.'
-  }
-  return nostatmessage
-}

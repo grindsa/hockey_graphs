@@ -6,7 +6,8 @@ import { SeasonSelector } from '../components/seasonselector';
 import { StatSelector } from '../components/statselector';
 import { Canvas } from '../components/canvas';
 import { asyncGET } from '../components/sharedfunctions.js';
-import { config, creatstatList } from '../components/constants.js';
+import { config } from '../components/constants.js';
+import { creatstatList } from '../components/localization.js'
 import '../css/mytheme.css';
 
 const app_name = 'hockeygraphs@grinda'

@@ -6,8 +6,9 @@ import HighchartsMore from 'highcharts/highcharts-more';
 import HighchartsExporting from 'highcharts/modules/exporting';
 import HighchartsOfflineExporting from "highcharts/modules/offline-exporting";
 import Heatmap from 'highcharts/modules/heatmap.js';
-import { createTableHeader, createTableBody, createSelectOptions, overviewClassnames, createnostatMessage, createnoChartMessage } from './matchstatisticservice.js'
+import { createTableHeader, createTableBody, createSelectOptions, overviewClassnames } from './matchstatisticservice.js'
 import { asyncGET, isEmpty } from '../sharedfunctions.js';
+import { createnostatMessage, createnoChartMessage } from '../localization.js';
 
 // Load Highcharts modules
 HighchartsExporting(Highcharts);
