@@ -10,6 +10,7 @@ django.setup()
 from django.conf import settings
 from rest.functions.helper import url_build
 from rest.functions.season import seasonid_get
+from rest.functions.bananachart import banana_chart_create
 
 def teamcomparison_get(logger, request, fkey=None, fvalue=None):
     """ matchstatistics grouped by days """
@@ -17,6 +18,10 @@ def teamcomparison_get(logger, request, fkey=None, fvalue=None):
 
     (_fkey, season_id) = seasonid_get(logger, request)
 
-    result = {_fkey: season_id}
+    result = []
+
+    result.append(banana_chart_create(logger, 'foo1'))
+    result.append(banana_chart_create(logger, 'foo2'))
+
 
     return result
