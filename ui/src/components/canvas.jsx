@@ -17,6 +17,7 @@ export class Canvas extends React.Component {
     }else{
       return (
         <TeamComparison
+          teamcomparison={this.props.state.endpoints.teamcomparison}
           language={this.props.state.language}
           season={this.props.state.selectedSeason}
           />
