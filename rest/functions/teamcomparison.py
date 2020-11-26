@@ -7,8 +7,6 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "hockey_graphs.settings")
 import django
 django.setup()
-from django.conf import settings
-from rest.functions.helper import url_build
 from rest.functions.season import seasonid_get
 from rest.functions.bananachart import banana_chart_create
 
@@ -16,7 +14,7 @@ def teamcomparison_get(logger, request, fkey=None, fvalue=None):
     """ matchstatistics grouped by days """
     logger.debug('teamcomparison_get({0}:{1})'.format(fkey, fvalue))
 
-    (_fkey, season_id) = seasonid_get(logger, request)
+    (_fkey, _season_id) = seasonid_get(logger, request)
 
     result = []
 

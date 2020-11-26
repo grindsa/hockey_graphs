@@ -95,11 +95,29 @@ class Selector extends React.Component{
 
 class Chart extends React.Component{
   /* block to render chart mobile differenciation is done via chartoptions */
+  constructor(props) {
+    super(props);
+    this.state = props.options
+
+    this.updateChart = this.updateChart.bind(this);
+  }
+
+  updateChart = (newData) => {
+    // The chart is updated only with new options.
+    this.setState({
+      chart: newData
+    });
+  }
+
   render() {
-    if (this.props.options.chart){
+    if (this.state.chart){
+      console.log(this.props.options.updates[1])
       return (
         <div className="w3-border">
-          <HighchartsReact highcharts={Highcharts} options={this.props.options.chart} immutable={true} />
+          <HighchartsReact highcharts={Highcharts} options={this.state.chart} />
+          <button  onClick={() => this.updateChart(this.state.updates[1])}>foo 1</button>
+          <button  onClick={() => this.updateChart(this.state.updates[2])}>foo 2</button>
+          <button  onClick={() => this.updateChart(this.state.updates[3])}>foo 3</button>
         </div>
       )
     }else{
