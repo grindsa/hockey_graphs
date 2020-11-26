@@ -27,3 +27,26 @@ export const createnoChartMessage = function(language){
   }
   return nostatmessage
 }
+
+
+export const createTcSliderText = function(language, select, max){
+  if (language == 'DE'){
+    if (select === max) {
+      var slidermessage = 'Gesamte Saison'
+    }else if (max - select === 1) {
+      var slidermessage = 'letztes Spiel'
+    }else{
+      var slidermessage = 'letzte ' + (max-select) + ' Spiele'
+    }
+  }else{
+    if (select === max) {
+      var slidermessage = 'Full Season'
+    }else if (max - select === 1) {
+      var slidermessage = 'last match'
+    }else{
+      var slidermessage = 'last '+ (max-select) + ' matches'
+    }
+  }
+
+  return slidermessage
+}

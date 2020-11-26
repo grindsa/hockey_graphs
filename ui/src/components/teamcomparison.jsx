@@ -1,4 +1,5 @@
 import React from 'react';
+import { isMobile } from 'react-device-detect';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import HighchartsMore from 'highcharts/highcharts-more';
@@ -6,10 +7,12 @@ import HighchartsExporting from 'highcharts/modules/exporting';
 import HighchartsOfflineExporting from "highcharts/modules/offline-exporting";
 import Heatmap from 'highcharts/modules/heatmap.js';
 import Slider from 'react-rangeslider'
-import 'react-rangeslider/lib/index.css'
+// import 'react-rangeslider/lib/index.css'
+import '../css/slider.css';
 import { checkTcUpdate, createSelectOptions }  from './teamcomparison/teamcomparisonstateservice.js';
 import { asyncGET, isEmpty } from './sharedfunctions.js';
-import { createnostatMessage } from './localization.js';
+import { createnostatMessage, createTcSliderText } from './localization.js';
+
 
 // Load Highcharts modules
 HighchartsExporting(Highcharts);
@@ -110,44 +113,64 @@ class Chart extends React.Component{
     this.setState({slidervalue: Object.keys(this.props.options.updates).length});
   }
 
+  componentDidUpdate(prevProps){
+    // set initial slidervalue
+    // this.setState({slidervalue: Object.keys(this.props.options.updates).length});
+    if (prevProps.options !== this.props.options){
+      console.log('componentDidUpdate')
+      this.setState(this.props.options);
+    }
+  }
+
   updateChart(newData){
     // update chart in state
     this.setState(currentState => {
       return {
       ... currentState,
-      chart: newData,
+      chart: {
+        ... currentState.chart,
+        newData,
+        }
       }
     });
   }
 
   handleSliderChange(newvalue){
-    // update slidervalue after usage 
+    // update slidervalue after usage
     this.setState(currentState => {
       return {
       ... currentState,
       slidervalue: newvalue,
       }
     });
+    this.updateChart(this.state.updates[this.state.slidervalue].chartoptions)
   }
 
   render() {
     if (this.state.chart){
       // get the number of dataupdates as this will be the max-val for the slider
       const slidermaxval = Object.keys(this.props.options.updates).length
+      const slidertext = createTcSliderText(this.props.language, this.state.slidervalue, slidermaxval)
+      var className = ""
+      if (isMobile) {
+        console.log('foo')
+        var classNames = "w3-center w3-margin-left w3-margin-right"
+      }
+
       return (
         <React.Fragment>
           <Slider
-            min={0}
+            min={1}
             max={slidermaxval}
             value = {this.state.slidervalue}
+            step={1}
             orientation='horizontal'
             onChange={this.handleSliderChange}
+            className={classNames}
           />
+          <div className="w3-center w3-margin-bottom">{slidertext}</div>
           <div className="w3-border">
-            <button  onClick={() => this.updateChart(this.state.updates[1].chartoptions)}>foo 1</button>
-            <button  onClick={() => this.updateChart(this.state.updates[2].chartoptions)}>foo 2</button>
-            <button  onClick={() => this.updateChart(this.state.updates[3].chartoptions)}>foo 3</button>
-            <HighchartsReact highcharts={Highcharts} options={this.state.chart} />
+            <HighchartsReact highcharts={Highcharts} options={this.state.chart} immutable={true}/>
           </div>
         </React.Fragment>
       )
