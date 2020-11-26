@@ -5,6 +5,8 @@ import HighchartsMore from 'highcharts/highcharts-more';
 import HighchartsExporting from 'highcharts/modules/exporting';
 import HighchartsOfflineExporting from "highcharts/modules/offline-exporting";
 import Heatmap from 'highcharts/modules/heatmap.js';
+import Slider from 'react-rangeslider'
+import 'react-rangeslider/lib/index.css'
 import { checkTcUpdate, createSelectOptions }  from './teamcomparison/teamcomparisonstateservice.js';
 import { asyncGET, isEmpty } from './sharedfunctions.js';
 import { createnostatMessage } from './localization.js';
@@ -23,7 +25,6 @@ export class TeamComparison extends React.Component {
       teamcomparisonList: [],
       selectedstat: 0,
     };
-
     this.handleStatChange = this.handleStatChange.bind(this);
   }
 
@@ -60,6 +61,7 @@ export class TeamComparison extends React.Component {
   render() {
     const nostatmessage = createnostatMessage(this.props.language)
     if (!isEmpty(this.state.teamcomparisonList)){
+      // get chart to be shown
       const chart = this.state.teamcomparisonList[this.state.selectedstat]
       return (
         <React.Fragment>
@@ -100,25 +102,54 @@ class Chart extends React.Component{
     this.state = props.options
 
     this.updateChart = this.updateChart.bind(this);
+    this.handleSliderChange = this.handleSliderChange.bind(this);
   }
 
-  updateChart = (newData) => {
-    // The chart is updated only with new options.
-    this.setState({
-      chart: newData
+  componentDidMount(){
+    // set initial slidervalue
+    this.setState({slidervalue: Object.keys(this.props.options.updates).length});
+  }
+
+  updateChart(newData){
+    // update chart in state
+    this.setState(currentState => {
+      return {
+      ... currentState,
+      chart: newData,
+      }
+    });
+  }
+
+  handleSliderChange(newvalue){
+    // update slidervalue after usage 
+    this.setState(currentState => {
+      return {
+      ... currentState,
+      slidervalue: newvalue,
+      }
     });
   }
 
   render() {
     if (this.state.chart){
-      console.log(this.props.options.updates[1])
+      // get the number of dataupdates as this will be the max-val for the slider
+      const slidermaxval = Object.keys(this.props.options.updates).length
       return (
-        <div className="w3-border">
-          <HighchartsReact highcharts={Highcharts} options={this.state.chart} />
-          <button  onClick={() => this.updateChart(this.state.updates[1])}>foo 1</button>
-          <button  onClick={() => this.updateChart(this.state.updates[2])}>foo 2</button>
-          <button  onClick={() => this.updateChart(this.state.updates[3])}>foo 3</button>
-        </div>
+        <React.Fragment>
+          <Slider
+            min={0}
+            max={slidermaxval}
+            value = {this.state.slidervalue}
+            orientation='horizontal'
+            onChange={this.handleSliderChange}
+          />
+          <div className="w3-border">
+            <button  onClick={() => this.updateChart(this.state.updates[1].chartoptions)}>foo 1</button>
+            <button  onClick={() => this.updateChart(this.state.updates[2].chartoptions)}>foo 2</button>
+            <button  onClick={() => this.updateChart(this.state.updates[3].chartoptions)}>foo 3</button>
+            <HighchartsReact highcharts={Highcharts} options={this.state.chart} />
+          </div>
+        </React.Fragment>
       )
     }else{
       const nochartdata = createnoChartMessage(this.props.language)
