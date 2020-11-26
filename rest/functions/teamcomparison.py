@@ -8,7 +8,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "hockey_graphs.settings")
 import django
 django.setup()
 from rest.functions.season import seasonid_get
-from rest.functions.bananachart import banana_chart_create
+from rest.functions.bananachart import banana_chart1_create, banana_chart2_create
 
 def teamcomparison_get(logger, request, fkey=None, fvalue=None):
     """ matchstatistics grouped by days """
@@ -18,8 +18,8 @@ def teamcomparison_get(logger, request, fkey=None, fvalue=None):
 
     result = []
 
-    result.append(banana_chart_create(logger, 'foo1'))
-    result.append(banana_chart_create(logger, 'foo2'))
+    result.append(banana_chart1_create(logger, 'foo1'))
+    result.append(banana_chart2_create(logger, 'foo2'))
 
 
     return result
