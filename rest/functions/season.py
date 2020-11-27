@@ -24,7 +24,7 @@ def season_latest_get(logger):
 def seasonid_get(logger, request):
     logger.debug('_seasonid_get()')
     # no filter has been passed, lets use season_id
-    if 'season' in request.GET:
+    if hasattr(request, 'GET') and 'season' in request.GET:
         try:
             fkey = 'season_id'
             fvalue = int(request.GET['season'])
