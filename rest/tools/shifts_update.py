@@ -54,6 +54,7 @@ if __name__ == '__main__':
         if TODAY in matchday_list and 'matches' in matchday_list[TODAY]:
             matchid_list = value_from_list_filter(LOGGER, matchday_list[TODAY]['matches'], 'match_id')
 
+    # matchid_list = [1797, 1798, 1799, 1800, 1801, 1802, 1803, 1804, 1805, 1806]
     with DelAppHelper(None, DEBUG) as del_app_helper:
         for match_id in matchid_list:
             # get shifts and update db
