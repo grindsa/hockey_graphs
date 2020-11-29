@@ -33,18 +33,22 @@ export const createTcSliderText = function(language, select, max){
   if (language == 'DE'){
     if (select === max) {
       var slidermessage = 'Gesamte Saison'
-    }else if (max - select === 1) {
-      var slidermessage = 'letztes Spiel'
+    /* }else if (max - select === 1) {
+      var slidermessage = 'letztes Spiel' */
     }else{
-      var slidermessage = 'letzte ' + (max-select) + ' Spiele'
+      var slidermessage = select + '. Spieletag'
     }
   }else{
     if (select === max) {
       var slidermessage = 'Full Season'
-    }else if (max - select === 1) {
-      var slidermessage = 'last match'
+    }else if (select === 1) {
+      var slidermessage = '1st Matchday'
+    }else if (select === 2) {
+      var slidermessage = '2nd Matchday'
+    }else if (select === 3) {
+      var slidermessage = '3rd Matchday'
     }else{
-      var slidermessage = 'last '+ (max-select) + ' matches'
+      var slidermessage = select + 'th Matchday'
     }
   }
 
