@@ -13,7 +13,6 @@ import { checkTcUpdate, createSelectOptions }  from './teamcomparison/teamcompar
 import { asyncGET, isEmpty } from './sharedfunctions.js';
 import { createnostatMessage, createTcSliderText } from './localization.js';
 
-
 // Load Highcharts modules
 HighchartsExporting(Highcharts);
 HighchartsOfflineExporting(Highcharts);
@@ -34,8 +33,8 @@ export class TeamComparison extends React.Component {
   async componentDidMount(){
     if (this.props.teamcomparison && this.props.season) {
       // get team comparison
-      const matchdaydic = await asyncGET(this.props.teamcomparison + '?season=' + this.props.season + '&mobile=' + isMobile)
-      this.setState({teamcomparisonList: matchdaydic});
+      const tcdic = await asyncGET(this.props.teamcomparison + '?season=' + this.props.season + '&mobile=' + isMobile)
+      this.setState({teamcomparisonList: tcdic});
     }
   }
 
@@ -51,7 +50,7 @@ export class TeamComparison extends React.Component {
 
   handleStatChange(event){
     const newvalue = event.target.value
-    if (this.state.selectedMatch !== newvalue){
+    if (this.state.selectedstat !== newvalue){
       this.setState(currentState => {
         return {
         ... currentState,
@@ -114,9 +113,10 @@ class Chart extends React.Component{
   }
 
   componentDidUpdate(prevProps){
-    // set initial slidervalue
     if (prevProps.options !== this.props.options){
       this.setState(this.props.options);
+      // set initial slidervalue
+      this.setState({slidervalue: Object.keys(this.props.options.updates).length});
     }
   }
 
