@@ -100,6 +100,7 @@ class Teammatchstat(models.Model):
     corsi_against_5v5 = models.IntegerField(default=0)
     matchduration = models.IntegerField(default=0)
     shots_for = models.IntegerField(default=0)
+    shots_pctg = models.FloatField(default=0)
     shots_ongoal_for = models.IntegerField(default=0)
     shots_ongoal_pctg = models.FloatField(default=0)
     shots_ongoal_against = models.IntegerField(default=0)
