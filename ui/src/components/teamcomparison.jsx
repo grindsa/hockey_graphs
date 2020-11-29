@@ -34,7 +34,7 @@ export class TeamComparison extends React.Component {
   async componentDidMount(){
     if (this.props.teamcomparison && this.props.season) {
       // get team comparison
-      const matchdaydic = await asyncGET(this.props.teamcomparison + '?season=' + this.props.season)
+      const matchdaydic = await asyncGET(this.props.teamcomparison + '?season=' + this.props.season + '&mobile=' + isMobile)
       this.setState({teamcomparisonList: matchdaydic});
     }
   }
@@ -44,7 +44,7 @@ export class TeamComparison extends React.Component {
     const tcupdate = checkTcUpdate(this.props.teamcomparison, prevProps.teamcomparison, this.props.season, prevProps.season)
     if (tcupdate){
         // get team comparison
-        const tcdic = await asyncGET(this.props.teamcomparison + '?season=' + this.props.season)
+        const tcdic = await asyncGET(this.props.teamcomparison + '?season=' + this.props.season + '&mobile=' + isMobile)
         this.setState({teamcomparisonList: tcdic});
     }
   }
@@ -115,29 +115,20 @@ class Chart extends React.Component{
 
   componentDidUpdate(prevProps){
     // set initial slidervalue
-    // this.setState({slidervalue: Object.keys(this.props.options.updates).length});
     if (prevProps.options !== this.props.options){
-      console.log('componentDidUpdate')
       this.setState(this.props.options);
     }
   }
 
   updateChart(newData){
     // update chart in state
-    this.setState(currentState => {
-      return {
-      ... currentState,
-      chart: {
-        ... currentState.chart,
-        newData,
-        }
-      }
-    });
+    const newChart = Object.assign({}, this.state.chart, newData)
+    this.setState({chart: newChart });
   }
 
-  handleSliderChange(newvalue){
+  async handleSliderChange(newvalue){
     // update slidervalue after usage
-    this.setState(currentState => {
+    await this.setState(currentState => {
       return {
       ... currentState,
       slidervalue: newvalue,
@@ -152,8 +143,8 @@ class Chart extends React.Component{
       const slidermaxval = Object.keys(this.props.options.updates).length
       const slidertext = createTcSliderText(this.props.language, this.state.slidervalue, slidermaxval)
       var className = ""
+
       if (isMobile) {
-        console.log('foo')
         var classNames = "w3-center w3-margin-left w3-margin-right"
       }
 
