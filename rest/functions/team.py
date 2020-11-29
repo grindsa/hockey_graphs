@@ -7,7 +7,23 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "hockey_graphs.settings")
 import django
 django.setup()
+from django.conf import settings
 from rest.models import Team
+from rest.functions.helper import list2dic, url_build
+
+def team_dic_get(logger, request):
+    """ query team(s) from database based with optional filtering """
+    logger.debug('teams_dic_get()')
+
+    team_list = team_list_get(logger, None, None, ['team_id', 'team_name', 'shortcut', 'logo'])
+    team_dic = list2dic(logger, team_list, 'team_id')
+
+    if request:
+        url = url_build(request)
+        for team_id in team_dic:
+            team_dic[team_id]['team_logo'] = '{0}{1}{2}'.format(url, settings.STATIC_URL, team_dic[team_id]['logo'])
+
+    return team_dic
 
 def team_list_get(logger, fkey=None, fvalue=None, vlist=('team_id', 'team_name', 'shortcut')):
     """ query team(s) from database based with optional filtering """
