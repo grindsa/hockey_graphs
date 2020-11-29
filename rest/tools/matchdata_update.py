@@ -100,7 +100,7 @@ if __name__ == '__main__':
     # Get list of matches to be updated (selection current season, status finish_false, date lt_uts)
     match_list = openmatch_list_get(LOGGER, SEASON_ID, UTS, ['match_id'])
     # match_list = pastmatch_list_get(LOGGER, SEASON_ID, UTS, ['match_id'])
-
+    # match_list = [1807, 1808]
     with DelAppHelper(None, DEBUG) as del_app_helper:
         for match_id in match_list:
 

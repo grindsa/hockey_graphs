@@ -2,7 +2,7 @@
 """ list of functions for team comparison """
 import numpy as np
 from rest.functions.helper import pctg_float_get, list_sumup
-from rest.functions.chartparameters import chart_color6, plotlines_color
+from rest.functions.chartparameters import chart_color1, chart_color3, chart_color6, plotlines_color
 
 def _deviation_avg_get(logger, input_list, value_list=None):
     logger.debug('_deviation_add()')
@@ -89,8 +89,26 @@ def pdo_breakdown_data_get(logger, ismobile, teamstat_dic, teams_dic):
 
     return chartseries_dic
 
-def series_updates_get(logger, data_dic):
-    logger.debug('pdo_breakdown_updates_get()')
+
+def overview_updates_get(logger, data_dic):
+    logger.debug('breakdown_updates_get()')
+
+    updates_dic = {}
+    for ele in data_dic:
+        updates_dic[ele] = {
+            'chartoptions':  {
+                'xAxis': {'categories': data_dic[ele]['team_list']},
+                'series': [
+                    {'name': _('Save percentage (Sv%)'), 'marker': {'symbol': 'square'}, 'data': data_dic[ele]['sv_list'], 'color': chart_color3},
+                    {'name': _('Shooting percentage (Sh%)'), 'marker': {'symbol': 'square'}, 'data': data_dic[ele]['sh_list'], 'color': chart_color1},
+                ]
+            }
+        }
+
+    return updates_dic
+
+def breakdown_updates_get(logger, data_dic):
+    logger.debug('breakdown_updates_get()')
 
     updates_dic = {}
     for ele in data_dic:
@@ -113,9 +131,28 @@ def series_updates_get(logger, data_dic):
                     'min': data_dic[ele]['y_min'] - 1,
                     'max':  data_dic[ele]['y_max'] + 1,
                     'plotBands': [{'from':  data_dic[ele]['y_avg'] -  data_dic[ele]['y_deviation']/2, 'to':  data_dic[ele]['y_avg'] +  data_dic[ele]['y_deviation']/2, 'color': chart_color6}],
-                    'plotLines': [{'zIndex': 3, 'color': plotlines_color, 'width': 2, 'value':  data_dic[ele]['y_avg']}],
+                    'plotLines': [{'zIndex': 3, 'color': plotlines_color, 'width': 3, 'value':  data_dic[ele]['y_avg']}],
                 },
             }
         }
 
     return updates_dic
+
+def pdo_overview_data_get(logger, ismobile, data_dic):
+    logger.debug('pdo_overview_data_get()')
+
+    overview_dic = {}
+
+    for mday in data_dic:
+        overview_dic[mday] = {'team_list': [], 'sh_list': [], 'sv_list': []}
+        for datapoint in sorted(data_dic[mday]['data'], key = lambda i: i['team_name']):
+            if ismobile:
+                overview_dic[mday]['team_list'].append(datapoint['name'])
+            else:
+                overview_dic[mday]['team_list'].append(datapoint['team_name'])
+
+            # create series for bar
+            overview_dic[mday]['sh_list'].append(datapoint['x'])
+            overview_dic[mday]['sv_list'].append(datapoint['y'])
+
+    return overview_dic

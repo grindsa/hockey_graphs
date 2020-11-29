@@ -4,9 +4,59 @@
 from rest.functions.chartparameters import credit, exporting, responsive_y1, title, legend, font_size, plotlines_color
 from rest.functions.chartparameters import chart_color1, chart_color2, chart_color3, chart_color4, chart_color6, text_color, font_size_mobile
 
+def pdo_overview_chart(logger, ctitle, pdo_dic):
+    """ pdo overview """
+
+    chart_options = {
+        'chart': {
+            'type': 'bar',
+            'height': '100%',
+            'alignTicks': 0,
+        },
+
+        'exporting': exporting(filename=ctitle),
+        'title': title(''),
+        'credits': credit(),
+        'legend': legend(),
+        'responsive': responsive_y1(),
+        'tooltip': {'enabled': 0},
+
+        'plotOptions': {
+            'series': {
+                'stacking': 'normal',
+                'dataLabels': {
+                    'enabled': 1,
+                    'useHTML': 0,
+                    'style': {'fontSize': font_size, 'textOutline': 0, 'color': '#ffffff', 'fontWeight': 0}
+                }
+            }
+        },
+
+        'xAxis': {
+            'categories': pdo_dic['team_list'],
+            'title': title('', font_size),
+            'labels': {'style': {'fontSize': font_size},},
+        },
+
+        'yAxis': {
+            'title': title(_('PDO'), font_size),
+            'reversedStacks': 0,
+            'labels': {'style': {'fontSize': font_size},},
+            'min': 50,
+            'plotLines': [{'color': plotlines_color, 'width': 2, 'value': 100}],
+        },
+
+        'series': [
+            {'name': _('Save percentage (Sv%)'), 'marker': {'symbol': 'square'}, 'data': pdo_dic['sv_list'], 'color': chart_color3},
+            {'name': _('Shooting percentage (Sh%)'), 'marker': {'symbol': 'square'}, 'data': pdo_dic['sh_list'], 'color': chart_color1},
+        ]
+    }
+
+    return chart_options
+
 def pdo_breakdown_chart(logger, ctitle, pdo_list):
     # pylint: disable=E0602
-    """ create time-on-ice chart """
+    """ pdo breakdown """
     logger.debug('pdo_breakdown_chart()')
 
     chart_options = {

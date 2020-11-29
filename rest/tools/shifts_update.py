@@ -30,7 +30,7 @@ def value_from_list_filter(logger, in_list, value):
 
 if __name__ == '__main__':
 
-    DEBUG = True
+    DEBUG = False
 
     # initialize logger
     LOGGER = logger_setup(DEBUG)
@@ -49,14 +49,14 @@ if __name__ == '__main__':
 
     # Get list of matches to be updated and compile a list of corresponding match_ids as this is input for the update loop
     matchday_list = matchdays_get(LOGGER, None, 'date', TODAY)
-    matchid_list = []
+    match_list = []
     if matchday_list:
         if TODAY in matchday_list and 'matches' in matchday_list[TODAY]:
-            matchid_list = value_from_list_filter(LOGGER, matchday_list[TODAY]['matches'], 'match_id')
+            match_list = value_from_list_filter(LOGGER, matchday_list[TODAY]['matches'], 'match_id')
 
-    # matchid_list = [1806]
+    # match_list = [1807, 1808]
     with DelAppHelper(None, DEBUG) as del_app_helper:
-        for match_id in matchid_list:
+        for match_id in match_list:
             # get shifts and update db
             shift_dic = del_app_helper.shifts_get(match_id)
             shift_add(LOGGER, 'match_id', match_id, {'match_id': match_id, 'shift': shift_dic})
