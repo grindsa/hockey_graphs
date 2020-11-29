@@ -24,9 +24,8 @@ if __name__ == '__main__':
 
     # get list of matches
     match_list = teamstat_get(LOGGER)
-
     for match in match_list:
-
+        # if match['match_id'] == 1795:
+        # if match['match_id'] == 1570:
         # get matchid and add data add function
         teammatchstat_add(LOGGER, match)
-        # break

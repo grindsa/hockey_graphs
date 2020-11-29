@@ -10,7 +10,7 @@ django.setup()
 from rest.models import Teammatchstat
 from rest.functions.gameheader import gameheader_get
 from rest.functions.match import match_info_get
-from rest.functions.corsi import gamecorsisum_get
+from rest.functions.corsi import gameshots5v5_get
 from rest.functions.helper import pctg_float_get
 
 def teammatchstat_add(logger, match_dic):
@@ -32,8 +32,7 @@ def teammatchstat_add(logger, match_dic):
             team_id = match_info_dic['visitor_team_id']
 
         # get corsi statistics
-        (corsi_for, corsi_for_5, corsi_against, corsi_against_5) = gamecorsisum_get(logger, match_id, match_info_dic, team)
-        print(corsi_for, corsi_for_5, corsi_against, corsi_against_5)
+        (shots_for_5v5, shots_against_5v5, shots_ongoal_for_5v5, shots_ongoal_against_5v5) = gameshots5v5_get(logger, match_id, match_info_dic, team)
 
         game_header = gameheader_get(logger, 'match_id', match_id, ['gameheader'])
         if 'lastEventTime' in game_header:
@@ -49,15 +48,15 @@ def teammatchstat_add(logger, match_dic):
             'goals_against': match_dic[o_team]['goals'],
             'goals_pp': match_dic[team]['ppGoals'],
             'goals_sh': match_dic[team]['shGoals'],
-            'corsi_for': corsi_for,
-            'corsi_for_5v5': corsi_for_5,
-            'corsi_against': corsi_against,
-            'corsi_against_5v5': corsi_against_5,
             'shots_for': match_dic[team]['shotsAttempts'],
+            'shots_for_5v5': shots_for_5v5,
             'shots_pctg': pctg_float_get(match_dic[team]['goals'], match_dic[team]['shotsAttempts']),
-            'shots_against': match_dic[o_team]['shotsAttempts'],
             'shots_ongoal_for': match_dic[team]['shotsOnGoal'],
+            'shots_ongoal_for_5v5': shots_ongoal_for_5v5,
+            'shots_against': match_dic[o_team]['shotsAttempts'],
+            'shots_against_5v5': shots_against_5v5,
             'shots_ongoal_against': match_dic[o_team]['shotsOnGoal'],
+            'shots_ongoal_against_5v5': shots_ongoal_against_5v5,
             'shots_ongoal_pctg': pctg_float_get(match_dic[team]['goals'], match_dic[team]['shotsOnGoal']),
             'saves': match_dic[team]['saves'],
             'saves_pctg': pctg_float_get(match_dic[team]['saves'], match_dic[o_team]['shotsOnGoal']),

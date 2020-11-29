@@ -25,6 +25,7 @@ def skatersonice_get(logger, shift_list, matchinfo_dic, add_id=False):
         # store some values in variable for faster access
         shift_duration = (shift['endTime']['time'] - shift['startTime']['time'])
         player_name = shift['player']['name']
+
         if shift['team']['id'] == matchinfo_dic['home_team_id']:
             team_name = 'home_team'
         else:
@@ -61,7 +62,10 @@ def penalties_include(logger, soi_dic, period_events):
                 if event['data']['duration'] < 301:
                     for second_ in range(event['data']['time']['from']['scoreboardTime']+1, event['data']['time']['to']['scoreboardTime']+1):
                         if 'penalty' in soi_dic[team][second_]:
-                            soi_dic[team][second_]['penalty'] = '{0}, {1}'.format(soi_dic[team][second_]['penalty'], event['data']['disciplinedPlayer']['surname'])
+                            try:
+                                soi_dic[team][second_]['penalty'] = '{0}, {1}'.format(soi_dic[team][second_]['penalty'], event['data']['disciplinedPlayer']['surname'])
+                            except BaseException:
+                                soi_dic[team][second_]['penalty'] = '{0}'.format(soi_dic[team][second_]['penalty'])
                         else:
                             if event['data']['disciplinedPlayer']:
                                 soi_dic[team][second_]['penalty'] = event['data']['disciplinedPlayer']['surname']

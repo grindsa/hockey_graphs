@@ -5,6 +5,8 @@ from rest.functions.timeline import skatersonice_get, penalties_include
 from rest.functions.periodevent import scorersfromevents_get
 from rest.functions.shift import shift_get, toifromshifts_get
 from rest.functions.shot import shot_list_get
+from rest.functions.helper import shot_leaffan_sync
+from rest.functions.periodevent import periodevent_get
 
 def _rosterinformation_add(logger, player_corsi_dic, toi_dic, scorer_dic, roster_list):
     """ enrich corsi dictionary with roster information like time-on-ice or line-number """
@@ -112,46 +114,75 @@ def gamecorsi_get(logger, shot_list, shift_list, periodevent_list, matchinfo_dic
 
     return player_corsi_dic
 
-def gamecorsisum_get(logger, match_id, match_info_dic, team):
+def gameshots5v5_get(logger, match_id, match_info_dic, team):
 
-        # get shifts and shots
-        shot_list = shot_list_get(logger, 'match_id', match_id, ['timestamp', 'match_shot_resutl_id', 'team_id', 'player__first_name', 'player__last_name', 'zone', 'coordinate_x', 'coordinate_y', 'player__jersey'])
-        shift_list = shift_get(logger, 'match_id', match_id, ['shift'])
+    # get shifts and shots
+    shot_list = shot_list_get(logger, 'match_id', match_id, ['real_date', 'shot_id', 'match_id', 'timestamp', 'match_shot_resutl_id', 'team_id', 'player__first_name', 'player__last_name', 'zone', 'coordinate_x', 'coordinate_y', 'player__jersey'])
+    shift_list = shift_get(logger, 'match_id', match_id, ['shift'])
+    periodevent_list = periodevent_get(logger, 'match_id', match_id, ['period_event'])
 
-        # soi = seconds on ice
-        (soi_dic, toi_dic) = skatersonice_get(logger, shift_list, match_info_dic)
+    # soi = seconds on ice
+    (soi_dic, toi_dic) = skatersonice_get(logger, shift_list, match_info_dic)
 
-        corsi_for = 0
-        corsi_for_5 = 0
-        corsi_against = 0
-        corsi_against_5 = 0
+    # add penalties to filter 5v5
+    soi_dic = penalties_include(logger, soi_dic, periodevent_list)
 
-        for shot in shot_list:
-            home_count = soi_dic['home_team'][shot['timestamp']]['count']
+    shots_for_5v5 = 0
+    shots_against_5v5 = 0
+    shots_ongoal_for_5v5 = 0
+    shots_ongoal_against_5v5 = 0
+
+    match_result = {'home': {1: 0, 2: 0, 3: 0, 4: 0, 5:0 }, 'visitor': {1: 0, 2: 0, 3: 0, 4: 0, 5:0 }}
+
+    # hack to sync data with Leaffan.net we aer skipping late corrections form next day
+    ltime = 0
+    ldate = 'foo'
+    for shot in shot_list:
+        # sync shots with leaffan
+        (process_shot, ltime, ldate) = shot_leaffan_sync(shot, ltime, ldate)
+
+        if process_shot:
+            home_penalty = False
+            if 'penalty' in soi_dic['home_team'][shot['timestamp']]:
+                home_penalty = True
+            visitor_penalty = False
+            if 'penalty' in soi_dic['visitor_team'][shot['timestamp']]:
+                visitor_penalty = True
+
+            shout_count = False
+            if home_penalty == visitor_penalty:
+                shout_count = True
+
+            home_count = soi_dic['visitor_team'][shot['timestamp']]['count']
             visitor_count = soi_dic['visitor_team'][shot['timestamp']]['count']
-            # count only shots at even strength
-            if home_count == visitor_count:
+
+            # count only shots at 5v5
+            if shout_count:
+            # if home_count == 5 and visitor_count == 5:
                 if team == 'home':
                     # we count from perspectiv of the come team
                     if shot['team_id'] == match_info_dic['home_team_id']:
-                        # this is a shot of the come_team
-                        corsi_for += 1
-                        if home_count == 5:
-                            corsi_for_5 += 1
+                        # this is a shot of the home_team
+                        shots_for_5v5 += 1
+                        if shot['match_shot_resutl_id'] in (1, 4, 5):
+                            # sog_filter
+                            shots_ongoal_for_5v5 += 1
                     else:
-                        corsi_against +=1
+                        shots_against_5v5 +=1
                         if home_count == 5:
-                            corsi_against_5 += 1
+                            shots_ongoal_against_5v5 += 1
                 else:
                     # we count from perpsective of visitor team
                     # we count from perspectiv of the come team
                     if shot['team_id'] == match_info_dic['home_team_id']:
                         # this is a shot of the come_team
-                        corsi_against += 1
-                        if home_count == 5:
-                            corsi_against_5 += 1
+                        shots_against_5v5 += 1
+                        if shot['match_shot_resutl_id'] in (1, 4, 5):
+                            # sog_filter
+                            shots_ongoal_against_5v5 += 1
                     else:
-                        corsi_for +=1
+                        shots_for_5v5 +=1
                         if home_count == 5:
-                            corsi_for_5 += 1
-        return (corsi_for, corsi_for_5, corsi_against, corsi_against_5)
+                            shots_ongoal_for_5v5 += 1
+
+    return (shots_for_5v5, shots_against_5v5, shots_ongoal_for_5v5, shots_ongoal_against_5v5)
