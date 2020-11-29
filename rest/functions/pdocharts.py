@@ -9,9 +9,6 @@ def pdo_breakdown_chart(logger, ctitle, pdo_list):
     """ create time-on-ice chart """
     logger.debug('pdo_breakdown_chart()')
 
-
-    # print(pdo_list['x_avg'], pdo_list['x_deviation'], pdo_list['y_avg'], pdo_list['y_deviation'])
-
     chart_options = {
 
         'chart': {
@@ -22,7 +19,7 @@ def pdo_breakdown_chart(logger, ctitle, pdo_list):
         'exporting': exporting(filename=ctitle),
         'title': title(''),
         'credits': credit(),
-        'legend': {'enabled': 0},
+        'legend': {'enabled': 1},
         'responsive': responsive_y1(),
 
         'tooltip': {
@@ -56,7 +53,7 @@ def pdo_breakdown_chart(logger, ctitle, pdo_list):
             'plotLines': [{'zIndex': 3, 'color': plotlines_color, 'width': 2, 'value': pdo_list['y_avg']}],
         },
 
-        'series': [{'data': pdo_list['data']}]
+        'series': [{'zIndex': 1, 'name': _('Standard Deviation'), 'color': plotlines_color, 'marker': {'symbol': 'square'}, 'data': pdo_list['data']}]
 
     }
     return chart_options
