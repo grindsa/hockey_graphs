@@ -17,7 +17,6 @@ def season_latest_get(logger):
     except BaseException as err_:
         logger.critical('error in season_latest_get(): {0}'.format(err_))
         result = None
-        print('bubu')
     logger.debug('season_latest_get() ended with {0}'.format(result))
     return result
 
