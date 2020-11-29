@@ -11,6 +11,7 @@ from rest.models import Teammatchstat
 from rest.functions.gameheader import gameheader_get
 from rest.functions.match import match_info_get
 from rest.functions.corsi import gamecorsisum_get
+from rest.functions.helper import pctg_float_get
 
 def teammatchstat_add(logger, match_dic):
     """ add team to database """
@@ -32,6 +33,7 @@ def teammatchstat_add(logger, match_dic):
 
         # get corsi statistics
         (corsi_for, corsi_for_5, corsi_against, corsi_against_5) = gamecorsisum_get(logger, match_id, match_info_dic, team)
+        print(corsi_for, corsi_for_5, corsi_against, corsi_against_5)
 
         game_header = gameheader_get(logger, 'match_id', match_id, ['gameheader'])
         if 'lastEventTime' in game_header:
@@ -47,17 +49,18 @@ def teammatchstat_add(logger, match_dic):
             'goals_against': match_dic[o_team]['goals'],
             'goals_pp': match_dic[team]['ppGoals'],
             'goals_sh': match_dic[team]['shGoals'],
-            'shots_for': match_dic[team]['shotsAttempts'],
             'corsi_for': corsi_for,
             'corsi_for_5v5': corsi_for_5,
             'corsi_against': corsi_against,
-            'corsi_for_5v5': corsi_against_5,
+            'corsi_against_5v5': corsi_against_5,
+            'shots_for': match_dic[team]['shotsAttempts'],
+            'shots_pctg': pctg_float_get(match_dic[team]['goals'], match_dic[team]['shotsAttempts']),
             'shots_against': match_dic[o_team]['shotsAttempts'],
             'shots_ongoal_for': match_dic[team]['shotsOnGoal'],
             'shots_ongoal_against': match_dic[o_team]['shotsOnGoal'],
-            'shots_ongoal_pctg': match_dic[o_team]['shotEfficiency'],
-            'saves': match_dic[o_team]['saves'],
-            'saves_pctg': match_dic[o_team]['savesPercent'],
+            'shots_ongoal_pctg': pctg_float_get(match_dic[team]['goals'], match_dic[team]['shotsOnGoal']),
+            'saves': match_dic[team]['saves'],
+            'saves_pctg': pctg_float_get(match_dic[team]['saves'], match_dic[o_team]['shotsOnGoal']),
             'faceoffswon': match_dic[team]['faceOffsWon'],
             'faceoffswon_pctg': match_dic[team]['faceOffsWonPercent'],
             'penaltyminutes': match_dic[team]['penaltyMinutes'],
@@ -76,21 +79,30 @@ def teammatchstat_add(logger, match_dic):
     logger.debug('teammatchstat_add() ended with: {0}'.format(result_list))
     return result_list
 
-def teammatchstat_get(_logger, fkey=None, fvalue=None, vlist=('match_id', 'home', 'visitor')):
+def teammatchstats_get(logger, fkey=None, fvalue=None, vlist=None):
     """ get info for a specifc match_id """
-    # logger.debug('teammatchstat_get({0}:{1})'.format(fkey, fvalue))
+    logger.debug('teammatchstat_get({0}:{1})'.format(fkey, fvalue))
     try:
         if fkey:
-            if len(vlist) == 1:
-                teammatchstat_dic = list(Teammatchstat.objects.filter(**{fkey: fvalue}).values_list(vlist[0], flat=True))[0]
+            if vlist:
+                if len(vlist) == 1:
+                    teammatchstat_dic = Teammatchstat.objects.filter(**{fkey: fvalue}).values_list(vlist[0], flat=True)
+                else:
+                    teammatchstat_dic = Teammatchstat.objects.filter(**{fkey: fvalue}).values(*vlist)
             else:
-                teammatchstat_dic = Teammatchstat.objects.filter(**{fkey: fvalue}).values(*vlist)[0]
+                teammatchstat_dic = Teammatchstat.objects.filter(**{fkey: fvalue}).values()
         else:
-            if len(vlist) == 1:
-                teammatchstat_dic = Teammatchstat.objects.all().order_by('match_id').values_list(vlist[0], flat=True)
+            if vlist:
+                if len(vlist) == 1:
+                    teammatchstat_dic = Teammatchstat.objects.all().order_by('match_id').values_list(vlist[0], flat=True)
+                else:
+                    teammatchstat_dic = Teammatchstat.objects.all().order_by('match_id').values(*vlist)
             else:
-                teammatchstat_dic = Teammatchstat.objects.all().order_by('match_id').values(*vlist)
-    except BaseException:
+                teammatchstat_dic = Teammatchstat.objects.all().order_by('match_id').values()
+
+    except BaseException as err_:
+        logger.critical('error in teammatchstats_get(): {0}'.format(err_))
         teammatchstat_dic = {}
 
-    return teammatchstat_dic
+    logger.debug('teammatchstat_get() ended')
+    return list(teammatchstat_dic)

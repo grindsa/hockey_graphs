@@ -10,9 +10,9 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "hockey_graphs.settings")
 import django
 django.setup()
 
-
 from rest.functions.helper import logger_setup
 from rest.functions.matchstatistics import matchstatistics_get
+from rest.functions.teamcomparison import teamcomparison_get
 import gettext
 
 en = gettext.translation('django', localedir='locale', languages=['en'])
@@ -33,8 +33,8 @@ if __name__ == '__main__':
     FKEY = 'match_id'
     FVALUE = 1786
 
+    # result = matchstatistics_get(LOGGER, request, FKEY, FVALUE)
+    result = teamcomparison_get(LOGGER, request, FKEY, FVALUE)
 
-    result = matchstatistics_get(LOGGER, request, FKEY, FVALUE)
-
-    #from pprint import pprint
-    #pprint(result)
+    # from pprint import pprint
+    # pprint(result)

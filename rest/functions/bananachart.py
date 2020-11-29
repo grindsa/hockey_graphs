@@ -52,7 +52,7 @@ def banana_chart2_create(logger, title):
         'updates': {
             1: {'text': 'foo1', 'chartoptions': {'title': {'text': 'foo10'}, 'series': [{'data': [3, 9, 6]}, {'data': [1, 2, 3]}]}},
             2: {'text': 'foo2', 'chartoptions': {'title': {'text': 'foo10'}, 'series': [{'data': [6, 3, 9]}, {'data': [2, 3, 1]}]}},
-            3: {'text': 'foo3', 'chartoptions': {'title': {'text': 'foo10'}, 'series': [{'data': [9, 6, 3]}, {'data': [3, 1, 2]}]}}
+            3: {'text': 'foo3', 'chartoptions': {'title': {'text': 'foo10'}, 'series': [{'data': [9, 6, 3]}, {'data': [3, 1, 2]}]}}  
         },
         'sliderlength': 3
     }

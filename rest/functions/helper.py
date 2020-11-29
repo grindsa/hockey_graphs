@@ -125,7 +125,7 @@ def datestr_to_date(datestr, tformat='%Y-%m-%dT%H:%M:%S'):
 
 def list2dic(logger, input_list, pkey=None):
     """ convert a list to a dicitionary """
-    logger.debug('list2dic({0})'.format(pkey))
+    # logger.debug('list2dic({0})'.format(pkey))
     output_dict = {}
     if pkey:
         for ele in input_list:
@@ -139,6 +139,18 @@ def maxval_get(input_list, sorter='timestamp', divisor=60, add=1):
     except BaseException:
         x_max = divisor + 1
     return x_max
+
+def pctg_float_get(part, base, decimal=2):
+    """ calculate pcts and return float """
+    try:
+        if base != 0:
+            pctg_value = round(part*100/base, decimal)
+        else:
+            pctg_value = 0
+    except BaseException:
+        pctg_value = 0
+
+    return pctg_value
 
 def pctg_get(part, base):
     """ calculate percentage value and return ans string """
@@ -162,3 +174,28 @@ def min2sec(sec_value):
         min_value = None
 
     return min_value
+
+def list_sumup(logger, input_list, filter_values, reverse=False):
+    logger.debug('list_sumup()')
+
+    match_list = []
+    _tmp_sum = {}
+    for ele in filter_values:
+        _tmp_sum[ele] = 0
+
+    if reverse:
+        input_list = list(reversed(input_list))
+
+    for match in input_list:
+        _tmp_dic = {}
+        for ele in filter_values:
+            _tmp_dic[ele] = match[ele]
+            _tmp_sum[ele] += match[ele]
+            _tmp_dic['sum_{0}'.format(ele)] = _tmp_sum[ele]
+
+        match_list.append(_tmp_dic)
+
+    if reverse:
+         match_list = list(reversed(match_list))
+
+    return match_list

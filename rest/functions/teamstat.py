@@ -41,3 +41,15 @@ def teamstat_get(_logger, fkey=None, fvalue=None, vlist=('match_id', 'home', 'vi
         teamstat_dic = {}
 
     return teamstat_dic
+
+def teamstat_dic_get(logger, matchstat_list):
+    logger.debug('teamstat_dic_get()')
+
+    teamstat_dic = {}
+    for stat in matchstat_list:
+        if stat['team_id'] not in teamstat_dic:
+            teamstat_dic[stat['team_id']] = []
+
+        teamstat_dic[stat['team_id']].append(stat)
+
+    return teamstat_dic
