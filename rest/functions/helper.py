@@ -74,6 +74,19 @@ def testdata_load(_debug=False):
     Shot.objects.create(shot_id=23, player_id=2, team_id=2, match_id=1, match_shot_resutl_id=3, timestamp=23, coordinate_x=23, coordinate_y=23, real_date='real_date_23', polygon='polygon_23', zone='zone_23')
     Shot.objects.create(shot_id=24, player_id=2, team_id=2, match_id=1, match_shot_resutl_id=4, timestamp=24, coordinate_x=24, coordinate_y=24, real_date='real_date_24', polygon='polygon_24', zone='zone_24')
 
+def mobile_check(logger, request):
+    """ mobile check """
+    logger.debug('mobile_check()')
+    if hasattr(request, 'GET') and 'mobile' in request.GET:
+        if request.GET['mobile'].lower() == 'true':
+            mobile = True
+        else:
+            mobile = False
+    else:
+        mobile = False
+    logger.debug('mobile_check() ended with: {0}'.format(mobile))
+    return mobile
+
 def logger_setup(debug):
     """ setup logger """
     if debug:

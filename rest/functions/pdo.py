@@ -3,6 +3,7 @@
 import numpy as np
 from rest.functions.helper import pctg_float_get, list_sumup
 from rest.functions.chartparameters import chart_color6, plotlines_color
+
 def _deviation_avg_get(logger, input_list, value_list=None):
     logger.debug('_deviation_add()')
 
@@ -21,8 +22,15 @@ def _deviation_avg_get(logger, input_list, value_list=None):
         deviation_dic[value] = {'std_deviation': round(np.std(_tmp_lake[value]), 2), 'average': round(np.mean(_tmp_lake[value]), 2), 'min': np.amin(_tmp_lake[value]), 'max': np.amax(_tmp_lake[value])}
     return deviation_dic
 
-def pdo_breakdown_data_get(logger, teamstat_dic, teams_dic):
+def pdo_breakdown_data_get(logger, ismobile, teamstat_dic, teams_dic):
     logger.debug('pdo_breakdown_data_get()')
+
+    if ismobile:
+        image_width = 25
+        image_height = 25
+    else:
+        image_width = 40
+        image_height = 40
 
     update_amount = 0
     _teamstat_sum_dic = {}
@@ -62,7 +70,7 @@ def pdo_breakdown_data_get(logger, teamstat_dic, teams_dic):
             _tmp_lake[ele]['sum_saves'] += sum_saves
             _tmp_lake[ele]['sum_shots_ongoal_against'] += sum_shots_ongoal_against
 
-            chartseries_dic[ele]['data'].append({'marker': {'width': 40, 'height': 40, 'symbol': 'url({0})'.format(logo)}, 'team_name': team_name, 'name': shortcut, 'x': pctg_float_get(sum_goals_for, sum_shots_ongoal_for), 'y': pctg_float_get(sum_saves, sum_shots_ongoal_against)})
+            chartseries_dic[ele]['data'].append({'marker': {'width': image_width, 'height': image_height, 'symbol': 'url({0})'.format(logo)}, 'team_name': team_name, 'name': shortcut, 'x': pctg_float_get(sum_goals_for, sum_shots_ongoal_for), 'y': pctg_float_get(sum_saves, sum_shots_ongoal_against)})
 
     # calculate x_avg and y_avg
     for ele in _tmp_lake:
@@ -84,14 +92,17 @@ def pdo_breakdown_data_get(logger, teamstat_dic, teams_dic):
 def series_updates_get(logger, data_dic):
     logger.debug('pdo_breakdown_updates_get()')
 
-
     updates_dic = {}
     for ele in data_dic:
         updates_dic[ele] = {
             'text': ele,
             'chartoptions':  {
-                'title': {'text': ele},
-                'series': [{'data': data_dic[ele]['data']}],
+                'series': [{
+                    'name': _('Standard Deviation'),
+                    'color': plotlines_color,
+                    'marker': {'symbol': 'square'},
+                    'data': data_dic[ele]['data']
+                }],
                 'xAxis': {
                     'min': data_dic[ele]['x_min'] - 1,
                     'max':  data_dic[ele]['x_max'] + 1,
@@ -106,9 +117,5 @@ def series_updates_get(logger, data_dic):
                 },
             }
         }
-    # print(data_dic[ele]['x_min'], data_dic[ele]['x_max'])
-    # from pprint import pprint
-    # pprint(updates_dic)
-
 
     return updates_dic
