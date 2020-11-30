@@ -766,3 +766,53 @@ def puckpossessionchart_create(logger, shotsum_dic, goal_dic, matchinfo_dic, cti
         ]
     }
     return chart_options
+
+
+def pace_chart_get(logger, ctitle, pace_dic):
+    """ create chart 5v5 pace """
+    # pylint: disable=E0602
+    logger.debug('pace_chart_get()')
+
+    chart_options = {
+
+        'chart': {
+            'type': 'scatter',
+            'height': '60%'
+        },
+
+        'exporting': exporting(filename=ctitle),
+        'title': title(''),
+        'credits': credit(),
+        'legend': legend(),
+        'responsive': responsive_y1(),
+
+        'tooltip': {
+            'useHTML': 1,
+            'headerFormat': '',
+            'pointFormat': '<span><b>{point.team_name}</b></span></br><span style="font-size: %s">CF60: {point.sum_shots_for_5v5_60}</span><br><span style="font-size: %s">CA60: {point.sum_shots_against_5v5_60}</span><br/>' % (font_size, font_size)
+        },
+
+        'xAxis': {
+            'labels': {
+                'enabled': 0
+            },
+            'tickInterval': 0,
+        },
+
+        'yAxis': {
+            'title': title(ctitle, font_size),
+            # 'tickInterval': 1,
+            'maxPadding': 0.1,
+            'min': pace_dic['y_min'] - 2,
+            'max': pace_dic['y_max'] + 2,
+            'labels': {'style': {'fontSize': font_size},},
+            'gridLineWidth': 1,
+            'plotBands': [{'from': pace_dic['y_avg'] - pace_dic['y_deviation']/2, 'to': pace_dic['y_avg'] + pace_dic['y_deviation']/2, 'color': chart_color6}],
+            'plotLines': [{'zIndex': 3, 'color': plotlines_color, 'width': 2, 'value': pace_dic['y_avg']}],
+        },
+
+        'series': [{'zIndex': 1, 'name': _('Standard Deviation'), 'color': plotlines_color, 'data': pace_dic['data']}]
+
+    }
+
+    return chart_options

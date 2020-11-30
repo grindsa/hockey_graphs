@@ -7,6 +7,7 @@ import calendar
 import configparser
 from datetime import datetime
 import math
+import numpy as np
 from dateutil.parser import parse
 import pytz
 
@@ -136,7 +137,7 @@ def datestr_to_date(datestr, tformat='%Y-%m-%dT%H:%M:%S'):
         result = None
     return result
 
-def list2dic(logger, input_list, pkey=None):
+def list2dic(_logger, input_list, pkey=None):
     """ convert a list to a dicitionary """
     # logger.debug('list2dic({0})'.format(pkey))
     output_dict = {}
@@ -189,6 +190,7 @@ def min2sec(sec_value):
     return min_value
 
 def list_sumup(logger, input_list, filter_values, reverse=False):
+    """ sum up list of dictionaries based on input """
     logger.debug('list_sumup()')
 
     match_list = []
@@ -209,7 +211,7 @@ def list_sumup(logger, input_list, filter_values, reverse=False):
         match_list.append(_tmp_dic)
 
     if reverse:
-         match_list = list(reversed(match_list))
+        match_list = list(reversed(match_list))
 
     return match_list
 
@@ -235,3 +237,21 @@ def shot_leaffan_sync(shot, ltime, ldate):
         process_shot = False
 
     return (process_shot, ltime, ldate)
+
+def _deviation_avg_get(logger, input_list, value_list=None):
+    logger.debug('_deviation_add()')
+
+    _tmp_lake = {}
+    for value in value_list:
+        _tmp_lake[value] = []
+
+    # compile lists
+    for ele in input_list:
+        for value in value_list:
+            _tmp_lake[value].append(ele[value])
+
+    # calculate deviation
+    deviation_dic = {}
+    for value in _tmp_lake:
+        deviation_dic[value] = {'std_deviation': round(np.std(_tmp_lake[value]), 2), 'average': round(np.mean(_tmp_lake[value]), 2), 'min': np.amin(_tmp_lake[value]), 'max': np.amax(_tmp_lake[value])}
+    return deviation_dic

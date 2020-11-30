@@ -9,12 +9,14 @@ import django
 django.setup()
 from rest.functions.helper import mobile_check
 from rest.functions.season import seasonid_get
-from rest.functions.bananachart import banana_chart1_create, banana_chart2_create
+# from rest.functions.bananachart import banana_chart1_create, banana_chart2_create
 from rest.functions.team import team_dic_get
 from rest.functions.teammatchstat import teammatchstats_get
 from rest.functions.teamstat import teamstat_dic_get
 from rest.functions.pdo import pdo_breakdown_data_get, pdo_overview_data_get, breakdown_updates_get, overview_updates_get
 from rest.functions.pdocharts import pdo_breakdown_chart, pdo_overview_chart
+from rest.functions.corsi import pace_data_get, pace_updates_get
+from rest.functions.shotcharts import pace_chart_get
 
 def teamcomparison_get(logger, request, fkey=None, fvalue=None):
     """ matchstatistics grouped by days """
@@ -37,10 +39,24 @@ def teamcomparison_get(logger, request, fkey=None, fvalue=None):
     # pylint: disable=E0602
     result.extend(_pdo_breakdown_get(logger, ismobile, teamstat_dic, teams_dic))
 
-    # result.append(banana_chart1_create(logger, 'foo1'))
-    # result.append(banana_chart2_create(logger, 'foo2'))
+    # pylint: disable=E0602
+    result.append(_5v5_pace_get(logger, _('5v5 Pace (CF60 + CA60)'), ismobile, teamstat_dic, teams_dic))
 
     return result
+
+def _5v5_pace_get(logger, title, ismobile, teamstat_dic, teams_dic):
+    """ build structure for pace chart """
+    logger.debug('_5v5_pace_get()')
+
+    pace_dic = pace_data_get(logger, ismobile, teamstat_dic, teams_dic)
+
+    stat_entry = {
+        'title': title,
+        'chart':  pace_chart_get(logger, title, pace_dic[len(pace_dic.keys())]),
+        'updates': pace_updates_get(logger, pace_dic)
+    }
+
+    return stat_entry
 
 def _pdo_breakdown_get(logger, ismobile, teamstat_dic, teams_dic):
     """ pdo breakdown """
@@ -54,7 +70,8 @@ def _pdo_breakdown_get(logger, ismobile, teamstat_dic, teams_dic):
     stat_entry_list = []
 
     # pdo overview
-    title =  _('PDO overview')
+    # pylint: disable=E0602
+    title = _('PDO overview')
     stat_entry = {
         'title': title,
         'chart':  pdo_overview_chart(logger, title, overview_dic[len(overview_dic.keys())]),
@@ -63,7 +80,8 @@ def _pdo_breakdown_get(logger, ismobile, teamstat_dic, teams_dic):
     stat_entry_list.append(stat_entry)
 
     # pdo breakdown chart
-    title =  _('PDO breakdown')
+    # pylint: disable=E0602
+    title = _('PDO breakdown')
 
     stat_entry = {
         'title': title,

@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 """ list of functions for shots """
-# pylint: disable=E0401, C0413
+# pylint: disable=E0401, C0413, C0116
 from rest.functions.timeline import skatersonice_get, penalties_include
 from rest.functions.periodevent import scorersfromevents_get
-from rest.functions.shift import shift_get, toifromshifts_get
+from rest.functions.shift import shift_get
 from rest.functions.shot import shot_list_get
-from rest.functions.helper import shot_leaffan_sync
+from rest.functions.helper import shot_leaffan_sync, list_sumup, _deviation_avg_get
 from rest.functions.periodevent import periodevent_get
+from rest.functions.chartparameters import chart_color6, plotlines_color
 
 def _rosterinformation_add(logger, player_corsi_dic, toi_dic, scorer_dic, roster_list):
     """ enrich corsi dictionary with roster information like time-on-ice or line-number """
@@ -115,6 +116,7 @@ def gamecorsi_get(logger, shot_list, shift_list, periodevent_list, matchinfo_dic
     return player_corsi_dic
 
 def gameshots5v5_get(logger, match_id, match_info_dic, team):
+    logger.debug('gameshots5v5_get()')
 
     # get shifts and shots
     shot_list = shot_list_get(logger, 'match_id', match_id, ['real_date', 'shot_id', 'match_id', 'timestamp', 'match_shot_resutl_id', 'team_id', 'player__first_name', 'player__last_name', 'zone', 'coordinate_x', 'coordinate_y', 'player__jersey'])
@@ -122,7 +124,7 @@ def gameshots5v5_get(logger, match_id, match_info_dic, team):
     periodevent_list = periodevent_get(logger, 'match_id', match_id, ['period_event'])
 
     # soi = seconds on ice
-    (soi_dic, toi_dic) = skatersonice_get(logger, shift_list, match_info_dic)
+    (soi_dic, _toi_dic) = skatersonice_get(logger, shift_list, match_info_dic)
 
     # add penalties to filter 5v5
     soi_dic = penalties_include(logger, soi_dic, periodevent_list)
@@ -131,8 +133,6 @@ def gameshots5v5_get(logger, match_id, match_info_dic, team):
     shots_against_5v5 = 0
     shots_ongoal_for_5v5 = 0
     shots_ongoal_against_5v5 = 0
-
-    match_result = {'home': {1: 0, 2: 0, 3: 0, 4: 0, 5:0 }, 'visitor': {1: 0, 2: 0, 3: 0, 4: 0, 5:0 }}
 
     # hack to sync data with Leaffan.net we aer skipping late corrections form next day
     ltime = 0
@@ -154,7 +154,7 @@ def gameshots5v5_get(logger, match_id, match_info_dic, team):
                 shout_count = True
 
             home_count = soi_dic['visitor_team'][shot['timestamp']]['count']
-            visitor_count = soi_dic['visitor_team'][shot['timestamp']]['count']
+            _visitor_count = soi_dic['visitor_team'][shot['timestamp']]['count']
 
             # count only shots at 5v5
             if shout_count:
@@ -168,7 +168,7 @@ def gameshots5v5_get(logger, match_id, match_info_dic, team):
                             # sog_filter
                             shots_ongoal_for_5v5 += 1
                     else:
-                        shots_against_5v5 +=1
+                        shots_against_5v5 += 1
                         if home_count == 5:
                             shots_ongoal_against_5v5 += 1
                 else:
@@ -181,8 +181,119 @@ def gameshots5v5_get(logger, match_id, match_info_dic, team):
                             # sog_filter
                             shots_ongoal_against_5v5 += 1
                     else:
-                        shots_for_5v5 +=1
+                        shots_for_5v5 += 1
                         if home_count == 5:
                             shots_ongoal_for_5v5 += 1
 
     return (shots_for_5v5, shots_against_5v5, shots_ongoal_for_5v5, shots_ongoal_against_5v5)
+
+def pace_data_get(logger, ismobile, teamstat_dic, teams_dic):
+    """ get pace data """
+    logger.debug('pace_data_get()')
+
+    if ismobile:
+        image_width = 25
+    else:
+        image_width = 40
+    image_height = image_width
+
+    (pace_sum_dic, update_amount) = _pace_sumup(logger, teamstat_dic)
+
+    # build temporary dictionary for date. we build the final sorted in next step
+    tmp_lake = {}
+    for ele in range(1, update_amount+1):
+        tmp_lake[ele] = []
+
+    for team_id in pace_sum_dic:
+        # harmonize lengh by adding list elements at the beginning
+        if len(pace_sum_dic[team_id]) < update_amount:
+            for ele in range(0, update_amount - len(pace_sum_dic[team_id])):
+                pace_sum_dic[team_id].insert(0, pace_sum_dic[team_id][0])
+
+        for idx, ele in enumerate(pace_sum_dic[team_id], 1):
+            tmp_lake[idx].append({
+                'team_name': teams_dic[team_id]['team_name'],
+                'shortcut':  teams_dic[team_id]['shortcut'],
+                'marker': {'width': image_width, 'height': image_height, 'symbol': 'url({0})'.format(teams_dic[team_id]['team_logo'])},
+                'sum_shots_for_5v5_60': ele['sum_shots_for_5v5_60'],
+                'sum_shots_against_5v5_60': ele['sum_shots_against_5v5_60'],
+                'sum_shots_5v5_60': ele['sum_shots_5v5_60'],
+                # 'x': ele,
+                'y': ele['sum_shots_5v5_60']
+            })
+
+    # build final dictionary
+    chartseries_dic = _pace_chartseries_get(logger, tmp_lake)
+
+    return chartseries_dic
+
+def _pace_sumup(logger, teamstat_dic):
+    """ sumup shots and generate 60 values """
+    logger.debug('_pace_sumup()')
+
+    update_amount = 0
+    pace_sum_dic = {}
+    for team_id in teamstat_dic:
+        # sumup data per team
+        pace_sum_dic[team_id] = list_sumup(logger, teamstat_dic[team_id], ['match_id', 'shots_for_5v5', 'shots_against_5v5', 'matchduration'])
+        # check how many items we have to create in update_dic
+        if update_amount < len(pace_sum_dic[team_id]):
+            update_amount = len(pace_sum_dic[team_id])
+
+        for ele in range(1, update_amount+1):
+            # we nbeed to add the 60 data
+            sum_shots_for_5v5 = pace_sum_dic[team_id][ele-1]['sum_shots_for_5v5']
+            sum_shots_against_5v5 = pace_sum_dic[team_id][ele-1]['sum_shots_against_5v5']
+            sum_matchduration = pace_sum_dic[team_id][ele-1]['sum_matchduration']
+
+            # calculate 60
+            pace_sum_dic[team_id][ele-1]['sum_shots_for_5v5_60'] = round(sum_shots_for_5v5 *  3600 / sum_matchduration, 0)
+            pace_sum_dic[team_id][ele-1]['sum_shots_against_5v5_60'] = round(sum_shots_against_5v5 * 3600 / sum_matchduration, 0)
+            pace_sum_dic[team_id][ele-1]['sum_shots_5v5_60'] = pace_sum_dic[team_id][ele-1]['sum_shots_for_5v5_60'] + pace_sum_dic[team_id][ele-1]['sum_shots_against_5v5_60']
+
+    return (pace_sum_dic, update_amount)
+
+def _pace_chartseries_get(logger, data_dic):
+    """ build structure for chart series """
+    logger.debug('pace_chartseries_get()')
+    chartseries_dic = {}
+    for ele in data_dic:
+        chartseries_dic[ele] = {'data': []}
+        for datapoint in sorted(data_dic[ele], key=lambda i: i['y']):
+            chartseries_dic[ele]['data'].append(datapoint)
+
+        # get statistic values we need
+        deviation_dic = _deviation_avg_get(logger, chartseries_dic[ele]['data'], ['y'])
+        chartseries_dic[ele]['y_deviation'] = deviation_dic['y']['std_deviation']
+        chartseries_dic[ele]['y_min'] = deviation_dic['y']['min']
+        chartseries_dic[ele]['y_max'] = deviation_dic['y']['max']
+        chartseries_dic[ele]['y_avg'] = deviation_dic['y']['average']
+
+    return chartseries_dic
+
+def pace_updates_get(logger, data_dic):
+    logger.debug('pace_updates_get()')
+
+    updates_dic = {}
+    for ele in data_dic:
+        updates_dic[ele] = {
+            'text': ele,
+            'chartoptions':  {
+                'series': [{
+                    # pylint: disable=E0602
+                    'name': _('Standard Deviation'),
+                    'color': plotlines_color,
+                    'marker': {'symbol': 'square'},
+                    'data': data_dic[ele]['data']
+                }],
+
+                'yAxis': {
+                    'min': data_dic[ele]['y_min'] - 2,
+                    'max':  data_dic[ele]['y_max'] + 2,
+                    'plotBands': [{'from':  data_dic[ele]['y_avg'] -  data_dic[ele]['y_deviation']/2, 'to':  data_dic[ele]['y_avg'] +  data_dic[ele]['y_deviation']/2, 'color': chart_color6}],
+                    'plotLines': [{'zIndex': 3, 'color': plotlines_color, 'width': 3, 'value':  data_dic[ele]['y_avg']}],
+                },
+            }
+        }
+
+    return updates_dic

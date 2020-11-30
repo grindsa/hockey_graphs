@@ -1,28 +1,10 @@
 # -*- coding: utf-8 -*-
 """ list of functions for team comparison """
-import numpy as np
-from rest.functions.helper import pctg_float_get, list_sumup
+from rest.functions.helper import pctg_float_get, list_sumup, _deviation_avg_get
 from rest.functions.chartparameters import chart_color1, chart_color3, chart_color6, plotlines_color
 
-def _deviation_avg_get(logger, input_list, value_list=None):
-    logger.debug('_deviation_add()')
-
-    _tmp_lake = {}
-    for value in value_list:
-        _tmp_lake[value] = []
-
-    # compile lists
-    for ele in input_list:
-        for value in value_list:
-            _tmp_lake[value].append(ele[value])
-
-    # calculate deviation
-    deviation_dic = {}
-    for value in _tmp_lake:
-        deviation_dic[value] = {'std_deviation': round(np.std(_tmp_lake[value]), 2), 'average': round(np.mean(_tmp_lake[value]), 2), 'min': np.amin(_tmp_lake[value]), 'max': np.amax(_tmp_lake[value])}
-    return deviation_dic
-
 def pdo_breakdown_data_get(logger, ismobile, teamstat_dic, teams_dic):
+    """ get data for breakdown chart """
     logger.debug('pdo_breakdown_data_get()')
 
     if ismobile:
@@ -36,7 +18,7 @@ def pdo_breakdown_data_get(logger, ismobile, teamstat_dic, teams_dic):
     _teamstat_sum_dic = {}
     for team_id in teamstat_dic:
         # sumup data per team
-        _teamstat_sum_dic[team_id] =  list_sumup(logger, teamstat_dic[team_id], ['match_id', 'shots_ongoal_for', 'shots_ongoal_against', 'goals_for', 'saves'])
+        _teamstat_sum_dic[team_id] = list_sumup(logger, teamstat_dic[team_id], ['match_id', 'shots_ongoal_for', 'shots_ongoal_against', 'goals_for', 'saves'])
         # check how many items we have to create in update_dic
         if update_amount < len(_teamstat_sum_dic[team_id]):
             update_amount = len(_teamstat_sum_dic[team_id])
@@ -89,8 +71,8 @@ def pdo_breakdown_data_get(logger, ismobile, teamstat_dic, teams_dic):
 
     return chartseries_dic
 
-
 def overview_updates_get(logger, data_dic):
+    """ build structure for pdo_overview_chart updates """
     logger.debug('breakdown_updates_get()')
 
     updates_dic = {}
@@ -99,6 +81,7 @@ def overview_updates_get(logger, data_dic):
             'chartoptions':  {
                 'xAxis': {'categories': data_dic[ele]['team_list']},
                 'series': [
+                    # pylint: disable=E0602
                     {'name': _('Save percentage (Sv%)'), 'marker': {'symbol': 'square'}, 'data': data_dic[ele]['sv_list'], 'color': chart_color3},
                     {'name': _('Shooting percentage (Sh%)'), 'marker': {'symbol': 'square'}, 'data': data_dic[ele]['sh_list'], 'color': chart_color1},
                 ]
@@ -108,6 +91,8 @@ def overview_updates_get(logger, data_dic):
     return updates_dic
 
 def breakdown_updates_get(logger, data_dic):
+    # pylint: disable=E0602
+    """ build structure for pdo breakdown chart """
     logger.debug('breakdown_updates_get()')
 
     updates_dic = {}
@@ -139,13 +124,14 @@ def breakdown_updates_get(logger, data_dic):
     return updates_dic
 
 def pdo_overview_data_get(logger, ismobile, data_dic):
+    """ collect data for pdo overview chart """
     logger.debug('pdo_overview_data_get()')
 
     overview_dic = {}
 
     for mday in data_dic:
         overview_dic[mday] = {'team_list': [], 'sh_list': [], 'sv_list': []}
-        for datapoint in sorted(data_dic[mday]['data'], key = lambda i: i['team_name']):
+        for datapoint in sorted(data_dic[mday]['data'], key=lambda i: i['team_name']):
             if ismobile:
                 overview_dic[mday]['team_list'].append(datapoint['name'])
             else:
