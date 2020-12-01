@@ -200,9 +200,11 @@ def pace_data_get(logger, ismobile, teamstat_dic, teams_dic):
     (pace_sum_dic, update_amount) = _pace_sumup(logger, teamstat_dic)
 
     # build temporary dictionary for date. we build the final sorted in next step
-    tmp_lake = {}
+    pace_lake = {}
+    shot_rate_lake = {}
     for ele in range(1, update_amount+1):
-        tmp_lake[ele] = []
+        pace_lake[ele] = []
+        shot_rate_lake[ele] = []
 
     for team_id in pace_sum_dic:
         # harmonize lengh by adding list elements at the beginning
@@ -211,7 +213,7 @@ def pace_data_get(logger, ismobile, teamstat_dic, teams_dic):
                 pace_sum_dic[team_id].insert(0, pace_sum_dic[team_id][0])
 
         for idx, ele in enumerate(pace_sum_dic[team_id], 1):
-            tmp_lake[idx].append({
+            pace_lake[idx].append({
                 'team_name': teams_dic[team_id]['team_name'],
                 'shortcut':  teams_dic[team_id]['shortcut'],
                 'marker': {'width': image_width, 'height': image_height, 'symbol': 'url({0})'.format(teams_dic[team_id]['team_logo'])},
@@ -222,10 +224,19 @@ def pace_data_get(logger, ismobile, teamstat_dic, teams_dic):
                 'y': ele['sum_shots_5v5_60']
             })
 
-    # build final dictionary
-    chartseries_dic = _pace_chartseries_get(logger, tmp_lake)
+            shot_rate_lake[idx].append({
+                'team_name': teams_dic[team_id]['team_name'],
+                'shortcut':  teams_dic[team_id]['shortcut'],
+                'marker': {'width': image_width, 'height': image_height, 'symbol': 'url({0})'.format(teams_dic[team_id]['team_logo'])},
+                'x': ele['sum_shots_for_5v5_60'],
+                'y': ele['sum_shots_against_5v5_60']
+            })
 
-    return chartseries_dic
+    # build final dictionary
+    pace_chartseries_dic = _pace_chartseries_get(logger, pace_lake)
+    shotrate_chartseries_dic = _pace_chartseries_get(logger, shot_rate_lake)
+
+    return (pace_chartseries_dic, shotrate_chartseries_dic)
 
 def _pace_sumup(logger, teamstat_dic):
     """ sumup shots and generate 60 values """
@@ -263,11 +274,13 @@ def _pace_chartseries_get(logger, data_dic):
             chartseries_dic[ele]['data'].append(datapoint)
 
         # get statistic values we need
-        deviation_dic = _deviation_avg_get(logger, chartseries_dic[ele]['data'], ['y'])
-        chartseries_dic[ele]['y_deviation'] = deviation_dic['y']['std_deviation']
-        chartseries_dic[ele]['y_min'] = deviation_dic['y']['min']
-        chartseries_dic[ele]['y_max'] = deviation_dic['y']['max']
-        chartseries_dic[ele]['y_avg'] = deviation_dic['y']['average']
+        deviation_dic = _deviation_avg_get(logger, chartseries_dic[ele]['data'], ['x', 'y'])
+
+        for value in deviation_dic:
+            chartseries_dic[ele]['{0}_deviation'.format(value)] = deviation_dic[value]['std_deviation']
+            chartseries_dic[ele]['{0}_min'.format(value)] = deviation_dic[value]['min']
+            chartseries_dic[ele]['{0}_max'.format(value)] = deviation_dic[value]['max']
+            chartseries_dic[ele]['{0}_avg'.format(value)] = deviation_dic[value]['average']
 
     return chartseries_dic
 
@@ -290,6 +303,39 @@ def pace_updates_get(logger, data_dic):
                 'yAxis': {
                     'min': data_dic[ele]['y_min'] - 2,
                     'max':  data_dic[ele]['y_max'] + 2,
+                    'plotBands': [{'from':  data_dic[ele]['y_avg'] -  data_dic[ele]['y_deviation']/2, 'to':  data_dic[ele]['y_avg'] +  data_dic[ele]['y_deviation']/2, 'color': chart_color6}],
+                    'plotLines': [{'zIndex': 3, 'color': plotlines_color, 'width': 3, 'value':  data_dic[ele]['y_avg']}],
+                },
+            }
+        }
+
+    return updates_dic
+
+def shotrates_updates_get(logger, data_dic):
+    logger.debug('shotrates_updates_get()')
+
+    updates_dic = {}
+
+    for ele in data_dic:
+        updates_dic[ele] = {
+            'text': ele,
+            'chartoptions':  {
+                'series': [{
+                    # pylint: disable=E0602                
+                    'name': _('Standard Deviation'),
+                    'color': plotlines_color,
+                    'marker': {'symbol': 'square'},
+                    'data': data_dic[ele]['data']
+                }],
+                'xAxis': {
+                    'min': data_dic[ele]['x_min'] - 1,
+                    'max':  data_dic[ele]['x_max'] + 1,
+                    'plotBands': [{'from':  data_dic[ele]['x_avg'] -  data_dic[ele]['x_deviation']/2, 'to':  data_dic[ele]['x_avg'] +  data_dic[ele]['x_deviation']/2, 'color': chart_color6}],
+                    'plotLines': [{'zIndex': 3, 'color': plotlines_color, 'width': 2, 'value':  data_dic[ele]['x_avg']}],
+                },
+                'yAxis': {
+                    'min': data_dic[ele]['y_min'] - 1,
+                    'max':  data_dic[ele]['y_max'] + 1,
                     'plotBands': [{'from':  data_dic[ele]['y_avg'] -  data_dic[ele]['y_deviation']/2, 'to':  data_dic[ele]['y_avg'] +  data_dic[ele]['y_deviation']/2, 'color': chart_color6}],
                     'plotLines': [{'zIndex': 3, 'color': plotlines_color, 'width': 3, 'value':  data_dic[ele]['y_avg']}],
                 },

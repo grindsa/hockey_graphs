@@ -816,3 +816,56 @@ def pace_chart_get(logger, ctitle, pace_dic):
     }
 
     return chart_options
+
+def shotrates_chart_get(logger, ctitle, shotrates_dic):
+    """ create chart 5v5 pace """
+    # pylint: disable=E0602
+    logger.debug('shotrates_chart_get()')
+
+    chart_options = {
+
+        'chart': {
+            'type': 'scatter',
+            'height': '100%',
+        },
+
+        'exporting': exporting(filename=ctitle),
+        'title': title(''),
+        'credits': credit(),
+        'legend': {'enabled': 1},
+        'responsive': responsive_y1(),
+
+        'tooltip': {
+            'useHTML': 1,
+            'headerFormat': '',
+            'pointFormat': '<span><b>{point.team_name}</b></span></br><span style="font-size: %s">%s: {point.x}</span><br><span style="font-size: %s">%s: {point.y}</span><br/>' % (font_size, _('Corsi For per 60 minutes at 5v5 (Cf/60)'), font_size, _('Corsi Against per 60 minutes at 5v5 (Ca/60)'))
+        },
+
+        'xAxis': {
+            'title': title(_('Corsi For per 60 minutes at 5v5 (Cf/60)'), font_size),
+            'labels': {'style': {'fontSize': font_size},},
+            'min': shotrates_dic['x_min'] - 1,
+            'max': shotrates_dic['x_max'] + 1,
+            'showFirstLabel': 1,
+            'showLastLabel': 1,
+            'gridLineWidth': 1,
+            'plotBands': [{'from': shotrates_dic['x_avg'] - shotrates_dic['x_deviation']/2, 'to': shotrates_dic['x_avg'] + shotrates_dic['x_deviation']/2, 'color': chart_color6}],
+            'plotLines': [{'zIndex': 3, 'color': plotlines_color, 'width': 2, 'value': shotrates_dic['x_avg']}],
+        },
+
+        'yAxis': {
+            'title': title(_('Corsi Against per 60 minutes at 5v5 (Ca/60)'), font_size),
+            'maxPadding': 0.1,
+            'reversed': 1,
+            'min': shotrates_dic['y_min'] - 1,
+            'max': shotrates_dic['y_max'] + 1,
+            'labels': {'style': {'fontSize': font_size},},
+            'gridLineWidth': 1,
+            'plotBands': [{'from': shotrates_dic['y_avg'] - shotrates_dic['y_deviation']/2, 'to': shotrates_dic['y_avg'] + shotrates_dic['y_deviation']/2, 'color': chart_color6}],
+            'plotLines': [{'zIndex': 3, 'color': plotlines_color, 'width': 2, 'value': shotrates_dic['y_avg']}],
+        },
+
+        'series': [{'zIndex': 1, 'name': _('Standard Deviation'), 'color': plotlines_color, 'marker': {'symbol': 'square'}, 'data': shotrates_dic['data']}]
+
+    }
+    return chart_options
