@@ -10,7 +10,7 @@ title_font_size_mobile = '12px'
 
 # align
 legend_valign = 'bottom'
-legend_valign_mobile = 'top'
+legend_valign_mobile = 'bottom'
 
 # color definition
 text_color = '#404040'
@@ -136,7 +136,7 @@ def tooltip(text):
 
 def corner_annotations(ismobile, upper_left_text, lower_left_text, upper_right_text, lower_right_text):
     """ annotations in all four corners """
-    
+
     if ismobile:
         upper_left = {'x': 25, 'y': 55}
         upper_right = {'x': 340, 'y': 55}

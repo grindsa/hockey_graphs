@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """ list of functions for team comparison """
 from rest.functions.helper import pctg_float_get, list_sumup, _deviation_avg_get
-from rest.functions.chartparameters import chart_color1, chart_color3, chart_color6, plotlines_color
+from rest.functions.chartparameters import chart_color1, chart_color3, chart_color6, plotlines_color, title, font_size
 
 def pdo_breakdown_data_get(logger, ismobile, teamstat_dic, teams_dic):
     """ get data for breakdown chart """
@@ -107,12 +107,14 @@ def breakdown_updates_get(logger, data_dic):
                     'data': data_dic[ele]['data']
                 }],
                 'xAxis': {
+                    'title': title(_('Shooting percentage (Sh%)'), font_size),
                     'min': data_dic[ele]['x_min'] - 1,
                     'max':  data_dic[ele]['x_max'] + 1,
                     'plotBands': [{'from':  data_dic[ele]['x_avg'] -  data_dic[ele]['x_deviation']/2, 'to':  data_dic[ele]['x_avg'] +  data_dic[ele]['x_deviation']/2, 'color': chart_color6}],
                     'plotLines': [{'zIndex': 3, 'color': plotlines_color, 'width': 2, 'value':  data_dic[ele]['x_avg']}],
                 },
                 'yAxis': {
+                    'title': title(_('Save percentage (Sv%)'), font_size),
                     'min': data_dic[ele]['y_min'] - 1,
                     'max':  data_dic[ele]['y_max'] + 1,
                     'plotBands': [{'from':  data_dic[ele]['y_avg'] -  data_dic[ele]['y_deviation']/2, 'to':  data_dic[ele]['y_avg'] +  data_dic[ele]['y_deviation']/2, 'color': chart_color6}],
