@@ -16,7 +16,7 @@ from rest.functions.teamstat import teamstat_dic_get
 from rest.functions.pdo import pdo_breakdown_data_get, pdo_overview_data_get, breakdown_updates_get, overview_updates_get
 from rest.functions.pdocharts import pdo_breakdown_chart, pdo_overview_chart
 from rest.functions.corsi import pace_data_get, pace_updates_get, shotrates_updates_get
-from rest.functions.shotcharts import pace_chart_get, shotrates_chart_get
+from rest.functions.shotcharts import pace_chart_get, shotrates_chart_get, shotshare_chart_get
 
 def teamcomparison_get(logger, request, fkey=None, fvalue=None):
     """ matchstatistics grouped by days """
@@ -52,25 +52,35 @@ def _5v5_pace_get(logger, ismobile, teamstat_dic, teams_dic):
     stat_entry_list = []
 
     # two different data series
-    (pace_dic, shotrates_dic) = pace_data_get(logger, ismobile, teamstat_dic, teams_dic)
+    (pace_dic, shotrates_dic, shotshares_dic) = pace_data_get(logger, ismobile, teamstat_dic, teams_dic)
 
     # 5v5 pace chart
     title = _('5v5 Pace (Cf/60 + Ca/60)'),
     stat_entry = {
         'title': title,
         'chart':  pace_chart_get(logger, title, pace_dic[len(pace_dic.keys())]),
-        'updates': pace_updates_get(logger, pace_dic)
+        'updates': pace_updates_get(logger, pace_dic, title)
     }
     stat_entry_list.append(stat_entry)
 
     # shotrates
-    title = _('5v5 Team shot rates'),
+    title = _('5v5 Shot rates Cf/60 vs Ca/60'),
     stat_entry = {
         'title': title,
         'chart':  shotrates_chart_get(logger, title, ismobile, shotrates_dic[len(shotrates_dic.keys())]),
         'updates': shotrates_updates_get(logger, shotrates_dic)
     }
     stat_entry_list.append(stat_entry)
+
+    # shotrates
+    title = _('5v5 Shot share C/60'),
+    stat_entry = {
+        'title': title,
+        'chart':  shotshare_chart_get(logger, title, shotshares_dic[len(shotshares_dic.keys())]),
+        'updates': pace_updates_get(logger, shotshares_dic, title)
+    }
+    stat_entry_list.append(stat_entry)
+
 
     return stat_entry_list
 

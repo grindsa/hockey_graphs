@@ -7,7 +7,7 @@ from rest.functions.shift import shift_get
 from rest.functions.shot import shot_list_get
 from rest.functions.helper import shot_leaffan_sync, list_sumup, _deviation_avg_get
 from rest.functions.periodevent import periodevent_get
-from rest.functions.chartparameters import chart_color6, plotlines_color
+from rest.functions.chartparameters import chart_color6, plotlines_color, title, font_size
 
 def _rosterinformation_add(logger, player_corsi_dic, toi_dic, scorer_dic, roster_list):
     """ enrich corsi dictionary with roster information like time-on-ice or line-number """
@@ -202,9 +202,11 @@ def pace_data_get(logger, ismobile, teamstat_dic, teams_dic):
     # build temporary dictionary for date. we build the final sorted in next step
     pace_lake = {}
     shot_rate_lake = {}
+    shot_share_lake = {}
     for ele in range(1, update_amount+1):
         pace_lake[ele] = []
         shot_rate_lake[ele] = []
+        shot_share_lake[ele] = []
 
     for team_id in pace_sum_dic:
         # harmonize lengh by adding list elements at the beginning
@@ -232,11 +234,23 @@ def pace_data_get(logger, ismobile, teamstat_dic, teams_dic):
                 'y': ele['sum_shots_against_5v5_60']
             })
 
+            shot_share_lake[idx].append({
+                'team_name': teams_dic[team_id]['team_name'],
+                'shortcut':  teams_dic[team_id]['shortcut'],
+                'marker': {'width': image_width, 'height': image_height, 'symbol': 'url({0})'.format(teams_dic[team_id]['team_logo'])},
+                'sum_shots_for_5v5_60': ele['sum_shots_for_5v5_60'],
+                'sum_shots_against_5v5_60': ele['sum_shots_against_5v5_60'],
+                'y': ele['sum_shots_for_5v5_60'] - ele['sum_shots_against_5v5_60']
+            })
+
+
     # build final dictionary
     pace_chartseries_dic = _pace_chartseries_get(logger, pace_lake)
     shotrate_chartseries_dic = _pace_chartseries_get(logger, shot_rate_lake)
+    shotshare_chartseries_dic = _pace_chartseries_get(logger, shot_share_lake)
 
-    return (pace_chartseries_dic, shotrate_chartseries_dic)
+
+    return (pace_chartseries_dic, shotrate_chartseries_dic, shotshare_chartseries_dic)
 
 def _pace_sumup(logger, teamstat_dic):
     """ sumup shots and generate 60 values """
@@ -284,7 +298,7 @@ def _pace_chartseries_get(logger, data_dic):
 
     return chartseries_dic
 
-def pace_updates_get(logger, data_dic):
+def pace_updates_get(logger, data_dic, ctitle):
     logger.debug('pace_updates_get()')
 
     updates_dic = {}
@@ -301,6 +315,7 @@ def pace_updates_get(logger, data_dic):
                 }],
 
                 'yAxis': {
+                    'title': title(ctitle, font_size),
                     'min': data_dic[ele]['y_min'] - 2,
                     'max':  data_dic[ele]['y_max'] + 2,
                     'plotBands': [{'from':  data_dic[ele]['y_avg'] -  data_dic[ele]['y_deviation']/2, 'to':  data_dic[ele]['y_avg'] +  data_dic[ele]['y_deviation']/2, 'color': chart_color6}],
@@ -321,19 +336,21 @@ def shotrates_updates_get(logger, data_dic):
             'text': ele,
             'chartoptions':  {
                 'series': [{
-                    # pylint: disable=E0602                
+                    # pylint: disable=E0602
                     'name': _('Standard Deviation'),
                     'color': plotlines_color,
                     'marker': {'symbol': 'square'},
                     'data': data_dic[ele]['data']
                 }],
                 'xAxis': {
+                    'title': title(_('Corsi For per 60 minutes at 5v5 (Cf/60)'), font_size),
                     'min': data_dic[ele]['x_min'] - 1,
                     'max':  data_dic[ele]['x_max'] + 1,
                     'plotBands': [{'from':  data_dic[ele]['x_avg'] -  data_dic[ele]['x_deviation']/2, 'to':  data_dic[ele]['x_avg'] +  data_dic[ele]['x_deviation']/2, 'color': chart_color6}],
                     'plotLines': [{'zIndex': 3, 'color': plotlines_color, 'width': 2, 'value':  data_dic[ele]['x_avg']}],
                 },
                 'yAxis': {
+                    'title': title(_('Corsi Against per 60 minutes at 5v5 (Ca/60)'), font_size),
                     'min': data_dic[ele]['y_min'] - 1,
                     'max':  data_dic[ele]['y_max'] + 1,
                     'plotBands': [{'from':  data_dic[ele]['y_avg'] -  data_dic[ele]['y_deviation']/2, 'to':  data_dic[ele]['y_avg'] +  data_dic[ele]['y_deviation']/2, 'color': chart_color6}],
