@@ -67,7 +67,7 @@ def _5v5_pace_get(logger, ismobile, teamstat_dic, teams_dic):
     title = _('5v5 Team shot rates'),
     stat_entry = {
         'title': title,
-        'chart':  shotrates_chart_get(logger, title, shotrates_dic[len(shotrates_dic.keys())]),
+        'chart':  shotrates_chart_get(logger, title, ismobile, shotrates_dic[len(shotrates_dic.keys())]),
         'updates': shotrates_updates_get(logger, shotrates_dic)
     }
     stat_entry_list.append(stat_entry)
@@ -101,7 +101,7 @@ def _pdo_breakdown_get(logger, ismobile, teamstat_dic, teams_dic):
 
     stat_entry = {
         'title': title,
-        'chart':  pdo_breakdown_chart(logger, title, breakdown_dic[len(breakdown_dic.keys())]),
+        'chart':  pdo_breakdown_chart(logger, title, ismobile, breakdown_dic[len(breakdown_dic.keys())]),
         'updates': breakdown_updates_get(logger, breakdown_dic),
     }
     stat_entry_list.append(stat_entry)

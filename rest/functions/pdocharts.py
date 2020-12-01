@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """ time on ice charts """
 # pylint: disable=E0401
-from rest.functions.chartparameters import credit, exporting, responsive_y1, title, legend, font_size, plotlines_color
+from rest.functions.chartparameters import credit, exporting, responsive_y1, title, legend, font_size, plotlines_color, corner_annotations
 from rest.functions.chartparameters import chart_color1, chart_color2, chart_color3, chart_color4, chart_color6, text_color, font_size_mobile
 
 def pdo_overview_chart(logger, ctitle, pdo_dic):
@@ -54,7 +54,7 @@ def pdo_overview_chart(logger, ctitle, pdo_dic):
 
     return chart_options
 
-def pdo_breakdown_chart(logger, ctitle, pdo_list):
+def pdo_breakdown_chart(logger, ctitle, ismobile, pdo_list):
     # pylint: disable=E0602
     """ pdo breakdown """
     logger.debug('pdo_breakdown_chart()')
@@ -103,7 +103,7 @@ def pdo_breakdown_chart(logger, ctitle, pdo_list):
             'plotLines': [{'zIndex': 3, 'color': plotlines_color, 'width': 2, 'value': pdo_list['y_avg']}],
         },
 
-        'series': [{'zIndex': 1, 'name': _('Standard Deviation'), 'color': plotlines_color, 'marker': {'symbol': 'square'}, 'data': pdo_list['data']}]
-
+        'series': [{'zIndex': 1, 'name': _('Standard Deviation'), 'color': plotlines_color, 'marker': {'symbol': 'square'}, 'data': pdo_list['data']}],
+        'annotations': corner_annotations(ismobile, _('Dull'), _('Unlucky'), _('Lucky'), _('Fun')),
     }
     return chart_options

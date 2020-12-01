@@ -5,6 +5,7 @@ import HighchartsReact from 'highcharts-react-official';
 import HighchartsMore from 'highcharts/highcharts-more';
 import HighchartsExporting from 'highcharts/modules/exporting';
 import HighchartsOfflineExporting from "highcharts/modules/offline-exporting";
+import AnnotationsModule from 'highcharts/modules/annotations';
 import Heatmap from 'highcharts/modules/heatmap.js';
 import Slider from 'react-rangeslider'
 // import 'react-rangeslider/lib/index.css'
@@ -18,6 +19,8 @@ HighchartsExporting(Highcharts);
 HighchartsOfflineExporting(Highcharts);
 HighchartsMore(Highcharts);
 Heatmap(Highcharts);
+AnnotationsModule(Highcharts);
+
 
 export class TeamComparison extends React.Component {
 

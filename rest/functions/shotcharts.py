@@ -2,7 +2,7 @@
 """ list of functions for shots """
 import math
 # pylint: disable=E0401
-from rest.functions.chartparameters import credit, exporting, responsive_gameflow, responsive_y1, responsive_y2, responsive_bubble, plotoptions_marker_disable, title, legend, tooltip, labels, font_size, font_size_mobile, legend_valign_mobile
+from rest.functions.chartparameters import credit, exporting, responsive_gameflow, responsive_y1, responsive_y2, responsive_bubble, plotoptions_marker_disable, title, legend, tooltip, labels, font_size, font_size_mobile, legend_valign_mobile, corner_annotations
 from rest.functions.chartparameters import text_color, plotlines_color, chart_color1, chart_color2, chart_color3, chart_color4, chart_color5, chart_color6, chart_color8, chart_color9, shot_missed_color, shot_blocked_color, shot_goal_color, shot_sog_color, line_color, line1_color, line2_color, line3_color, line4_color, line5_color
 
 # pylint: disable=R0914
@@ -817,10 +817,12 @@ def pace_chart_get(logger, ctitle, pace_dic):
 
     return chart_options
 
-def shotrates_chart_get(logger, ctitle, shotrates_dic):
+def shotrates_chart_get(logger, ctitle, ismobile, shotrates_dic):
     """ create chart 5v5 pace """
     # pylint: disable=E0602
     logger.debug('shotrates_chart_get()')
+
+
 
     chart_options = {
 
@@ -857,6 +859,8 @@ def shotrates_chart_get(logger, ctitle, shotrates_dic):
             'title': title(_('Corsi Against per 60 minutes at 5v5 (Ca/60)'), font_size),
             'maxPadding': 0.1,
             'reversed': 1,
+            'showFirstLabel': 1,
+            'showLastLabel': 1,
             'min': shotrates_dic['y_min'] - 1,
             'max': shotrates_dic['y_max'] + 1,
             'labels': {'style': {'fontSize': font_size},},
@@ -865,7 +869,10 @@ def shotrates_chart_get(logger, ctitle, shotrates_dic):
             'plotLines': [{'zIndex': 3, 'color': plotlines_color, 'width': 2, 'value': shotrates_dic['y_avg']}],
         },
 
-        'series': [{'zIndex': 1, 'name': _('Standard Deviation'), 'color': plotlines_color, 'marker': {'symbol': 'square'}, 'data': shotrates_dic['data']}]
+        'annotations': corner_annotations(ismobile, _('Dull'), _('Bad'), _('Good'), _('Fun')),
+
+        'series': [{'zIndex': 2, 'name': _('Standard Deviation'), 'color': plotlines_color, 'marker': {'symbol': 'square'}, 'data': shotrates_dic['data']}]
 
     }
+
     return chart_options

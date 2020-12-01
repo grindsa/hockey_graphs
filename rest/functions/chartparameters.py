@@ -132,3 +132,30 @@ def responsive_y2():
 def tooltip(text):
     """ customize tooltip """
     return {'shared': 1, 'useHTML': 1, 'headerFormat': text, 'marker': {'enabled': 0}}
+
+
+def corner_annotations(ismobile, upper_left_text, lower_left_text, upper_right_text, lower_right_text):
+    """ annotations in all four corners """
+    
+    if ismobile:
+        upper_left = {'x': 25, 'y': 55}
+        upper_right = {'x': 340, 'y': 55}
+        lower_left = {'x': 25, 'y': 310}
+        lower_right = {'x': 340, 'y': 310}
+    else:
+        upper_left = {'x': 25, 'y': 55}
+        upper_right = {'x': 750, 'y': 55}
+        lower_left = {'x': 25, 'y': 700}
+        lower_right = {'x': 750, 'y': 700}
+
+    result = [{
+        'labels': [
+            {'style': {'fontSize': font_size}, 'backgroundColor': 'white', 'borderColor': 'white', 'point': upper_left, 'text': upper_left_text},
+            {'style': {'fontSize': font_size}, 'backgroundColor': 'white', 'borderColor': 'white', 'point': lower_left, 'text': lower_left_text},
+            {'style': {'fontSize': font_size}, 'backgroundColor': 'white', 'borderColor': 'white', 'point': upper_right, 'text': upper_right_text},
+            {'style': {'fontSize': font_size}, 'backgroundColor': 'white', 'borderColor': 'white', 'point': lower_right, 'text': lower_right_text},
+        ],
+        'zIndex': 1
+    }]
+
+    return result
