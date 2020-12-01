@@ -1,8 +1,8 @@
 # hockey_graphs
 
-hockey_graphs is personal software project to create a set of tools rendering harts based on statistics from [Penny-DEL](https://www.penny-del.org/)
+hockey_graphs is private software project to create a set of tools rendering charts based on statistics from [Penny-DEL](https://www.penny-del.org/)
 
-The current version is hosted at [http://hockeygraphs.dynamop.de/](https://hockeygraphs.dynamop.de/) and already contains charts based on data from
+The latest version is hosted at [http://hockeygraphs.dynamop.de/](https://hockeygraphs.dynamop.de/) and contains various charts based on data from
 - 2019/2020 season
 - [Magenta Sport Hockey Cup](https://www.magentasport.de/eishockey/magentasportcup)
 
