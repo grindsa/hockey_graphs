@@ -115,11 +115,11 @@ def gamecorsi_get(logger, shot_list, shift_list, periodevent_list, matchinfo_dic
 
     return player_corsi_dic
 
-def gameshots5v5_get(logger, match_id, match_info_dic, team):
+def gameshots5v5_get(logger, match_id, match_info_dic, team, shot_list):
     logger.debug('gameshots5v5_get()')
 
     # get shifts and shots
-    shot_list = shot_list_get(logger, 'match_id', match_id, ['real_date', 'shot_id', 'match_id', 'timestamp', 'match_shot_resutl_id', 'team_id', 'player__first_name', 'player__last_name', 'zone', 'coordinate_x', 'coordinate_y', 'player__jersey'])
+    # shot_list = shot_list_get(logger, 'match_id', match_id, ['real_date', 'shot_id', 'match_id', 'timestamp', 'match_shot_resutl_id', 'team_id', 'player__first_name', 'player__last_name', 'zone', 'coordinate_x', 'coordinate_y', 'player__jersey'])
     shift_list = shift_get(logger, 'match_id', match_id, ['shift'])
     periodevent_list = periodevent_get(logger, 'match_id', match_id, ['period_event'])
 

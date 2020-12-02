@@ -372,7 +372,6 @@ def shotsperzone_aggregate(logger, shotzone_dic, match_info_dic):
 
     return shotzonesum_dic
 
-
 def shotcoordinates_get(logger, shot_list, matchinfo_dic):
     logger.debug('shotcoordinates_get()')
 
@@ -402,3 +401,47 @@ def shotcoordinates_get(logger, shot_list, matchinfo_dic):
         shotmap_dic[team].append(shot)
 
     return shotmap_dic
+
+def rebound_breaks_get(logger, shot_list, matchinfo_dic):
+    """ detect and count rebounds """
+    logger.debug('shotcoordinates_get()')
+
+    # within this interval two shots from same team will be assumed as rebound
+    reboud_interval = 3
+    # within this interval two shots form different team will be assumed as break
+    break_interval = 7
+
+    data_dic = {'home': {'rebounds': 0, 'rebound_goals': 0, 'breaks': 0, 'break_goals': 0}, 'visitor': {'rebounds': 0, 'rebound_goals': 0, 'breaks': 0, 'break_goals': 0}}
+
+    prev_team = None
+    prev_time = 0
+    for idx, shot in enumerate(shot_list):
+
+       # time difference to previous shot
+        shot_diff = abs(shot['timestamp'] - prev_time)
+
+        # we need to differenciate between home and visitor team
+        if shot['team_id'] == matchinfo_dic['home_team_id']:
+            team = 'home'
+        else:
+            team = 'visitor'
+
+        # rebound detection
+        if shot['team_id'] == prev_team and shot_diff <= reboud_interval and idx != 0:
+            # print('rebound', team)
+            data_dic[team]['rebounds'] += 1
+            if shot['match_shot_resutl_id'] == 4:
+                data_dic[team]['rebound_goals'] += 1
+
+        # break detection
+        if shot['team_id'] != prev_team and shot_diff <= break_interval and idx != 0:
+            # print('break', team)
+            data_dic[team]['breaks'] += 1
+            if shot['match_shot_resutl_id'] == 4:
+                data_dic[team]['break_goals'] += 1
+
+        # store term and timestamp for comparison in next interation
+        prev_team = shot['team_id']
+        prev_time = shot['timestamp']
+
+    return data_dic

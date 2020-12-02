@@ -12,6 +12,7 @@ from rest.functions.gameheader import gameheader_get
 from rest.functions.match import match_info_get
 from rest.functions.corsi import gameshots5v5_get
 from rest.functions.helper import pctg_float_get
+from rest.functions.shot import shot_list_get, rebound_breaks_get
 
 def teammatchstat_add(logger, match_dic):
     """ add team to database """
@@ -20,6 +21,9 @@ def teammatchstat_add(logger, match_dic):
     match_id = match_dic['match_id']
 
     match_info_dic = match_info_get(logger, match_id, None)
+    shot_list = shot_list_get(logger, 'match_id', match_id, ['real_date', 'shot_id', 'match_id', 'timestamp', 'match_shot_resutl_id', 'team_id', 'player__first_name', 'player__last_name', 'zone', 'coordinate_x', 'coordinate_y', 'player__jersey'])
+    # rebounds and breaks
+    rb_dic = rebound_breaks_get(logger, shot_list, match_info_dic)
 
     result_list = []
     for team in ['home', 'visitor']:
@@ -32,7 +36,7 @@ def teammatchstat_add(logger, match_dic):
             team_id = match_info_dic['visitor_team_id']
 
         # get corsi statistics
-        (shots_for_5v5, shots_against_5v5, shots_ongoal_for_5v5, shots_ongoal_against_5v5) = gameshots5v5_get(logger, match_id, match_info_dic, team)
+        (shots_for_5v5, shots_against_5v5, shots_ongoal_for_5v5, shots_ongoal_against_5v5) = gameshots5v5_get(logger, match_id, match_info_dic, team, shot_list)
 
         game_header = gameheader_get(logger, 'match_id', match_id, ['gameheader'])
         if 'lastEventTime' in game_header:
@@ -61,10 +65,18 @@ def teammatchstat_add(logger, match_dic):
             'saves': match_dic[team]['saves'],
             'saves_pctg': pctg_float_get(match_dic[team]['saves'], match_dic[o_team]['shotsOnGoal']),
             'faceoffswon': match_dic[team]['faceOffsWon'],
-            'faceoffslost': match_dic[o_team]['faceOffsWon'],            
+            'faceoffslost': match_dic[o_team]['faceOffsWon'],
             'faceoffswon_pctg': match_dic[team]['faceOffsWonPercent'],
             'penaltyminutes': match_dic[team]['penaltyMinutes'],
             'powerplayseconds': match_dic[team]['powerPlaySeconds'],
+            'rebounds_for': rb_dic[team]['rebounds'],
+            'rebounds_against': rb_dic[o_team]['rebounds'],
+            'goals_rebound_for': rb_dic[team]['rebound_goals'],
+            'goals_rebound_agains': rb_dic[o_team]['rebound_goals'],
+            'breaks_for': rb_dic[team]['breaks'],
+            'breaks_against': rb_dic[o_team]['breaks'],
+            'goals_break_for': rb_dic[team]['break_goals'],
+            'goals_break_against': rb_dic[o_team]['break_goals'],  
         }
 
         try:
