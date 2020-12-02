@@ -73,8 +73,8 @@ class TeamstatAdmin(admin.ModelAdmin):
 
 class TeammatchstatAdmin(admin.ModelAdmin):
     """ admin class for teammatchstat """
-    fields = ['match', 'team', 'goals_for', 'goals_against', 'goals_pp', 'goals_sh', 'shots_for', 'shots_for_5v5', 'shots_ongoal_for', 'shots_ongoal_for_5v5', 'shots_ongoal_pctg', 'shots_against', 'shots_against_5v5', 'shots_ongoal_against', 'shots_ongoal_against_5v5', 'saves', 'saves_pctg', 'faceoffswon', 'faceoffswon_pctg', 'penaltyminutes', 'powerplayseconds']
-    list_display = ['match', 'team', 'goals_for', 'goals_against', 'goals_pp', 'goals_sh', 'shots_for', 'shots_for_5v5', 'shots_ongoal_for', 'shots_ongoal_for_5v5', 'shots_ongoal_pctg', 'shots_against', 'shots_against_5v5', 'shots_ongoal_against', 'shots_ongoal_against_5v5', 'saves', 'saves_pctg', 'faceoffswon', 'faceoffswon_pctg', 'penaltyminutes', 'powerplayseconds']
+    fields = ['match', 'team', 'goals_for', 'goals_against', 'goals_pp', 'goals_sh', 'shots_for', 'shots_for_5v5', 'shots_ongoal_for', 'shots_ongoal_for_5v5', 'shots_ongoal_pctg', 'shots_against', 'shots_against_5v5', 'shots_ongoal_against', 'shots_ongoal_against_5v5', 'saves', 'saves_pctg', 'faceoffswon', 'faceoffslost', 'faceoffswon_pctg', 'penaltyminutes', 'powerplayseconds']
+    list_display = ['match', 'team', 'goals_for', 'goals_against', 'goals_pp', 'goals_sh', 'shots_for', 'shots_for_5v5', 'shots_ongoal_for', 'shots_ongoal_for_5v5', 'shots_ongoal_pctg', 'shots_against', 'shots_against_5v5', 'shots_ongoal_against', 'shots_ongoal_against_5v5', 'saves', 'saves_pctg', 'faceoffswon', 'faceoffslost', 'faceoffswon_pctg', 'penaltyminutes', 'powerplayseconds']
     ordering = ['match_id', 'team_id']
 
 admin.site.register(Match, MatchAdmin)

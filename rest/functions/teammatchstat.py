@@ -61,6 +61,7 @@ def teammatchstat_add(logger, match_dic):
             'saves': match_dic[team]['saves'],
             'saves_pctg': pctg_float_get(match_dic[team]['saves'], match_dic[o_team]['shotsOnGoal']),
             'faceoffswon': match_dic[team]['faceOffsWon'],
+            'faceoffslost': match_dic[o_team]['faceOffsWon'],            
             'faceoffswon_pctg': match_dic[team]['faceOffsWonPercent'],
             'penaltyminutes': match_dic[team]['penaltyMinutes'],
             'powerplayseconds': match_dic[team]['powerPlaySeconds'],
