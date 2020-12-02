@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """ list of functions for faceoff statistics """
-from rest.functions.chartparameters import plotlines_color, chart_color6
+from rest.functions.chartparameters import plotlines_color, chart_color6, title, font_size
 from rest.functions.corsi import pace_chartseries_get
 from rest.functions.helper import list_sumup, pctg_float_get
 
@@ -61,7 +61,7 @@ def faceoff_overview_get(logger, ismobile, teamstat_dic, teams_dic):
 
     return faceoff_chartseries_dic
 
-def faceoffs_updates_get(logger, title, data_dic):
+def faceoffs_updates_get(logger, ctitle, data_dic):
     """ get data for slider update """
     logger.debug('faceoffs_updates_get()')
 
@@ -79,7 +79,7 @@ def faceoffs_updates_get(logger, title, data_dic):
                     'data': data_dic[ele]['data']
                 }],
                 'yAxis': {
-                    'title': title,
+                    'title': title(ctitle, font_size),
                     'min': data_dic[ele]['y_min_minmax'] - 2,
                     'max':  data_dic[ele]['y_max_minmax'] + 2,
                     'plotBands': [{'from':  data_dic[ele]['y_avg'] -  data_dic[ele]['y_deviation']/2, 'to':  data_dic[ele]['y_avg'] +  data_dic[ele]['y_deviation']/2, 'color': chart_color6}],
