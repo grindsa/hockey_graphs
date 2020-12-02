@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """ list of functions for team comparison """
-from rest.functions.helper import pctg_float_get, list_sumup, _deviation_avg_get
+from rest.functions.helper import pctg_float_get, list_sumup, deviation_avg_get
 from rest.functions.chartparameters import chart_color1, chart_color3, chart_color6, plotlines_color, title, font_size
 
 def pdo_breakdown_data_get(logger, ismobile, teamstat_dic, teams_dic):
@@ -61,7 +61,7 @@ def pdo_breakdown_data_get(logger, ismobile, teamstat_dic, teams_dic):
 
     # add standard deviation
     for ele in chartseries_dic:
-        deviation_dic = _deviation_avg_get(logger, chartseries_dic[ele]['data'], ['x', 'y'])
+        deviation_dic = deviation_avg_get(logger, chartseries_dic[ele]['data'], ['x', 'y'])
         chartseries_dic[ele]['x_deviation'] = deviation_dic['x']['std_deviation']
         chartseries_dic[ele]['y_deviation'] = deviation_dic['y']['std_deviation']
         chartseries_dic[ele]['x_min'] = deviation_dic['x']['min']

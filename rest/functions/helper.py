@@ -238,7 +238,7 @@ def shot_leaffan_sync(shot, ltime, ldate):
 
     return (process_shot, ltime, ldate)
 
-def _deviation_avg_get(logger, input_list, value_list=None):
+def deviation_avg_get(logger, input_list, value_list=None):
     logger.debug('_deviation_add()')
 
     _tmp_lake = {}

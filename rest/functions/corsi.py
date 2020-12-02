@@ -5,7 +5,7 @@ from rest.functions.timeline import skatersonice_get, penalties_include
 from rest.functions.periodevent import scorersfromevents_get
 from rest.functions.shift import shift_get
 from rest.functions.shot import shot_list_get
-from rest.functions.helper import shot_leaffan_sync, list_sumup, _deviation_avg_get, minmax_get
+from rest.functions.helper import shot_leaffan_sync, list_sumup, deviation_avg_get, minmax_get
 from rest.functions.periodevent import periodevent_get
 from rest.functions.chartparameters import chart_color6, plotlines_color, title, font_size
 
@@ -286,7 +286,7 @@ def pace_chartseries_get(logger, data_dic, minmax=False):
             chartseries_dic[ele]['data'].append(datapoint)
 
         # get statistic values we need
-        deviation_dic = _deviation_avg_get(logger, chartseries_dic[ele]['data'], ['x', 'y'])
+        deviation_dic = deviation_avg_get(logger, chartseries_dic[ele]['data'], ['x', 'y'])
 
         for value in deviation_dic:
             chartseries_dic[ele]['{0}_deviation'.format(value)] = deviation_dic[value]['std_deviation']
