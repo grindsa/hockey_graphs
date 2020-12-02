@@ -7,16 +7,18 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "hockey_graphs.settings")
 import django
 django.setup()
+from rest.functions.corsi import pace_data_get, pace_updates_get, shotrates_updates_get
+from rest.functions.faceoff import faceoff_overview_get, faceoffs_updates_get
+from rest.functions.faceoffcharts import faceoff_overview_chart
 from rest.functions.helper import mobile_check
+from rest.functions.pdo import pdo_breakdown_data_get, pdo_overview_data_get, breakdown_updates_get, overview_updates_get
+from rest.functions.pdocharts import pdo_breakdown_chart, pdo_overview_chart
 from rest.functions.season import seasonid_get
+from rest.functions.shotcharts import pace_chart_get, shotrates_chart_get, shotshare_chart_get
 # from rest.functions.bananachart import banana_chart1_create, banana_chart2_create
 from rest.functions.team import team_dic_get
 from rest.functions.teammatchstat import teammatchstats_get
 from rest.functions.teamstat import teamstat_dic_get
-from rest.functions.pdo import pdo_breakdown_data_get, pdo_overview_data_get, breakdown_updates_get, overview_updates_get
-from rest.functions.pdocharts import pdo_breakdown_chart, pdo_overview_chart
-from rest.functions.corsi import pace_data_get, pace_updates_get, shotrates_updates_get
-from rest.functions.shotcharts import pace_chart_get, shotrates_chart_get, shotshare_chart_get
 
 def teamcomparison_get(logger, request, fkey=None, fvalue=None):
     """ matchstatistics grouped by days """
@@ -36,11 +38,13 @@ def teamcomparison_get(logger, request, fkey=None, fvalue=None):
     result = []
 
     # create PDO breakdown chart
-    # pylint: disable=E0602
     result.extend(_pdo_breakdown_get(logger, ismobile, teamstat_dic, teams_dic))
 
-    # pylint: disable=E0602
+    # 5on5 shotcharts
     result.extend(_5v5_pace_get(logger, ismobile, teamstat_dic, teams_dic))
+
+    # faceoff wins
+    result.append(_faceoff_pctg_get(logger, ismobile, teamstat_dic, teams_dic))
 
     return result
 
@@ -116,5 +120,20 @@ def _pdo_breakdown_get(logger, ismobile, teamstat_dic, teams_dic):
     }
     stat_entry_list.append(stat_entry)
 
-
     return stat_entry_list
+
+def _faceoff_pctg_get(logger, ismobile, teamstat_dic, teams_dic):
+    """ faceoff wins """
+    logger.debug('_faceoff_pctg_get()')
+
+    faceoff_dic = faceoff_overview_get(logger, ismobile, teamstat_dic, teams_dic)
+
+    # pylint: disable=E0602
+    title = _('Faceoff win percentage')
+    stat_entry = {
+        'title': title,
+        'chart': faceoff_overview_chart(logger, title, faceoff_dic[len(faceoff_dic.keys())]),
+        'updates': faceoffs_updates_get(logger, title, faceoff_dic)
+    }
+
+    return stat_entry

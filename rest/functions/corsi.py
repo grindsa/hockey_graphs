@@ -5,7 +5,7 @@ from rest.functions.timeline import skatersonice_get, penalties_include
 from rest.functions.periodevent import scorersfromevents_get
 from rest.functions.shift import shift_get
 from rest.functions.shot import shot_list_get
-from rest.functions.helper import shot_leaffan_sync, list_sumup, _deviation_avg_get
+from rest.functions.helper import shot_leaffan_sync, list_sumup, _deviation_avg_get, minmax_get
 from rest.functions.periodevent import periodevent_get
 from rest.functions.chartparameters import chart_color6, plotlines_color, title, font_size
 
@@ -243,12 +243,10 @@ def pace_data_get(logger, ismobile, teamstat_dic, teams_dic):
                 'y': ele['sum_shots_for_5v5_60'] - ele['sum_shots_against_5v5_60']
             })
 
-
     # build final dictionary
-    pace_chartseries_dic = _pace_chartseries_get(logger, pace_lake)
-    shotrate_chartseries_dic = _pace_chartseries_get(logger, shot_rate_lake)
-    shotshare_chartseries_dic = _pace_chartseries_get(logger, shot_share_lake)
-
+    pace_chartseries_dic = pace_chartseries_get(logger, pace_lake)
+    shotrate_chartseries_dic = pace_chartseries_get(logger, shot_rate_lake)
+    shotshare_chartseries_dic = pace_chartseries_get(logger, shot_share_lake)
 
     return (pace_chartseries_dic, shotrate_chartseries_dic, shotshare_chartseries_dic)
 
@@ -278,7 +276,7 @@ def _pace_sumup(logger, teamstat_dic):
 
     return (pace_sum_dic, update_amount)
 
-def _pace_chartseries_get(logger, data_dic):
+def pace_chartseries_get(logger, data_dic, minmax=False):
     """ build structure for chart series """
     logger.debug('pace_chartseries_get()')
     chartseries_dic = {}
@@ -295,6 +293,11 @@ def _pace_chartseries_get(logger, data_dic):
             chartseries_dic[ele]['{0}_min'.format(value)] = deviation_dic[value]['min']
             chartseries_dic[ele]['{0}_max'.format(value)] = deviation_dic[value]['max']
             chartseries_dic[ele]['{0}_avg'.format(value)] = deviation_dic[value]['average']
+
+            if minmax:
+                (min_, max_) = minmax_get(deviation_dic[value]['min'], deviation_dic[value]['max'], deviation_dic[value]['average'])
+                chartseries_dic[ele]['{0}_min_minmax'.format(value)] = min_
+                chartseries_dic[ele]['{0}_max_minmax'.format(value)] = max_
 
     return chartseries_dic
 
@@ -343,6 +346,7 @@ def shotrates_updates_get(logger, data_dic):
                     'data': data_dic[ele]['data']
                 }],
                 'xAxis': {
+                    # pylint: disable=E0602
                     'title': title(_('Corsi For per 60 minutes at 5v5 (Cf/60)'), font_size),
                     'min': data_dic[ele]['x_min'] - 1,
                     'max':  data_dic[ele]['x_max'] + 1,
@@ -350,6 +354,7 @@ def shotrates_updates_get(logger, data_dic):
                     'plotLines': [{'zIndex': 3, 'color': plotlines_color, 'width': 2, 'value':  data_dic[ele]['x_avg']}],
                 },
                 'yAxis': {
+                    # pylint: disable=E0602
                     'title': title(_('Corsi Against per 60 minutes at 5v5 (Ca/60)'), font_size),
                     'min': data_dic[ele]['y_min'] - 1,
                     'max':  data_dic[ele]['y_max'] + 1,

@@ -258,3 +258,18 @@ def _deviation_avg_get(logger, input_list, value_list=None):
             deviation_dic[value] = {'std_deviation': round(np.std(_tmp_lake[value]), 2), 'average': round(np.mean(_tmp_lake[value]), 2), 'min': np.amin(_tmp_lake[value]), 'max': np.amax(_tmp_lake[value])}
 
     return deviation_dic
+
+def minmax_get(minval, maxval, average):
+    """ define min/max based on avarage """
+
+    minabs = round(abs(maxval - average), 0)
+    maxabs = round(abs(minval - average), 0)
+
+    if maxabs > minabs:
+        newmin = average - maxabs
+        newmax = average + maxabs
+    else:
+        newmin = average - minabs
+        newmax = average + minabs
+
+    return (newmin, newmax)
