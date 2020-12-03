@@ -112,6 +112,21 @@ def responsive_y1():
         }]
     }
 
+
+def responsive_y1_label():
+    """ options for responsiveness """
+    return {
+        'rules': [{
+            'condition': {'maxWidth': 500},
+            'chartOptions': {
+                'legend': {'verticalAlign': legend_valign_mobile, 'layout': 'horizontal', 'itemStyle': {'font-size': font_size_mobile}},
+                'xAxis': {'title': {'style': {'font-size': font_size_mobile}}, 'labels': {'style': {'fontSize': font_size_mobile}}},
+                'yAxis': {'title': {'style': {'font-size': font_size_mobile}}, 'labels': {'style': {'fontSize': font_size_mobile}}},
+                'plotOptions': {'series': {'dataLabels': {'enabled': 1,  'style': {'fontSize': font_size_mobile}}}},
+            }
+        }]
+    }
+
 def responsive_y2():
     """ options for responsiveness """
     return {

@@ -2,7 +2,7 @@
 """ list of functions for shots """
 import math
 # pylint: disable=E0401
-from rest.functions.chartparameters import credit, exporting, responsive_gameflow, responsive_y1, responsive_y2, responsive_bubble, plotoptions_marker_disable, title, legend, tooltip, labels, font_size, font_size_mobile, legend_valign_mobile, corner_annotations
+from rest.functions.chartparameters import credit, exporting, responsive_gameflow, responsive_y1, responsive_y1_label, responsive_y2, responsive_bubble, plotoptions_marker_disable, title, legend, tooltip, labels, font_size, font_size_mobile, legend_valign_mobile, corner_annotations
 from rest.functions.chartparameters import text_color, plotlines_color, chart_color1, chart_color2, chart_color3, chart_color4, chart_color5, chart_color6, chart_color8, chart_color9, shot_missed_color, shot_blocked_color, shot_goal_color, shot_sog_color, line_color, line1_color, line2_color, line3_color, line4_color, line5_color
 
 # pylint: disable=R0914
@@ -924,4 +924,54 @@ def shotshare_chart_get(logger, ctitle, shotshare_dic):
 
     }
 
+    return chart_options
+
+def rebound_overview_chart(logger, ctitle, data_dic):
+    """ create chart for rebound statistics """
+    # pylint: disable=E0602
+    logger.debug('rebound_overview_chart()')
+
+    chart_options = {
+
+        'chart': {
+            'type': 'bar',
+            'height': '120%',
+        },
+
+        'exporting': exporting(filename=ctitle),
+        'title': title(''),
+        'credits': credit('Nach einer Idee von @h_modes', 'https://twitter.com/h_modes'),
+        'legend': legend(),
+        'responsive': responsive_y1_label(),
+
+        # 'plotOptions': { 'series': {'stacking': 'normal'}},
+        'plotOptions': {
+            'series': {
+                'dataLabels': {
+                    'enabled': 1,
+                    'format': '{y} %'
+                }
+            }
+        },
+
+        'xAxis': [{
+            'categories': data_dic['x_category'],
+            'title': title(''),
+            'maxPadding': 0.1,
+            'labels': {'style': {'fontSize': font_size},},
+            },
+        ],
+
+        'yAxis': [
+            {
+                'title': title(_('Rebounds'), font_size),
+                'maxPadding': 0.1,
+                'labels': {'style': {'fontSize': font_size},},
+            }],
+
+        'series': [
+            {'index': 0, 'name': _('leading to own goal'), 'data': data_dic['goals_rebound_for_pctg'], 'color': chart_color3},
+            {'index': 1, 'name': _('leading to goal against'), 'data': data_dic['goals_rebound_against_pctg'], 'color': chart_color2},
+        ]
+    }
     return chart_options

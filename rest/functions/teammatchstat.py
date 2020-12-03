@@ -72,11 +72,11 @@ def teammatchstat_add(logger, match_dic):
             'rebounds_for': rb_dic[team]['rebounds'],
             'rebounds_against': rb_dic[o_team]['rebounds'],
             'goals_rebound_for': rb_dic[team]['rebound_goals'],
-            'goals_rebound_agains': rb_dic[o_team]['rebound_goals'],
+            'goals_rebound_against': rb_dic[o_team]['rebound_goals'],
             'breaks_for': rb_dic[team]['breaks'],
             'breaks_against': rb_dic[o_team]['breaks'],
             'goals_break_for': rb_dic[team]['break_goals'],
-            'goals_break_against': rb_dic[o_team]['break_goals'],  
+            'goals_break_against': rb_dic[o_team]['break_goals'],
         }
 
         try:
@@ -85,7 +85,7 @@ def teammatchstat_add(logger, match_dic):
             obj.save()
             result_list.append(obj.id)
         except BaseException as err_:
-            logger.critical('error in teammatchstat_add(): {0}'.format(err_))
+            logger.critical('ERROR in teammatchstat_add(): {0}'.format(err_))
             result_list.append(None)
 
     logger.debug('teammatchstat_add() ended with: {0}'.format(result_list))

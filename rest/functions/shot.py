@@ -10,7 +10,7 @@ import django
 django.setup()
 from shapely.geometry import Point
 from rest.models import Shot
-from rest.functions.helper import maxval_get
+from rest.functions.helper import maxval_get, list_sumup
 import functions.rink_dimensions as rd
 
 def _shoot_coordinates_convert(logger, coordinate_x, coordinate_y):
@@ -445,3 +445,84 @@ def rebound_breaks_get(logger, shot_list, matchinfo_dic):
         prev_time = shot['timestamp']
 
     return data_dic
+
+def _rebound_sumup(logger, teamstat_dic):
+    """ sum up faceoff statistics """
+    logger.debug('_faceoff_sumup()')
+
+    update_amount = 0
+    teamstat_sum_dic = {}
+
+    for team_id in teamstat_dic:
+        # sumup data per team
+        teamstat_sum_dic[team_id] = list_sumup(logger, teamstat_dic[team_id], ['match_id', 'rebounds_for', 'rebounds_against', 'goals_rebound_for', 'goals_rebound_against'])
+        # check how many items we have to create in update_dic
+        if update_amount < len(teamstat_sum_dic[team_id]):
+            update_amount = len(teamstat_sum_dic[team_id])
+
+    return (teamstat_sum_dic, update_amount)
+
+def rebound_overview_get(logger, ismobile, teamstat_dic, teams_dic):
+    """ collect data for rebound overview chart """
+    logger.debug('rebound_overview_get()')
+
+    if ismobile:
+        image_width = 25
+        image_height = 25
+    else:
+        image_width = 40
+        image_height = 40
+
+    # get summary
+    (reboundsum_dic, update_amount) = _rebound_sumup(logger, teamstat_dic)
+
+    # build temporary dictionary for date. we build the final sorted in next step
+    rebound_lake = {}
+    for ele in range(1, update_amount+1):
+        rebound_lake[ele] = []
+
+    for team_id in reboundsum_dic:
+        # harmonize lengh by adding list elements at the beginning
+        if len(reboundsum_dic[team_id]) < update_amount:
+            for ele in range(0, update_amount - len(reboundsum_dic[team_id])):
+                reboundsum_dic[team_id].insert(0, reboundsum_dic[team_id][0])
+
+        for idx, ele in enumerate(reboundsum_dic[team_id], 1):
+
+            if ele['sum_rebounds_for']:
+                goals_rebound_for_pctg = round(ele['sum_goals_rebound_for'] * 100 / ele['sum_rebounds_for'], 2)
+            else:
+                goals_rebound_for_pctg = 0.00
+            if ele['sum_rebounds_against']:
+                goals_rebound_against_pctg = round(ele['sum_goals_rebound_against'] * 100 / ele['sum_rebounds_against'], 2)
+            else:
+                goals_rebound_against_pctg = 0.00
+
+            rebound_lake[idx].append({
+                'team_name': teams_dic[team_id]['team_name'],
+                'shortcut':  teams_dic[team_id]['shortcut'],
+                'rebounds_for': ele['sum_rebounds_for'],
+                'rebounds_against': ele['sum_rebounds_against'],
+                'goals_rebound_for': ele['sum_goals_rebound_for'],
+                'goals_rebound_against': ele['sum_goals_rebound_against'],
+                'goals_rebound_for_pctg':  goals_rebound_for_pctg,
+                'goals_rebound_against_pctg':  goals_rebound_against_pctg
+            })
+
+    # build final dictionary
+    rebound_chartseries_dic = _rebound_chartseries_get(logger, rebound_lake)
+
+    return rebound_chartseries_dic
+
+def _rebound_chartseries_get(logger, data_dic, minmax=False):
+    """ build structure for chart series """
+    logger.debug('_rebound_chartseries_get()')
+    chartseries_dic = {}
+    for ele in data_dic:
+        chartseries_dic[ele] = {'x_category': [], 'goals_rebound_for_pctg': [], 'goals_rebound_against_pctg': []}
+        for datapoint in sorted(data_dic[ele], key=lambda i: i['goals_rebound_for_pctg'], reverse=True):
+            chartseries_dic[ele]['x_category'].append(datapoint['shortcut'])
+            chartseries_dic[ele]['goals_rebound_for_pctg'].append(datapoint['goals_rebound_for_pctg'])
+            chartseries_dic[ele]['goals_rebound_against_pctg'].append(datapoint['goals_rebound_against_pctg'])
+
+    return chartseries_dic
