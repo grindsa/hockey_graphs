@@ -14,11 +14,14 @@ from rest.functions.helper import mobile_check
 from rest.functions.pdo import pdo_breakdown_data_get, pdo_overview_data_get, breakdown_updates_get, overview_updates_get
 from rest.functions.pdocharts import pdo_breakdown_chart, pdo_overview_chart
 from rest.functions.season import seasonid_get
-from rest.functions.shotcharts import pace_chart_get, shotrates_chart_get, shotshare_chart_get
+from rest.functions.shotcharts import pace_chart_get, shotrates_chart_get, shotshare_chart_get, rebound_overview_chart
 # from rest.functions.bananachart import banana_chart1_create, banana_chart2_create
+from rest.functions.shot import rebound_overview_get
 from rest.functions.team import team_dic_get
 from rest.functions.teammatchstat import teammatchstats_get
 from rest.functions.teamstat import teamstat_dic_get
+from rest.functions.heatmap import teamcomparison_hmdata_get
+from rest.functions.heatmapcharts import teamcomparison_chart_get
 
 def teamcomparison_get(logger, request, fkey=None, fvalue=None):
     """ matchstatistics grouped by days """
@@ -37,16 +40,37 @@ def teamcomparison_get(logger, request, fkey=None, fvalue=None):
 
     result = []
 
+    result.append(_teamcomparison_heatmap_get(logger, ismobile, teamstat_dic, teams_dic))
+
     # create PDO breakdown chart
-    result.extend(_pdo_breakdown_get(logger, ismobile, teamstat_dic, teams_dic))
+    #result.extend(_pdo_breakdown_get(logger, ismobile, teamstat_dic, teams_dic))
 
     # 5on5 shotcharts
-    result.extend(_5v5_pace_get(logger, ismobile, teamstat_dic, teams_dic))
+    #result.extend(_5v5_pace_get(logger, ismobile, teamstat_dic, teams_dic))
 
     # faceoff wins
-    result.append(_faceoff_pctg_get(logger, ismobile, teamstat_dic, teams_dic))
+    #result.append(_faceoff_pctg_get(logger, ismobile, teamstat_dic, teams_dic))
+
+    # rebound efficentcy
+    # result.append(_rebound_pctg_get(logger, ismobile, teamstat_dic, teams_dic))
 
     return result
+
+def _teamcomparison_heatmap_get(logger, ismobile, teamstat_dic, teams_dic):
+    """ build structure for pace chart """
+    logger.debug('_5v5_pace_get()')
+
+    heatmap_data = teamcomparison_hmdata_get(logger, ismobile, teamstat_dic, teams_dic)
+
+    # team heatmap
+    title = _('Team heatmaps'),
+    stat_entry = {
+        'title': title,
+        'chart':  teamcomparison_chart_get(logger, title, heatmap_data[len(heatmap_data.keys())]),
+        'updates': {}
+    }
+
+    return stat_entry
 
 def _5v5_pace_get(logger, ismobile, teamstat_dic, teams_dic):
     """ build structure for pace chart """
@@ -134,6 +158,23 @@ def _faceoff_pctg_get(logger, ismobile, teamstat_dic, teams_dic):
         'title': title,
         'chart': faceoff_overview_chart(logger, title, faceoff_dic[len(faceoff_dic.keys())]),
         'updates': faceoffs_updates_get(logger, title, faceoff_dic)
+    }
+
+    return stat_entry
+
+def _rebound_pctg_get(logger, ismobile, teamstat_dic, teams_dic):
+    """ faceoff wins """
+    logger.debug('_faceoff_pctg_get()')
+
+    rebound_dic = rebound_overview_get(logger, ismobile, teamstat_dic, teams_dic)
+
+    # pylint: disable=E0602
+    title = _('Rebound efficiency')
+    stat_entry = {
+        'title': title,
+        'chart': rebound_overview_chart(logger, title, rebound_dic[len(rebound_dic.keys())]),
+        # 'updates': faceoffs_updates_get(logger, title, faceoff_dic)
+        'updates':  {}
     }
 
     return stat_entry

@@ -954,20 +954,19 @@ def rebound_overview_chart(logger, ctitle, data_dic):
             }
         },
 
-        'xAxis': [{
+        'xAxis': {
             'categories': data_dic['x_category'],
             'title': title(''),
             'maxPadding': 0.1,
             'labels': {'style': {'fontSize': font_size},},
-            },
-        ],
+        },
 
-        'yAxis': [
-            {
-                'title': title(_('Rebounds'), font_size),
-                'maxPadding': 0.1,
-                'labels': {'style': {'fontSize': font_size},},
-            }],
+        'yAxis': {
+            'title': title(_('Rebound percentage'), font_size),
+            'maxPadding': 0.1,
+            'labels': {'style': {'fontSize': font_size}},
+            'tickInterval': 5,
+        },
 
         'series': [
             {'index': 0, 'name': _('leading to own goal'), 'data': data_dic['goals_rebound_for_pctg'], 'color': chart_color3},
