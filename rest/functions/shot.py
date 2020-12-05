@@ -11,6 +11,7 @@ django.setup()
 from shapely.geometry import Point
 from rest.models import Shot
 from rest.functions.helper import maxval_get, list_sumup
+from rest.functions.chartparameters import chart_color2, chart_color3, title
 import functions.rink_dimensions as rd
 
 def _shoot_coordinates_convert(logger, coordinate_x, coordinate_y):
@@ -323,8 +324,6 @@ def shotsperzone_count(logger, shot_list, matchinfo_dic):
 
     for shot in shot_list:
 
-        # timestamp of shot
-        sec_ = shot['timestamp']
         # get min out of seconds
         min_ = math.ceil(shot['timestamp']/60)
         # cornercase handling and period
@@ -373,8 +372,8 @@ def shotsperzone_aggregate(logger, shotzone_dic, match_info_dic):
     return shotzonesum_dic
 
 def shotcoordinates_get(logger, shot_list, matchinfo_dic):
+    """ get shootcoordindates """
     logger.debug('shotcoordinates_get()')
-
     shotmap_dic = {'home_team': [], 'visitor_team': []}
 
     for shot in shot_list:
@@ -515,7 +514,7 @@ def rebound_overview_get(logger, ismobile, teamstat_dic, teams_dic):
 
     return rebound_chartseries_dic
 
-def _rebound_chartseries_get(logger, data_dic, minmax=False):
+def _rebound_chartseries_get(logger, data_dic):
     """ build structure for chart series """
     logger.debug('_rebound_chartseries_get()')
     chartseries_dic = {}
@@ -597,7 +596,7 @@ def _break_sumup(logger, teamstat_dic):
 
     return (teamstat_sum_dic, update_amount)
 
-def _break_chartseries_get(logger, data_dic, minmax=False):
+def _break_chartseries_get(logger, data_dic):
     """ build structure for chart series """
     logger.debug('_break_chartseries_get()')
     chartseries_dic = {}
@@ -609,3 +608,22 @@ def _break_chartseries_get(logger, data_dic, minmax=False):
             chartseries_dic[ele]['goals_break_against_pctg'].append(datapoint['goals_break_against_pctg'])
 
     return chartseries_dic
+
+def rebound_updates_get(logger, _ctitle, data_dic, key1, key2):
+    """ build structure for chart updates """
+    logger.debug('rebound_updates_get()')
+
+    updates_dic = {}
+    for ele in data_dic:
+        updates_dic[ele] = {
+            'chartoptions':  {
+                'xAxis': {'categories': data_dic[ele]['x_category'], 'title': title(''), 'maxPadding': 0.1, 'labels': {'useHTML': 1, 'align': 'center'}},
+                'series': [
+                    # pylint: disable=E0602
+                    {'index': 0, 'name': _('leading to own goal'), 'data': data_dic[ele][key1], 'color': chart_color3},
+                    {'index': 1, 'name': _('leading to goal against'), 'data': data_dic[ele][key2], 'color': chart_color2},
+                ]
+            }
+        }
+
+    return updates_dic

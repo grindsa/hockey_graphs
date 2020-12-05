@@ -16,11 +16,11 @@ from rest.functions.pdocharts import pdo_breakdown_chart, pdo_overview_chart
 from rest.functions.season import seasonid_get
 from rest.functions.shotcharts import pace_chart_get, shotrates_chart_get, shotshare_chart_get, rebound_overview_chart, break_overview_chart
 # from rest.functions.bananachart import banana_chart1_create, banana_chart2_create
-from rest.functions.shot import rebound_overview_get, break_overview_get
+from rest.functions.shot import rebound_overview_get, break_overview_get, rebound_updates_get
 from rest.functions.team import team_dic_get
 from rest.functions.teammatchstat import teammatchstats_get
 from rest.functions.teamstat import teamstat_dic_get
-from rest.functions.heatmap import teamcomparison_hmdata_get
+from rest.functions.heatmap import teamcomparison_hmdata_get, teamcomparison_updates_get
 from rest.functions.heatmapcharts import teamcomparison_chart_get
 
 def teamcomparison_get(logger, request, fkey=None, fvalue=None):
@@ -66,11 +66,12 @@ def _teamcomparison_heatmap_get(logger, ismobile, teamstat_dic, teams_dic):
     heatmap_data = teamcomparison_hmdata_get(logger, ismobile, teamstat_dic, teams_dic)
 
     # team heatmap
-    title = _('Team heatmaps'),
+    # pylint: disable=E0602    
+    title = _('Team heatmaps')
     stat_entry = {
         'title': title,
         'chart':  teamcomparison_chart_get(logger, title, ismobile, heatmap_data[len(heatmap_data.keys())]),
-        'updates': {}
+        'updates': teamcomparison_updates_get(logger, title, ismobile, heatmap_data)
     }
 
     return stat_entry
@@ -86,7 +87,8 @@ def _5v5_pace_get(logger, ismobile, teamstat_dic, teams_dic):
     (pace_dic, shotrates_dic, shotshares_dic) = pace_data_get(logger, ismobile, teamstat_dic, teams_dic)
 
     # 5v5 pace chart
-    title = _('5v5 Pace (Cf/60 + Ca/60)'),
+    # pylint: disable=E0602
+    title = _('5v5 Pace (Cf/60 + Ca/60)')
     stat_entry = {
         'title': title,
         'chart':  pace_chart_get(logger, title, pace_dic[len(pace_dic.keys())]),
@@ -95,7 +97,7 @@ def _5v5_pace_get(logger, ismobile, teamstat_dic, teams_dic):
     stat_entry_list.append(stat_entry)
 
     # shotrates
-    title = _('5v5 Shot rates Cf/60 vs Ca/60'),
+    title = _('5v5 Shot rates Cf/60 vs Ca/60')
     stat_entry = {
         'title': title,
         'chart':  shotrates_chart_get(logger, title, ismobile, shotrates_dic[len(shotrates_dic.keys())]),
@@ -104,7 +106,8 @@ def _5v5_pace_get(logger, ismobile, teamstat_dic, teams_dic):
     stat_entry_list.append(stat_entry)
 
     # shotshare
-    title = _('5v5 Shot share C/60'),
+    # pylint: disable=E0602
+    title = _('5v5 Shot share C/60')
     stat_entry = {
         'title': title,
         'chart':  shotshare_chart_get(logger, title, shotshares_dic[len(shotshares_dic.keys())]),
@@ -176,8 +179,7 @@ def _rebound_pctg_get(logger, ismobile, teamstat_dic, teams_dic):
     stat_entry = {
         'title': title,
         'chart': rebound_overview_chart(logger, title, rebound_dic[len(rebound_dic.keys())]),
-        # 'updates': faceoffs_updates_get(logger, title, faceoff_dic)
-        'updates':  {}
+        'updates': rebound_updates_get(logger, title, rebound_dic, 'goals_rebound_for_pctg', 'goals_rebound_against_pctg'),
     }
 
     return stat_entry
@@ -193,8 +195,7 @@ def _break_pctg_get(logger, ismobile, teamstat_dic, teams_dic):
     stat_entry = {
         'title': title,
         'chart': break_overview_chart(logger, title, rebound_dic[len(rebound_dic.keys())]),
-        # 'updates': faceoffs_updates_get(logger, title, faceoff_dic)
-        'updates':  {}
+        'updates': rebound_updates_get(logger, title, rebound_dic, 'goals_break_for_pctg', 'goals_break_against_pctg'),
     }
 
     return stat_entry
