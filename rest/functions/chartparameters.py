@@ -5,8 +5,10 @@
 # size
 font_size = '10px'
 font_size_mobile = '8px'
-title_font_size = '12px'
-title_font_size_mobile = '12px'
+title_font_size = '18px'
+subtitle_font_size = '14px'
+title_font_size_mobile = '14px'
+subtitle_font_size_mobile = '12px'
 
 # align
 legend_valign = 'bottom'
@@ -58,7 +60,17 @@ def plotoptions_marker_disable(ele):
     """ plotoptions for spline """
     return {ele: {'marker': {'enabled': 0}}}
 
-def title(text, font_size_=title_font_size):
+def title(text, font_size_=title_font_size, decoration=False):
+    """ set title """
+    result =  {'text': text, 'style': {'color': text_color, 'font-size': font_size_}}
+
+    if decoration:
+        result['style']['fontWeight'] = 'bold'
+        result['style']['textDecoration'] = 'underline'
+
+    return result
+
+def subtitle(text, font_size_=subtitle_font_size):
     """ set title """
     return {'text': text, 'style': {'color': text_color, 'font-size': font_size_}}
 
@@ -175,10 +187,8 @@ def corner_annotations(ismobile, upper_left_text, lower_left_text, upper_right_t
 
     return result
 
-
-def color_axis(color_list=None):
+def color_axis(color_list=None, showinlegend=1):
     """ create color scheme for heatmap """
-
     if not color_list:
         color_list = ['#a90c38', '#c11b39', '#e54444', '#ec4f4a', '#e06f5b', '#f98973', '#fa8e78', '#fc9783', '#eac7bf', '#b2cfe2', '#a4cbe5', '#8bb8db', '#70a2c9', '#43719f', '#416f9d', '#2e5b87']
 
@@ -199,6 +209,16 @@ def color_axis(color_list=None):
     result = {
         'min': 0,
         'stops': stop_list,
+        'showInLegend': showinlegend,
     }
 
     return result
+
+def variables_get(ismobile):
+    """ build variables based on mobile detection """
+    if ismobile:
+        data_dic = {'border_width': 5, 'title_size': title_font_size_mobile, 'subtitle_size': subtitle_font_size_mobile}
+    else:
+        data_dic = {'border_width': 10, 'title_size': title_font_size, 'subtitle_size': subtitle_font_size}
+
+    return data_dic

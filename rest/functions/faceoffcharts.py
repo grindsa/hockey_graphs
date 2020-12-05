@@ -1,22 +1,24 @@
 # -*- coding: utf-8 -*-
 """ list of functions for faceoff charts """
-from rest.functions.chartparameters import exporting, title, credit, legend, responsive_y1
+from rest.functions.chartparameters import exporting, title, credit, legend, responsive_y1, variables_get
 from rest.functions.chartparameters import plotlines_color, chart_color6, font_size
 
-def faceoff_overview_chart(logger, ctitle, data_dic):
+def faceoff_overview_chart(logger, ctitle, ismobile, data_dic):
     """ create chart 5v5 pace """
     # pylint: disable=E0602
     logger.debug('faceoff_overview_chart()')
+
+    variable_dic = variables_get(ismobile)
 
     chart_options = {
 
         'chart': {
             'type': 'scatter',
-            'height': '60%'
+            'height': '80%'
         },
 
         'exporting': exporting(filename=ctitle),
-        'title': title(''),
+        'title': title(ctitle, variable_dic['title_size'], decoration=True),
         'credits': credit(),
         'legend': legend(),
         'responsive': responsive_y1(),

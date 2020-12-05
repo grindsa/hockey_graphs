@@ -66,11 +66,13 @@ def _teamcomparison_heatmap_get(logger, ismobile, teamstat_dic, teams_dic):
     heatmap_data = teamcomparison_hmdata_get(logger, ismobile, teamstat_dic, teams_dic)
 
     # team heatmap
-    # pylint: disable=E0602    
+    # pylint: disable=E0602
     title = _('Team heatmaps')
+    subtitle = _('A league-wide, at-a-glance look on Team performance. Red is bad, blue is good')
+
     stat_entry = {
         'title': title,
-        'chart':  teamcomparison_chart_get(logger, title, ismobile, heatmap_data[len(heatmap_data.keys())]),
+        'chart':  teamcomparison_chart_get(logger, title, subtitle, ismobile, heatmap_data[len(heatmap_data.keys())]),
         'updates': teamcomparison_updates_get(logger, title, ismobile, heatmap_data)
     }
 
@@ -88,19 +90,21 @@ def _5v5_pace_get(logger, ismobile, teamstat_dic, teams_dic):
 
     # 5v5 pace chart
     # pylint: disable=E0602
-    title = _('5v5 Pace (Cf/60 + Ca/60)')
+    title = _('5v5 "Pace" (Cf/60 + Ca/60)')
+    subtitle = _('Combined shots on own and other goal during 5-on-5 play (on 60min adjusted)')
     stat_entry = {
         'title': title,
-        'chart':  pace_chart_get(logger, title, pace_dic[len(pace_dic.keys())]),
+        'chart':  pace_chart_get(logger, title, subtitle, ismobile, pace_dic[len(pace_dic.keys())]),
         'updates': pace_updates_get(logger, pace_dic, title)
     }
     stat_entry_list.append(stat_entry)
 
     # shotrates
     title = _('5v5 Shot rates Cf/60 vs Ca/60')
+    subtitle = _('Shots generated during 5-on-5 play (on 60min adjusted)')
     stat_entry = {
         'title': title,
-        'chart':  shotrates_chart_get(logger, title, ismobile, shotrates_dic[len(shotrates_dic.keys())]),
+        'chart':  shotrates_chart_get(logger, title, subtitle, ismobile, shotrates_dic[len(shotrates_dic.keys())]),
         'updates': shotrates_updates_get(logger, shotrates_dic)
     }
     stat_entry_list.append(stat_entry)
@@ -108,9 +112,10 @@ def _5v5_pace_get(logger, ismobile, teamstat_dic, teams_dic):
     # shotshare
     # pylint: disable=E0602
     title = _('5v5 Shot share C/60')
+    subtitle = _('Each team’s share of shots taken in their games')
     stat_entry = {
         'title': title,
-        'chart':  shotshare_chart_get(logger, title, shotshares_dic[len(shotshares_dic.keys())]),
+        'chart':  shotshare_chart_get(logger, title, subtitle, subtitle, shotshares_dic[len(shotshares_dic.keys())]),
         'updates': pace_updates_get(logger, shotshares_dic, title)
     }
     stat_entry_list.append(stat_entry)
@@ -132,9 +137,10 @@ def _pdo_breakdown_get(logger, ismobile, teamstat_dic, teams_dic):
     # pdo overview
     # pylint: disable=E0602
     title = _('PDO overview')
+    subtitle = _('5v5 shooting percentage and save percentage')
     stat_entry = {
         'title': title,
-        'chart':  pdo_overview_chart(logger, title, overview_dic[len(overview_dic.keys())]),
+        'chart':  pdo_overview_chart(logger, title, subtitle, ismobile, overview_dic[len(overview_dic.keys())]),
         'updates': overview_updates_get(logger, overview_dic),
     }
     stat_entry_list.append(stat_entry)
@@ -142,10 +148,10 @@ def _pdo_breakdown_get(logger, ismobile, teamstat_dic, teams_dic):
     # pdo breakdown chart
     # pylint: disable=E0602
     title = _('PDO breakdown')
-
+    subtitle = _('luck and fun across the league')
     stat_entry = {
         'title': title,
-        'chart':  pdo_breakdown_chart(logger, title, ismobile, breakdown_dic[len(breakdown_dic.keys())]),
+        'chart':  pdo_breakdown_chart(logger, title, subtitle, ismobile, breakdown_dic[len(breakdown_dic.keys())]),
         'updates': breakdown_updates_get(logger, breakdown_dic),
     }
     stat_entry_list.append(stat_entry)
@@ -159,10 +165,10 @@ def _faceoff_pctg_get(logger, ismobile, teamstat_dic, teams_dic):
     faceoff_dic = faceoff_overview_get(logger, ismobile, teamstat_dic, teams_dic)
 
     # pylint: disable=E0602
-    title = _('Faceoff success rate')
+    title = _('Faceoff win rate')
     stat_entry = {
         'title': title,
-        'chart': faceoff_overview_chart(logger, title, faceoff_dic[len(faceoff_dic.keys())]),
+        'chart': faceoff_overview_chart(logger, title, ismobile, faceoff_dic[len(faceoff_dic.keys())]),
         'updates': faceoffs_updates_get(logger, title, faceoff_dic)
     }
 
@@ -176,9 +182,10 @@ def _rebound_pctg_get(logger, ismobile, teamstat_dic, teams_dic):
 
     # pylint: disable=E0602
     title = _('Rebound success rate')
+    subtitle = _('Percentage of rebounds leading to a goal')
     stat_entry = {
         'title': title,
-        'chart': rebound_overview_chart(logger, title, rebound_dic[len(rebound_dic.keys())]),
+        'chart': rebound_overview_chart(logger, title, subtitle, ismobile, rebound_dic[len(rebound_dic.keys())]),
         'updates': rebound_updates_get(logger, title, rebound_dic, 'goals_rebound_for_pctg', 'goals_rebound_against_pctg'),
     }
 
@@ -188,14 +195,15 @@ def _break_pctg_get(logger, ismobile, teamstat_dic, teams_dic):
     """ faceoff wins """
     logger.debug('_break_pctg_get()')
 
-    rebound_dic = break_overview_get(logger, ismobile, teamstat_dic, teams_dic)
+    break_dic = break_overview_get(logger, ismobile, teamstat_dic, teams_dic)
 
     # pylint: disable=E0602
     title = _('Break success rate')
+    subtitle = _('Percentage of breaks leading to a goal')
     stat_entry = {
         'title': title,
-        'chart': break_overview_chart(logger, title, rebound_dic[len(rebound_dic.keys())]),
-        'updates': rebound_updates_get(logger, title, rebound_dic, 'goals_break_for_pctg', 'goals_break_against_pctg'),
+        'chart': break_overview_chart(logger, title, subtitle, ismobile, break_dic[len(break_dic.keys())]),
+        'updates': rebound_updates_get(logger, title, break_dic, 'goals_break_for_pctg', 'goals_break_against_pctg'),
     }
 
     return stat_entry

@@ -1,27 +1,25 @@
 # -*- coding: utf-8 -*-
 """ list of functions for heatmaps """
 # pylint: disable=E0401
-from rest.functions.chartparameters import credit, exporting, title, color_axis, text_color
+from rest.functions.chartparameters import variables_get, text_color, font_size, credit, exporting, title, subtitle, color_axis, text_color, title_font_size, title_font_size_mobile, title_font_size_mobile, subtitle_font_size
 
-def teamcomparison_chart_get(logger, ctitle, ismobile, data_dic):
+def teamcomparison_chart_get(logger, ctitle, csubtitle, ismobile, data_dic):
     """ team comparison heatmap chart """
     logger.debug('teamcomparison_chart_get()')
 
-    if ismobile:
-        border_width = 5
-    else:
-        border_width = 10
+    variable_dic = variables_get(ismobile)
 
     chart_options = {
 
         'chart': {
             'type': 'heatmap',
-            'height': '90%',
+            'height': '110%',
             'inverted': 1,
         },
 
         'exporting': exporting(filename=ctitle, allowhtml=0),
-        'title': title(''),
+        'title': title(ctitle, variable_dic['title_size'], decoration=True),
+        'subtitle': subtitle(csubtitle, variable_dic['subtitle_size']),
         'credits': credit(),
 
         'xAxis': {
@@ -42,19 +40,26 @@ def teamcomparison_chart_get(logger, ctitle, ismobile, data_dic):
             'split': 1,
         },
 
-        'colorAxis': color_axis(),
-
         'legend': {
-            'enabled': 0
+            'align': 'center',
+            'layout': 'horizontal',
+            'verticalAlign': 'bottom',
+            'useHTML': 0,
+            'itemStyle': {'color': text_color, 'font-size': font_size},
         },
 
+        'colorAxis': color_axis(showinlegend=0),
+
         'series': [{
-            'name': '',
+            'name': _('bad'),
+            'color': '#a90c38',
+            'marker': {'symbol': 'square'},
             # 'borderWidth': 1,
             # 'borderColor': '#000000',
-            'borderWidth': border_width,
+            'borderWidth': variable_dic['border_width'],
             'borderColor': '#ffffff',
             'data': data_dic['data'],
+            'showInLegend': 0,
             'dataLabels': {
                 'enabled': 0,
                 'useHTML': 0,

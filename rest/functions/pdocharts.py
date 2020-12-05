@@ -1,21 +1,24 @@
 # -*- coding: utf-8 -*-
 """ time on ice charts """
 # pylint: disable=E0401
-from rest.functions.chartparameters import credit, exporting, responsive_y1, title, legend, font_size, plotlines_color, corner_annotations
+from rest.functions.chartparameters import credit, exporting, responsive_y1, title, subtitle, legend, font_size, plotlines_color, corner_annotations, variables_get
 from rest.functions.chartparameters import chart_color1, chart_color2, chart_color3, chart_color4, chart_color6, text_color, font_size_mobile
 
-def pdo_overview_chart(logger, ctitle, pdo_dic):
+def pdo_overview_chart(logger, ctitle, csubtitle, ismobile, pdo_dic):
     """ pdo overview """
+
+    variable_dic = variables_get(ismobile)
 
     chart_options = {
         'chart': {
             'type': 'bar',
-            'height': '100%',
+            'height': '120%',
             'alignTicks': 0,
         },
 
         'exporting': exporting(filename=ctitle),
-        'title': title(''),
+        'title': title(ctitle, variable_dic['title_size'], decoration=True),
+        'subtitle': subtitle(csubtitle, variable_dic['subtitle_size']),
         'credits': credit(),
         'legend': legend(),
         'responsive': responsive_y1(),
@@ -35,14 +38,14 @@ def pdo_overview_chart(logger, ctitle, pdo_dic):
         'xAxis': {
             'categories': pdo_dic['team_list'],
             'title': title('', font_size),
-            # 'labels': {'style': {'fontSize': font_size},},
             'labels': {'useHTML': 1, 'align': 'center'},
+            # 'labels': {'style': {'fontSize': font_size}},
         },
 
         'yAxis': {
             'title': title(_('PDO'), font_size),
             'reversedStacks': 0,
-            'labels': {'style': {'fontSize': font_size},},
+            'labels': {'style': {'fontSize': font_size}},
             'min': 50,
             'plotLines': [{'color': plotlines_color, 'width': 2, 'value': 100}],
         },
@@ -55,20 +58,23 @@ def pdo_overview_chart(logger, ctitle, pdo_dic):
 
     return chart_options
 
-def pdo_breakdown_chart(logger, ctitle, ismobile, pdo_list):
+def pdo_breakdown_chart(logger, ctitle, csubtitle, ismobile, pdo_list):
     # pylint: disable=E0602
     """ pdo breakdown """
     logger.debug('pdo_breakdown_chart()')
+
+    variable_dic = variables_get(ismobile)
 
     chart_options = {
 
         'chart': {
             'type': 'scatter',
-            'height': '100%',
+            'height': '120%',
         },
 
         'exporting': exporting(filename=ctitle),
-        'title': title(''),
+        'title': title(ctitle, variable_dic['title_size'], decoration=True),
+        'subtitle': subtitle(csubtitle, variable_dic['subtitle_size']),
         'credits': credit(),
         'legend': {'enabled': 1},
         'responsive': responsive_y1(),

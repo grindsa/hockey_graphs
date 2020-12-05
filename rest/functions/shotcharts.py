@@ -2,7 +2,7 @@
 """ list of functions for shots """
 import math
 # pylint: disable=E0401
-from rest.functions.chartparameters import credit, exporting, responsive_gameflow, responsive_y1, responsive_y1_label, responsive_y2, responsive_bubble, plotoptions_marker_disable, title, legend, tooltip, labels, font_size, font_size_mobile, legend_valign_mobile, corner_annotations
+from rest.functions.chartparameters import credit, exporting, responsive_gameflow, responsive_y1, responsive_y1_label, responsive_y2, responsive_bubble, plotoptions_marker_disable, title, subtitle, legend, tooltip, labels, font_size, font_size_mobile, legend_valign_mobile, corner_annotations, variables_get
 from rest.functions.chartparameters import text_color, plotlines_color, chart_color1, chart_color2, chart_color3, chart_color4, chart_color5, chart_color6, chart_color8, chart_color9, shot_missed_color, shot_blocked_color, shot_goal_color, shot_sog_color, line_color, line1_color, line2_color, line3_color, line4_color, line5_color
 
 # pylint: disable=R0914
@@ -739,7 +739,7 @@ def puckpossessionchart_create(logger, shotsum_dic, goal_dic, matchinfo_dic, cti
             },
         'xAxis': {
             'categories': min_list,
-            'title': title(_('Game Time'), font_size),
+            'title': title(_('Game Time'), font_size, decoration=True),
             'labels': {'style': {'fontSize': font_size},},
             'tickInterval': 5,
             'showFirstLabel': 1,
@@ -768,20 +768,23 @@ def puckpossessionchart_create(logger, shotsum_dic, goal_dic, matchinfo_dic, cti
     return chart_options
 
 
-def pace_chart_get(logger, ctitle, pace_dic):
+def pace_chart_get(logger, ctitle, csubtitle, ismobile, pace_dic):
     """ create chart 5v5 pace """
     # pylint: disable=E0602
     logger.debug('pace_chart_get()')
+
+    variable_dic = variables_get(ismobile)
 
     chart_options = {
 
         'chart': {
             'type': 'scatter',
-            'height': '60%'
+            'height': '80%'
         },
 
         'exporting': exporting(filename=ctitle),
-        'title': title(''),
+        'title': title(ctitle, variable_dic['title_size'], decoration=True),
+        'subtitle': subtitle(csubtitle, variable_dic['subtitle_size']),
         'credits': credit(),
         'legend': legend(),
         'responsive': responsive_y1(),
@@ -817,22 +820,23 @@ def pace_chart_get(logger, ctitle, pace_dic):
 
     return chart_options
 
-def shotrates_chart_get(logger, ctitle, ismobile, shotrates_dic):
+def shotrates_chart_get(logger, ctitle, csubtitle, ismobile, shotrates_dic):
     """ create chart 5v5 pace """
     # pylint: disable=E0602
     logger.debug('shotrates_chart_get()')
 
-
+    variable_dic = variables_get(ismobile)
 
     chart_options = {
 
         'chart': {
             'type': 'scatter',
-            'height': '100%',
+            'height': '120%',
         },
 
         'exporting': exporting(filename=ctitle),
-        'title': title(''),
+        'title': title(ctitle, variable_dic['title_size'], decoration=True),
+        'subtitle': subtitle(csubtitle, variable_dic['subtitle_size']),
         'credits': credit(),
         'legend': {'enabled': 1},
         'responsive': responsive_y1(),
@@ -877,20 +881,23 @@ def shotrates_chart_get(logger, ctitle, ismobile, shotrates_dic):
 
     return chart_options
 
-def shotshare_chart_get(logger, ctitle, shotshare_dic):
+def shotshare_chart_get(logger, ctitle, csubtitle, ismobile, shotshare_dic):
     """ create chart 5v5 pace """
     # pylint: disable=E0602
     logger.debug('pace_chart_get()')
+
+    variable_dic = variables_get(ismobile)
 
     chart_options = {
 
         'chart': {
             'type': 'scatter',
-            'height': '60%'
+            'height': '80%'
         },
 
         'exporting': exporting(filename=ctitle),
-        'title': title(''),
+        'title': title(ctitle, variable_dic['title_size'], decoration=True),
+        'subtitle': subtitle(csubtitle, variable_dic['subtitle_size']),
         'credits': credit(),
         'legend': legend(),
         'responsive': responsive_y1(),
@@ -926,10 +933,12 @@ def shotshare_chart_get(logger, ctitle, shotshare_dic):
 
     return chart_options
 
-def rebound_overview_chart(logger, ctitle, data_dic):
+def rebound_overview_chart(logger, ctitle, csubtitle, ismobile, data_dic):
     """ create chart for rebound statistics """
     # pylint: disable=E0602
     logger.debug('rebound_overview_chart()')
+
+    variable_dic = variables_get(ismobile)
 
     chart_options = {
 
@@ -939,7 +948,8 @@ def rebound_overview_chart(logger, ctitle, data_dic):
         },
 
         'exporting': exporting(filename=ctitle),
-        'title': title(''),
+        'title': title(ctitle, variable_dic['title_size'], decoration=True),
+        'subtitle': subtitle(csubtitle, variable_dic['subtitle_size']),
         'credits': credit('Nach einer Idee von @h_modes', 'https://twitter.com/h_modes'),
         'legend': legend(),
         'responsive': responsive_y1_label(),
@@ -975,10 +985,12 @@ def rebound_overview_chart(logger, ctitle, data_dic):
     }
     return chart_options
 
-def break_overview_chart(logger, ctitle, data_dic):
+def break_overview_chart(logger, ctitle, csubtitle, ismobile, data_dic):
     """ create chart for break statistics """
     # pylint: disable=E0602
     logger.debug('break_overview_chart()')
+
+    variable_dic = variables_get(ismobile)
 
     chart_options = {
 
@@ -988,7 +1000,8 @@ def break_overview_chart(logger, ctitle, data_dic):
         },
 
         'exporting': exporting(filename=ctitle),
-        'title': title(''),
+        'title': title(ctitle, variable_dic['title_size'], decoration=True),
+        'subtitle': subtitle(csubtitle, variable_dic['subtitle_size']),
         'credits': credit('Nach einer Idee von @h_modes', 'https://twitter.com/h_modes'),
         'legend': legend(),
         'responsive': responsive_y1_label(),
