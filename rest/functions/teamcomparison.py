@@ -14,9 +14,9 @@ from rest.functions.helper import mobile_check
 from rest.functions.pdo import pdo_breakdown_data_get, pdo_overview_data_get, breakdown_updates_get, overview_updates_get
 from rest.functions.pdocharts import pdo_breakdown_chart, pdo_overview_chart
 from rest.functions.season import seasonid_get
-from rest.functions.shotcharts import pace_chart_get, shotrates_chart_get, shotshare_chart_get, rebound_overview_chart
+from rest.functions.shotcharts import pace_chart_get, shotrates_chart_get, shotshare_chart_get, rebound_overview_chart, break_overview_chart
 # from rest.functions.bananachart import banana_chart1_create, banana_chart2_create
-from rest.functions.shot import rebound_overview_get
+from rest.functions.shot import rebound_overview_get, break_overview_get
 from rest.functions.team import team_dic_get
 from rest.functions.teammatchstat import teammatchstats_get
 from rest.functions.teamstat import teamstat_dic_get
@@ -53,6 +53,9 @@ def teamcomparison_get(logger, request, fkey=None, fvalue=None):
 
     # rebound efficentcy
     result.append(_rebound_pctg_get(logger, ismobile, teamstat_dic, teams_dic))
+
+    # rebound efficentcy
+    result.append(_break_pctg_get(logger, ismobile, teamstat_dic, teams_dic))
 
     return result
 
@@ -169,10 +172,27 @@ def _rebound_pctg_get(logger, ismobile, teamstat_dic, teams_dic):
     rebound_dic = rebound_overview_get(logger, ismobile, teamstat_dic, teams_dic)
 
     # pylint: disable=E0602
-    title = _('Rebound sucess rate')
+    title = _('Rebound success rate')
     stat_entry = {
         'title': title,
         'chart': rebound_overview_chart(logger, title, rebound_dic[len(rebound_dic.keys())]),
+        # 'updates': faceoffs_updates_get(logger, title, faceoff_dic)
+        'updates':  {}
+    }
+
+    return stat_entry
+
+def _break_pctg_get(logger, ismobile, teamstat_dic, teams_dic):
+    """ faceoff wins """
+    logger.debug('_break_pctg_get()')
+
+    rebound_dic = break_overview_get(logger, ismobile, teamstat_dic, teams_dic)
+
+    # pylint: disable=E0602
+    title = _('Break success rate')
+    stat_entry = {
+        'title': title,
+        'chart': break_overview_chart(logger, title, rebound_dic[len(rebound_dic.keys())]),
         # 'updates': faceoffs_updates_get(logger, title, faceoff_dic)
         'updates':  {}
     }

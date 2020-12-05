@@ -974,3 +974,52 @@ def rebound_overview_chart(logger, ctitle, data_dic):
         ]
     }
     return chart_options
+
+def break_overview_chart(logger, ctitle, data_dic):
+    """ create chart for break statistics """
+    # pylint: disable=E0602
+    logger.debug('break_overview_chart()')
+
+    chart_options = {
+
+        'chart': {
+            'type': 'bar',
+            'height': '120%',
+        },
+
+        'exporting': exporting(filename=ctitle),
+        'title': title(''),
+        'credits': credit('Nach einer Idee von @h_modes', 'https://twitter.com/h_modes'),
+        'legend': legend(),
+        'responsive': responsive_y1_label(),
+
+        # 'plotOptions': { 'series': {'stacking': 'normal'}},
+        'plotOptions': {
+            'series': {
+                'dataLabels': {
+                    'enabled': 1,
+                    'format': '{y} %'
+                }
+            }
+        },
+
+        'xAxis': {
+            'categories': data_dic['x_category'],
+            'title': title(''),
+            'maxPadding': 0.1,
+            'labels': {'useHTML': 1, 'align': 'center'},
+        },
+
+        'yAxis': {
+            'title': title(_('break percentage'), font_size),
+            'maxPadding': 0.1,
+            'labels': {'style': {'fontSize': font_size}},
+            'tickInterval': 5,
+        },
+
+        'series': [
+            {'index': 0, 'name': _('leading to own goal'), 'data': data_dic['goals_break_for_pctg'], 'color': chart_color3},
+            {'index': 1, 'name': _('leading to goal against'), 'data': data_dic['goals_break_against_pctg'], 'color': chart_color2},
+        ]
+    }
+    return chart_options

@@ -527,3 +527,85 @@ def _rebound_chartseries_get(logger, data_dic, minmax=False):
             chartseries_dic[ele]['goals_rebound_against_pctg'].append(datapoint['goals_rebound_against_pctg'])
 
     return chartseries_dic
+
+def break_overview_get(logger, ismobile, teamstat_dic, teams_dic):
+    """ collect data for break overview chart """
+    logger.debug('break_overview_get()')
+
+    if ismobile:
+        img_width = 20
+        img_height = 20
+    else:
+        img_width = 30
+        img_height = 30
+
+    # get summary
+    (breaksum_dic, update_amount) = _break_sumup(logger, teamstat_dic)
+
+    # build temporary dictionary for date. we build the final sorted in next step
+    break_lake = {}
+    for ele in range(1, update_amount+1):
+        break_lake[ele] = []
+
+    for team_id in breaksum_dic:
+        # harmonize lengh by adding list elements at the beginning
+        if len(breaksum_dic[team_id]) < update_amount:
+            for ele in range(0, update_amount - len(breaksum_dic[team_id])):
+                breaksum_dic[team_id].insert(0, breaksum_dic[team_id][0])
+
+        for idx, ele in enumerate(breaksum_dic[team_id], 1):
+
+            if ele['sum_breaks_for']:
+                goals_break_for_pctg = round(ele['sum_goals_break_for'] * 100 / ele['sum_breaks_for'], 2)
+            else:
+                goals_break_for_pctg = 0.00
+            if ele['sum_breaks_against']:
+                goals_break_against_pctg = round(ele['sum_goals_break_against'] * 100 / ele['sum_breaks_against'], 2)
+            else:
+                goals_break_against_pctg = 0.00
+
+            break_lake[idx].append({
+                'team_name': teams_dic[team_id]['team_name'],
+                'shortcut':  teams_dic[team_id]['shortcut'],
+                'name': '<span><img src="{0}" alt="{1}" width="{2}" height="{3}"></span>'.format(teams_dic[team_id]['team_logo'], teams_dic[team_id]['shortcut'], img_width, img_height),
+                'breaks_for': ele['sum_breaks_for'],
+                'breaks_against': ele['sum_breaks_against'],
+                'goals_break_for': ele['sum_goals_break_for'],
+                'goals_break_against': ele['sum_goals_break_against'],
+                'goals_break_for_pctg':  goals_break_for_pctg,
+                'goals_break_against_pctg':  goals_break_against_pctg
+            })
+
+    # build final dictionary
+    break_chartseries_dic = _break_chartseries_get(logger, break_lake)
+
+    return break_chartseries_dic
+
+def _break_sumup(logger, teamstat_dic):
+    """ sum up faceoff statistics """
+    logger.debug('_faceoff_sumup()')
+
+    update_amount = 0
+    teamstat_sum_dic = {}
+
+    for team_id in teamstat_dic:
+        # sumup data per team
+        teamstat_sum_dic[team_id] = list_sumup(logger, teamstat_dic[team_id], ['match_id', 'breaks_for', 'breaks_against', 'goals_break_for', 'goals_break_against'])
+        # check how many items we have to create in update_dic
+        if update_amount < len(teamstat_sum_dic[team_id]):
+            update_amount = len(teamstat_sum_dic[team_id])
+
+    return (teamstat_sum_dic, update_amount)
+
+def _break_chartseries_get(logger, data_dic, minmax=False):
+    """ build structure for chart series """
+    logger.debug('_break_chartseries_get()')
+    chartseries_dic = {}
+    for ele in data_dic:
+        chartseries_dic[ele] = {'x_category': [], 'goals_break_for_pctg': [], 'goals_break_against_pctg': []}
+        for datapoint in sorted(data_dic[ele], key=lambda i: i['goals_break_for_pctg'], reverse=True):
+            chartseries_dic[ele]['x_category'].append(datapoint['name'])
+            chartseries_dic[ele]['goals_break_for_pctg'].append(datapoint['goals_break_for_pctg'])
+            chartseries_dic[ele]['goals_break_against_pctg'].append(datapoint['goals_break_against_pctg'])
+
+    return chartseries_dic
