@@ -173,3 +173,25 @@ def teamcomparison_hmdata_get(logger, ismobile, teamstat_dic, teams_dic):
     chart_options = _teamcomparison_hm_chartseries_get(logger, heatmap_lake)
 
     return chart_options
+
+def teamcomparison_updates_get(logger, _title, ismobile, data_dic):
+    """ prepare structure for updates """
+    logger.debug('teamcomparison_updates_get()')
+
+    if ismobile:
+        border_width = 5
+    else:
+        border_width = 10
+
+    updates_dic = {}
+    for ele in data_dic:
+        updates_dic[ele] = {
+            'chartoptions':  {
+                'series': [
+                    # pylint: disable=E0602
+                    {'data': data_dic[ele]['data'], 'borderWidth': border_width, 'borderColor': '#ffffff', 'dataLabels': {'enabled': 0}},
+                ]
+            }
+        }
+
+    return updates_dic

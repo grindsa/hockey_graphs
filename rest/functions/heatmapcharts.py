@@ -61,8 +61,6 @@ def teamcomparison_chart_get(logger, ctitle, ismobile, data_dic):
                 'style': {'fontSize': '8px', 'textOutline': 0, 'color': text_color}
             }
         }],
-
-
     }
 
     return chart_options
