@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """ list of functions for shots """
 # pylint: disable=E0401, C0413
-from functions.helper import list_sumup
+from functions.helper import list_sumup, pctg_float_get
 
 def  _teampcomparison_data_sumup(logger, teamstat_dic):
     """ sumup data """
@@ -11,26 +11,37 @@ def  _teampcomparison_data_sumup(logger, teamstat_dic):
 
     for team_id in teamstat_dic:
         # sumup data per team
-        teamstat_sum_dic[team_id] = list_sumup(logger, teamstat_dic[team_id], ['match_id', 'shots_for_5v5', 'shots_against_5v5', 'shots_ongoal_for', 'shots_ongoal_against', 'goals_for', 'goals_against', 'saves', 'matchduration'])
+        teamstat_sum_dic[team_id] = list_sumup(logger, teamstat_dic[team_id], ['match_id', 'shots_for_5v5', 'shots_against_5v5', 'shots_ongoal_for', 'shots_ongoal_against', 'goals_for', 'goals_against', 'saves', 'matchduration', 'faceoffswon', 'faceoffslost', 'rebounds_for', 'rebounds_against', 'goals_rebound_for', 'goals_rebound_against', 'breaks_for', 'breaks_against', 'goals_break_for', 'goals_break_against'])
         # check how many items we have to create in update_dic
         if update_amount < len(teamstat_sum_dic[team_id]):
             update_amount = len(teamstat_sum_dic[team_id])
 
         for ele in range(1, update_amount+1):
-            # we nbeed to add the 60 data
-            sum_shots_for_5v5 = teamstat_sum_dic[team_id][ele-1]['sum_shots_for_5v5']
-            sum_shots_against_5v5 = teamstat_sum_dic[team_id][ele-1]['sum_shots_against_5v5']
-            sum_matchduration = teamstat_sum_dic[team_id][ele-1]['sum_matchduration']
-
-            # calculate 60
-            teamstat_sum_dic[team_id][ele-1]['sum_shots_for_5v5_60'] = round(sum_shots_for_5v5 *  3600 / sum_matchduration, 0)
-            teamstat_sum_dic[team_id][ele-1]['sum_shots_against_5v5_60'] = round(sum_shots_against_5v5 * 3600 / sum_matchduration, 0)
+            # calculate 60 data
+            teamstat_sum_dic[team_id][ele-1]['sum_shots_for_5v5_60'] = round(teamstat_sum_dic[team_id][ele-1]['sum_shots_for_5v5'] *  3600 / teamstat_sum_dic[team_id][ele-1]['sum_matchduration'], 0)
+            teamstat_sum_dic[team_id][ele-1]['sum_shots_against_5v5_60'] = round(teamstat_sum_dic[team_id][ele-1]['sum_shots_against_5v5'] * 3600 / teamstat_sum_dic[team_id][ele-1]['sum_matchduration'], 0)
+            teamstat_sum_dic[team_id][ele-1]['sum_corsi_5v5_60'] = teamstat_sum_dic[team_id][ele-1]['sum_shots_for_5v5_60'] - teamstat_sum_dic[team_id][ele-1]['sum_shots_against_5v5_60']
             teamstat_sum_dic[team_id][ele-1]['sum_shots_5v5_60'] = teamstat_sum_dic[team_id][ele-1]['sum_shots_for_5v5_60'] + teamstat_sum_dic[team_id][ele-1]['sum_shots_against_5v5_60']
+
+            # calculate pdo
+            teamstat_sum_dic[team_id][ele-1]['sh_pctg'] = pctg_float_get(teamstat_sum_dic[team_id][ele-1]['sum_goals_for'], teamstat_sum_dic[team_id][ele-1]['sum_shots_ongoal_for'])
+            teamstat_sum_dic[team_id][ele-1]['sv_pctg'] = pctg_float_get(teamstat_sum_dic[team_id][ele-1]['sum_saves'], teamstat_sum_dic[team_id][ele-1]['sum_shots_ongoal_against'])
+
+            # faceoff success rate
+            teamstat_sum_dic[team_id][ele-1]['faceoff_success_rate'] = pctg_float_get(teamstat_sum_dic[team_id][ele-1]['sum_faceoffswon'], (teamstat_sum_dic[team_id][ele-1]['sum_faceoffswon'] + teamstat_sum_dic[team_id][ele-1]['sum_faceoffslost']), 1)
+
+            # rebound rates
+            teamstat_sum_dic[team_id][ele-1]['goals_rebound_for_pctg'] = pctg_float_get(teamstat_sum_dic[team_id][ele-1]['sum_goals_rebound_for'], teamstat_sum_dic[team_id][ele-1]['sum_rebounds_for'])
+            teamstat_sum_dic[team_id][ele-1]['goals_rebound_against_pctg'] = pctg_float_get(teamstat_sum_dic[team_id][ele-1]['sum_goals_rebound_against'], teamstat_sum_dic[team_id][ele-1]['sum_rebounds_against'])
+
+            # break rates
+            teamstat_sum_dic[team_id][ele-1]['goals_break_for_pctg'] = pctg_float_get(teamstat_sum_dic[team_id][ele-1]['sum_goals_break_for'], teamstat_sum_dic[team_id][ele-1]['sum_breaks_for'])
+            teamstat_sum_dic[team_id][ele-1]['goals_break_against_pctg'] = pctg_float_get(teamstat_sum_dic[team_id][ele-1]['sum_goals_break_against'], teamstat_sum_dic[team_id][ele-1]['sum_breaks_against'])
 
     return (teamstat_sum_dic, update_amount)
 
 
-def _teamcomparison_hm_chartseries_get(logger, data_dic, minmax=False):
+def _teamcomparison_hm_chartseries_get(logger, data_dic):
     """ build structure for chart series """
     logger.debug('_rebound_chartseries_get()')
     chartseries_dic = {}
@@ -38,7 +49,15 @@ def _teamcomparison_hm_chartseries_get(logger, data_dic, minmax=False):
     y_category = [
         {'name': 'Cf/60', 'key': 'sum_shots_for_5v5_60'},
         {'name': 'Ca/60', 'key': 'sum_shots_against_5v5_60'},
-        {'name': 'Pace', 'key': 'sum_shots_5v5_60'}
+        {'name': 'C/60', 'key': 'sum_corsi_5v5_60'},
+        {'name': 'Pace', 'key': 'sum_shots_5v5_60'},
+        {'name': 'Sh%', 'key': 'sh_pctg'},
+        {'name': 'Sv%', 'key': 'sv_pctg'},
+        {'name': 'FAC%', 'key': 'faceoff_success_rate'},
+        {'name': 'Rb+%', 'key': 'goals_rebound_for_pctg'},
+        {'name': 'Rb-%', 'key': 'goals_rebound_against_pctg'},
+        {'name': 'Br+%', 'key': 'goals_break_for_pctg'},
+        {'name': 'Br-%', 'key': 'goals_break_against_pctg'}
     ]
 
     for ele in data_dic:
@@ -49,16 +68,25 @@ def _teamcomparison_hm_chartseries_get(logger, data_dic, minmax=False):
             chartseries_dic[ele]['y_category'].append(value['name'])
 
         x_cnt = 0
-        for datapoint in sorted(data_dic[ele], key=lambda i: i['shortcut']):
+        for datapoint in sorted(data_dic[ele], key=lambda i: i['team_name']):
             # short by team and add shortcut to x_val
-            chartseries_dic[ele]['x_category'].append(datapoint['shortcut'])
+            # chartseries_dic[ele]['x_category'].append(datapoint['shortcut'])
             y_cnt = 0
+            # print(datapoint['logo'])
             for value in y_category:
                 # go over datapoints
+                # detect against bar (reverse color scheme needs to be applied)
+                reverse = False
+                if 'against' in y_category[y_cnt]['key']:
+                    reverse = True
+                # build data structure
                 tmp_dic = {
                     'x': x_cnt,
                     'y': y_cnt,
+                    'name': datapoint['name'],
                     'ovalue': datapoint[value['key']],
+                    'y_name': y_category[y_cnt]['name'],
+                    'reverse': reverse
                 }
                 y_cnt += 1
                 chartseries_dic[ele]['data'].append(tmp_dic)
@@ -86,8 +114,15 @@ def _datapoint_reformat(datapoint):
         _tmp_dic[ele]['min'] = min(_tmp_dic[ele]['data'])
 
     for ele in datapoint:
-        ele['value'] = round((ele['ovalue'] - _tmp_dic[ele['y']]['min']) / (_tmp_dic[ele['y']]['max'] - _tmp_dic[ele['y']]['min']) * 100, 2)
+        if ele['reverse']:
+            # high values are bad (usually aginst values)
+            ele['value'] = 100 - round((ele['ovalue'] - _tmp_dic[ele['y']]['min']) / (_tmp_dic[ele['y']]['max'] - _tmp_dic[ele['y']]['min']) * 100, 2)
+        else:
+            # low values are bad
+            ele['value'] = round((ele['ovalue'] - _tmp_dic[ele['y']]['min']) / (_tmp_dic[ele['y']]['max'] - _tmp_dic[ele['y']]['min']) * 100, 2)
+
         ele['dataLabels'] = {'format': '{0}'.format(int(ele['ovalue']))}
+
     return datapoint
 
 
@@ -103,6 +138,13 @@ def teamcomparison_hmdata_get(logger, ismobile, teamstat_dic, teams_dic):
     for ele in range(1, update_amount+1):
         heatmap_lake[ele] = []
 
+    if ismobile:
+        img_width = '20'
+        img_height = '20'
+    else:
+        img_width = '30'
+        img_height = '30'
+
     for team_id in sumup_dic:
         # harmonize lengh by adding list elements at the beginning
         if len(sumup_dic[team_id]) < update_amount:
@@ -111,11 +153,21 @@ def teamcomparison_hmdata_get(logger, ismobile, teamstat_dic, teams_dic):
 
         for idx, ele in enumerate(sumup_dic[team_id], 1):
             heatmap_lake[idx].append({
+                'team_logo': teams_dic[team_id]['team_logo'],
                 'team_name': teams_dic[team_id]['team_name'],
                 'shortcut':  teams_dic[team_id]['shortcut'],
+                'name': '<span><img src="{0}" alt="{1}" width="{2}" height="{3}"></span>'.format(teams_dic[team_id]['team_logo'], teams_dic[team_id]['shortcut'], img_width, img_height),
                 'sum_shots_for_5v5_60': ele['sum_shots_for_5v5_60'],
                 'sum_shots_against_5v5_60': ele['sum_shots_against_5v5_60'],
                 'sum_shots_5v5_60': ele['sum_shots_5v5_60'],
+                'sum_corsi_5v5_60': ele['sum_corsi_5v5_60'],
+                'sh_pctg': ele['sh_pctg'],
+                'sv_pctg': ele['sv_pctg'],
+                'faceoff_success_rate': ele['faceoff_success_rate'],
+                'goals_rebound_for_pctg': ele['goals_rebound_for_pctg'],
+                'goals_rebound_against_pctg': ele['goals_rebound_against_pctg'],
+                'goals_break_for_pctg': ele['goals_rebound_for_pctg'],
+                'goals_break_against_pctg': ele['goals_rebound_against_pctg']
             })
 
     chart_options = _teamcomparison_hm_chartseries_get(logger, heatmap_lake)

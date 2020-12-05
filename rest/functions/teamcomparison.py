@@ -66,7 +66,7 @@ def _teamcomparison_heatmap_get(logger, ismobile, teamstat_dic, teams_dic):
     title = _('Team heatmaps'),
     stat_entry = {
         'title': title,
-        'chart':  teamcomparison_chart_get(logger, title, heatmap_data[len(heatmap_data.keys())]),
+        'chart':  teamcomparison_chart_get(logger, title, ismobile, heatmap_data[len(heatmap_data.keys())]),
         'updates': {}
     }
 
@@ -100,7 +100,7 @@ def _5v5_pace_get(logger, ismobile, teamstat_dic, teams_dic):
     }
     stat_entry_list.append(stat_entry)
 
-    # shotrates
+    # shotshare
     title = _('5v5 Shot share C/60'),
     stat_entry = {
         'title': title,
@@ -153,7 +153,7 @@ def _faceoff_pctg_get(logger, ismobile, teamstat_dic, teams_dic):
     faceoff_dic = faceoff_overview_get(logger, ismobile, teamstat_dic, teams_dic)
 
     # pylint: disable=E0602
-    title = _('Faceoff win percentage')
+    title = _('Faceoff success rate')
     stat_entry = {
         'title': title,
         'chart': faceoff_overview_chart(logger, title, faceoff_dic[len(faceoff_dic.keys())]),
@@ -164,12 +164,12 @@ def _faceoff_pctg_get(logger, ismobile, teamstat_dic, teams_dic):
 
 def _rebound_pctg_get(logger, ismobile, teamstat_dic, teams_dic):
     """ faceoff wins """
-    logger.debug('_faceoff_pctg_get()')
+    logger.debug('_rebound_pctg_get()')
 
     rebound_dic = rebound_overview_get(logger, ismobile, teamstat_dic, teams_dic)
 
     # pylint: disable=E0602
-    title = _('Rebound efficiency')
+    title = _('Rebound sucess rate')
     stat_entry = {
         'title': title,
         'chart': rebound_overview_chart(logger, title, rebound_dic[len(rebound_dic.keys())]),

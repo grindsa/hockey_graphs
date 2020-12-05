@@ -122,7 +122,7 @@ def responsive_y1_label():
                 'legend': {'verticalAlign': legend_valign_mobile, 'layout': 'horizontal', 'itemStyle': {'font-size': font_size_mobile}},
                 'xAxis': {'title': {'style': {'font-size': font_size_mobile}}, 'labels': {'style': {'fontSize': font_size_mobile}}},
                 'yAxis': {'title': {'style': {'font-size': font_size_mobile}}, 'labels': {'style': {'fontSize': font_size_mobile}}},
-                'plotOptions': {'series': {'dataLabels': {'enabled': 1,  'style': {'fontSize': font_size_mobile}}}},
+                'plotOptions': {'series': {'dataLabels': {'enabled': 1, 'style': {'fontSize': font_size_mobile}}}},
             }
         }]
     }
@@ -172,5 +172,33 @@ def corner_annotations(ismobile, upper_left_text, lower_left_text, upper_right_t
         ],
         'zIndex': 1
     }]
+
+    return result
+
+
+def color_axis(color_list=None):
+    """ create color scheme for heatmap """
+
+    if not color_list:
+        color_list = ['#a90c38', '#c11b39', '#e54444', '#ec4f4a', '#e06f5b', '#f98973', '#fa8e78', '#fc9783', '#eac7bf', '#b2cfe2', '#a4cbe5', '#8bb8db', '#70a2c9', '#43719f', '#416f9d', '#2e5b87']
+
+    stop_list = []
+    quotient = round(100/ (len(color_list)-1), 0)
+
+    # add first color for start
+    stop_list.append([0, color_list[0]])
+
+    # distribute colors equally
+    for ele in range(1, len(color_list)-1):
+        stop_list.append([ele * quotient/100, color_list[ele]])
+
+    # add last color for end
+    stop_list.append([1, color_list[-1]])
+
+
+    result = {
+        'min': 0,
+        'stops': stop_list,
+    }
 
     return result
