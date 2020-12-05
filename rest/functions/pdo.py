@@ -10,9 +10,13 @@ def pdo_breakdown_data_get(logger, ismobile, teamstat_dic, teams_dic):
     if ismobile:
         image_width = 25
         image_height = 25
+        overview_width = 20
+        overview_height = 20
     else:
         image_width = 40
         image_height = 40
+        overview_width = 30
+        overview_height = 30
 
     update_amount = 0
     _teamstat_sum_dic = {}
@@ -35,6 +39,7 @@ def pdo_breakdown_data_get(logger, ismobile, teamstat_dic, teams_dic):
     for team_id in _teamstat_sum_dic:
         shortcut = teams_dic[team_id]['shortcut']
         logo = teams_dic[team_id]['team_logo']
+        logo_url = '<span><img src="{0}" alt="{1}" width="{2}" height="{3}"></span>'.format(teams_dic[team_id]['team_logo'], teams_dic[team_id]['shortcut'], overview_width, overview_height),
         team_name = teams_dic[team_id]['team_name']
         # harmonize lengh by adding list elements at the beginning
         if len(_teamstat_sum_dic[team_id]) < update_amount:
@@ -52,7 +57,7 @@ def pdo_breakdown_data_get(logger, ismobile, teamstat_dic, teams_dic):
             _tmp_lake[ele]['sum_saves'] += sum_saves
             _tmp_lake[ele]['sum_shots_ongoal_against'] += sum_shots_ongoal_against
 
-            chartseries_dic[ele]['data'].append({'marker': {'width': image_width, 'height': image_height, 'symbol': 'url({0})'.format(logo)}, 'team_name': team_name, 'name': shortcut, 'x': pctg_float_get(sum_goals_for, sum_shots_ongoal_for), 'y': pctg_float_get(sum_saves, sum_shots_ongoal_against)})
+            chartseries_dic[ele]['data'].append({'marker': {'width': image_width, 'height': image_height, 'symbol': 'url({0})'.format(logo)}, 'logo_url': logo_url, 'team_name': team_name, 'name': shortcut, 'x': pctg_float_get(sum_goals_for, sum_shots_ongoal_for), 'y': pctg_float_get(sum_saves, sum_shots_ongoal_against)})
 
     # calculate x_avg and y_avg
     for ele in _tmp_lake:
@@ -134,13 +139,10 @@ def pdo_overview_data_get(logger, ismobile, data_dic):
     for mday in data_dic:
         overview_dic[mday] = {'team_list': [], 'sh_list': [], 'sv_list': []}
         for datapoint in sorted(data_dic[mday]['data'], key=lambda i: i['team_name']):
-            if ismobile:
-                overview_dic[mday]['team_list'].append(datapoint['name'])
-            else:
-                overview_dic[mday]['team_list'].append(datapoint['team_name'])
 
             # create series for bar
             overview_dic[mday]['sh_list'].append(datapoint['x'])
+            overview_dic[mday]['team_list'].append(datapoint['logo_url'])
             overview_dic[mday]['sv_list'].append(datapoint['y'])
 
     return overview_dic

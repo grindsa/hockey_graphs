@@ -35,7 +35,8 @@ def pdo_overview_chart(logger, ctitle, pdo_dic):
         'xAxis': {
             'categories': pdo_dic['team_list'],
             'title': title('', font_size),
-            'labels': {'style': {'fontSize': font_size},},
+            # 'labels': {'style': {'fontSize': font_size},},
+            'labels': {'useHTML': 1, 'align': 'center'},
         },
 
         'yAxis': {

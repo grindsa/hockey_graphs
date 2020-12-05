@@ -467,11 +467,11 @@ def rebound_overview_get(logger, ismobile, teamstat_dic, teams_dic):
     logger.debug('rebound_overview_get()')
 
     if ismobile:
-        image_width = 25
-        image_height = 25
+        img_width = 20
+        img_height = 20
     else:
-        image_width = 40
-        image_height = 40
+        img_width = 30
+        img_height = 30
 
     # get summary
     (reboundsum_dic, update_amount) = _rebound_sumup(logger, teamstat_dic)
@@ -501,6 +501,7 @@ def rebound_overview_get(logger, ismobile, teamstat_dic, teams_dic):
             rebound_lake[idx].append({
                 'team_name': teams_dic[team_id]['team_name'],
                 'shortcut':  teams_dic[team_id]['shortcut'],
+                'name': '<span><img src="{0}" alt="{1}" width="{2}" height="{3}"></span>'.format(teams_dic[team_id]['team_logo'], teams_dic[team_id]['shortcut'], img_width, img_height),
                 'rebounds_for': ele['sum_rebounds_for'],
                 'rebounds_against': ele['sum_rebounds_against'],
                 'goals_rebound_for': ele['sum_goals_rebound_for'],
@@ -521,7 +522,7 @@ def _rebound_chartseries_get(logger, data_dic, minmax=False):
     for ele in data_dic:
         chartseries_dic[ele] = {'x_category': [], 'goals_rebound_for_pctg': [], 'goals_rebound_against_pctg': []}
         for datapoint in sorted(data_dic[ele], key=lambda i: i['goals_rebound_for_pctg'], reverse=True):
-            chartseries_dic[ele]['x_category'].append(datapoint['shortcut'])
+            chartseries_dic[ele]['x_category'].append(datapoint['name'])
             chartseries_dic[ele]['goals_rebound_for_pctg'].append(datapoint['goals_rebound_for_pctg'])
             chartseries_dic[ele]['goals_rebound_against_pctg'].append(datapoint['goals_rebound_against_pctg'])
 

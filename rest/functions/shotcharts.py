@@ -958,7 +958,7 @@ def rebound_overview_chart(logger, ctitle, data_dic):
             'categories': data_dic['x_category'],
             'title': title(''),
             'maxPadding': 0.1,
-            'labels': {'style': {'fontSize': font_size},},
+            'labels': {'useHTML': 1, 'align': 'center'},
         },
 
         'yAxis': {
