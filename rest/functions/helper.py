@@ -273,3 +273,16 @@ def minmax_get(minval, maxval, average):
         newmax = average + minabs
 
     return (newmin, newmax)
+
+def markdown_load(filter=None):
+    """ load markdown file and return it back """
+
+    result = """
+# headline 1
+## headline 2
+
+- *listelement*: with some explaination
+- *another listelement*: with anouther explaination
+
+    """
+    return result

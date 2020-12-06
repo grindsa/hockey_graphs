@@ -10,7 +10,7 @@ django.setup()
 from rest.functions.corsi import pace_data_get, pace_updates_get, shotrates_updates_get
 from rest.functions.faceoff import faceoff_overview_get, faceoffs_updates_get
 from rest.functions.faceoffcharts import faceoff_overview_chart
-from rest.functions.helper import mobile_check
+from rest.functions.helper import mobile_check, markdown_load
 from rest.functions.pdo import pdo_breakdown_data_get, pdo_overview_data_get, breakdown_updates_get, overview_updates_get
 from rest.functions.pdocharts import pdo_breakdown_chart, pdo_overview_chart
 from rest.functions.season import seasonid_get
@@ -43,19 +43,19 @@ def teamcomparison_get(logger, request, fkey=None, fvalue=None):
     result.append(_teamcomparison_heatmap_get(logger, ismobile, teamstat_dic, teams_dic))
 
     # create PDO breakdown chart
-    result.extend(_pdo_breakdown_get(logger, ismobile, teamstat_dic, teams_dic))
+    #result.extend(_pdo_breakdown_get(logger, ismobile, teamstat_dic, teams_dic))
 
     # 5on5 shotcharts
-    result.extend(_5v5_pace_get(logger, ismobile, teamstat_dic, teams_dic))
+    #result.extend(_5v5_pace_get(logger, ismobile, teamstat_dic, teams_dic))
 
     # faceoff wins
-    result.append(_faceoff_pctg_get(logger, ismobile, teamstat_dic, teams_dic))
+    #result.append(_faceoff_pctg_get(logger, ismobile, teamstat_dic, teams_dic))
 
     # rebound efficentcy
-    result.append(_rebound_pctg_get(logger, ismobile, teamstat_dic, teams_dic))
+    #result.append(_rebound_pctg_get(logger, ismobile, teamstat_dic, teams_dic))
 
     # rebound efficentcy
-    result.append(_break_pctg_get(logger, ismobile, teamstat_dic, teams_dic))
+    #result.append(_break_pctg_get(logger, ismobile, teamstat_dic, teams_dic))
 
     return result
 
@@ -73,7 +73,8 @@ def _teamcomparison_heatmap_get(logger, ismobile, teamstat_dic, teams_dic):
     stat_entry = {
         'title': title,
         'chart':  teamcomparison_chart_get(logger, title, subtitle, ismobile, heatmap_data[len(heatmap_data.keys())]),
-        'updates': teamcomparison_updates_get(logger, title, ismobile, heatmap_data)
+        'updates': teamcomparison_updates_get(logger, title, ismobile, heatmap_data),
+        'comments': markdown_load()
     }
 
     return stat_entry
