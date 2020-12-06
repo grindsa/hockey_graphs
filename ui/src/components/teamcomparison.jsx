@@ -45,7 +45,7 @@ export class TeamComparison extends React.Component {
 
   async componentDidUpdate(prevProps) {
     /* we get the url to fectch as props and monitor it here */
-    const tcupdate = checkTcUpdate(this.props.teamcomparison, prevProps.teamcomparison, this.props.season, prevProps.season)
+    const tcupdate = checkTcUpdate(this.props.teamcomparison, prevProps.teamcomparison, this.props.season, prevProps.season, this.props.language, prevProps.language)
     if (tcupdate){
         // get team comparison
         const tcdic = await asyncGET(this.props.teamcomparison + '?season=' + this.props.season + '&mobile=' + isMobile + '&language=' + this.props.language)
@@ -109,7 +109,7 @@ class Comment extends React.Component{
       return (<p></p>)
     }else{
       return (
-        <div className="w3-container commentwidth">
+        <div className="w3-container">
           <ReactMarkdown source={this.props.text} plugins={[gfm]} />
         </div>
       )

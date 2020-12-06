@@ -43,7 +43,6 @@ select.selectbg {
 }
 
 .mainwidth { max-width:800px; margin:auto}
-.commentwidth { max-width:600px; margin:auto}
 
 .tab-red,.hover-tab-red:hover{border-color:#333333!important}
 .my-half{ width:50% }

@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const checkTcUpdate = function(tcomparison, prevtcomparison, season, prevseason){
+export const checkTcUpdate = function(tcomparison, prevtcomparison, season, prevseason, lang, prevlang){
   /* this is to check if we have to fetch data from rest */
   var mupdate = false
   if (tcomparison !== prevtcomparison && season !== 0) {
@@ -9,6 +9,11 @@ export const checkTcUpdate = function(tcomparison, prevtcomparison, season, prev
   if (season !== prevseason && season !== 0){
     mupdate = true
   }
+  if (lang !== prevlang && season !== 0){
+    mupdate = true
+  }
+
+
   return mupdate
 }
 
