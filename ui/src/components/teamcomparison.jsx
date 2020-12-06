@@ -37,7 +37,7 @@ export class TeamComparison extends React.Component {
   async componentDidMount(){
     if (this.props.teamcomparison && this.props.season) {
       // get team comparison
-      const tcdic = await asyncGET(this.props.teamcomparison + '?season=' + this.props.season + '&mobile=' + isMobile)
+      const tcdic = await asyncGET(this.props.teamcomparison + '?season=' + this.props.season + '&mobile=' + isMobile + '&language=' + this.props.language)
       this.setState({teamcomparisonList: tcdic});
     }
   }
@@ -47,7 +47,7 @@ export class TeamComparison extends React.Component {
     const tcupdate = checkTcUpdate(this.props.teamcomparison, prevProps.teamcomparison, this.props.season, prevProps.season)
     if (tcupdate){
         // get team comparison
-        const tcdic = await asyncGET(this.props.teamcomparison + '?season=' + this.props.season + '&mobile=' + isMobile)
+        const tcdic = await asyncGET(this.props.teamcomparison + '?season=' + this.props.season + '&mobile=' + isMobile + '&language=' + this.props.language)
         this.setState({teamcomparisonList: tcdic});
     }
   }
@@ -105,7 +105,7 @@ class Comment extends React.Component{
   /* selector for different statistics */
   render(){
     if (isEmpty(this.props.text)){
-      return (<p>empty</p>)
+      return (<p></p>)
     }else{
       return (
         <div className="w3-container commentwidth">
@@ -182,7 +182,7 @@ class Chart extends React.Component{
           <div className="w3-border">
             <HighchartsReact highcharts={Highcharts} options={this.state.chart} immutable={true}/>
           </div>
-          <Comment text={this.props.options.comments} />
+          <Comment text={this.props.options.comment} />
         </React.Fragment>
       )
     }else{
