@@ -45,16 +45,16 @@ def teamcomparison_get(logger, request, fkey=None, fvalue=None):
     result.append(_teamcomparison_heatmap_get(logger, ismobile, language, teamstat_dic, teams_dic))
 
     # create PDO breakdown chart
-    #result.extend(_pdo_breakdown_get(logger, ismobile, teamstat_dic, teams_dic))
+    result.extend(_pdo_breakdown_get(logger, ismobile, teamstat_dic, teams_dic))
 
     # 5on5 shotcharts
-    #result.extend(_5v5_pace_get(logger, ismobile, teamstat_dic, teams_dic))
+    result.extend(_5v5_pace_get(logger, ismobile, teamstat_dic, teams_dic))
 
     # faceoff wins
-    #result.append(_faceoff_pctg_get(logger, ismobile, teamstat_dic, teams_dic))
+    result.append(_faceoff_pctg_get(logger, ismobile, teamstat_dic, teams_dic))
 
     # rebound efficentcy
-    #result.append(_rebound_pctg_get(logger, ismobile, teamstat_dic, teams_dic))
+    result.append(_rebound_pctg_get(logger, ismobile, teamstat_dic, teams_dic))
 
     # rebound efficentcy
     result.append(_break_pctg_get(logger, ismobile, teamstat_dic, teams_dic))
