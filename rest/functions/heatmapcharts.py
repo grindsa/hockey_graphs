@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """ list of functions for heatmaps """
 # pylint: disable=E0401
-from rest.functions.chartparameters import variables_get, text_color, font_size, credit, exporting, title, subtitle, color_axis, text_color, title_font_size, title_font_size_mobile, title_font_size_mobile, subtitle_font_size
+from rest.functions.chartparameters import variables_get, text_color, font_size, credit, exporting, title, subtitle, color_axis, text_color, title_font_size, title_font_size_mobile, title_font_size_mobile, subtitle_font_size, chartstyle
 
 def teamcomparison_chart_get(logger, ctitle, csubtitle, ismobile, data_dic):
     """ team comparison heatmap chart """
@@ -15,6 +15,7 @@ def teamcomparison_chart_get(logger, ctitle, csubtitle, ismobile, data_dic):
             'type': 'heatmap',
             'height': '110%',
             'inverted': 1,
+            'style': chartstyle()
         },
 
         'exporting': exporting(filename=ctitle, allowhtml=0),

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """ time on ice charts """
 # pylint: disable=E0401
-from rest.functions.chartparameters import credit, exporting, responsive_y1, title, subtitle, legend, font_size, plotlines_color, corner_annotations, variables_get
+from rest.functions.chartparameters import chartstyle, credit, exporting, responsive_y1, title, subtitle, legend, font_size, plotlines_color, corner_annotations, variables_get
 from rest.functions.chartparameters import chart_color1, chart_color2, chart_color3, chart_color4, chart_color6, text_color, font_size_mobile
 
 def pdo_overview_chart(logger, ctitle, csubtitle, ismobile, pdo_dic):
@@ -14,6 +14,7 @@ def pdo_overview_chart(logger, ctitle, csubtitle, ismobile, pdo_dic):
             'type': 'bar',
             'height': '120%',
             'alignTicks': 0,
+            'style': chartstyle()
         },
 
         'exporting': exporting(filename=ctitle),
@@ -70,6 +71,7 @@ def pdo_breakdown_chart(logger, ctitle, csubtitle, ismobile, pdo_list):
         'chart': {
             'type': 'scatter',
             'height': '120%',
+            'style': chartstyle()            
         },
 
         'exporting': exporting(filename=ctitle),

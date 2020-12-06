@@ -222,3 +222,6 @@ def variables_get(ismobile):
         data_dic = {'border_width': 10, 'title_size': title_font_size, 'subtitle_size': subtitle_font_size}
 
     return data_dic
+
+def chartstyle():
+    return {'fontFamily': 'verdana, helvetica, arial, sans-serif'}

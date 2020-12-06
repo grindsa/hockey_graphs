@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """ time on ice charts """
 # pylint: disable=E0401
-from rest.functions.chartparameters import credit, exporting, responsive_y1, title, legend, font_size
+from rest.functions.chartparameters import chartstyle, credit, exporting, responsive_y1, title, legend, font_size
 from rest.functions.chartparameters import chart_color1, chart_color2, chart_color3, chart_color4, text_color, font_size_mobile
 
 def gametoichart_create(logger, toi_dic, ctitle):
@@ -35,6 +35,7 @@ def gametoichart_create(logger, toi_dic, ctitle):
             'type': 'bar',
             'height': '120%',
             'alignTicks': 0,
+            'style': chartstyle()
         },
 
         'exporting': exporting(filename=ctitle),
@@ -134,6 +135,7 @@ def gamematchupchart_create(logger, lineup_dic, matchup_matrix, plotline_dic, ma
         'chart': {
             'type': 'heatmap',
             'height': '90%',
+            'style': chartstyle()            
         },
 
         'exporting': exporting(filename=ctitle, allowhtml=0),

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """ list of functions for faceoff charts """
-from rest.functions.chartparameters import exporting, title, credit, legend, responsive_y1, variables_get
+from rest.functions.chartparameters import chartstyle, exporting, title, credit, legend, responsive_y1, variables_get
 from rest.functions.chartparameters import plotlines_color, chart_color6, font_size
 
 def faceoff_overview_chart(logger, ctitle, ismobile, data_dic):
@@ -14,7 +14,8 @@ def faceoff_overview_chart(logger, ctitle, ismobile, data_dic):
 
         'chart': {
             'type': 'scatter',
-            'height': '80%'
+            'height': '80%',
+            'style': chartstyle()            
         },
 
         'exporting': exporting(filename=ctitle),

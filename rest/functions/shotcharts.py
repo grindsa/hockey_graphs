@@ -2,7 +2,7 @@
 """ list of functions for shots """
 import math
 # pylint: disable=E0401
-from rest.functions.chartparameters import credit, exporting, responsive_gameflow, responsive_y1, responsive_y1_label, responsive_y2, responsive_bubble, plotoptions_marker_disable, title, subtitle, legend, tooltip, labels, font_size, font_size_mobile, legend_valign_mobile, corner_annotations, variables_get
+from rest.functions.chartparameters import chartstyle, credit, exporting, responsive_gameflow, responsive_y1, responsive_y1_label, responsive_y2, responsive_bubble, plotoptions_marker_disable, title, subtitle, legend, tooltip, labels, font_size, font_size_mobile, legend_valign_mobile, corner_annotations, variables_get
 from rest.functions.chartparameters import text_color, plotlines_color, chart_color1, chart_color2, chart_color3, chart_color4, chart_color5, chart_color6, chart_color8, chart_color9, shot_missed_color, shot_blocked_color, shot_goal_color, shot_sog_color, line_color, line1_color, line2_color, line3_color, line4_color, line5_color
 
 # pylint: disable=R0914
@@ -52,6 +52,7 @@ def shotsumchart_create(logger, shot_sum_dic, shot_min_dic, goal_dic, plotline_l
             'type': 'column',
             'height': '60%',
             'alignTicks': 0,
+            'style': chartstyle()
         },
 
         'exporting': exporting(filename=ctitle),
@@ -167,6 +168,7 @@ def gameflowchart_create(logger, shot_flow_dic, goal_dic, plotline_list, matchin
             'inverted': 1,
             'height': '100%',
             'alignTicks': 0,
+            'style': chartstyle()
         },
 
         'exporting': exporting(filename=ctitle),
@@ -273,7 +275,8 @@ def shotstatussumchart_create(logger, shotsum_dic, _shotstatus_dic, goal_dic, te
 
         'chart': {
             'type': 'area',
-            'height': '60%'
+            'height': '60%',
+            'style': chartstyle()
         },
 
         'exporting': exporting(filename=ctitle),
@@ -380,7 +383,8 @@ def shotmapchart_create(logger, shotmap_list, ctitle):
             'plotBorderWidth': 0,
             'plotBackgroundImage': bg_image,
             'zoomType': 'xy',
-            'height': '110%'
+            'height': '110%',
+            'style': chartstyle()
         },
 
         'exporting': exporting(filename=ctitle),
@@ -527,6 +531,7 @@ def gamecorsichart_create(logger, player_corsi_dic, ctitle):
             'plotBorderWidth': 1,
             'zoomType': 'xy',
             'height': '105%',
+            'style': chartstyle()
         },
 
         'exporting': exporting(filename=ctitle),
@@ -624,6 +629,7 @@ def gamecorsippctgchart_create(logger, player_corsi_dic, ctitle):
             'type': 'bar',
             'height': '120%',
             'alignTicks': 0,
+            'style': chartstyle()
         },
 
         'exporting': exporting(filename=ctitle),
@@ -713,7 +719,8 @@ def puckpossessionchart_create(logger, shotsum_dic, goal_dic, matchinfo_dic, cti
 
         'chart': {
             'type': 'area',
-            'height': '60%'
+            'height': '60%',
+            'style': chartstyle()
         },
 
         'exporting': exporting(filename=ctitle),
@@ -779,7 +786,8 @@ def pace_chart_get(logger, ctitle, csubtitle, ismobile, pace_dic):
 
         'chart': {
             'type': 'scatter',
-            'height': '80%'
+            'height': '80%',
+            'style': chartstyle()
         },
 
         'exporting': exporting(filename=ctitle),
@@ -832,6 +840,7 @@ def shotrates_chart_get(logger, ctitle, csubtitle, ismobile, shotrates_dic):
         'chart': {
             'type': 'scatter',
             'height': '120%',
+            'style': chartstyle()
         },
 
         'exporting': exporting(filename=ctitle),
@@ -892,7 +901,8 @@ def shotshare_chart_get(logger, ctitle, csubtitle, ismobile, shotshare_dic):
 
         'chart': {
             'type': 'scatter',
-            'height': '80%'
+            'height': '80%',
+            'style': chartstyle()
         },
 
         'exporting': exporting(filename=ctitle),
@@ -945,6 +955,7 @@ def rebound_overview_chart(logger, ctitle, csubtitle, ismobile, data_dic):
         'chart': {
             'type': 'bar',
             'height': '120%',
+            'style': chartstyle()
         },
 
         'exporting': exporting(filename=ctitle),
@@ -997,6 +1008,7 @@ def break_overview_chart(logger, ctitle, csubtitle, ismobile, data_dic):
         'chart': {
             'type': 'bar',
             'height': '120%',
+            'style': chartstyle()
         },
 
         'exporting': exporting(filename=ctitle),
