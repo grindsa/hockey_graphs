@@ -7,6 +7,7 @@ import HighchartsExporting from 'highcharts/modules/exporting';
 import HighchartsOfflineExporting from "highcharts/modules/offline-exporting";
 import AnnotationsModule from 'highcharts/modules/annotations';
 import Heatmap from 'highcharts/modules/heatmap.js';
+import ReactMarkdown from 'react-markdown'
 import Slider from 'react-rangeslider'
 // import 'react-rangeslider/lib/index.css'
 import '../css/slider.css';
@@ -100,6 +101,21 @@ class Selector extends React.Component{
   }
 }
 
+class Comment extends React.Component{
+  /* selector for different statistics */
+  render(){
+    if (isEmpty(this.props.text)){
+      return (<p>empty</p>)
+    }else{
+      return (
+        <div className="w3-container commentwidth">
+          <ReactMarkdown source={this.props.text} />
+        </div>
+      )
+    }
+  }
+}
+
 class Chart extends React.Component{
   /* block to render chart mobile differenciation is done via chartoptions */
   constructor(props) {
@@ -166,6 +182,7 @@ class Chart extends React.Component{
           <div className="w3-border">
             <HighchartsReact highcharts={Highcharts} options={this.state.chart} immutable={true}/>
           </div>
+          <Comment text={this.props.options.comments} />
         </React.Fragment>
       )
     }else{

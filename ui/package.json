@@ -31,6 +31,7 @@
     "react-day-picker": "^7.4.8",
     "react-device-detect": "^1.14.0",
     "react-dom": "^16.14.0",
+    "react-markdown": "^5.0.3",
     "react-rangeslider": "^2.2.0",
     "style-loader": "^2.0.0"
   }
