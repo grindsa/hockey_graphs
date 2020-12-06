@@ -32,6 +32,12 @@ class Match(models.Model):
     def __str__(self):
         return '{0} ({1}-{2})'.format(self.match_id, self.home_team, self.visitor_team)
 
+class Comment(models.Model):
+    """ shifts """
+    name = models.CharField(max_length=30)
+    de = models.TextField()
+    en = models.TextField()
+
 class Periodevent(models.Model):
     """ shifts """
     match = models.ForeignKey(Match, on_delete=models.CASCADE)

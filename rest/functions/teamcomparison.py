@@ -10,7 +10,8 @@ django.setup()
 from rest.functions.corsi import pace_data_get, pace_updates_get, shotrates_updates_get
 from rest.functions.faceoff import faceoff_overview_get, faceoffs_updates_get
 from rest.functions.faceoffcharts import faceoff_overview_chart
-from rest.functions.helper import mobile_check, markdown_load
+from rest.functions.helper import mobile_check, language_get
+from rest.functions.comment import comment_get
 from rest.functions.pdo import pdo_breakdown_data_get, pdo_overview_data_get, breakdown_updates_get, overview_updates_get
 from rest.functions.pdocharts import pdo_breakdown_chart, pdo_overview_chart
 from rest.functions.season import seasonid_get
@@ -34,13 +35,14 @@ def teamcomparison_get(logger, request, fkey=None, fvalue=None):
     matchstat_list = teammatchstats_get(logger, 'match__season_id', season_id)
 
     ismobile = mobile_check(logger, request)
+    language = language_get(logger, request)
 
     # stacked stats per team
     teamstat_dic = teamstat_dic_get(logger, matchstat_list)
 
     result = []
 
-    result.append(_teamcomparison_heatmap_get(logger, ismobile, teamstat_dic, teams_dic))
+    result.append(_teamcomparison_heatmap_get(logger, ismobile, language, teamstat_dic, teams_dic))
 
     # create PDO breakdown chart
     #result.extend(_pdo_breakdown_get(logger, ismobile, teamstat_dic, teams_dic))
@@ -55,11 +57,11 @@ def teamcomparison_get(logger, request, fkey=None, fvalue=None):
     #result.append(_rebound_pctg_get(logger, ismobile, teamstat_dic, teams_dic))
 
     # rebound efficentcy
-    #result.append(_break_pctg_get(logger, ismobile, teamstat_dic, teams_dic))
+    result.append(_break_pctg_get(logger, ismobile, teamstat_dic, teams_dic))
 
     return result
 
-def _teamcomparison_heatmap_get(logger, ismobile, teamstat_dic, teams_dic):
+def _teamcomparison_heatmap_get(logger, ismobile, language, teamstat_dic, teams_dic):
     """ build structure for pace chart """
     logger.debug('_5v5_pace_get()')
 
@@ -74,7 +76,7 @@ def _teamcomparison_heatmap_get(logger, ismobile, teamstat_dic, teams_dic):
         'title': title,
         'chart':  teamcomparison_chart_get(logger, title, subtitle, ismobile, heatmap_data[len(heatmap_data.keys())]),
         'updates': teamcomparison_updates_get(logger, title, ismobile, heatmap_data),
-        'comments': markdown_load()
+        'comment': comment_get(logger, 'name', 'teamcomparison_heatmap', [language])
     }
 
     return stat_entry

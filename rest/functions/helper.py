@@ -274,15 +274,17 @@ def minmax_get(minval, maxval, average):
 
     return (newmin, newmax)
 
-def markdown_load(filter=None):
-    """ load markdown file and return it back """
+def language_get(logger, request):
+    """ lang check """
+    logger.debug('language_get()')
 
-    result = """
-# headline 1
-## headline 2
+    if hasattr(request, 'GET') and 'language' in request.GET:
+        try:
+            language = request.GET['language'].lower()
+        except BaseException:
+            language = 'en'
+    else:
+        language = 'en'
 
-- *listelement*: with some explaination
-- *another listelement*: with anouther explaination
-
-    """
-    return result
+    logger.debug('language_get() ended with: {0}'.format(language))
+    return language

@@ -3,7 +3,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from rest.models import Gameheader, Match, Periodevent, Player, Playerstat, Roster, Season, Shift, Shot, Team, Teamstat, Teammatchstat
+from rest.models import Comment, Gameheader, Match, Periodevent, Player, Playerstat, Roster, Season, Shift, Shot, Team, Teamstat, Teammatchstat
 
 class MatchAdmin(admin.ModelAdmin):
     """ match admin """
@@ -34,6 +34,12 @@ class GameheaderAdmin(admin.ModelAdmin):
     fields = ['match', 'gameheader']
     list_display = ['match', 'gameheader']
     ordering = ['match_id']
+
+class CommentAdmin(admin.ModelAdmin):
+    """ Roster admin """
+    fields = ['name', 'de', 'en']
+    list_display = ['name', 'de', 'en']
+    ordering = ['name', 'de', 'en']
 
 class RosterAdmin(admin.ModelAdmin):
     """ Roster admin """
@@ -77,6 +83,7 @@ class TeammatchstatAdmin(admin.ModelAdmin):
     list_display = ['match', 'team', 'goals_for', 'goals_against', 'goals_pp', 'goals_sh', 'shots_for', 'shots_for_5v5', 'shots_ongoal_for', 'shots_ongoal_for_5v5', 'shots_ongoal_pctg', 'shots_against', 'shots_against_5v5', 'shots_ongoal_against', 'shots_ongoal_against_5v5', 'saves', 'saves_pctg', 'faceoffswon', 'faceoffslost', 'faceoffswon_pctg', 'penaltyminutes', 'powerplayseconds', 'rebounds_for', 'rebounds_against', 'goals_rebound_for', 'goals_rebound_against', 'breaks_for', 'breaks_against', 'goals_break_for', 'goals_break_against']
     ordering = ['match_id', 'team_id']
 
+admin.site.register(Comment, CommentAdmin)
 admin.site.register(Match, MatchAdmin)
 admin.site.register(Periodevent, PeriodeventAdmin)
 admin.site.register(Player, PlayerAdmin)
