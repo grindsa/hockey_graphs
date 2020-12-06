@@ -9,6 +9,7 @@ import AnnotationsModule from 'highcharts/modules/annotations';
 import Heatmap from 'highcharts/modules/heatmap.js';
 import ReactMarkdown from 'react-markdown'
 import Slider from 'react-rangeslider'
+import gfm from 'remark-gfm'
 // import 'react-rangeslider/lib/index.css'
 import '../css/slider.css';
 import { checkTcUpdate, createSelectOptions }  from './teamcomparison/teamcomparisonstateservice.js';
@@ -109,7 +110,7 @@ class Comment extends React.Component{
     }else{
       return (
         <div className="w3-container commentwidth">
-          <ReactMarkdown source={this.props.text} />
+          <ReactMarkdown source={this.props.text} plugins={[gfm]} />
         </div>
       )
     }
