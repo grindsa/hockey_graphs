@@ -165,15 +165,15 @@ def corner_annotations(ismobile, upper_left_text, lower_left_text, upper_right_t
     """ annotations in all four corners """
 
     if ismobile:
-        upper_left = {'x': 25, 'y': 55}
-        upper_right = {'x': 340, 'y': 55}
-        lower_left = {'x': 25, 'y': 310}
-        lower_right = {'x': 340, 'y': 310}
+        upper_left = {'x': 25, 'y': 40}
+        upper_right = {'x': 340, 'y': 40}
+        lower_left = {'x': 25, 'y': 355}
+        lower_right = {'x': 340, 'y': 355}
     else:
         upper_left = {'x': 25, 'y': 55}
         upper_right = {'x': 750, 'y': 55}
-        lower_left = {'x': 25, 'y': 700}
-        lower_right = {'x': 750, 'y': 700}
+        lower_left = {'x': 25, 'y': 800}
+        lower_right = {'x': 750, 'y': 800}
 
     result = [{
         'labels': [
