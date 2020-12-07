@@ -51,6 +51,7 @@ def teammatchstat_add(logger, match_dic):
             'goals_for': match_dic[team]['goals'],
             'goals_against': match_dic[o_team]['goals'],
             'goals_pp': match_dic[team]['ppGoals'],
+            'goals_pp_against': match_dic[o_team]['ppGoals'],
             'goals_sh': match_dic[team]['shGoals'],
             'shots_for': match_dic[team]['shotsAttempts'],
             'shots_for_5v5': shots_for_5v5,
@@ -77,6 +78,10 @@ def teammatchstat_add(logger, match_dic):
             'breaks_against': rb_dic[o_team]['breaks'],
             'goals_break_for': rb_dic[team]['break_goals'],
             'goals_break_against': rb_dic[o_team]['break_goals'],
+            'ppcount': match_dic[team]['ppCount'],
+            'shcount': match_dic[team]['shCount'],
+            'ppefficiency': match_dic[team]['ppEfficiency'],
+            'shefficiency': match_dic[team]['shEfficiency'],
         }
 
         try:
