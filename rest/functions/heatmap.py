@@ -11,7 +11,7 @@ def  _teampcomparison_data_sumup(logger, teamstat_dic):
 
     for team_id in teamstat_dic:
         # sumup data per team
-        teamstat_sum_dic[team_id] = list_sumup(logger, teamstat_dic[team_id], ['match_id', 'shots_for_5v5', 'shots_against_5v5', 'shots_ongoal_for', 'shots_ongoal_against', 'goals_for', 'goals_against', 'saves', 'matchduration', 'faceoffswon', 'faceoffslost', 'rebounds_for', 'rebounds_against', 'goals_rebound_for', 'goals_rebound_against', 'breaks_for', 'breaks_against', 'goals_break_for', 'goals_break_against'])
+        teamstat_sum_dic[team_id] = list_sumup(logger, teamstat_dic[team_id], ['match_id', 'shots_for_5v5', 'shots_against_5v5', 'shots_ongoal_for', 'shots_ongoal_against', 'goals_for', 'goals_against', 'saves', 'matchduration', 'faceoffswon', 'faceoffslost', 'rebounds_for', 'rebounds_against', 'goals_rebound_for', 'goals_rebound_against', 'breaks_for', 'breaks_against', 'goals_break_for', 'goals_break_against', 'goals_pp', 'goals_pp_against', 'ppcount', 'shcount'])
         # check how many items we have to create in update_dic
         if update_amount < len(teamstat_sum_dic[team_id]):
             update_amount = len(teamstat_sum_dic[team_id])
@@ -38,6 +38,10 @@ def  _teampcomparison_data_sumup(logger, teamstat_dic):
             teamstat_sum_dic[team_id][ele-1]['goals_break_for_pctg'] = pctg_float_get(teamstat_sum_dic[team_id][ele-1]['sum_goals_break_for'], teamstat_sum_dic[team_id][ele-1]['sum_breaks_for'])
             teamstat_sum_dic[team_id][ele-1]['goals_break_against_pctg'] = pctg_float_get(teamstat_sum_dic[team_id][ele-1]['sum_goals_break_against'], teamstat_sum_dic[team_id][ele-1]['sum_breaks_against'])
 
+            # special team performance
+            teamstat_sum_dic[team_id][ele-1]['goals_pp_for_pctg'] = pctg_float_get(teamstat_sum_dic[team_id][ele-1]['sum_goals_pp'], teamstat_sum_dic[team_id][ele-1]['sum_ppcount'])
+            teamstat_sum_dic[team_id][ele-1]['goals_pp_kill_pctg'] = 100 - pctg_float_get(teamstat_sum_dic[team_id][ele-1]['sum_goals_pp_against'], teamstat_sum_dic[team_id][ele-1]['sum_shcount'])
+
     return (teamstat_sum_dic, update_amount)
 
 
@@ -57,7 +61,9 @@ def _teamcomparison_hm_chartseries_get(logger, data_dic):
         {'name': 'Rb+%', 'key': 'goals_rebound_for_pctg'},
         {'name': 'Rb-%', 'key': 'goals_rebound_against_pctg'},
         {'name': 'Br+%', 'key': 'goals_break_for_pctg'},
-        {'name': 'Br-%', 'key': 'goals_break_against_pctg'}
+        {'name': 'Br-%', 'key': 'goals_break_against_pctg'},
+        {'name': 'PP%', 'key': 'goals_pp_for_pctg'},
+        {'name': 'Pk%', 'key': 'goals_pp_kill_pctg'}
     ]
 
     for ele in data_dic:
@@ -78,6 +84,7 @@ def _teamcomparison_hm_chartseries_get(logger, data_dic):
                 # detect against bar (reverse color scheme needs to be applied)
                 reverse = False
                 if 'against' in y_category[y_cnt]['key']:
+                    print(y_category[y_cnt]['key'])
                     reverse = True
                 # build data structure
                 tmp_dic = {
@@ -167,7 +174,9 @@ def teamcomparison_hmdata_get(logger, ismobile, teamstat_dic, teams_dic):
                 'goals_rebound_for_pctg': ele['goals_rebound_for_pctg'],
                 'goals_rebound_against_pctg': ele['goals_rebound_against_pctg'],
                 'goals_break_for_pctg': ele['goals_rebound_for_pctg'],
-                'goals_break_against_pctg': ele['goals_rebound_against_pctg']
+                'goals_break_against_pctg': ele['goals_rebound_against_pctg'],
+                'goals_pp_for_pctg': ele['goals_pp_for_pctg'],
+                'goals_pp_kill_pctg': ele['goals_pp_kill_pctg']
             })
 
     chart_options = _teamcomparison_hm_chartseries_get(logger, heatmap_lake)
@@ -189,7 +198,7 @@ def teamcomparison_updates_get(logger, _title, ismobile, data_dic):
             'chartoptions':  {
                 'series': [
                     # pylint: disable=E0602
-                    {'data': data_dic[ele]['data'], 'borderWidth': border_width, 'borderColor': '#ffffff', 'dataLabels': {'enabled': 0}},
+                    {'marker': {'symbol': 'square'}, 'showInLegend': 0, 'data': data_dic[ele]['data'], 'borderWidth': border_width, 'borderColor': '#ffffff', 'dataLabels': {'enabled': 0}},
                 ]
             }
         }

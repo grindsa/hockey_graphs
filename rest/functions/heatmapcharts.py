@@ -52,20 +52,12 @@ def teamcomparison_chart_get(logger, ctitle, csubtitle, ismobile, data_dic):
         'colorAxis': color_axis(showinlegend=0),
 
         'series': [{
-            'name': _('bad'),
-            'color': '#a90c38',
             'marker': {'symbol': 'square'},
-            # 'borderWidth': 1,
-            # 'borderColor': '#000000',
             'borderWidth': variable_dic['border_width'],
             'borderColor': '#ffffff',
             'data': data_dic['data'],
             'showInLegend': 0,
-            'dataLabels': {
-                'enabled': 0,
-                'useHTML': 0,
-                'style': {'fontSize': '8px', 'textOutline': 0, 'color': text_color}
-            }
+            'dataLabels': {'enabled': 0}
         }],
     }
 
