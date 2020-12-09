@@ -7,6 +7,7 @@ class Season(models.Model):
     """ season table """
     name = models.CharField(max_length=20)
     shortcut = models.CharField(max_length=5)
+    tournament = models.IntegerField(default=0)
     def __str__(self):
         return self.name
 
@@ -98,7 +99,7 @@ class Teammatchstat(models.Model):
     team = models.ForeignKey(Team, on_delete=models.CASCADE, default=0)
     goals_for = models.IntegerField(default=0)
     goals_pp = models.IntegerField(default=0)
-    goals_pp_against = models.IntegerField(default=0)    
+    goals_pp_against = models.IntegerField(default=0)
     goals_sh = models.IntegerField(default=0)
     goals_against = models.IntegerField(default=0)
     matchduration = models.IntegerField(default=0)
