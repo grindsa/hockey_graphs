@@ -94,8 +94,8 @@ def matchstats_get(logger, match_id):
                 'ppGoals_pctg': pctg_get(matchstat_dic['home']['ppGoals'], (matchstat_dic['home']['ppGoals'] + matchstat_dic['visitor']['ppGoals'])),
                 'shGoals': matchstat_dic['home']['shGoals'],
                 'shGoals_pctg': pctg_get(matchstat_dic['home']['shGoals'], (matchstat_dic['home']['shGoals'] + matchstat_dic['visitor']['shGoals'])),
-                'puckpossession': '{0}%'.format(int(matchstat_dic['home']['shotsAttempts'] * 100 / (matchstat_dic['home']['shotsAttempts'] + matchstat_dic['home']['shotsAttempts']))),
-                'puckpossession_pctg': '{0}%'.format(int(matchstat_dic['home']['shotsAttempts'] * 100 / (matchstat_dic['home']['shotsAttempts'] + matchstat_dic['home']['shotsAttempts'])))
+                'puckpossession': pctg_get(matchstat_dic['home']['shotsAttempts'], (matchstat_dic['home']['shotsAttempts'] + matchstat_dic['visitor']['shotsAttempts'])),
+                'puckpossession_pctg': pctg_get(matchstat_dic['home']['shotsAttempts'], (matchstat_dic['home']['shotsAttempts'] + matchstat_dic['visitor']['shotsAttempts']))
             },
             'visitor_team': {
                 'shotsOnGoal': matchstat_dic['visitor']['shotsOnGoal'],
@@ -112,8 +112,8 @@ def matchstats_get(logger, match_id):
                 'ppGoals_pctg': pctg_get(matchstat_dic['visitor']['ppGoals'], (matchstat_dic['home']['ppGoals'] + matchstat_dic['visitor']['ppGoals'])),
                 'shGoals': matchstat_dic['visitor']['shGoals'],
                 'shGoals_pctg': pctg_get(matchstat_dic['visitor']['shGoals'], (matchstat_dic['home']['shGoals'] + matchstat_dic['visitor']['shGoals'])),
-                'puckpossession': '{0}%'.format(int(matchstat_dic['visitor']['shotsAttempts'] * 100 / (matchstat_dic['home']['shotsAttempts'] + matchstat_dic['home']['shotsAttempts']))),
-                'puckpossession_pctg': '{0}%'.format(int(matchstat_dic['visitor']['shotsAttempts'] * 100 / (matchstat_dic['home']['shotsAttempts'] + matchstat_dic['home']['shotsAttempts'])))
+                'puckpossession': pctg_get(matchstat_dic['visitor']['shotsAttempts'], (matchstat_dic['home']['shotsAttempts'] + matchstat_dic['visitor']['shotsAttempts'])),
+                'puckpossession_pctg': pctg_get(matchstat_dic['visitor']['shotsAttempts'], (matchstat_dic['home']['shotsAttempts'] + matchstat_dic['visitor']['shotsAttempts']))
             }
         }
 
