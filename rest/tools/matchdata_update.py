@@ -6,7 +6,7 @@ import os
 import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir, os.path.pardir)))
-
+import argparse
 from rest.functions.gameheader import gameheader_add
 from rest.functions.helper import logger_setup, uts_now
 from rest.functions.match import openmatch_list_get, match_add, pastmatch_list_get
@@ -15,7 +15,7 @@ from rest.functions.player import player_list_get, player_add
 from rest.functions.playerstat import playerstat_add, playerstat_get
 from rest.functions.roster import roster_add
 from rest.functions.season import season_latest_get
-# from rest.functions.shift import shift_add
+from rest.functions.shift import shift_add
 from rest.functions.shot import shot_add, zone_name_get
 from rest.functions.teamstat import teamstat_add
 from delapphelper import DelAppHelper
@@ -50,7 +50,7 @@ def _match_update(logger, match_id_, header_dic):
         logger.debug('update match: {0}: {1}'.format(match_id_, result))
         data_dic['result'] = result
 
-    if 'actualTimeName' in header_dic and header_dic['actualTimeName'].lower() == "ende":
+    if 'actualTimeName' in header_dic and header_dic['actualTimeName'].lower() in ["ende", "ende n. verlängerung", "ende n. penaltyschießen"]:
         logger.debug('set finish flag for match: {0}'.format(match_id_))
         data_dic['finish'] = True
 
@@ -86,24 +86,67 @@ def shots_process(logger, match_dic):
         }
         shot_add(logger, 'shot_id', shot['id'], data_dic)
 
+def arg_parse():
+    """ simple argparser """
+    parser = argparse.ArgumentParser(description='match_import.py - update matches in database')
+    parser.add_argument('-d', '--debug', help='debug mode', action="store_true", default=False)
+    parser.add_argument('--shifts', help='debug mode', action="store_true", default=False)
+    mlist = parser.add_mutually_exclusive_group()
+    mlist.add_argument('-s', '--season', help='season id')
+    mlist.add_argument('--matchlist', help='list of del matchids')
+    mlist.add_argument('-o', '--openmatches', help='open matches from latest season', action="store_true", default=False)
+    mlist.add_argument('-p', '--pastmatches', help='previous matches from latest season', action="store_true", default=False)
+    args = parser.parse_args()
+
+    # default settings
+    season = 0
+    matchlist = None
+
+    debug = args.debug
+    addshifts = args.shifts
+    openmatches = args.openmatches
+    pastmatches = args.pastmatches
+    if args.season:
+        season = args.season
+    if args.matchlist:
+        matchlist = args.matchlist
+
+    # process matchlist
+    try:
+        _tmp_list = matchlist.split(',')
+    except BaseException:
+        _tmp_list = []
+    match_list = []
+    for match in _tmp_list:
+        match_list.append(int(match))
+
+    return(debug, season, match_list, addshifts, openmatches, pastmatches)
+
+
 if __name__ == '__main__':
 
-    DEBUG = False
+    (DEBUG, SEASON_ID, MATCH_LIST, ADDSHIFTS, OPENMATCHES, PASTMATCHES) = arg_parse()
 
     # initialize logger
     LOGGER = logger_setup(DEBUG)
-    # get season_id
-    SEASON_ID = season_latest_get(LOGGER)
+
+    if not SEASON_ID:
+        # get season_id
+        SEASON_ID = season_latest_get(LOGGER)
+
     # unix timestamp
     UTS = uts_now()
 
-    # Get list of matches to be updated (selection current season, status finish_false, date lt_uts)
-    match_list = openmatch_list_get(LOGGER, SEASON_ID, UTS, ['match_id'])
-    # match_list = pastmatch_list_get(LOGGER, SEASON_ID, UTS, ['match_id'])
-    # match_list = [1807, 1808]
-    with DelAppHelper(None, DEBUG) as del_app_helper:
-        for match_id in match_list:
+    if not MATCH_LIST:
+        if OPENMATCHES:
+            # Get list of matches to be updated (selection current season, status finish_false, date lt_uts)
+            MATCH_LIST = openmatch_list_get(LOGGER, SEASON_ID, UTS, ['match_id'])
+        elif PASTMATCHES:
+            MATCH_LIST = pastmatch_list_get(LOGGER, SEASON_ID, UTS, ['match_id'])
 
+    with DelAppHelper(None, DEBUG) as del_app_helper:
+        for match_id in MATCH_LIST:
+            # print('process match: {0}'.format(match_id))
             # get matchheader
             gameheader_dic = del_app_helper.gameheader_get(match_id)
             gameheader_add(LOGGER, 'match_id', match_id, {'match_id': match_id, 'gameheader': gameheader_dic})
@@ -114,7 +157,6 @@ if __name__ == '__main__':
                 home_dic = del_app_helper.playerstats_get(match_id, True)
                 visitor_dic = del_app_helper.playerstats_get(match_id, False)
                 _playerstats_process(LOGGER, match_id, period, home_dic, visitor_dic)
-
 
             # get and store periodevents
             try:
@@ -139,9 +181,11 @@ if __name__ == '__main__':
             except BaseException:
                 LOGGER.debug('ERROR: teamstats_get() failed.')
 
-            # get shifts
-            # shift_dic = del_app_helper.shifts_get(match_id)
-            # shift_add(LOGGER, 'match_id', match_id, {'match_id': match_id, 'shift': shift_dic})
+            # get shifts if required
+            if ADDSHIFTS:
+                # print('adding shifts')
+                shift_dic = del_app_helper.shifts_get(match_id)
+                shift_add(LOGGER, 'match_id', match_id, {'match_id': match_id, 'shift': shift_dic})
 
             try:
                 # get shots
