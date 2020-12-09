@@ -9,6 +9,19 @@ import django
 django.setup()
 from rest.models import Season
 
+def season_get(logger, fkey, fvalue, vlist=('id', 'name', 'shortcut', 'tournament')):
+    """ season_get """
+    logger.debug('season_get({0}:{1})'.format(fkey, fvalue))
+    try:
+        if len(vlist) == 1:
+            season_list = list(Season.objects.filter(**{fkey: fvalue}).values_list(vlist[0], flat=True))[0]
+        else:
+            season_list = Season.objects.filter(**{fkey: fvalue}).values(*vlist)[0]
+    except BaseException:
+        season_list = []
+    return season_list
+
+
 def season_latest_get(logger):
     """get latest season"""
     logger.debug('season_latest_get()')

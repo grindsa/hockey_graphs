@@ -9,7 +9,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.
 import argparse
 from rest.functions.helper import logger_setup, list2dic, uts_to_date_utc
 from rest.functions.match import match_add
-from rest.functions.season import season_latest_get
+from rest.functions.season import season_latest_get, season_get
 from rest.functions.team import team_list_get
 from delapphelper import DelAppHelper
 
@@ -53,6 +53,10 @@ if __name__ == '__main__':
     if not SEASON_ID:
         # get season_id
         SEASON_ID = season_latest_get(LOGGER)
+
+    if not TOURNAMENT_ID:
+        # get tournamentid based on season_id
+        TOURNAMENT_ID = season_get(LOGGER, 'id', SEASON_ID, ['tournament'])
 
     # get team_list
     TEAM_DIC = list2dic(LOGGER, list(team_list_get(LOGGER, None, None, ['team_id', 'shortcut'])), 'shortcut')
