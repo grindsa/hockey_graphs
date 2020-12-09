@@ -9,7 +9,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.
 import argparse
 from rest.functions.gameheader import gameheader_add
 from rest.functions.helper import logger_setup, uts_now
-from rest.functions.match import openmatch_list_get, match_add, pastmatch_list_get
+from rest.functions.match import openmatch_list_get, match_add, pastmatch_list_get, sincematch_list_get
 from rest.functions.periodevent import periodevent_add
 from rest.functions.player import player_list_get, player_add
 from rest.functions.playerstat import playerstat_add, playerstat_get
@@ -20,9 +20,9 @@ from rest.functions.shot import shot_add, zone_name_get
 from rest.functions.teamstat import teamstat_add
 from delapphelper import DelAppHelper
 
-def _playerstats_process(logger, match_id, period, home_dic, visitor_dic):
+def _playerstats_process(logger, match_id_, _period, home_dic_, visitor_dic_):
     """ update match with result and finish flag """
-    playerstat_list = playerstat_get(logger, 'match_id', match_id)
+    playerstat_list = playerstat_get(logger, 'match_id', match_id_)
 
     # filter only allowed periods
     periods_allowed = ['1', '2', '3', 'P']
@@ -36,10 +36,9 @@ def _playerstats_process(logger, match_id, period, home_dic, visitor_dic):
             visitorstat_dic = playerstat_list['visitor']
         else:
             visitorstat_dic = {}
-        homestat_dic[period] = home_dic
-        visitorstat_dic[period] = visitor_dic
-        playerstat_add(LOGGER, 'match_id', match_id, {'match_id': match_id, 'home': homestat_dic, 'visitor': visitorstat_dic})
-
+        homestat_dic[period] = home_dic_
+        visitorstat_dic[period] = visitor_dic_
+        playerstat_add(LOGGER, 'match_id', match_id_, {'match_id': match_id_, 'home': homestat_dic, 'visitor': visitorstat_dic})
 
 def _match_update(logger, match_id_, header_dic):
     """ update match with result and finish flag """
@@ -92,10 +91,11 @@ def arg_parse():
     parser.add_argument('-d', '--debug', help='debug mode', action="store_true", default=False)
     parser.add_argument('--shifts', help='debug mode', action="store_true", default=False)
     mlist = parser.add_mutually_exclusive_group()
-    mlist.add_argument('-s', '--season', help='season id')
-    mlist.add_argument('--matchlist', help='list of del matchids')
+    mlist.add_argument('-s', '--season', help='season id', default=None)
+    mlist.add_argument('--matchlist', help='list of del matchids', default=[])
     mlist.add_argument('-o', '--openmatches', help='open matches from latest season', action="store_true", default=False)
     mlist.add_argument('-p', '--pastmatches', help='previous matches from latest season', action="store_true", default=False)
+    mlist.add_argument('-i', '--interval', help='previous matches during last x hours', default=0)
     args = parser.parse_args()
 
     # default settings
@@ -106,10 +106,9 @@ def arg_parse():
     addshifts = args.shifts
     openmatches = args.openmatches
     pastmatches = args.pastmatches
-    if args.season:
-        season = args.season
-    if args.matchlist:
-        matchlist = args.matchlist
+    season = args.season
+    matchlist = args.matchlist
+    interval = int(args.interval)
 
     # process matchlist
     try:
@@ -120,12 +119,16 @@ def arg_parse():
     for match in _tmp_list:
         match_list.append(int(match))
 
-    return(debug, season, match_list, addshifts, openmatches, pastmatches)
+    if not openmatches and not pastmatches and not interval:
+        print('either -i -o -p parameter must be specified')
+        sys.exit(0)
+
+    return(debug, season, match_list, addshifts, openmatches, pastmatches, interval)
 
 
 if __name__ == '__main__':
 
-    (DEBUG, SEASON_ID, MATCH_LIST, ADDSHIFTS, OPENMATCHES, PASTMATCHES) = arg_parse()
+    (DEBUG, SEASON_ID, MATCH_LIST, ADDSHIFTS, OPENMATCHES, PASTMATCHES, INTERVAL) = arg_parse()
 
     # initialize logger
     LOGGER = logger_setup(DEBUG)
@@ -143,6 +146,8 @@ if __name__ == '__main__':
             MATCH_LIST = openmatch_list_get(LOGGER, SEASON_ID, UTS, ['match_id'])
         elif PASTMATCHES:
             MATCH_LIST = pastmatch_list_get(LOGGER, SEASON_ID, UTS, ['match_id'])
+        elif INTERVAL:
+            MATCH_LIST = sincematch_list_get(LOGGER, SEASON_ID, UTS, INTERVAL*3600, ['match_id'], )
 
     with DelAppHelper(None, DEBUG) as del_app_helper:
         for match_id in MATCH_LIST:

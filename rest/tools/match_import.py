@@ -16,21 +16,15 @@ from delapphelper import DelAppHelper
 def arg_parse():
     """ simple argparser """
     parser = argparse.ArgumentParser(description='match_import.py - update matches in database')
-    parser.add_argument('-d', '--debug', help='debug mode', action="store_true")
+    parser.add_argument('-d', '--debug', help='debug mode', action="store_true", default=False)
     tsg = parser.add_mutually_exclusive_group()
-    tsg.add_argument('-s', '--season', help='hockeygraphs season id')
-    tsg.add_argument('-t', '--tournament', help='del season id')
+    tsg.add_argument('-s', '--season', help='hockeygraphs season id', default=None)
+    tsg.add_argument('-t', '--tournament', help='del season id', default=None)
     args = parser.parse_args()
-    # default settings
-    debug = False
-    season = 0
-    tournament = 0
-    if args.debug:
-        debug = args.debug
-    if args.season:
-        season = args.season
-    if args.tournament:
-        tournament = args.tournament
+
+    debug = args.debug
+    season = args.season
+    tournament = args.tournament
 
     if not tournament and not season:
         print('specify either "-t" or "-s"')
