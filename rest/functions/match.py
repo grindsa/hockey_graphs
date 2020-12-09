@@ -37,14 +37,14 @@ def match_list_get(logger, fkey=None, fvalue=None, vlist=('match_id', 'season', 
     try:
         if fkey:
             if len(vlist) == 1:
-                match_list = Match.objects.filter(**{fkey: fvalue}).order_by('match_id').values_list(vlist[0], flat=True)
+                match_list = Match.objects.filter(**{fkey: fvalue}).order_by('match_id').exclude(disable=True).values_list(vlist[0], flat=True)
             else:
-                match_list = Match.objects.filter(**{fkey: fvalue}).order_by('match_id').values(*vlist)
+                match_list = Match.objects.filter(**{fkey: fvalue}).order_by('match_id').exclude(disable=True).values(*vlist)
         else:
             if len(vlist) == 1:
-                match_list = Match.objects.all().order_by('match_id').values_list(vlist[0], flat=True)
+                match_list = Match.objects.all().order_by('match_id').exclude(disable=True).values_list(vlist[0], flat=True)
             else:
-                match_list = Match.objects.all().order_by('match_id').values(*vlist)
+                match_list = Match.objects.all().order_by('match_id').exclude(disable=True).values(*vlist)
     except BaseException as err_:
         logger.critical('error in match_list_get(): {0}'.format(err_))
         match_list = []
@@ -162,9 +162,9 @@ def openmatch_list_get(logger, season_id, uts=0, vlist=('match_id', 'season', 'd
     logger.debug('match_list_get({0}:{1})'.format(season_id, uts))
     try:
         if len(vlist) == 1:
-            match_list = Match.objects.filter(season_id=season_id, finish=False, date_uts__lt=uts).order_by('match_id').values_list(vlist[0], flat=True)
+            match_list = Match.objects.filter(season_id=season_id, finish=False, date_uts__lt=uts).order_by('match_id').exclude(disable=True).values_list(vlist[0], flat=True)
         else:
-            match_list = Match.objects.filter(season_id=season_id, finish=False, date_uts__lt=uts).order_by('match_id').values(*vlist)
+            match_list = Match.objects.filter(season_id=season_id, finish=False, date_uts__lt=uts).order_by('match_id').exclude(disable=True).values(*vlist)
     except BaseException as err_:
         logger.critical('error in match_list_get(): {0}'.format(err_))
         match_list = []
@@ -176,9 +176,9 @@ def pastmatch_list_get(logger, season_id, uts=0, vlist=('match_id', 'season', 'd
     logger.debug('match_list_get({0}:{1})'.format(season_id, uts))
     try:
         if len(vlist) == 1:
-            match_list = Match.objects.filter(season_id=season_id, date_uts__lt=uts).order_by('match_id').values_list(vlist[0], flat=True)
+            match_list = Match.objects.filter(season_id=season_id, date_uts__lt=uts).order_by('match_id').exclude(disable=True).values_list(vlist[0], flat=True)
         else:
-            match_list = Match.objects.filter(season_id=season_id, date_uts__lt=uts).order_by('match_id').values(*vlist)
+            match_list = Match.objects.filter(season_id=season_id, date_uts__lt=uts).order_by('match_id').exclude(disable=True).values(*vlist)
     except BaseException as err_:
         logger.critical('error in match_list_get(): {0}'.format(err_))
         match_list = []
