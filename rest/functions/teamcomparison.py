@@ -79,7 +79,7 @@ def _pppk_pctg_get(logger, ismobile, teamstat_dic, teams_dic):
     stat_entry = {
         'title': title,
         'chart':  pppk_chart_get(logger, title, subtitle, ismobile, pppk_data[len(pppk_data.keys())]),
-        'updates': {}
+        'updates': breakdown_updates_get(logger, pppk_data)
     }
 
     return stat_entry
