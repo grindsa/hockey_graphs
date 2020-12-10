@@ -32,7 +32,7 @@ export class MatchStatistics extends React.Component {
 
   async componentDidMount(){
     // get matchstatistics
-    const matchstatistics = await asyncGET(this.props.matchstatistics + this.props.match.match_id + '?language=' + this.props.language)
+    const matchstatistics = await asyncGET(this.props.matchstatistics + this.props.match.match_id+ '?language=' + this.props.language  + '&mobile=' + isMobile)
     this.setState({matchstatistics: matchstatistics})
   }
 
