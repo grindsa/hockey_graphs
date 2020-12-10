@@ -350,7 +350,7 @@ def shotmapchart_create(logger, shotmap_list, ctitle):
     # pylint: disable=E0602
     logger.debug('shotmapchart_create()')
 
-    data_dic = {1 :[], 2: [], 3: [], 4: []}
+    data_dic = {1 :[], 2: [], 3: [], 4: [], 5: []}
 
     for shot in sorted(shotmap_list, key=lambda x: (x['match_shot_resutl_id'])):
         tmp_dic = {

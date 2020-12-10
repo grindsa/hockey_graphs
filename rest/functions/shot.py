@@ -131,7 +131,7 @@ def shotstatus_count(logger, shot_list, matchinfo_dic):
             # now we registered OT
             ot_reg = True
             for val in range(61, 66):
-                for ele in range(1, 5):
+                for ele in range(1, 6):
                     shot_status_dic['home_team'][ele][val] = 0
                     shot_status_dic['visitor_team'][ele][val] = 0
 
@@ -142,10 +142,9 @@ def shotstatus_count(logger, shot_list, matchinfo_dic):
             team = 'visitor_team'
 
         # count shots
-        if shot['match_shot_resutl_id'] <= 4:
-            shot_status_dic[team][shot['match_shot_resutl_id']][min_] += 1
-            if shot['match_shot_resutl_id'] == 4:
-                goal_dic[team][min_] = shot['player__last_name']
+        shot_status_dic[team][shot['match_shot_resutl_id']][min_] += 1
+        if shot['match_shot_resutl_id'] == 4:
+            goal_dic[team][min_] = shot['player__last_name']
 
     return(shot_status_dic, goal_dic)
 

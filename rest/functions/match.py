@@ -68,7 +68,7 @@ def match_add(logger, fkey, fvalue, data_dic):
 def matchstats_get(logger, match_id):
     """ get matchstatistics """
     # pylint: disable=E0602
-    matchstat_dic = teamstat_get(logger, 'match', match_id)
+    matchstat_dic = teamstat_get(logger, 'match', match_id)[0]
     if matchstat_dic:
         stat_dic = {
             'shotsOnGoal': _('Shots on Goal'),
