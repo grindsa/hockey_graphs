@@ -53,11 +53,11 @@ def matchstatistics_get(logger, request, fkey=None, fvalue=None):
         result = []
 
         # get matchstatistics
-        result.append(matchstats_get(logger, fvalue))
+        #result.append(matchstats_get(logger, fvalue))
 
         # create chart for shots per match
         # pylint: disable=E0602
-        result.append(_gameshots_get(logger, _('Shots per minute'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list))
+        #result.append(_gameshots_get(logger, _('Shots per minute'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list))
 
         # create shotflowchart
         # pylint: disable=E0602
@@ -65,30 +65,30 @@ def matchstatistics_get(logger, request, fkey=None, fvalue=None):
 
         # create chart for shotstatus
         # pylint: disable=E0602
-        result.append(_gameshootstatus_get(logger, _('Shots by Result'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list))
+        #result.append(_gameshootstatus_get(logger, _('Shots by Result'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list))
 
         # create shotzone chart
         # pylint: disable=E0602
-        result.append(_gamezoneshots_get(logger, _('Shots per Zone'), request, fkey, fvalue, matchinfo_dic, shot_list))
+        #result.append(_gamezoneshots_get(logger, _('Shots per Zone'), request, fkey, fvalue, matchinfo_dic, shot_list))
 
         # shotmap
         # pylint: disable=E0602
-        result.append(_gameshotmap_get(logger, _('Game Shotmap'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list))
+        #result.append(_gameshotmap_get(logger, _('Game Shotmap'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list))
 
         # player corsi
         # pylint: disable=E0602
-        result.extend(_gamecorsi_get(logger, subtitle, ismobile, request, matchinfo_dic, shot_list, shift_list, periodevent_list, roster_list))
+        #result.extend(_gamecorsi_get(logger, subtitle, ismobile, request, matchinfo_dic, shot_list, shift_list, periodevent_list, roster_list))
 
         # puck possession
         # pylint: disable=E0602
-        result.append(_gamepuckpossession_get(logger, _('Puck possession'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list))
+        #result.append(_gamepuckpossession_get(logger, _('Puck possession'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list))
 
         # time on ice per player
         # pylint: disable=E0602
-        result.append(_gametoi_get(logger, _('Time on Ice per Player'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shift_list))
+        #result.append(_gametoi_get(logger, _('Time on Ice per Player'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shift_list))
 
         # pylint: disable=E0602
-        result.append(_gamematchup_get(logger, _('5v5 Matchup'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list, shift_list, roster_list, periodevent_list))
+        #result.append(_gamematchup_get(logger, _('5v5 Matchup'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list, shift_list, roster_list, periodevent_list))
 
     else:
         result = {'error': 'Please specify a matchid'}

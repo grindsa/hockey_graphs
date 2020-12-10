@@ -2,7 +2,7 @@
 """ list of functions for shots """
 import math
 # pylint: disable=E0401
-from rest.functions.chartparameters import chartstyle, credit, exporting, responsive_gameflow, responsive_y1, responsive_y1_label, responsive_y2, responsive_bubble, plotoptions_marker_disable, title, subtitle, legend, tooltip, labels, font_size, font_size_mobile, legend_valign_mobile, corner_annotations, variables_get
+from rest.functions.chartparameters import chartstyle, credit, exporting, responsive_gameflow, responsive_y1, responsive_y1_label, responsive_y2, responsive_bubble, plotoptions_marker_disable, title, subtitle, legend, tooltip, labels, font_size, font_size_mobile, legend_valign_mobile, corner_annotations, variables_get, gameflow_annotations
 from rest.functions.chartparameters import text_color, plotlines_color, chart_color1, chart_color2, chart_color3, chart_color4, chart_color5, chart_color6, chart_color8, chart_color9, shot_missed_color, shot_blocked_color, shot_goal_color, shot_sog_color, line_color, line1_color, line2_color, line3_color, line4_color, line5_color
 
 # pylint: disable=R0914
@@ -171,7 +171,7 @@ def gameflowchart_create(logger, ctitle, csubtitle, ismobile, shot_flow_dic, goa
         'chart': {
             'type': 'areaspline',
             'inverted': 1,
-            'height': '100%',
+            'height': '110%',
             'alignTicks': 0,
             'style': chartstyle()
         },
@@ -183,23 +183,10 @@ def gameflowchart_create(logger, ctitle, csubtitle, ismobile, shot_flow_dic, goa
         'plotOptions': plotoptions_marker_disable('areaspline'),
         'responsive': responsive_gameflow(),
 
-        'title': {
-            'useHTML': 1,
-            'text': '<img src="{0}" width="{1}">'.format(matchinfo_dic['home_team_logo'], 55),
-            'floating': 1,
-            'align': 'left',
-            'x': 100,
-            'y': 80,
-        },
+        'title': title(ctitle, variable_dic['title_size'], decoration=True),
+        'subtitle': subtitle(csubtitle, variable_dic['subtitle_size']),
 
-        'subtitle': {
-            'useHTML': 1,
-            'text': '<img src="{0}" width="{1}">'.format(matchinfo_dic['visitor_team_logo'], 55),
-            'floating': 1,
-            'align': 'right',
-            'x': -50,
-            'y': 80,
-        },
+        'annotations': gameflow_annotations(ismobile, y_max, matchinfo_dic['home_team_logo'], matchinfo_dic['visitor_team_logo']),
 
         'xAxis': {
             'categories': min_list,

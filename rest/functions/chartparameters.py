@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """ common parameters and functions across all charts """
 # pylint: disable=C0103
+import math
 
 # size
 font_size = '10px'
@@ -90,8 +91,6 @@ def responsive_gameflow():
             'chartOptions': {
                 'xAxis': {'title': {'style': {'font-size': font_size_mobile}}, 'labels': {'style': {'fontSize': font_size_mobile}}},
                 'yAxis': {'title': {'style': {'font-size': font_size_mobile}}, 'labels': {'style': {'fontSize': font_size_mobile}}},
-                'title': {'x': 60, 'y': 40},
-                'subtitle': {'x': -10, 'y': 40},
                 }
         }]
     }
@@ -159,6 +158,31 @@ def responsive_y2():
 def tooltip(text):
     """ customize tooltip """
     return {'shared': 1, 'useHTML': 1, 'headerFormat': text, 'marker': {'enabled': 0}}
+
+def gameflow_annotations(ismobile, y_max, home_logo, visitor_logo):
+    """ annotations in all four corners """
+
+    # we need to calulcate the y position of the logos dynamically
+    y_bar_max = math.ceil(y_max/100) * 100
+
+    # flip by 90 - thus it looks strange
+    if ismobile:
+        left = {'x':5, 'y': round(-0.75 * y_bar_max, 0), 'xAxis': 0, 'yAxis': 0}
+        right = {'x': 5, 'y': round(0.53 * y_bar_max, 0), 'xAxis': 0, 'yAxis': 0}
+        img_width = 35
+    else:
+        img_width = 55
+        left = {'x': 5, 'y': round(-0.75 * y_bar_max, 0), 'xAxis': 0, 'yAxis': 0}
+        right = {'x': 5, 'y': round(0.6 * y_bar_max, 0), 'xAxis': 0, 'yAxis': 0}
+
+    img_height = img_width
+    result = [{
+        'shapes': [
+            {'type': 'image', 'src': home_logo, 'width': img_width, 'height': img_height, 'point': left},
+            {'type': 'image', 'src': visitor_logo, 'width': img_width, 'height': img_height, 'point': right}
+        ]
+    }]
+    return result
 
 
 def corner_annotations(ismobile, upper_left_text, lower_left_text, upper_right_text, lower_right_text):
