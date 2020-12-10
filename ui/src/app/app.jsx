@@ -24,7 +24,7 @@ export class App extends React.Component {
       language: 'DE',
       selectedSeason: 0,
       StatList: [{id: 0, name: 'Spielstatistiken'}, {id: 1, name: 'Teamvergleich'}],
-      selectedStat: 1
+      selectedStat: 0
     }
 
     this.changeSeason = this.changeSeason.bind(this);
