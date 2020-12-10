@@ -251,6 +251,8 @@ def shotstatussumchart_create(logger, ctitle, csubtitle, ismobile, shotsum_dic, 
     shot_list = list(shotsum_dic[team][1].values())
     missed_list = list(shotsum_dic[team][2].values())
     block_list = list(shotsum_dic[team][3].values())
+    posthit_list = list(shotsum_dic[team][5].values())
+
     goal_list = []
     for min_, value in shotsum_dic[team][4].items():
         # set marker on graph if there was a goal in this min
@@ -323,7 +325,11 @@ def shotstatussumchart_create(logger, ctitle, csubtitle, ismobile, shotsum_dic, 
             'name': _('missed'),
             'data': missed_list,
             'color': shot_missed_color,
-        }, {
+        },{
+            'name': _('Post hit'),
+            'data': posthit_list,
+            'color': shot_posthit_color,
+        },{
             'name': _('blocked'),
             'data': block_list,
             'color': shot_blocked_color,
@@ -332,7 +338,7 @@ def shotstatussumchart_create(logger, ctitle, csubtitle, ismobile, shotsum_dic, 
             'data': goal_list,
             'color': shot_goal_color,
             'zIndex': 2,
-        }, {
+        },{
             'name': _('Shots on Goal'),
             'data': shot_list,
             'color': shot_sog_color,

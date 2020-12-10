@@ -36,13 +36,14 @@ def shotstatussumtable_get(logger, _title, shot_min_dic, team, _matchinfo_dic):
 
     table_dic = {'th': [_('Shots per Period'), '1st', '2nd', '3rd', 'OT', _('Total')], 'align': ['w3-left-align', None, None, None, None, None], 'td': []}
 
-    status_dic = {1: _('Shots on Goal'), 2: _('missed'), 3: _('blocked'), 4: _('Goals')}
+    status_dic = {1: _('Shots on Goal'), 2: _('missed'), 3: _('blocked'), 4: _('Goals'), 5: _('Post hit')}
     # 1 - gehalten
     # 2 - vorbei
     # 3 - geblockt
     # 4 - goal
+    # 5 - pfosten (post hit)
 
-    for ele in (2, 3, 1, 4):
+    for ele in (2, 5, 3, 1, 4):
         sp1 = 0
         sp2 = 0
         sp3 = 0

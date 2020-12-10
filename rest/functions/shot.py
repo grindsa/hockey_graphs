@@ -88,13 +88,13 @@ def shot_dic_prep(logger, group_by=False, x_max=61):
 
     # initialize the different minutes)
     if group_by == 'match_shot_resutl_id':
-        for ele in range(1, 5):
+        for ele in range(1, 6):
             shot_min_dic['home_team'][ele] = {}
             shot_min_dic['visitor_team'][ele] = {}
 
     for min_ in range(0, x_max):
         if group_by == 'match_shot_resutl_id':
-            for ele in range(1, 5):
+            for ele in range(1, 6):
                 shot_min_dic['home_team'][ele][min_] = 0
                 shot_min_dic['visitor_team'][ele][min_] = 0
         elif group_by == 'zone':
@@ -260,8 +260,8 @@ def shotstatus_aggregate(logger, shot_status_dic):
     logger.debug('shotspermin_aggregate()')
 
     # aggregate shots per min
-    shotsum_dic = {'home_team': {1:{}, 2:{}, 3:{}, 4:{},}, 'visitor_team': {1:{}, 2:{}, 3:{}, 4:{},}}
-    for ele in range(1, 5):
+    shotsum_dic = {'home_team': {1:{}, 2:{}, 3:{}, 4:{}, 5:{}}, 'visitor_team': {1:{}, 2:{}, 3:{}, 4:{}, 5:{}}}
+    for ele in range(1, 6):
         home_min_values = list(shot_status_dic['home_team'][ele].values())
         visitor_min_values = list(shot_status_dic['visitor_team'][ele].values())
         for min_ in shot_status_dic['home_team'][ele]:
