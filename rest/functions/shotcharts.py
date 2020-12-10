@@ -3,7 +3,7 @@
 import math
 # pylint: disable=E0401
 from rest.functions.chartparameters import chartstyle, credit, exporting, responsive_gameflow, responsive_y1, responsive_y1_label, responsive_y2, responsive_bubble, plotoptions_marker_disable, title, subtitle, legend, tooltip, labels, font_size, font_size_mobile, legend_valign_mobile, corner_annotations, variables_get, gameflow_annotations
-from rest.functions.chartparameters import text_color, plotlines_color, chart_color1, chart_color2, chart_color3, chart_color4, chart_color5, chart_color6, chart_color8, chart_color9, shot_missed_color, shot_blocked_color, shot_goal_color, shot_sog_color, line_color, line1_color, line2_color, line3_color, line4_color, line5_color
+from rest.functions.chartparameters import text_color, plotlines_color, chart_color1, chart_color2, chart_color3, chart_color4, chart_color5, chart_color6, chart_color8, chart_color9, shot_posthit_color, shot_missed_color, shot_blocked_color, shot_goal_color, shot_sog_color, line_color, line1_color, line2_color, line3_color, line4_color, line5_color
 
 # pylint: disable=R0914
 def shotsumchart_create(logger, ctitle, csubtitle, ismobile, shot_sum_dic, shot_min_dic, goal_dic, plotline_list, machinfo_dic):
@@ -365,8 +365,11 @@ def shotmapchart_create(logger, ctitle, csubtitle, ismobile, shotmap_list):
         elif shot['match_shot_resutl_id'] == 3:
             tmp_dic['dataLabels'] = {'color': '#ffffff'}
             tmp_dic['labelrank'] = 3
-        elif shot['match_shot_resutl_id'] == 4:
+        elif shot['match_shot_resutl_id'] == 5:
+            tmp_dic['dataLabels'] = {'color': '#ffffff'}
             tmp_dic['labelrank'] = 4
+        elif shot['match_shot_resutl_id'] == 4:
+            tmp_dic['labelrank'] = 5
 
         if shot['match_shot_resutl_id'] in data_dic:
             data_dic[shot['match_shot_resutl_id']].append(tmp_dic)
@@ -405,10 +408,10 @@ def shotmapchart_create(logger, ctitle, csubtitle, ismobile, shotmap_list):
                     'enabled': 1,
                     'color': '#000000',
                     'style': {'textShadow': 0, 'textOutline': 0, 'fontSize': font_size},
-                    'y': 13,
+                    'y': 11,
                     'format': '{point.jersey}',
                     'align': 'center',
-                    'allowOverlap': 1,
+                    'allowOverlap': 0,
                 },
                 'color': shot_sog_color,
                 'lineColor': line_color,
@@ -436,10 +439,11 @@ def shotmapchart_create(logger, ctitle, csubtitle, ismobile, shotmap_list):
         },
 
         'series': [
-            {'name': _('missed'), 'zIndex': 1, 'data': data_dic[2], 'color': shot_missed_color, 'marker': {'symbol': 'circle', 'radius': 15}},
-            {'name': _('Shots on Goal'), 'color': shot_sog_color, 'zIndex': 2, 'data': data_dic[1], 'marker': {'radius': 15, 'symbol': 'circle'}},
+            {'name': _('missed'), 'zIndex': 1, 'data': data_dic[2], 'color': shot_missed_color, 'marker': {'lineColor': chart_color2, 'lineWidth': 1, 'symbol': 'circle', 'radius': 15}},
+            {'name': _('Shots on Goal'), 'color': shot_sog_color, 'zIndex': 2, 'data': data_dic[1], 'marker': {'lineColor': '#2083df', 'lineWidth': 1, 'radius': 15, 'symbol': 'circle'}},
             {'name': _('blocked'), 'zIndex': 3, 'color': shot_blocked_color, 'data': data_dic[3], 'marker': {'symbol': 'circle', 'radius': 15}},
-            {'name': _('Goals'), 'zIndex': 3, 'color': shot_goal_color, 'data': data_dic[4], 'marker': {'symbol': 'circle', 'radius': 15}},
+            {'name': _('Post hit'), 'zIndex': 4, 'color': chart_color4, 'data': data_dic[5], 'marker': {'symbol': 'circle', 'radius': 15}},
+            {'name': _('Goals'), 'zIndex': 5, 'color': shot_goal_color, 'data': data_dic[4], 'marker': {'symbol': 'circle', 'radius': 15}},
             ],
 
         'responsive': {
@@ -447,12 +451,13 @@ def shotmapchart_create(logger, ctitle, csubtitle, ismobile, shotmap_list):
                 'condition': {'maxWidth': 500},
                 'chartOptions': {
                     'series': [
-                        {'name': _('missed'), 'zIndex': 1, 'data': data_dic[2], 'color': shot_missed_color, 'marker': {'symbol': 'circle', 'radius': 12}},
-                        {'name': _('Shots on Goal'), 'zIndex': 2, 'color': shot_sog_color, 'data': data_dic[1], 'marker': {'radius': 12, 'symbol': 'circle'}},
+                        {'name': _('missed'), 'zIndex': 1, 'data': data_dic[2], 'color': shot_missed_color, 'marker': {'lineColor': chart_color2, 'lineWidth': 1, 'symbol': 'circle', 'radius': 12}},
+                        {'name': _('Shots on Goal'), 'zIndex': 2, 'color': shot_sog_color, 'data': data_dic[1], 'marker': {'lineColor': '#2083df', 'lineWidth': 1, 'radius': 12, 'symbol': 'circle'}},
                         {'name': _('blocked'), 'zIndex': 3, 'color': shot_blocked_color, 'data': data_dic[3], 'marker': {'symbol': 'circle', 'radius': 12}},
-                        {'name': _('Goals'), 'zIndex': 4, 'color': shot_goal_color, 'data': data_dic[4], 'marker': {'symbol': 'circle', 'radius': 12}},
+                        {'name': _('Post hit'), 'zIndex': 4, 'color': chart_color4, 'data': data_dic[5], 'marker': {'symbol': 'circle', 'radius': 12}},
+                        {'name': _('Goals'), 'zIndex': 5, 'color': shot_goal_color, 'data': data_dic[4], 'marker': {'symbol': 'circle', 'radius': 12}},
                     ],
-                    'plotOptions':{'series': {'dataLabels': {'y': 15}}}
+                    'plotOptions':{'series': {'dataLabels': {'y': 10}}}
                     }
             }]
         }

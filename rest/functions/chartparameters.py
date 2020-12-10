@@ -31,6 +31,7 @@ shot_missed_color = '#d8d9da'
 shot_blocked_color = '#000052'
 shot_goal_color = '#f01a29'
 shot_sog_color = '#7cb5ec'
+shot_posthit_color = '#68717a'
 line_color = '#c00c18'
 
 line1_color = chart_color3
@@ -184,7 +185,6 @@ def gameflow_annotations(ismobile, y_max, home_logo, visitor_logo):
     }]
     return result
 
-
 def corner_annotations(ismobile, upper_left_text, lower_left_text, upper_right_text, lower_right_text):
     """ annotations in all four corners """
 
@@ -241,7 +241,7 @@ def color_axis(color_list=None, showinlegend=1):
 def variables_get(ismobile):
     """ build variables based on mobile detection """
     if ismobile:
-        data_dic = {'border_width': 5, 'title_size': title_font_size_mobile, 'subtitle_size': subtitle_font_size_mobile, 'font_size': font_size_mobile, 'shotmap_height_pctg': '122%'}
+        data_dic = {'border_width': 5, 'title_size': title_font_size_mobile, 'subtitle_size': subtitle_font_size_mobile, 'font_size': font_size_mobile, 'shotmap_height_pctg': '130%'}
     else:
         data_dic = {'border_width': 10, 'title_size': title_font_size, 'subtitle_size': subtitle_font_size, 'font_size': font_size, 'shotmap_height_pctg': '110%'}
 
