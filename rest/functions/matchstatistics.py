@@ -165,8 +165,8 @@ def _gameshootstatus_get(logger, title, subtitle, ismobile, request, fkey, fvalu
 
         # create chart
         shot_chart = [
-            shotstatussumchart_create(logger, title, subtitle, ismobile, shotstatussum_dic, shotstatus_dic, goal_dic, 'home_team', matchinfo_dic),
-            shotstatussumchart_create(logger, title, subtitle, ismobile, shotstatussum_dic, shotstatus_dic, goal_dic, 'visitor_team', matchinfo_dic),
+            shotstatussumchart_create(logger, '{1} - {0}'.format(title, matchinfo_dic['home_team__shortcut']), subtitle, ismobile, shotstatussum_dic, shotstatus_dic, goal_dic, 'home_team', matchinfo_dic),
+            shotstatussumchart_create(logger, '{1} - {0}'.format(title, matchinfo_dic['visitor_team__shortcut']), subtitle, ismobile, shotstatussum_dic, shotstatus_dic, goal_dic, 'visitor_team', matchinfo_dic),
         ]
         shot_table = [
             shotstatussumtable_get(logger, title, shotstatus_dic, 'home_team', matchinfo_dic),
@@ -257,7 +257,7 @@ def _gameshotmap_get(logger, title, subtitle, ismobile, request, fkey, fvalue, m
 
 def _gamecorsi_get(logger, subtitle, ismobile, request, matchinfo_dic, shot_list, shift_list, periodevent_list, roster_list):
     """ get corsi """
-    # pylint: disable=R0914    
+    # pylint: disable=R0914
     logger.debug('_gamecorsi_get()')
 
     stat_entry_list = []
