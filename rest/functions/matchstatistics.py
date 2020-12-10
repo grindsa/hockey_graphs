@@ -11,7 +11,8 @@ from django.conf import settings
 from rest.functions.corsi import gamecorsi_get
 from rest.functions.shot import shot_list_get, shotspermin_count, shotspermin_aggregate, shotspersec_count, shotstatus_count, shotstatus_aggregate, shotsperzone_count, shotsperzone_aggregate, shotcoordinates_get
 from rest.functions.shotcharts import shotsumchart_create, gameflowchart_create, shotstatussumchart_create, shotmapchart_create, gamecorsichart_create, gamecorsippctgchart_create, puckpossessionchart_create
-from rest.functions.toicharts import gametoichart_create, gamematchupchart_create
+from rest.functions.toicharts import gametoichart_create
+from rest.functions.heatmapcharts import gamematchupchart_create
 from rest.functions.shottables import shotsperiodtable_get, shotstatussumtable_get, shotzonetable_get, gamecorsi_table
 from rest.functions.toitables import gametoi_table
 from rest.functions.match import match_info_get, matchstats_get
@@ -20,16 +21,22 @@ from rest.functions.roster import roster_get
 from rest.functions.periodevent import periodevent_get, penaltyplotlines_get
 from rest.functions.playerstat import playerstat_get, toifromplayerstats_get, matchupmatrix_get
 from rest.functions.chartparameters import chart_color7
-from rest.functions.helper import url_build
+from rest.functions.helper import url_build, mobile_check
 
 def matchstatistics_get(logger, request, fkey=None, fvalue=None):
     """ matchstatistics grouped by days """
     logger.debug('matchstatistics_get({0}:{1})'.format(fkey, fvalue))
 
+    ismobile = mobile_check(logger, request)
+
     # we protect the REST and will not return anything without matchid
     if fkey:
         # we need some match_information
         matchinfo_dic = match_info_get(logger, fvalue, request.META)
+
+        # pylint: disable=E0602
+        vs_name = _('vs.')
+        subtitle = '{0} {2} {1}'.format(matchinfo_dic['home_team__team_name'], matchinfo_dic['visitor_team__team_name'], vs_name)
 
         # get list of shots
         shot_list = shot_list_get(logger, fkey, fvalue, ['timestamp', 'match_shot_resutl_id', 'team_id', 'player__first_name', 'player__last_name', 'zone', 'coordinate_x', 'coordinate_y', 'player__jersey'])
@@ -50,15 +57,15 @@ def matchstatistics_get(logger, request, fkey=None, fvalue=None):
 
         # create chart for shots per match
         # pylint: disable=E0602
-        result.append(_gameshots_get(logger, _('Shots per minute'), request, fkey, fvalue, matchinfo_dic, shot_list))
+        result.append(_gameshots_get(logger, _('Shots per minute'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list))
 
         # create shotflowchart
         # pylint: disable=E0602
-        result.append(_gameflow_get(logger, _('Gameflow'), request, fkey, fvalue, matchinfo_dic, shot_list))
+        result.append(_gameflow_get(logger, _('Gameflow'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list))
 
         # create chart for shotstatus
         # pylint: disable=E0602
-        result.append(_gameshootstatus_get(logger, _('Shots by Result'), request, fkey, fvalue, matchinfo_dic, shot_list))
+        result.append(_gameshootstatus_get(logger, _('Shots by Result'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list))
 
         # create shotzone chart
         # pylint: disable=E0602
@@ -66,29 +73,29 @@ def matchstatistics_get(logger, request, fkey=None, fvalue=None):
 
         # shotmap
         # pylint: disable=E0602
-        result.append(_gameshotmap_get(logger, _('Game Shotmap'), request, fkey, fvalue, matchinfo_dic, shot_list))
+        result.append(_gameshotmap_get(logger, _('Game Shotmap'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list))
 
         # player corsi
         # pylint: disable=E0602
-        result.extend(_gamecorsi_get(logger, request, fkey, fvalue, matchinfo_dic, shot_list, shift_list, periodevent_list, roster_list))
+        result.extend(_gamecorsi_get(logger, subtitle, ismobile, request, matchinfo_dic, shot_list, shift_list, periodevent_list, roster_list))
 
         # puck possession
         # pylint: disable=E0602
-        result.append(_gamepuckpossession_get(logger, _('Puck possession'), request, fkey, fvalue, matchinfo_dic, shot_list))
+        result.append(_gamepuckpossession_get(logger, _('Puck possession'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list))
 
         # time on ice per player
         # pylint: disable=E0602
-        result.append(_gametoi_get(logger, _('Time on Ice per Player'), request, fkey, fvalue, matchinfo_dic, shift_list))
+        result.append(_gametoi_get(logger, _('Time on Ice per Player'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shift_list))
 
         # pylint: disable=E0602
-        result.append(_gamematchup_get(logger, _('5v5 Matchup'), request, fkey, fvalue, matchinfo_dic, shot_list, shift_list, roster_list, periodevent_list))
+        result.append(_gamematchup_get(logger, _('5v5 Matchup'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list, shift_list, roster_list, periodevent_list))
 
     else:
         result = {'error': 'Please specify a matchid'}
 
     return result
 
-def _gameflow_get(logger, title, request, fkey, fvalue, matchinfo_dic, shot_list):
+def _gameflow_get(logger, title, subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list):
     """ prepare shots per match chart """
     logger.debug('_shots_per_match_get({0}:{1})'.format(fkey, fvalue))
 
@@ -103,7 +110,7 @@ def _gameflow_get(logger, title, request, fkey, fvalue, matchinfo_dic, shot_list
         plotline_list = penaltyplotlines_get(logger, fkey, fvalue, chart_color7)
 
         # create the chart
-        shot_chart = gameflowchart_create(logger, shotflow_dic, goal_dic, plotline_list, matchinfo_dic, title)
+        shot_chart = gameflowchart_create(logger, title, subtitle, ismobile, shotflow_dic, goal_dic, plotline_list, matchinfo_dic)
 
     stat_entry = {
         'title': title,
@@ -114,7 +121,7 @@ def _gameflow_get(logger, title, request, fkey, fvalue, matchinfo_dic, shot_list
 
     return stat_entry
 
-def _gamepuckpossession_get(logger, title, request, fkey, fvalue, matchinfo_dic, shot_list):
+def _gamepuckpossession_get(logger, title, subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list):
     """ create chart for puck possession """
     logger.debug('_gamepuckpossession_get({0}:{1})'.format(fkey, fvalue))
 
@@ -129,7 +136,7 @@ def _gamepuckpossession_get(logger, title, request, fkey, fvalue, matchinfo_dic,
         # aggregate shots per min
         shotsum_dic = shotspermin_aggregate(logger, shotmin_dic)
 
-        shot_chart = puckpossessionchart_create(logger, shotsum_dic, goal_dic, matchinfo_dic, title)
+        shot_chart = puckpossessionchart_create(logger, title, subtitle, ismobile, shotsum_dic, goal_dic, matchinfo_dic)
         # pylint: disable=E0602
         shot_table = shotsperiodtable_get(logger, _('Shots per period'), shotmin_dic, matchinfo_dic)
 
@@ -142,8 +149,7 @@ def _gamepuckpossession_get(logger, title, request, fkey, fvalue, matchinfo_dic,
 
     return stat_entry
 
-
-def _gameshootstatus_get(logger, title, request, fkey, fvalue, matchinfo_dic, shot_list):
+def _gameshootstatus_get(logger, title, subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list):
     """ shot status """
     logger.debug('_gameshootstatus_get({0}:{1})'.format(fkey, fvalue))
 
@@ -159,8 +165,8 @@ def _gameshootstatus_get(logger, title, request, fkey, fvalue, matchinfo_dic, sh
 
         # create chart
         shot_chart = [
-            shotstatussumchart_create(logger, shotstatussum_dic, shotstatus_dic, goal_dic, 'home_team', matchinfo_dic, title),
-            shotstatussumchart_create(logger, shotstatussum_dic, shotstatus_dic, goal_dic, 'visitor_team', matchinfo_dic, title),
+            shotstatussumchart_create(logger, title, subtitle, ismobile, shotstatussum_dic, shotstatus_dic, goal_dic, 'home_team', matchinfo_dic),
+            shotstatussumchart_create(logger, title, subtitle, ismobile, shotstatussum_dic, shotstatus_dic, goal_dic, 'visitor_team', matchinfo_dic),
         ]
         shot_table = [
             shotstatussumtable_get(logger, title, shotstatus_dic, 'home_team', matchinfo_dic),
@@ -176,12 +182,9 @@ def _gameshootstatus_get(logger, title, request, fkey, fvalue, matchinfo_dic, sh
 
     return stat_entry
 
-def _gameshots_get(logger, title, request, fkey, fvalue, matchinfo_dic, shot_list):
+def _gameshots_get(logger, title, subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list):
     """ prepare shots per match chart """
     logger.debug('_gameshots_get({0}:{1})'.format(fkey, fvalue))
-
-    shot_table = {}
-    shot_chart = {}
 
     if shot_list:
 
@@ -194,14 +197,11 @@ def _gameshots_get(logger, title, request, fkey, fvalue, matchinfo_dic, shot_lis
         # create plotlines to be addedd to chart
         plotline_list = penaltyplotlines_get(logger, fkey, fvalue)
 
-        shot_chart = shotsumchart_create(logger, shotsum_dic, shotmin_dic, goal_dic, plotline_list, matchinfo_dic, title)
-        # pylint: disable=E0602
-        shot_table = shotsperiodtable_get(logger, _('Shots per period'), shotmin_dic, matchinfo_dic)
-
+    # pylint: disable=E0602
     stat_entry = {
         'title': title,
-        'chart': shot_chart,
-        'table': shot_table,
+        'chart': shotsumchart_create(logger, title, subtitle, ismobile, shotsum_dic, shotmin_dic, goal_dic, plotline_list, matchinfo_dic),
+        'table': shotsperiodtable_get(logger, _('Shots per period'), shotmin_dic, matchinfo_dic),
         'tabs': False
     }
 
@@ -230,7 +230,7 @@ def _gamezoneshots_get(logger, title, request, fkey, fvalue, matchinfo_dic, shot
 
     return stat_entry
 
-def _gameshotmap_get(logger, title, request, fkey, fvalue, matchinfo_dic, shot_list):
+def _gameshotmap_get(logger, title, subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list):
     """ get gameshotmap """
     logger.debug('_gameshotmap_get({0}:{1})'.format(fkey, fvalue))
 
@@ -242,8 +242,8 @@ def _gameshotmap_get(logger, title, request, fkey, fvalue, matchinfo_dic, shot_l
         shotmap_dic = shotcoordinates_get(logger, shot_list, matchinfo_dic)
 
         shot_chart = [
-            shotmapchart_create(logger, shotmap_dic['home_team'], title),
-            shotmapchart_create(logger, shotmap_dic['visitor_team'], title)
+            shotmapchart_create(logger, '{0} {1}'.format(title, matchinfo_dic['home_team__shortcut']), subtitle, ismobile, shotmap_dic['home_team']),
+            shotmapchart_create(logger, '{0} {1}'.format(title, matchinfo_dic['visitor_team__shortcut']), subtitle, ismobile, shotmap_dic['visitor_team'])
         ]
 
     stat_entry = {
@@ -255,9 +255,10 @@ def _gameshotmap_get(logger, title, request, fkey, fvalue, matchinfo_dic, shot_l
 
     return stat_entry
 
-def _gamecorsi_get(logger, request, fkey, fvalue, matchinfo_dic, shot_list, shift_list, periodevent_list, roster_list):
+def _gamecorsi_get(logger, subtitle, ismobile, request, matchinfo_dic, shot_list, shift_list, periodevent_list, roster_list):
     """ get corsi """
-    logger.debug('_gamecorsi_get({0}:{1})'.format(fkey, fvalue))
+    # pylint: disable=R0914    
+    logger.debug('_gamecorsi_get()')
 
     stat_entry_list = []
 
@@ -265,17 +266,19 @@ def _gamecorsi_get(logger, request, fkey, fvalue, matchinfo_dic, shot_list, shif
 
         # get corsi values per player for a certain match
         game_corsi_dic = gamecorsi_get(logger, shot_list, shift_list, periodevent_list, matchinfo_dic, roster_list)
-
+        # pylint: disable=E0602
         title = _('Shot attempts at even strength (CF, CA)')
+        ctitle = _('Shot attempts at even strength')
+
         if game_corsi_dic:
             # corsi absolute chart and table
             corsi_chart_abs = [
-                gamecorsichart_create(logger, game_corsi_dic['home_team'], title),
-                gamecorsichart_create(logger, game_corsi_dic['visitor_team'], title)
+                gamecorsichart_create(logger, '{1} - {0}'.format(ctitle, matchinfo_dic['home_team__shortcut']), subtitle, ismobile, game_corsi_dic['home_team']),
+                gamecorsichart_create(logger, '{1} - {0}'.format(ctitle, matchinfo_dic['visitor_team__shortcut']), subtitle, ismobile, game_corsi_dic['visitor_team'])
             ]
             corsi_table_abs = [
-                gamecorsi_table(logger, game_corsi_dic['home_team'], 'home_team', matchinfo_dic),
-                gamecorsi_table(logger, game_corsi_dic['visitor_team'], 'visitor_team', matchinfo_dic)
+                gamecorsi_table(logger, ismobile, game_corsi_dic['home_team'], matchinfo_dic),
+                gamecorsi_table(logger, ismobile, game_corsi_dic['visitor_team'], matchinfo_dic)
             ]
         else:
             corsi_chart_abs = [{}, {}]
@@ -293,12 +296,12 @@ def _gamecorsi_get(logger, request, fkey, fvalue, matchinfo_dic, shot_list, shif
         if game_corsi_dic:
             # corsi percentage chart and table
             corsi_chart_pctg = [
-                gamecorsippctgchart_create(logger, game_corsi_dic['home_team'], title),
-                gamecorsippctgchart_create(logger, game_corsi_dic['visitor_team'], title)
+                gamecorsippctgchart_create(logger, '{1} - {0}'.format(ctitle, matchinfo_dic['home_team__shortcut']), subtitle, ismobile, game_corsi_dic['home_team']),
+                gamecorsippctgchart_create(logger, '{1} - {0}'.format(ctitle, matchinfo_dic['visitor_team__shortcut']), subtitle, ismobile, game_corsi_dic['visitor_team'])
             ]
             corsi_table_pctg = [
-                gamecorsi_table(logger, game_corsi_dic['home_team'], 'home_team', matchinfo_dic, 'cf_pctg'),
-                gamecorsi_table(logger, game_corsi_dic['visitor_team'], 'visitor_team', matchinfo_dic, 'cf_pctg')
+                gamecorsi_table(logger, ismobile, game_corsi_dic['home_team'], matchinfo_dic, 'cf_pctg'),
+                gamecorsi_table(logger, ismobile, game_corsi_dic['visitor_team'], matchinfo_dic, 'cf_pctg')
             ]
         else:
             corsi_chart_pctg = [{}, {}]
@@ -314,7 +317,7 @@ def _gamecorsi_get(logger, request, fkey, fvalue, matchinfo_dic, shot_list, shif
 
     return stat_entry_list
 
-def _gametoi_get(logger, title, request, fkey, fvalue, matchinfo_dic, shift_list):
+def _gametoi_get(logger, title, subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shift_list):
     """ get corsi """
     logger.debug('_gametoi_get({0}:{1})'.format(fkey, fvalue))
 
@@ -334,8 +337,8 @@ def _gametoi_get(logger, title, request, fkey, fvalue, matchinfo_dic, shift_list
     if toi_dic:
         # create chart and table
         toi_chart = [
-            gametoichart_create(logger, toi_dic['home_team'], title),
-            gametoichart_create(logger, toi_dic['visitor_team'], title),
+            gametoichart_create(logger, '{1} - {0}'.format(title, matchinfo_dic['home_team__shortcut']), subtitle, ismobile, toi_dic['home_team']),
+            gametoichart_create(logger, '{1} - {0}'.format(title, matchinfo_dic['home_team__shortcut']), subtitle, ismobile, toi_dic['visitor_team']),
         ]
 
         toi_table = [
@@ -352,25 +355,18 @@ def _gametoi_get(logger, title, request, fkey, fvalue, matchinfo_dic, shift_list
 
     return stat_entry
 
-
-def _gamematchup_get(logger, title, request, _fkey, _fvalue, matchinfo_dic, shot_list, shift_list, roster_list, periodevent_list):
+def _gamematchup_get(logger, title, subtitle, ismobile, request, _fkey, _fvalue, matchinfo_dic, shot_list, shift_list, roster_list, periodevent_list):
     """ game matchup """
-
-    matchup_table = {}
-    matchup_chart = {}
 
     if shift_list:
 
         # get matrix showing the different player relations
         (lineup_dic, matchup_matrix, plotline_dic) = matchupmatrix_get(logger, matchinfo_dic, shot_list, shift_list, roster_list, periodevent_list)
 
-        # generate_chart
-        matchup_chart = gamematchupchart_create(logger, lineup_dic, matchup_matrix, plotline_dic, matchinfo_dic, title)
-
     stat_entry = {
         'title': title,
-        'chart': matchup_chart,
-        'table': matchup_table,
+        'chart': gamematchupchart_create(logger, title, subtitle, ismobile, lineup_dic, matchup_matrix, plotline_dic, matchinfo_dic),
+        'table': {},
         'tabs': False
     }
 

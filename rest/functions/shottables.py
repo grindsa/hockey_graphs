@@ -96,15 +96,20 @@ def shotzonetable_get(logger, shot_zone_dic, matchinfo_dic):
 
     return table_dic
 
-def gamecorsi_table(logger, player_corsi_dic, _team, _matchinfo_dic, sorter='corsi'):
+def gamecorsi_table(logger, ismobile, player_corsi_dic, _matchinfo_dic, sorter='corsi'):
     """ create corsi table """
     # pylint: disable=E0602
     logger.debug('gamecorsi_table()')
 
+    if ismobile:
+        toi = 'TOI'
+    else:
+        toi = _('Time on Ice')
+
     table_dic = {
-        'th': ['Name', _('Line'), '#', 'CF 5v5', 'CA 5v5', 'Corsi', 'CF% 5v5', _('Time on Ice')],
+        'th': ['Name', _('Line'), '#', 'CF 5v5', 'CA 5v5', 'Corsi', 'CF% 5v5', toi],
         'align': ['w3-left-align', None, None, None, None, None, None, None],
-        'tooltip': [None, None, None, _('Shot attempts "for" at 5v5'), _('Shot attempts "against" at 5v5'), _('Plus/Minus of Shot attempts and Shot attempts "against"'), _('Percentage Shot attempts/Shot attempts "against"'), None, None],
+        'tooltip': [None, None, None, _('Shot attempts "for" at 5v5'), _('Shot attempts "against" at 5v5'), _('Plus/Minus of Shot attempts and Shot attempts "against"'), _('Percentage Shot attempts/Shot attempts "against"'), _('Time on Ice')],
         'td': []}
 
     for player in sorted(player_corsi_dic.values(), key=lambda x: x[sorter], reverse=True):

@@ -6,10 +6,12 @@ from rest.functions.chartparameters import chartstyle, credit, exporting, respon
 from rest.functions.chartparameters import text_color, plotlines_color, chart_color1, chart_color2, chart_color3, chart_color4, chart_color5, chart_color6, chart_color8, chart_color9, shot_missed_color, shot_blocked_color, shot_goal_color, shot_sog_color, line_color, line1_color, line2_color, line3_color, line4_color, line5_color
 
 # pylint: disable=R0914
-def shotsumchart_create(logger, shot_sum_dic, shot_min_dic, goal_dic, plotline_list, machinfo_dic, ctitle):
+def shotsumchart_create(logger, ctitle, csubtitle, ismobile, shot_sum_dic, shot_min_dic, goal_dic, plotline_list, machinfo_dic):
     # pylint: disable=E0602
     """ create shotsum chart """
     logger.debug('shotsumchart_create()')
+
+    variable_dic = variables_get(ismobile)
 
     minute_list = list(shot_sum_dic['home_team'].keys())
     home_team_bar = list(shot_min_dic['home_team'].values())
@@ -50,13 +52,14 @@ def shotsumchart_create(logger, shot_sum_dic, shot_min_dic, goal_dic, plotline_l
 
         'chart': {
             'type': 'column',
-            'height': '60%',
+            'height': '80%',
             'alignTicks': 0,
             'style': chartstyle()
         },
 
         'exporting': exporting(filename=ctitle),
-        'title': title(''),
+        'title': title(ctitle, variable_dic['title_size'], decoration=True),
+        'subtitle': subtitle(csubtitle, variable_dic['subtitle_size']),
         'legend': legend(),
         'tooltip': tooltip('<b>{point.x}.%s</b><br>' % _('min')),
         'plotOptions': plotoptions_marker_disable('spline'),
@@ -130,10 +133,12 @@ def shotsumchart_create(logger, shot_sum_dic, shot_min_dic, goal_dic, plotline_l
 
     return chart_options
 
-def gameflowchart_create(logger, shot_flow_dic, goal_dic, plotline_list, matchinfo_dic, ctitle):
+def gameflowchart_create(logger, ctitle, csubtitle, ismobile, shot_flow_dic, goal_dic, plotline_list, matchinfo_dic):
     """ create flow chart """
     # pylint: disable=E0602
     logger.debug('gameflowchart_create()')
+
+    variable_dic = variables_get(ismobile)
 
     # calculate max and min vals to keep y-axis centered
     y_max = max(list(shot_flow_dic['home_team'].values()))
@@ -247,10 +252,12 @@ def gameflowchart_create(logger, shot_flow_dic, goal_dic, plotline_list, matchin
 
     return chart_options
 
-def shotstatussumchart_create(logger, shotsum_dic, _shotstatus_dic, goal_dic, team, matchinfo_dic, ctitle):
+def shotstatussumchart_create(logger, ctitle, csubtitle, ismobile, shotsum_dic, _shotstatus_dic, goal_dic, team, matchinfo_dic):
     """ create shotstatus chart """
     # pylint: disable=E0602
     logger.debug('shotstatussumchart_create()')
+
+    variable_dic = variables_get(ismobile)
 
     # build lists
     min_list = list(shotsum_dic[team][1].keys())
@@ -275,12 +282,13 @@ def shotstatussumchart_create(logger, shotsum_dic, _shotstatus_dic, goal_dic, te
 
         'chart': {
             'type': 'area',
-            'height': '60%',
+            'height': '80%',
             'style': chartstyle()
         },
 
         'exporting': exporting(filename=ctitle),
-        'title': title(''),
+        'title': title(ctitle, variable_dic['title_size'], decoration=True),
+        'subtitle': subtitle(csubtitle, variable_dic['subtitle_size']),
         'credits': credit(),
         'tooltip': tooltip('<b>{point.x}.%s</b><br>' % _('min')),
         'legend': legend(),
@@ -345,10 +353,12 @@ def shotstatussumchart_create(logger, shotsum_dic, _shotstatus_dic, goal_dic, te
     }
     return chart_options
 
-def shotmapchart_create(logger, shotmap_list, ctitle):
+def shotmapchart_create(logger, ctitle, csubtitle, ismobile, shotmap_list):
     """ create shotmap """
     # pylint: disable=E0602
     logger.debug('shotmapchart_create()')
+
+    variable_dic = variables_get(ismobile)
 
     data_dic = {1 :[], 2: [], 3: [], 4: [], 5: []}
 
@@ -383,12 +393,13 @@ def shotmapchart_create(logger, shotmap_list, ctitle):
             'plotBorderWidth': 0,
             'plotBackgroundImage': bg_image,
             'zoomType': 'xy',
-            'height': '110%',
+            'height': variable_dic['shotmap_height_pctg'],
             'style': chartstyle()
         },
 
         'exporting': exporting(filename=ctitle),
-        'title': title(''),
+        'title': title(ctitle, variable_dic['title_size'], decoration=True),
+        'subtitle': subtitle(csubtitle, variable_dic['subtitle_size']),
         'credits': credit(),
         'legend': legend(),
 
@@ -462,10 +473,12 @@ def shotmapchart_create(logger, shotmap_list, ctitle):
 
     return chart_options
 
-def gamecorsichart_create(logger, player_corsi_dic, ctitle):
+def gamecorsichart_create(logger, ctitle, csubtitle, ismobile, player_corsi_dic):
     """ create corsi chart for a certain game """
     # pylint: disable=E0602
     logger.debug('gamecorsichart_create()')
+
+    variable_dic = variables_get(ismobile)
 
     # format data series in a way we need it
     data_list = {}
@@ -535,7 +548,8 @@ def gamecorsichart_create(logger, player_corsi_dic, ctitle):
         },
 
         'exporting': exporting(filename=ctitle),
-        'title': title(''),
+        'title': title(ctitle, variable_dic['title_size'], decoration=True),
+        'subtitle': subtitle(csubtitle, variable_dic['subtitle_size']),
         'credits': credit(),
         'legend': legend(),
         'responsive': responsive_bubble(),
@@ -604,10 +618,12 @@ def gamecorsichart_create(logger, player_corsi_dic, ctitle):
 
     return chart_options
 
-def gamecorsippctgchart_create(logger, player_corsi_dic, ctitle):
+def gamecorsippctgchart_create(logger, ctitle, csubtitle, ismobile, player_corsi_dic):
     """ create corsi chart for a certain game """
     # pylint: disable=E0602
     logger.debug('gamecorsippctgchart_create()')
+
+    variable_dic = variables_get(ismobile)
 
     # create x axis with player names
     x_list = []
@@ -633,7 +649,8 @@ def gamecorsippctgchart_create(logger, player_corsi_dic, ctitle):
         },
 
         'exporting': exporting(filename=ctitle),
-        'title': title(''),
+        'title': title(ctitle, variable_dic['title_size'], decoration=True),
+        'subtitle': subtitle(csubtitle, variable_dic['subtitle_size']),
         'credits': credit(),
         'legend': legend(),
         'tooltip': {'enabled': 0},
@@ -694,10 +711,12 @@ def gamecorsippctgchart_create(logger, player_corsi_dic, ctitle):
     }
     return chart_options
 
-def puckpossessionchart_create(logger, shotsum_dic, goal_dic, matchinfo_dic, ctitle):
+def puckpossessionchart_create(logger, ctitle, csubtitle, ismobile, shotsum_dic, goal_dic, matchinfo_dic):
     """ create area chart showing puck possession """
     # pylint: disable=E0602
     logger.debug('puckpossessionchart_create()')
+
+    variable_dic = variables_get(ismobile)
 
     min_list = list(shotsum_dic['home_team'].keys())
 
@@ -719,12 +738,13 @@ def puckpossessionchart_create(logger, shotsum_dic, goal_dic, matchinfo_dic, cti
 
         'chart': {
             'type': 'area',
-            'height': '60%',
+            'height': '80%',
             'style': chartstyle()
         },
 
         'exporting': exporting(filename=ctitle),
-        'title': title(''),
+        'title': title(ctitle, variable_dic['title_size'], decoration=True),
+        'subtitle': subtitle(csubtitle, variable_dic['subtitle_size']),
         'credits': credit('Nach einer Idee von @h_modes', 'https://twitter.com/h_modes'),
         'legend': legend(),
         'responsive': responsive_y1(),

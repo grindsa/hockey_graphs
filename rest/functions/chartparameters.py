@@ -62,7 +62,7 @@ def plotoptions_marker_disable(ele):
 
 def title(text, font_size_=title_font_size, decoration=False):
     """ set title """
-    result =  {'text': text, 'style': {'color': text_color, 'font-size': font_size_}}
+    result = {'text': text, 'style': {'color': text_color, 'font-size': font_size_}}
 
     if decoration:
         result['style']['fontWeight'] = 'bold'
@@ -217,11 +217,12 @@ def color_axis(color_list=None, showinlegend=1):
 def variables_get(ismobile):
     """ build variables based on mobile detection """
     if ismobile:
-        data_dic = {'border_width': 5, 'title_size': title_font_size_mobile, 'subtitle_size': subtitle_font_size_mobile}
+        data_dic = {'border_width': 5, 'title_size': title_font_size_mobile, 'subtitle_size': subtitle_font_size_mobile, 'font_size': font_size_mobile, 'shotmap_height_pctg': '122%'}
     else:
-        data_dic = {'border_width': 10, 'title_size': title_font_size, 'subtitle_size': subtitle_font_size}
+        data_dic = {'border_width': 10, 'title_size': title_font_size, 'subtitle_size': subtitle_font_size, 'font_size': font_size, 'shotmap_height_pctg': '110%'}
 
     return data_dic
 
 def chartstyle():
+    """ return chartstyle """
     return {'fontFamily': 'verdana, helvetica, arial, sans-serif'}
