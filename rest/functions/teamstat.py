@@ -23,22 +23,29 @@ def teamstat_add(logger, fkey=None, fvalue=None, data_dic=None):
     logger.debug('teamstat_add({0}:{1}) ended with {2}'.format(fkey, fvalue, result))
     return result
 
-def teamstat_get(_logger, fkey=None, fvalue=None, vlist=('match_id', 'home', 'visitor')):
+def teamstat_get(logger, fkey=None, fvalue=None, vlist=('match_id', 'home', 'visitor')):
     """ get info for a specifc match_id """
-    # logger.debug('teamstat_get({0}:{1})'.format(fkey, fvalue))
+    logger.debug('teamstat_get({0}:{1})'.format(fkey, fvalue))
     try:
         if fkey:
-            if len(vlist) == 1:
-                teamstat_dic = list(Teamstat.objects.filter(**{fkey: fvalue}).values_list(vlist[0], flat=True))[0]
+            if fkey == 'match_id' and isinstance(fvalue, list):
+                if len(vlist) == 1:
+                    teamstat_dic = list(Teamstat.objects.filter(match__in=fvalue).values_list(vlist[0], flat=True))
+                else:
+                    teamstat_dic = list(Teamstat.objects.filter(match__in=fvalue).values(*vlist))
             else:
-                teamstat_dic = Teamstat.objects.filter(**{fkey: fvalue}).values(*vlist)[0]
+                if len(vlist) == 1:
+                    teamstat_dic = list(Teamstat.objects.filter(**{fkey: fvalue}).values_list(vlist[0], flat=True))
+                else:
+                    teamstat_dic = list(Teamstat.objects.filter(**{fkey: fvalue}).values(*vlist))
         else:
             if len(vlist) == 1:
                 teamstat_dic = Teamstat.objects.all().order_by('match_id').values_list(vlist[0], flat=True)
             else:
                 teamstat_dic = Teamstat.objects.all().order_by('match_id').values(*vlist)
-    except BaseException:
-        teamstat_dic = {}
+    except BaseException as err_:
+        logger.debug('Error in teamstat_get(): {0}'.format(err_))
+        teamstat_dic = []
 
     return teamstat_dic
 

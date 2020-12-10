@@ -119,7 +119,7 @@ def arg_parse():
     for match in _tmp_list:
         match_list.append(int(match))
 
-    if not openmatches and not pastmatches and not interval:
+    if not openmatches and not pastmatches and not interval and not match_list:
         print('either -i -o -p parameter must be specified')
         sys.exit(0)
 
