@@ -189,6 +189,7 @@ def _gameshots_get(logger, title, subtitle, ismobile, request, fkey, fvalue, mat
     """ prepare shots per match chart """
     logger.debug('_gameshots_get({0}:{1})'.format(fkey, fvalue))
 
+    stat_entry = {}
     if shot_list:
 
         # get shots and goals per min
@@ -200,13 +201,14 @@ def _gameshots_get(logger, title, subtitle, ismobile, request, fkey, fvalue, mat
         # create plotlines to be addedd to chart
         plotline_list = penaltyplotlines_get(logger, fkey, fvalue)
 
-    # pylint: disable=E0602
-    stat_entry = {
-        'title': title,
-        'chart': shotsumchart_create(logger, title, subtitle, ismobile, shotsum_dic, shotmin_dic, goal_dic, plotline_list, matchinfo_dic),
-        'table': shotsperiodtable_get(logger, _('Shots per period'), shotmin_dic, matchinfo_dic),
-        'tabs': False
-    }
+
+        # pylint: disable=E0602
+        stat_entry = {
+            'title': title,
+            'chart': shotsumchart_create(logger, title, subtitle, ismobile, shotsum_dic, shotmin_dic, goal_dic, plotline_list, matchinfo_dic),
+            'table': shotsperiodtable_get(logger, _('Shots per period'), shotmin_dic, matchinfo_dic),
+            'tabs': False
+        }
 
     return stat_entry
 
@@ -361,16 +363,17 @@ def _gametoi_get(logger, title, subtitle, ismobile, request, fkey, fvalue, match
 def _gamematchup_get(logger, title, subtitle, ismobile, request, _fkey, _fvalue, matchinfo_dic, shot_list, shift_list, roster_list, periodevent_list):
     """ game matchup """
 
+    stat_entry = {}
     if shift_list:
 
         # get matrix showing the different player relations
         (lineup_dic, matchup_matrix, plotline_dic) = matchupmatrix_get(logger, matchinfo_dic, shot_list, shift_list, roster_list, periodevent_list)
 
-    stat_entry = {
-        'title': title,
-        'chart': gamematchupchart_create(logger, title, subtitle, ismobile, lineup_dic, matchup_matrix, plotline_dic, matchinfo_dic),
-        'table': {},
-        'tabs': False
-    }
+        stat_entry = {
+            'title': title,
+            'chart': gamematchupchart_create(logger, title, subtitle, ismobile, lineup_dic, matchup_matrix, plotline_dic, matchinfo_dic),
+            'table': {},
+            'tabs': False
+        }
 
     return stat_entry
