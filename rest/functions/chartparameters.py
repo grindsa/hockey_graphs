@@ -241,12 +241,16 @@ def color_axis(color_list=None, showinlegend=1):
 def variables_get(ismobile):
     """ build variables based on mobile detection """
     if ismobile:
-        data_dic = {'border_width': 5, 'title_size': title_font_size_mobile, 'subtitle_size': subtitle_font_size_mobile, 'font_size': font_size_mobile, 'shotmap_height_pctg': '130%'}
+        data_dic = {'border_width': 5, 'title_size': title_font_size_mobile, 'subtitle_size': subtitle_font_size_mobile, 'font_size': font_size_mobile, 'shotmap_height_pctg': '130%', 'shotzone_height_pctg': '85%'}
     else:
-        data_dic = {'border_width': 10, 'title_size': title_font_size, 'subtitle_size': subtitle_font_size, 'font_size': font_size, 'shotmap_height_pctg': '110%'}
+        data_dic = {'border_width': 10, 'title_size': title_font_size, 'subtitle_size': subtitle_font_size, 'font_size': font_size, 'shotmap_height_pctg': '110%', 'shotzone_height_pctg': '80%'}
 
     return data_dic
 
 def chartstyle():
     """ return chartstyle """
     return {'fontFamily': 'verdana, helvetica, arial, sans-serif'}
+
+def shotzonelabel(text, size=font_size):
+    """ get shotzone marker """
+    return {'enabled': 1, 'color': '#ffffff', 'style': {'textShadow': 0, 'textOutline': 0, 'fontSize': size}, 'y': 11, 'format': '{0}%'.format(text), 'align': 'center'}

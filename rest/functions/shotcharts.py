@@ -2,7 +2,7 @@
 """ list of functions for shots """
 import math
 # pylint: disable=E0401
-from rest.functions.chartparameters import chartstyle, credit, exporting, responsive_gameflow, responsive_y1, responsive_y1_label, responsive_y2, responsive_bubble, plotoptions_marker_disable, title, subtitle, legend, tooltip, labels, font_size, font_size_mobile, legend_valign_mobile, corner_annotations, variables_get, gameflow_annotations
+from rest.functions.chartparameters import chartstyle, credit, exporting, responsive_gameflow, responsive_y1, responsive_y1_label, responsive_y2, responsive_bubble, plotoptions_marker_disable, title, subtitle, legend, tooltip, labels, font_size, font_size_mobile, legend_valign_mobile, corner_annotations, variables_get, gameflow_annotations, shotzonelabel
 from rest.functions.chartparameters import text_color, plotlines_color, chart_color1, chart_color2, chart_color3, chart_color4, chart_color5, chart_color6, chart_color8, chart_color9, shot_posthit_color, shot_missed_color, shot_blocked_color, shot_goal_color, shot_sog_color, line_color, line1_color, line2_color, line3_color, line4_color, line5_color
 
 # pylint: disable=R0914
@@ -355,27 +355,30 @@ def shotmapchart_create(logger, ctitle, csubtitle, ismobile, shotmap_list):
 
     data_dic = {1 :[], 2: [], 3: [], 4: [], 5: []}
 
+    cnt = 0
     for shot in sorted(shotmap_list, key=lambda x: (x['match_shot_resutl_id'])):
+        cnt += 1
         tmp_dic = {
             'x': shot['x'],
             'y': shot['y'],
             'z': 2,
             'jersey': shot['player__jersey'],
             'name': shot['name'],
-            'labelrank': 2,
+            'labelrank': 2000 + cnt,
             'minute': shot['minute'],
             }
 
         if shot['match_shot_resutl_id'] == 2:
-            tmp_dic['labelrank'] = 1
+            tmp_dic['labelrank'] = 1000 + cnt
+            # tmp_dic['zIndex'] = 1
         elif shot['match_shot_resutl_id'] == 3:
             tmp_dic['dataLabels'] = {'color': '#ffffff'}
-            tmp_dic['labelrank'] = 3
+            tmp_dic['labelrank'] = 3000 + cnt
         elif shot['match_shot_resutl_id'] == 5:
             tmp_dic['dataLabels'] = {'color': '#ffffff'}
-            tmp_dic['labelrank'] = 4
+            tmp_dic['labelrank'] = 4000 + cnt
         elif shot['match_shot_resutl_id'] == 4:
-            tmp_dic['labelrank'] = 5
+            tmp_dic['labelrank'] = 5000 + cnt
 
         if shot['match_shot_resutl_id'] in data_dic:
             data_dic[shot['match_shot_resutl_id']].append(tmp_dic)
@@ -470,6 +473,128 @@ def shotmapchart_create(logger, ctitle, csubtitle, ismobile, shotmap_list):
     }
 
     return chart_options
+
+
+def shotzonedata_build(logger, ismobile, shotzoneaggr_dic):
+    """ create shotzone data """
+    # pylint: disable=E0602
+    logger.debug('shotzonedata_build()')
+
+    zone_list = ['left', 'slot', 'right', 'blue_line']
+
+    if ismobile:
+        image_width = 25,
+        label_size = '14px'
+    else:
+        image_width = 50,
+        label_size = '28px'
+
+    image_height = image_width
+
+    data_list = [
+        # left
+        {'x': 2, 'y': 12, 'z': 2, 'marker': {'width': image_width, 'height': image_height, 'symbol': 'url({0})'.format(shotzoneaggr_dic['home_team']['logo'])}},
+        {'x': 4, 'y': 11.5, 'z': 2, 'marker': {'enabled': 0}, 'dataLabels': shotzonelabel(shotzoneaggr_dic['home_team']['left']['roundpercent'], label_size)},
+        {'x': 2, 'y': 10, 'z': 2, 'marker': {'width': image_width, 'height': image_height, 'symbol': 'url({0})'.format(shotzoneaggr_dic['visitor_team']['logo'])}},
+        {'x': 4, 'y': 9.5, 'z': 2, 'marker': {'enabled': 0}, 'dataLabels': shotzonelabel(shotzoneaggr_dic['visitor_team']['left']['roundpercent'], label_size)},
+
+        # slot
+        {'x': 9, 'y': 12, 'z': 2, 'marker': {'width': image_width, 'height': image_height, 'symbol': 'url({0})'.format(shotzoneaggr_dic['home_team']['logo'])}},
+        {'x': 11, 'y': 11.5, 'z': 2, 'marker': {'enabled': 0}, 'dataLabels': shotzonelabel(shotzoneaggr_dic['home_team']['slot']['roundpercent'], label_size)},
+        {'x': 9, 'y': 10, 'z': 2, 'marker': {'width': image_width, 'height': image_height, 'symbol': 'url({0})'.format(shotzoneaggr_dic['visitor_team']['logo'])}},
+        {'x': 11, 'y': 9.5, 'z': 2, 'marker': {'enabled': 0}, 'dataLabels': shotzonelabel(shotzoneaggr_dic['visitor_team']['slot']['roundpercent'], label_size)},
+
+        # right
+        {'x': 16, 'y': 12, 'z': 2, 'marker': {'width': image_width, 'height': image_height, 'symbol': 'url({0})'.format(shotzoneaggr_dic['home_team']['logo'])}},
+        {'x': 18, 'y': 11.5, 'z': 2, 'marker': {'enabled': 0}, 'dataLabels': shotzonelabel(shotzoneaggr_dic['home_team']['right']['roundpercent'], label_size)},
+        {'x': 16, 'y': 10, 'z': 2, 'marker': {'width': image_width, 'height': image_height, 'symbol': 'url({0})'.format(shotzoneaggr_dic['visitor_team']['logo'])}},
+        {'x': 18, 'y': 9.5, 'z': 2, 'marker': {'enabled': 0}, 'dataLabels': shotzonelabel(shotzoneaggr_dic['visitor_team']['right']['roundpercent'], label_size)},
+
+        # blue
+        {'x': 9, 'y': 4, 'z': 2, 'marker': {'width': image_width, 'height': image_height, 'symbol': 'url({0})'.format(shotzoneaggr_dic['home_team']['logo'])}},
+        {'x': 11, 'y': 3.5, 'z': 2, 'marker': {'enabled': 0}, 'dataLabels': shotzonelabel(shotzoneaggr_dic['home_team']['blue_line']['roundpercent'], label_size)},
+        {'x': 9, 'y': 2, 'z': 2, 'marker': {'width': image_width, 'height': image_height, 'symbol': 'url({0})'.format(shotzoneaggr_dic['visitor_team']['logo'])}},
+        {'x': 11, 'y': 1.5, 'z': 2, 'marker': {'enabled': 0}, 'dataLabels': shotzonelabel(shotzoneaggr_dic['visitor_team']['blue_line']['roundpercent'], label_size)},
+    ]
+
+    return data_list
+
+def shotzonechart_create(logger, ctitle, csubtitle, ismobile, request, shotzoneaggr_dic, bg_image):
+    """ create shotzone chart """
+    # pylint: disable=E0602
+    logger.debug('shotmapchart_create()')
+
+    variable_dic = variables_get(ismobile)
+
+    data_list = shotzonedata_build(logger, ismobile, shotzoneaggr_dic)
+
+    chart_options = {
+
+        'chart': {
+            'type': 'scatter',
+            'plotBorderWidth': 0,
+            'plotBackgroundImage': bg_image,
+            'zoomType': 'xy',
+            'height': variable_dic['shotzone_height_pctg'],
+            'style': chartstyle()
+        },
+
+        'exporting': exporting(filename=ctitle),
+        'title': title(ctitle, variable_dic['title_size'], decoration=True),
+        'subtitle': subtitle(csubtitle, variable_dic['subtitle_size']),
+        'credits': credit(),
+        'legend': legend(enabled=0),
+
+        'tooltip': {
+            'useHTML': 1,
+            'headerFormat': '<table class="w3-tiny">',
+            'pointFormat': '<tr><td><b>{point.name} ({point.jersey})<b></td></tr>' +
+                           '<tr><td>{point.minute}. %s</td></tr>' % _('min'),
+            'footerFormat': '</table>',
+            'followPointer': 1,
+        },
+
+        'plotOptions': {
+            'series': {
+                'dataLabels': {
+                    'enabled': 1,
+                    'color': '#000000',
+                    'style': {'textShadow': 0, 'textOutline': 0, 'fontSize': font_size},
+                    'y': 11,
+                    'format': '{point.jersey}',
+                    'align': 'center',
+                    'allowOverlap': 0,
+                },
+                'color': shot_sog_color,
+                'lineColor': line_color,
+            },
+        },
+
+        'xAxis': {
+            'visible': 0,
+            'labels': {'enabled': 0},
+            'min': 0,
+            'max': 20,
+            'tickInterval': 0,
+        },
+
+        'yAxis': {
+            'visible': 0,
+            'gridLineWidth': 0,
+            'title': {
+                'text': '',
+            },
+            'labels': {'enabled': 0},
+            'min': 0,
+            'max': 20,
+            'tickInterval': 0,
+        },
+
+        'series': [{'data': data_list}],
+    }
+
+    return chart_options
+
 
 def gamecorsichart_create(logger, ctitle, csubtitle, ismobile, player_corsi_dic):
     """ create corsi chart for a certain game """
