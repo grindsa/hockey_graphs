@@ -10,7 +10,7 @@ django.setup()
 from django.conf import settings
 from rest.functions.corsi import gamecorsi_get
 from rest.functions.shot import shot_list_get, shotspermin_count, shotspermin_aggregate, shotspersec_count, shotstatus_count, shotstatus_aggregate, shotsperzone_count, shotsperzone_aggregate, shotcoordinates_get
-from rest.functions.shotcharts import shotsumchart_create, gameflowchart_create, shotstatussumchart_create, shotmapchart_create, gamecorsichart_create, gamecorsippctgchart_create, puckpossessionchart_create
+from rest.functions.shotcharts import shotsumchart_create, gameflowchart_create, shotstatussumchart_create, shotmapchart_create, gamecorsichart_create, gamecorsippctgchart_create, puckpossessionchart_create, shotzonechart_create
 from rest.functions.toicharts import gametoichart_create
 from rest.functions.heatmapcharts import gamematchupchart_create
 from rest.functions.shottables import shotsperiodtable_get, shotstatussumtable_get, shotzonetable_get, gamecorsi_table
@@ -72,7 +72,7 @@ def matchstatistics_get(logger, request, fkey=None, fvalue=None):
 
         # create shotzone chart
         # pylint: disable=E0602
-        result.append(_gamezoneshots_get(logger, _('Shots per Zone'), request, fkey, fvalue, matchinfo_dic, shot_list))
+        result.append(_gamezoneshots_get(logger, _('Shots per Zone'), subtitle, ismobile, request, matchinfo_dic, shot_list))
 
         # shotmap
         # pylint: disable=E0602
@@ -212,24 +212,24 @@ def _gameshots_get(logger, title, subtitle, ismobile, request, fkey, fvalue, mat
 
     return stat_entry
 
-def _gamezoneshots_get(logger, title, request, fkey, fvalue, matchinfo_dic, shot_list):
+def _gamezoneshots_get(logger, title, subtitle, ismobile, request, matchinfo_dic, shot_list):
     """ shots per zone """
-    logger.debug('_gamezoneshots_get({0}:{1})'.format(fkey, fvalue))
+    logger.debug('_gamezoneshots_get()')
 
     shot_table = {}
     shot_chart = {}
 
+    bg_image = '{0}{1}{2}'.format(url_build(request.META), settings.STATIC_URL, 'img/shot_zones.png')
+
     if shot_list:
         # get shots and goals per zone
         shotzone_dic = shotsperzone_count(logger, shot_list, matchinfo_dic)
-        shot_chart = shotsperzone_aggregate(logger, shotzone_dic, matchinfo_dic)
-        shot_chart['background_image'] = '{0}{1}{2}'.format(url_build(request.META), settings.STATIC_URL, 'img/shot_zones.png')
-        shot_table = shotzonetable_get(logger, shotzone_dic, matchinfo_dic)
+        shotzoneagg_dic = shotsperzone_aggregate(logger, shotzone_dic, matchinfo_dic)
 
     stat_entry = {
         'title': title,
-        'chart': shot_chart,
-        'table': shot_table,
+        'chart': shotzonechart_create(logger, title, subtitle, ismobile, request, shotzoneagg_dic, bg_image),
+        'table': shotzonetable_get(logger, shotzone_dic, matchinfo_dic),
         'tabs': False
     }
 
