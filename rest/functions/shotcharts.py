@@ -545,14 +545,7 @@ def shotzonechart_create(logger, ctitle, csubtitle, ismobile, request, shotzonea
         'credits': credit(),
         'legend': legend(enabled=0),
 
-        'tooltip': {
-            'useHTML': 1,
-            'headerFormat': '<table class="w3-tiny">',
-            'pointFormat': '<tr><td><b>{point.name} ({point.jersey})<b></td></tr>' +
-                           '<tr><td>{point.minute}. %s</td></tr>' % _('min'),
-            'footerFormat': '</table>',
-            'followPointer': 1,
-        },
+        'tooltip': {'enabled': 0},
 
         'plotOptions': {
             'series': {
