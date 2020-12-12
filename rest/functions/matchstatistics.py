@@ -226,12 +226,14 @@ def _gamezoneshots_get(logger, title, subtitle, ismobile, request, matchinfo_dic
         shotzone_dic = shotsperzone_count(logger, shot_list, matchinfo_dic)
         shotzoneagg_dic = shotsperzone_aggregate(logger, shotzone_dic, matchinfo_dic)
 
-    stat_entry = {
-        'title': title,
-        'chart': shotzonechart_create(logger, title, subtitle, ismobile, request, shotzoneagg_dic, bg_image),
-        'table': shotzonetable_get(logger, shotzone_dic, matchinfo_dic),
-        'tabs': False
-    }
+        stat_entry = {
+            'title': title,
+            'chart': shotzonechart_create(logger, title, subtitle, ismobile, request, shotzoneagg_dic, bg_image),
+            'table': shotzonetable_get(logger, shotzone_dic, matchinfo_dic),
+            'tabs': False
+        }
+    else:
+        stat_entry = {}
 
     return stat_entry
 
@@ -363,7 +365,7 @@ def _gametoi_get(logger, title, subtitle, ismobile, request, fkey, fvalue, match
 def _gamematchup_get(logger, title, subtitle, ismobile, request, _fkey, _fvalue, matchinfo_dic, shot_list, shift_list, roster_list, periodevent_list):
     """ game matchup """
 
-    stat_entry = {}
+    stat_entry = {'title': title, 'table': {}, 'tabs': False, 'chart': {}}
     if shift_list:
 
         # get matrix showing the different player relations

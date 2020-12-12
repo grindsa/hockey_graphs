@@ -84,7 +84,6 @@ def _teamcomparison_hm_chartseries_get(logger, data_dic):
                 # detect against bar (reverse color scheme needs to be applied)
                 reverse = False
                 if 'against' in y_category[y_cnt]['key']:
-                    print(y_category[y_cnt]['key'])
                     reverse = True
                 # build data structure
                 tmp_dic = {
