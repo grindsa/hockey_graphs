@@ -19,10 +19,10 @@ def _pppk_sumup(logger, teamstat_dic):
         if update_amount < len(teamstat_sum_dic[team_id]):
             update_amount = len(teamstat_sum_dic[team_id])
 
-        for ele in range(1, update_amount+1):
+        for ele in teamstat_sum_dic[team_id]:
             # calculate pp/ppk
-            teamstat_sum_dic[team_id][ele-1]['pp_pctg'] = pctg_float_get(teamstat_sum_dic[team_id][ele-1]['sum_goals_pp'], teamstat_sum_dic[team_id][ele-1]['sum_ppcount'], 0)
-            teamstat_sum_dic[team_id][ele-1]['pk_pctg'] = 100 - pctg_float_get(teamstat_sum_dic[team_id][ele-1]['sum_goals_pp_against'], teamstat_sum_dic[team_id][ele-1]['sum_shcount'], 0)
+            ele['pp_pctg'] = pctg_float_get(ele['sum_goals_pp'], ele['sum_ppcount'], 0)
+            ele['pk_pctg'] = 100 - pctg_float_get(ele['sum_goals_pp_against'], ele['sum_shcount'], 0)
 
     return (teamstat_sum_dic, update_amount)
 
@@ -47,8 +47,8 @@ def pppk_data_get(logger, ismobile, teamstat_dic, teams_dic):
     for team_id in pppksum_dic:
         # harmonize lengh by adding list elements at the beginning
         if len(pppksum_dic[team_id]) < update_amount:
-            for ele in range(0, update_amount - len(pace_sum_dic[team_id])):
-                pppksum_dic[team_id].insert(0, pace_sum_dic[team_id][0])
+            for ele in range(0, update_amount - len(pppksum_dic[team_id])):
+                pppksum_dic[team_id].insert(0, pppksum_dic[team_id][0])
 
         for idx, ele in enumerate(pppksum_dic[team_id], 1):
             pppk_lake[idx].append({

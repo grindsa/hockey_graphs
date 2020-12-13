@@ -263,16 +263,16 @@ def _pace_sumup(logger, teamstat_dic):
         if update_amount < len(pace_sum_dic[team_id]):
             update_amount = len(pace_sum_dic[team_id])
 
-        for ele in range(1, update_amount+1):
+        for ele in pace_sum_dic[team_id]:
             # we nbeed to add the 60 data
-            sum_shots_for_5v5 = pace_sum_dic[team_id][ele-1]['sum_shots_for_5v5']
-            sum_shots_against_5v5 = pace_sum_dic[team_id][ele-1]['sum_shots_against_5v5']
-            sum_matchduration = pace_sum_dic[team_id][ele-1]['sum_matchduration']
+            sum_shots_for_5v5 = ele['sum_shots_for_5v5']
+            sum_shots_against_5v5 = ele['sum_shots_against_5v5']
+            sum_matchduration = ele['sum_matchduration']
 
             # calculate 60
-            pace_sum_dic[team_id][ele-1]['sum_shots_for_5v5_60'] = round(sum_shots_for_5v5 *  3600 / sum_matchduration, 0)
-            pace_sum_dic[team_id][ele-1]['sum_shots_against_5v5_60'] = round(sum_shots_against_5v5 * 3600 / sum_matchduration, 0)
-            pace_sum_dic[team_id][ele-1]['sum_shots_5v5_60'] = pace_sum_dic[team_id][ele-1]['sum_shots_for_5v5_60'] + pace_sum_dic[team_id][ele-1]['sum_shots_against_5v5_60']
+            ele['sum_shots_for_5v5_60'] = round(sum_shots_for_5v5 *  3600 / sum_matchduration, 0)
+            ele['sum_shots_against_5v5_60'] = round(sum_shots_against_5v5 * 3600 / sum_matchduration, 0)
+            ele['sum_shots_5v5_60'] = ele['sum_shots_for_5v5_60'] + ele['sum_shots_against_5v5_60']
 
     return (pace_sum_dic, update_amount)
 

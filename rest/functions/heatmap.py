@@ -12,35 +12,36 @@ def  _teampcomparison_data_sumup(logger, teamstat_dic):
     for team_id in teamstat_dic:
         # sumup data per team
         teamstat_sum_dic[team_id] = list_sumup(logger, teamstat_dic[team_id], ['match_id', 'shots_for_5v5', 'shots_against_5v5', 'shots_ongoal_for', 'shots_ongoal_against', 'goals_for', 'goals_against', 'saves', 'matchduration', 'faceoffswon', 'faceoffslost', 'rebounds_for', 'rebounds_against', 'goals_rebound_for', 'goals_rebound_against', 'breaks_for', 'breaks_against', 'goals_break_for', 'goals_break_against', 'goals_pp', 'goals_pp_against', 'ppcount', 'shcount'])
+
         # check how many items we have to create in update_dic
         if update_amount < len(teamstat_sum_dic[team_id]):
             update_amount = len(teamstat_sum_dic[team_id])
 
-        for ele in range(1, update_amount+1):
+        for ele in teamstat_sum_dic[team_id]:
             # calculate 60 data
-            teamstat_sum_dic[team_id][ele-1]['sum_shots_for_5v5_60'] = round(teamstat_sum_dic[team_id][ele-1]['sum_shots_for_5v5'] *  3600 / teamstat_sum_dic[team_id][ele-1]['sum_matchduration'], 0)
-            teamstat_sum_dic[team_id][ele-1]['sum_shots_against_5v5_60'] = round(teamstat_sum_dic[team_id][ele-1]['sum_shots_against_5v5'] * 3600 / teamstat_sum_dic[team_id][ele-1]['sum_matchduration'], 0)
-            teamstat_sum_dic[team_id][ele-1]['sum_corsi_5v5_60'] = teamstat_sum_dic[team_id][ele-1]['sum_shots_for_5v5_60'] - teamstat_sum_dic[team_id][ele-1]['sum_shots_against_5v5_60']
-            teamstat_sum_dic[team_id][ele-1]['sum_shots_5v5_60'] = teamstat_sum_dic[team_id][ele-1]['sum_shots_for_5v5_60'] + teamstat_sum_dic[team_id][ele-1]['sum_shots_against_5v5_60']
+            ele['sum_shots_for_5v5_60'] = round(ele['sum_shots_for_5v5'] *  3600 / ele['sum_matchduration'], 0)
+            ele['sum_shots_against_5v5_60'] = round(ele['sum_shots_against_5v5'] * 3600 / ele['sum_matchduration'], 0)
+            ele['sum_corsi_5v5_60'] = ele['sum_shots_for_5v5_60'] - ele['sum_shots_against_5v5_60']
+            ele['sum_shots_5v5_60'] = ele['sum_shots_for_5v5_60'] + ele['sum_shots_against_5v5_60']
 
             # calculate pdo
-            teamstat_sum_dic[team_id][ele-1]['sh_pctg'] = pctg_float_get(teamstat_sum_dic[team_id][ele-1]['sum_goals_for'], teamstat_sum_dic[team_id][ele-1]['sum_shots_ongoal_for'])
-            teamstat_sum_dic[team_id][ele-1]['sv_pctg'] = pctg_float_get(teamstat_sum_dic[team_id][ele-1]['sum_saves'], teamstat_sum_dic[team_id][ele-1]['sum_shots_ongoal_against'])
+            ele['sh_pctg'] = pctg_float_get(ele['sum_goals_for'], ele['sum_shots_ongoal_for'])
+            ele['sv_pctg'] = pctg_float_get(ele['sum_saves'], ele['sum_shots_ongoal_against'])
 
             # faceoff success rate
-            teamstat_sum_dic[team_id][ele-1]['faceoff_success_rate'] = pctg_float_get(teamstat_sum_dic[team_id][ele-1]['sum_faceoffswon'], (teamstat_sum_dic[team_id][ele-1]['sum_faceoffswon'] + teamstat_sum_dic[team_id][ele-1]['sum_faceoffslost']), 1)
+            ele['faceoff_success_rate'] = pctg_float_get(ele['sum_faceoffswon'], (ele['sum_faceoffswon'] + ele['sum_faceoffslost']), 1)
 
             # rebound rates
-            teamstat_sum_dic[team_id][ele-1]['goals_rebound_for_pctg'] = pctg_float_get(teamstat_sum_dic[team_id][ele-1]['sum_goals_rebound_for'], teamstat_sum_dic[team_id][ele-1]['sum_rebounds_for'])
-            teamstat_sum_dic[team_id][ele-1]['goals_rebound_against_pctg'] = pctg_float_get(teamstat_sum_dic[team_id][ele-1]['sum_goals_rebound_against'], teamstat_sum_dic[team_id][ele-1]['sum_rebounds_against'])
+            ele['goals_rebound_for_pctg'] = pctg_float_get(ele['sum_goals_rebound_for'], ele['sum_rebounds_for'])
+            ele['goals_rebound_against_pctg'] = pctg_float_get(ele['sum_goals_rebound_against'], ele['sum_rebounds_against'])
 
             # break rates
-            teamstat_sum_dic[team_id][ele-1]['goals_break_for_pctg'] = pctg_float_get(teamstat_sum_dic[team_id][ele-1]['sum_goals_break_for'], teamstat_sum_dic[team_id][ele-1]['sum_breaks_for'])
-            teamstat_sum_dic[team_id][ele-1]['goals_break_against_pctg'] = pctg_float_get(teamstat_sum_dic[team_id][ele-1]['sum_goals_break_against'], teamstat_sum_dic[team_id][ele-1]['sum_breaks_against'])
+            ele['goals_break_for_pctg'] = pctg_float_get(ele['sum_goals_break_for'], ele['sum_breaks_for'])
+            ele['goals_break_against_pctg'] = pctg_float_get(ele['sum_goals_break_against'], ele['sum_breaks_against'])
 
             # special team performance
-            teamstat_sum_dic[team_id][ele-1]['goals_pp_for_pctg'] = pctg_float_get(teamstat_sum_dic[team_id][ele-1]['sum_goals_pp'], teamstat_sum_dic[team_id][ele-1]['sum_ppcount'])
-            teamstat_sum_dic[team_id][ele-1]['goals_pp_kill_pctg'] = 100 - pctg_float_get(teamstat_sum_dic[team_id][ele-1]['sum_goals_pp_against'], teamstat_sum_dic[team_id][ele-1]['sum_shcount'])
+            ele['goals_pp_for_pctg'] = pctg_float_get(ele['sum_goals_pp'], ele['sum_ppcount'])
+            ele['goals_pp_kill_pctg'] = 100 - pctg_float_get(ele['sum_goals_pp_against'], ele['sum_shcount'])
 
     return (teamstat_sum_dic, update_amount)
 
