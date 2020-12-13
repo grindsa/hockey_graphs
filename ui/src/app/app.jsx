@@ -39,19 +39,31 @@ export class App extends React.Component {
     // get and set seasonlist
     const seasonlist = await asyncGET(endpoints.seasons)
     await this.setState({seasonlist: seasonlist});
-    // seasonid
+
+    // parse cookie and read data
+    const cookie = new Cookies();
+    if (cookie.get(app_name)){
+      const langValue = cookie.get(app_name).language
+      await this.setState({language: langValue });
+
+      var selectedSeason = cookie.get(app_name).selectedSeason
+      if(selectedSeason){
+        await this.setState({selectedSeason: selectedSeason});
+      }
+
+      /* var selectedStat = cookie.get(app_name).selectedStat
+      if(selectedStat){
+        await this.setState({selectedStat: selectedStat});
+      } */
+
+    }
+
+    // set default value (no cookie)
     if (this.state.selectedSeason === 0){
       var seasonid = this.state.seasonlist.results[this.state.seasonlist.count-1].id
       await this.setState({selectedSeason: seasonid});
     }
-    // parse cookie
-    const cookies = new Cookies();
-    const langValue = cookies.get(app_name).language
-    var selectedSeason = cookies.get(app_name).selectedSeason
-    if(selectedSeason){
-      await this.setState({selectedSeason: selectedSeason});
-    }
-    await this.setState({language: langValue });
+
     // create list of stat based on language preferences
     const statlist = creatstatList(this.state.language)
     this.setState({StatList: statlist });
@@ -68,8 +80,7 @@ export class App extends React.Component {
     // change stat
     await this.setState({selectedStat: newStat})
     // update cookie
-    // const cookies = new Cookies();
-    // cookies.set(app_name, {language: this.state.language, selectedSeason: this.state.selectedSeason, foo: 'WannaSeeUrFaceOnceUreadThis'}, { path: '/', maxAge: 2419200 });
+    CookieSet(app_name, this.state)
   }
 
   async toggleLanguage(){

@@ -24,8 +24,6 @@ export async function asyncGET(apiEndpoint){
 
 export function CookieSet(app_name, options){
     // save state to coookie
-    console.log('setcookie')
-    console.log(options)
     const cookies = new Cookies();
-    cookies.set(app_name, {language: options.language, selectedSeason: options.selectedSeason, foo: 'WannaSeeUrFaceOnceUreadThis'}, { path: '/', maxAge: 2419200 });
+    cookies.set(app_name, {language: options.language, selectedSeason: options.selectedSeason, selectedStat: options.selectedStat, foo: 'WannaSeeUrFaceOnceUreadThis'}, { path: '/', maxAge: 2419200 });
 }
