@@ -97,18 +97,18 @@ def gamematchupchart_create(logger, ctitle, csubtitle, ismobile, lineup_dic, mat
         },
 
         'legend': {
-            'title': title(_('Time on Ice'), font_size),
+            'title': {'text': _('Time on Ice'), 'style': {'fontStyle': 'lighter','fontSize': font_size}},
             'align': 'center',
             'layout': 'horizontal',
             'verticalAlign': 'bottom',
-            'useHTML': 1,
-            'itemStyle': {'color': text_color, 'font-size': font_size},
+            'itemStyle': {'color': text_color, 'fontWeight': 'lighter', 'fontSize': font_size},
         },
 
         'colorAxis': {
             'min': 0,
             'minColor': '#FFFFFF',
             'maxColor': chart_color1,
+            'labels': {'style': {'color': text_color, 'fontSize': font_size}},
         },
 
         'series': [{
@@ -127,8 +127,10 @@ def gamematchupchart_create(logger, ctitle, csubtitle, ismobile, lineup_dic, mat
             'rules': [{
                 'condition': {'maxWidth': 500},
                 'chartOptions': {
+                    'legend': {'title': {'text': _('Time on Ice'), 'style': {'fontStyle': 'lighter','fontSize': font_size_mobile}}},
                     'xAxis': {'categories': x_list_mobile, 'labels': {'style': {'fontSize': font_size_mobile}}},
                     'yAxis': {'categories': y_list_mobile, 'labels': {'style': {'fontSize': font_size_mobile}}},
+                    'colorAxis': {'labels': {'style': {'color': text_color, 'fontSize': font_size_mobile}}},
                 }
             }]
         }
