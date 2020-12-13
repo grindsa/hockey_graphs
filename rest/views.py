@@ -56,6 +56,7 @@ class MatchStatisticsViewSet(viewsets.ViewSet):
 
     def list(self, request):
         """ get a list of matchdays and matches per day """
+        set_language(LOGGER, request)
         result = matchstatistics_get(LOGGER, request)
         response = Response(result, status=status.HTTP_200_OK)
         return response
@@ -72,13 +73,14 @@ class TeamComparisonViewSet(viewsets.ViewSet):
 
     def list(self, request):
         """ get a benchmarking charts """
+        set_language(LOGGER, request)
         result = teamcomparison_get(LOGGER, request)
         response = Response(result, status=status.HTTP_200_OK)
         return response
 
     def retrieve(self, request, pk=None):
         """ get a single benchmark """
-        # result = matchdays_get(LOGGER, request, fkey='date', fvalue=pk)
+        set_language(LOGGER, request)
         result = teamcomparison_get(LOGGER, request, fkey='chart', fvalue=pk)
         response = Response(result, status=status.HTTP_200_OK)
         return response
