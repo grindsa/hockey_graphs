@@ -67,12 +67,12 @@ def create_cron_entries(logger, tzone):
             (lhour, _lmin) = datetime.fromtimestamp(match_list[today]['matches'][-1]['date_uts'], tz=tzone).strftime("%H:%M").split(':')
 
             # create cron-entry to get live statistics
-            lstats = cron.new(command=path + '/matchdata_update.py', comment='update match statistics', user='root')
+            lstats = cron.new(command=path + '/matchdata_update.py -o', comment='update match statistics', user='root')
             lstats.hour.during(int(fhour), int(lhour)+3).every(1)
             lstats.minute.every(2)
 
             # update shifts at 11pm
-            shifts = cron.new(command=path+'/shifts_update.py', comment='update shifts', user='root')
+            shifts = cron.new(command=path+'/matchdata_update.py -i 24 --shifts', comment='update shifts', user='root')
             shifts.hour.on(23)
             shifts.minute.on(00)
 
