@@ -588,7 +588,6 @@ def shotzonechart_create(logger, ctitle, csubtitle, ismobile, request, shotzonea
 
     return chart_options
 
-
 def gamecorsichart_create(logger, ctitle, csubtitle, ismobile, player_corsi_dic):
     """ create corsi chart for a certain game """
     # pylint: disable=E0602
@@ -659,7 +658,7 @@ def gamecorsichart_create(logger, ctitle, csubtitle, ismobile, player_corsi_dic)
             'type': 'bubble',
             'plotBorderWidth': 1,
             'zoomType': 'xy',
-            'height': '105%',
+            'height': '120%',
             'style': chartstyle()
         },
 
@@ -669,6 +668,7 @@ def gamecorsichart_create(logger, ctitle, csubtitle, ismobile, player_corsi_dic)
         'credits': credit(),
         'legend': legend(),
         'responsive': responsive_bubble(),
+        'annotations': corner_annotations(ismobile, _('Dull'), _('Bad'), _('Good'), _('Fun')),
 
         'tooltip': {
             'useHTML': 1,
@@ -861,7 +861,7 @@ def puckpossessionchart_create(logger, ctitle, csubtitle, ismobile, shotsum_dic,
         'exporting': exporting(filename=ctitle),
         'title': title(ctitle, variable_dic['title_size'], decoration=True),
         'subtitle': subtitle(csubtitle, variable_dic['subtitle_size']),
-        'credits': credit('Nach einer Idee von @h_modes', 'https://twitter.com/h_modes'),
+        'credits': credit(),
         'legend': legend(),
         'responsive': responsive_y1(),
 
@@ -1097,7 +1097,7 @@ def rebound_overview_chart(logger, ctitle, csubtitle, ismobile, data_dic):
         'exporting': exporting(filename=ctitle),
         'title': title(ctitle, variable_dic['title_size'], decoration=True),
         'subtitle': subtitle(csubtitle, variable_dic['subtitle_size']),
-        'credits': credit('Nach einer Idee von @h_modes', 'https://twitter.com/h_modes'),
+        'credits': credit(),
         'legend': legend(),
         'responsive': responsive_y1_label(),
 
@@ -1150,7 +1150,7 @@ def break_overview_chart(logger, ctitle, csubtitle, ismobile, data_dic):
         'exporting': exporting(filename=ctitle),
         'title': title(ctitle, variable_dic['title_size'], decoration=True),
         'subtitle': subtitle(csubtitle, variable_dic['subtitle_size']),
-        'credits': credit('Nach einer Idee von @h_modes', 'https://twitter.com/h_modes'),
+        'credits': credit(),
         'legend': legend(),
         'responsive': responsive_y1_label(),
 
