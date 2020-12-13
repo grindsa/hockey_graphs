@@ -5,7 +5,7 @@ import { LanguageSelector } from '../components/languageselector';
 import { SeasonSelector } from '../components/seasonselector';
 import { StatSelector } from '../components/statselector';
 import { Canvas } from '../components/canvas';
-import { asyncGET } from '../components/sharedfunctions.js';
+import { asyncGET, CookieSet } from '../components/sharedfunctions.js';
 import { config } from '../components/constants.js';
 import { creatstatList } from '../components/localization.js'
 import '../css/mytheme.css';
@@ -61,8 +61,7 @@ export class App extends React.Component {
     // change season
     await this.setState({selectedSeason: newSeason})
     // update cookie
-    const cookies = new Cookies();
-    cookies.set(app_name, {language: this.state.language, selectedSeason: this.state.selectedSeason, foo: 'WannaSeeUrFaceOnceUreadThis'}, { path: '/', maxAge: 2419200 });
+    CookieSet(app_name, this.state)
   }
 
   async changeStat(newStat){
@@ -78,8 +77,7 @@ export class App extends React.Component {
     // change language
     await this.setState({ language: language === 'DE' ? 'EN' : 'DE' });
     // update cookie
-    const cookies = new Cookies();
-    cookies.set(app_name, {language: this.state.language, selectedSeason: this.state.selectedSeason, foo: 'WannaSeeUrFaceOnceUreadThis'}, { path: '/', maxAge: 2419200 });
+    CookieSet(app_name, this.state)
     // create list of stat based on language preferences
     const statlist = creatstatList(this.state.language)
     this.setState({StatList: statlist });
