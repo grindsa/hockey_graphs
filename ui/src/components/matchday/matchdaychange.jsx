@@ -44,7 +44,7 @@ export class ChangeMatchday extends React.Component {
 class HeadBar extends React.Component {
   render(){
     return(
-      <h1>
+      <h1 className='pseudohead'>
          <HeadPrevious previous={this.props.previous} onChangeMatchDay={this.props.onChangeMatchDay} />
          {this.props.date}
          <HeadNext next={this.props.next} onChangeMatchDay={this.props.onChangeMatchDay} />

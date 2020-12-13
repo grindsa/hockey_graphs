@@ -70,7 +70,6 @@ export class Chart extends React.Component{
       if (isMobile) {
         var classNames = "w3-center w3-margin-left w3-margin-right"
       }
-
       return (
         <React.Fragment>
           <Slider
