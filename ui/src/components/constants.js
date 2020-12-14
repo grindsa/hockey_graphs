@@ -9,6 +9,7 @@ const prod = {
 const dev = {
   url: {
     API_URL: 'http://127.0.0.1:8081/api/v1/'
+    // API_URL: 'http://192.168.123.21:8081/api/v1/'
   }
 };
 
