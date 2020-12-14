@@ -41,7 +41,9 @@ def matchdays_get(logger, request, fkey=None, fvalue=None, vlist=('match_id', 's
     matchday_dic = {}
     matchday_uts_dic = {}
     lastmday_uts = 0
+    firstmday_uts = 9999999999
     lastmday_human = ''
+    firstmday_human = ''
 
     # we need the url to be added to the logo URL
     if request and request.META:
@@ -60,6 +62,10 @@ def matchdays_get(logger, request, fkey=None, fvalue=None, vlist=('match_id', 's
             if uts_now() >  match['date_uts']:
                 lastmday_uts =  match['date_uts']
                 lastmday_human = match['date']
+        # we need the first machday for cornercase handling (begin of season with no matches yet)
+        if match['date_uts'] <= firstmday_uts:
+            firstmday_uts =  match['date_uts']
+            firstmday_human = match['date']
 
         if match['date'] not in matchday_dic:
             matchday_dic[match['date']] = {
@@ -81,9 +87,12 @@ def matchdays_get(logger, request, fkey=None, fvalue=None, vlist=('match_id', 's
 
         matchday_dic[match['date']]['matches'].append(match)
 
-    # set displayflag to last matchday
     if matchday_dic and lastmday_human:
+        # set displayflag to last matchday (during season this should be the case)
         matchday_dic[lastmday_human]['displayday'] = True
+    elif matchday_dic and firstmday_human:
+        # set displayflag to first matchday (no matches in season yet)
+        matchday_dic[firstmday_human]['displayday'] = True
 
     # add references to previous and next matchdate
     matchday_dic = matchdays_previous_next_add(logger, matchday_dic, matchday_uts_dic)
