@@ -1,5 +1,5 @@
 import React from 'react';
-import { isMobile } from 'react-device-detect';
+import { isMobileOnly } from 'react-device-detect';
 import { Chart } from './teamcomparison/chart';
 import { Selector } from './teamcomparison/selector';
 
@@ -21,7 +21,7 @@ export class TeamComparison extends React.Component {
   async componentDidMount(){
     if (this.props.teamcomparison && this.props.season) {
       // get team comparison
-      const tcdic = await asyncGET(this.props.teamcomparison + '?season=' + this.props.season + '&mobile=' + isMobile + '&language=' + this.props.language)
+      const tcdic = await asyncGET(this.props.teamcomparison + '?season=' + this.props.season + '&mobile=' + isMobileOnly + '&language=' + this.props.language)
       this.setState({teamcomparisonList: tcdic});
     }
   }
@@ -31,7 +31,7 @@ export class TeamComparison extends React.Component {
     const tcupdate = checkTcUpdate(this.props.teamcomparison, prevProps.teamcomparison, this.props.season, prevProps.season, this.props.language, prevProps.language)
     if (tcupdate){
         // get team comparison
-        const tcdic = await asyncGET(this.props.teamcomparison + '?season=' + this.props.season + '&mobile=' + isMobile + '&language=' + this.props.language)
+        const tcdic = await asyncGET(this.props.teamcomparison + '?season=' + this.props.season + '&mobile=' + isMobileOnly + '&language=' + this.props.language)
         this.setState({teamcomparisonList: tcdic});
     }
   }

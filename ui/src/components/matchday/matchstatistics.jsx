@@ -1,5 +1,5 @@
 import React from 'react';
-import { isMobile } from 'react-device-detect';
+import { isMobileOnly } from 'react-device-detect';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import HighchartsMore from 'highcharts/highcharts-more';
@@ -32,7 +32,7 @@ export class MatchStatistics extends React.Component {
 
   async componentDidMount(){
     // get matchstatistics
-    const matchstatistics = await asyncGET(this.props.matchstatistics + this.props.match.match_id+ '?language=' + this.props.language  + '&mobile=' + isMobile)
+    const matchstatistics = await asyncGET(this.props.matchstatistics + this.props.match.match_id+ '?language=' + this.props.language  + '&mobile=' + isMobileOnly)
     this.setState({matchstatistics: matchstatistics})
   }
 
@@ -120,7 +120,7 @@ class MatchHeader extends React.Component {
   render() {
     var home_team = this.props.match.home_team_name
     var visitor_team = this.props.match.visitor_team_name
-    if (isMobile) {
+    if (isMobileOnly) {
       home_team = this.props.match.home_team_shortcut
       visitor_team = this.props.match.visitor_team_shortcut
     }
@@ -241,7 +241,7 @@ class Table extends React.Component{
 class ZoneChart extends React.Component{
   /* render table with data differenciation if mobile or not */
   render() {
-    if (isMobile) {
+    if (isMobileOnly) {
       var img_width = 30
       var shotzone_classes = "shotzone_mobile"
     } else{
