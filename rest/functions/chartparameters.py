@@ -185,26 +185,38 @@ def gameflow_annotations(ismobile, y_max, home_logo, visitor_logo):
     }]
     return result
 
-def corner_annotations(ismobile, upper_left_text, lower_left_text, upper_right_text, lower_right_text):
+def _corner_magic(minmax_dic):
+    """ do some magic to position the points """
+
+    # points will be positioned relative to axis min/max
+    x_diff = minmax_dic['x_max'] - minmax_dic['x_min']
+    y_diff = minmax_dic['y_max'] - minmax_dic['y_min']
+    factor = 4 # we are moving each annotation by four percent from axis
+
+    x_min = minmax_dic['x_min'] + x_diff * factor/100
+    x_max = minmax_dic['x_max'] - x_diff * factor/100
+    y_min = minmax_dic['y_min'] + y_diff * factor/100
+    y_max = minmax_dic['y_max'] - y_diff * factor/100
+
+    return (x_min, x_max, y_min, y_max)
+
+def corner_annotations(ismobile, minmax_dic, upper_left_text, lower_left_text, upper_right_text, lower_right_text):
     """ annotations in all four corners """
 
-    if ismobile:
-        upper_left = {'x': 25, 'y': 40}
-        upper_right = {'x': 340, 'y': 40}
-        lower_left = {'x': 25, 'y': 355}
-        lower_right = {'x': 340, 'y': 355}
-    else:
-        upper_left = {'x': 25, 'y': 55}
-        upper_right = {'x': 750, 'y': 55}
-        lower_left = {'x': 25, 'y': 800}
-        lower_right = {'x': 750, 'y': 800}
+    (x_min, x_max, y_min, y_max) = _corner_magic(minmax_dic)
+
+    upper_left = {'x': x_min, 'y': y_max, 'xAxis': 0, 'yAxis': 0}
+    upper_right = {'x': x_max, 'y': y_max, 'xAxis': 0, 'yAxis': 0}
+    lower_left = {'x': x_min, 'y': y_min, 'xAxis': 0, 'yAxis': 0}
+    lower_right = {'x': x_max, 'y': y_min, 'xAxis': 0, 'yAxis': 0}
 
     result = [{
+        'labelOptions': {'x': 0, 'y': 10},
         'labels': [
-            {'style': {'fontSize': font_size}, 'backgroundColor': 'white', 'borderColor': 'white', 'point': upper_left, 'text': upper_left_text},
-            {'style': {'fontSize': font_size}, 'backgroundColor': 'white', 'borderColor': 'white', 'point': lower_left, 'text': lower_left_text},
-            {'style': {'fontSize': font_size}, 'backgroundColor': 'white', 'borderColor': 'white', 'point': upper_right, 'text': upper_right_text},
-            {'style': {'fontSize': font_size}, 'backgroundColor': 'white', 'borderColor': 'white', 'point': lower_right, 'text': lower_right_text},
+            {'style': {'fontSize': font_size}, 'backgroundColor': 'rgba(255, 255, 255, 0)', 'borderColor': 'white', 'point': upper_left, 'text': upper_left_text},
+            {'style': {'fontSize': font_size}, 'backgroundColor': 'rgba(255, 255, 255, 0)', 'borderColor': 'white', 'point': lower_left, 'text': lower_left_text},
+            {'style': {'fontSize': font_size}, 'backgroundColor': 'rgba(255, 255, 255, 0)', 'borderColor': 'white', 'point': upper_right, 'text': upper_right_text},
+            {'style': {'fontSize': font_size}, 'backgroundColor': 'rgba(255, 255, 255, 0)', 'borderColor': 'white', 'point': lower_right, 'text': lower_right_text},
         ],
         'zIndex': 1
     }]

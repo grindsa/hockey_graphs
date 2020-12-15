@@ -325,11 +325,11 @@ def shotstatussumchart_create(logger, ctitle, csubtitle, ismobile, shotsum_dic, 
             'name': _('missed'),
             'data': missed_list,
             'color': shot_missed_color,
-        },{
+        }, {
             'name': _('Post hit'),
             'data': posthit_list,
             'color': shot_posthit_color,
-        },{
+        }, {
             'name': _('blocked'),
             'data': block_list,
             'color': shot_blocked_color,
@@ -338,7 +338,7 @@ def shotstatussumchart_create(logger, ctitle, csubtitle, ismobile, shotsum_dic, 
             'data': goal_list,
             'color': shot_goal_color,
             'zIndex': 2,
-        },{
+        }, {
             'name': _('Shots on Goal'),
             'data': shot_list,
             'color': shot_sog_color,
@@ -480,13 +480,11 @@ def shotzonedata_build(logger, ismobile, shotzoneaggr_dic):
     # pylint: disable=E0602
     logger.debug('shotzonedata_build()')
 
-    zone_list = ['left', 'slot', 'right', 'blue_line']
-
     if ismobile:
-        image_width = 25,
+        image_width = 25
         label_size = '14px'
     else:
-        image_width = 50,
+        image_width = 50
         label_size = '28px'
 
     image_height = image_width
@@ -606,10 +604,21 @@ def gamecorsichart_create(logger, ctitle, csubtitle, ismobile, player_corsi_dic)
     # we scale the bars depending on amout of shots or shots-against
     scale_max = 0
 
+    minmax_dic = {'x_min': None, 'x_max': 0, 'y_min': None, 'y_max': 0}
+
     for player in sorted(player_corsi_dic.values(), key=lambda x: (x['shots'])):
         # count shotsum
         shotsum_dic['shots'] += player['shots']
         shotsum_dic['shots_against'] += player['shots_against']
+
+        if not minmax_dic['x_min'] or minmax_dic['x_min'] > player['shots']:
+            minmax_dic['x_min'] = player['shots']
+        if minmax_dic['x_max'] < player['shots']:
+            minmax_dic['x_max'] = player['shots']
+        if not minmax_dic['y_min'] or minmax_dic['y_min'] > player['shots_against']:
+            minmax_dic['y_min'] = player['shots_against']
+        if minmax_dic['y_max'] < player['shots_against']:
+            minmax_dic['y_max'] = player['shots_against']
 
         tmp_dic = {
             'x': player['shots'],
@@ -652,6 +661,12 @@ def gamecorsichart_create(logger, ctitle, csubtitle, ismobile, player_corsi_dic)
     shotsum_dic['shots_avg'] = round(shotsum_dic['shots'] / len(player_corsi_dic.keys()), 0)
     shotsum_dic['shots_against_avg'] = round(shotsum_dic['shots_against'] / len(player_corsi_dic.keys()), 0)
 
+    # adjust max values for the bars - min is already 0 so no adjustment needed
+    minmax_dic['x_min'] = 0
+    minmax_dic['y_min'] = 0
+    minmax_dic['x_max'] += 2
+    minmax_dic['y_max'] += 2
+
     chart_options = {
 
         'chart': {
@@ -668,7 +683,7 @@ def gamecorsichart_create(logger, ctitle, csubtitle, ismobile, player_corsi_dic)
         'credits': credit(),
         'legend': legend(),
         'responsive': responsive_bubble(),
-        'annotations': corner_annotations(ismobile, _('Dull'), _('Bad'), _('Good'), _('Fun')),
+        'annotations': corner_annotations(ismobile, minmax_dic, _('Bad'), _('Dull'), _('Fun'), _('Good')),
 
         'tooltip': {
             'useHTML': 1,
@@ -703,6 +718,7 @@ def gamecorsichart_create(logger, ctitle, csubtitle, ismobile, player_corsi_dic)
             'labels': {'style': {'fontSize': font_size}},
             'plotLines': [{'color': plotlines_color, 'width': 2, 'value': shotsum_dic['shots_avg']}],
             'min': 0,
+            'max': minmax_dic['x_max'],
             'tickInterval': 1,
             'showFirstLabel': 1,
             'showLastLabel': 1,
@@ -712,6 +728,7 @@ def gamecorsichart_create(logger, ctitle, csubtitle, ismobile, player_corsi_dic)
             'labels': {'style': {'fontSize': font_size},},
             'plotLines': [{'color': plotlines_color, 'width': 2, 'value': shotsum_dic['shots_against_avg']}],
             'min': 0,
+            'max': minmax_dic['y_max'],
             'reversed': 1,
             'tickInterval': 1,
             'showFirstLabel': 1,
