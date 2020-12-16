@@ -22,7 +22,9 @@ export class TeamComparison extends React.Component {
     if (this.props.teamcomparison && this.props.season) {
       // get team comparison
       const tcdic = await asyncGET(this.props.teamcomparison + '?season=' + this.props.season + '&mobile=' + isMobileOnly + '&language=' + this.props.language)
-      this.setState({teamcomparisonList: tcdic});
+      if (!isEmpty(tcdic)){
+        this.setState({teamcomparisonList: tcdic});
+      }
     }
   }
 
