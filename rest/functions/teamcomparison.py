@@ -44,7 +44,9 @@ def teamcomparison_get(logger, request, fkey=None, fvalue=None):
 
     result = []
 
-    result.append(_teamcomparison_heatmap_get(logger, ismobile, language, teamstat_dic, teams_dic))
+    stat_entry = _teamcomparison_heatmap_get(logger, ismobile, language, teamstat_dic, teams_dic)
+    if stat_entry:
+        result.append(stat_entry)
 
     # create PDO breakdown chart
     result.extend(_pdo_breakdown_get(logger, ismobile, teamstat_dic, teams_dic))
@@ -53,16 +55,24 @@ def teamcomparison_get(logger, request, fkey=None, fvalue=None):
     result.extend(_5v5_pace_get(logger, ismobile, teamstat_dic, teams_dic))
 
     # faceoff wins
-    result.append(_faceoff_pctg_get(logger, ismobile, teamstat_dic, teams_dic))
+    stat_entry = _faceoff_pctg_get(logger, ismobile, teamstat_dic, teams_dic)
+    if stat_entry:
+        result.append(stat_entry)
 
     # rebound efficentcy
-    result.append(_rebound_pctg_get(logger, ismobile, teamstat_dic, teams_dic))
+    stat_entry = _rebound_pctg_get(logger, ismobile, teamstat_dic, teams_dic)
+    if stat_entry:
+        result.append(stat_entry)
 
     # rebound efficentcy
-    result.append(_break_pctg_get(logger, ismobile, teamstat_dic, teams_dic))
+    stat_entry = _break_pctg_get(logger, ismobile, teamstat_dic, teams_dic)
+    if stat_entry:
+        result.append(stat_entry)
 
     # Special teams performance
-    result.append(_pppk_pctg_get(logger, ismobile, teamstat_dic, teams_dic))
+    stat_entry = _pppk_pctg_get(logger, ismobile, teamstat_dic, teams_dic)
+    if stat_entry:
+        result.append(stat_entry)
 
     return result
 
@@ -83,7 +93,7 @@ def _pppk_pctg_get(logger, ismobile, teamstat_dic, teams_dic):
             'updates': breakdown_updates_get(logger, pppk_data, _('Defensive'), _('Overstrained'), _('Agressive'), _('Offensive'))
         }
     else:
-        stat_entry = {}        
+        stat_entry = {}
 
     return stat_entry
 
@@ -134,6 +144,7 @@ def _5v5_pace_get(logger, ismobile, teamstat_dic, teams_dic):
 
     if shotrates_dic:
         # shotrates
+        # pylint: disable=E0602        
         title = _('5v5 Shot rates Cf/60 vs Ca/60')
         subtitle = _('Shots generated during 5-on-5 play (on 60min adjusted)')
         stat_entry = {
