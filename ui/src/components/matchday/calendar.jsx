@@ -46,12 +46,16 @@ export class Calendar extends React.Component{
 
   createdisabledDaysList(matchdaylist){
     var disabledDaysList = []
+    // first element of list with before only
+    disabledDaysList.push({before: new Date(matchdaylist[0])})
     matchdaylist.forEach(function (after, index) {
         var before = matchdaylist[index+1]
         if(before){
           disabledDaysList.push({ after: new Date(after), before: new Date(before)})
         }
     });
+    // last element of list if after only
+    disabledDaysList.push({after: new Date(matchdaylist[matchdaylist.length - 1])})
     return disabledDaysList
   }
 
