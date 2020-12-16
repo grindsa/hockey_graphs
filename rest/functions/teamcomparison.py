@@ -79,14 +79,14 @@ def _pppk_pctg_get(logger, ismobile, teamstat_dic, teams_dic):
     stat_entry = {
         'title': title,
         'chart':  pppk_chart_get(logger, title, subtitle, ismobile, pppk_data[len(pppk_data.keys())]),
-        'updates': breakdown_updates_get(logger, pppk_data)
+        'updates': breakdown_updates_get(logger, pppk_data, _('Defensive'), _('Overstrained'), _('Agressive'), _('Offensive'))
     }
 
     return stat_entry
 
 def _teamcomparison_heatmap_get(logger, ismobile, language, teamstat_dic, teams_dic):
     """ build structure for pace chart """
-    logger.debug('_5v5_pace_get()')
+    logger.debug('_teamcomparison_heatmap_get()')
 
     heatmap_data = teamcomparison_hmdata_get(logger, ismobile, teamstat_dic, teams_dic)
 
@@ -178,7 +178,7 @@ def _pdo_breakdown_get(logger, ismobile, teamstat_dic, teams_dic):
     stat_entry = {
         'title': title,
         'chart':  pdo_breakdown_chart(logger, title, subtitle, ismobile, breakdown_dic[len(breakdown_dic.keys())]),
-        'updates': breakdown_updates_get(logger, breakdown_dic),
+        'updates': breakdown_updates_get(logger, breakdown_dic, _('Dull'), _('Unlucky'), _('Lucky'), _('Fun'), ismobile),
     }
     stat_entry_list.append(stat_entry)
 

@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 """ time on ice charts """
 # pylint: disable=E0401
-from rest.functions.chartparameters import chartstyle, credit, exporting, responsive_y1, title, subtitle, legend, font_size, plotlines_color, corner_annotations, variables_get
-from rest.functions.chartparameters import chart_color1, chart_color2, chart_color3, chart_color4, chart_color6, text_color, font_size_mobile
+from rest.functions.chartparameters import chartstyle, credit, exporting, responsive_y1, title, subtitle, font_size, plotlines_color, corner_annotations, variables_get, chart_color6
 
 def pppk_chart_get(logger, ctitle, csubtitle, ismobile, pppk_data):
     # pylint: disable=E0602
@@ -20,6 +19,13 @@ def pppk_chart_get(logger, ctitle, csubtitle, ismobile, pppk_data):
         pppk_data['x_max'] = 99
     if pppk_data['y_max'] == 100:
         pppk_data['y_max'] = 99
+
+    minmax_dic = {
+        'x_min': pppk_data['x_min'] - 1,
+        'y_min': pppk_data['y_min'] - 1,
+        'x_max': pppk_data['x_max'] + 1,
+        'y_max': pppk_data['y_max'] + 1
+    }
 
     chart_options = {
 
@@ -45,8 +51,9 @@ def pppk_chart_get(logger, ctitle, csubtitle, ismobile, pppk_data):
         'xAxis': {
             'title': title(_('Powerplay percentage (Pp%)'), font_size),
             'labels': {'style': {'fontSize': font_size},},
-            'min': pppk_data['x_min'] - 1,
-            'max': pppk_data['x_max'] + 1,
+            'min': minmax_dic['x_min'],
+            'max': minmax_dic['x_max'],
+            'tickInterval': 1,
             'showFirstLabel': 1,
             'showLastLabel': 1,
             'gridLineWidth': 1,
@@ -57,8 +64,9 @@ def pppk_chart_get(logger, ctitle, csubtitle, ismobile, pppk_data):
         'yAxis': {
             'title': title(_('Penalty Kill percentage (Pk%)'), font_size),
             'maxPadding': 0.1,
-            'min': pppk_data['y_min'] - 1,
-            'max': pppk_data['y_max'] + 1,
+            'min': minmax_dic['y_min'],
+            'max': minmax_dic['y_max'],
+            'tickInterval': 1,
             'labels': {'style': {'fontSize': font_size},},
             'gridLineWidth': 1,
             'plotBands': [{'from': pppk_data['y_avg'] - pppk_data['y_deviation']/2, 'to': pppk_data['y_avg'] + pppk_data['y_deviation']/2, 'color': chart_color6}],
@@ -66,6 +74,6 @@ def pppk_chart_get(logger, ctitle, csubtitle, ismobile, pppk_data):
         },
 
         'series': [{'zIndex': 1, 'name': _('Standard Deviation'), 'color': plotlines_color, 'marker': {'symbol': 'square'}, 'data': pppk_data['data']}],
-        'annotations': corner_annotations(ismobile, _('Defensive'), _('Overstrained'), _('Agressive'), _('Offensive')),
+        'annotations': corner_annotations(ismobile, minmax_dic, _('Defensive'), _('Overstrained'), _('Agressive'), _('Offensive')),
     }
     return chart_options

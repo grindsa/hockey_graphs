@@ -4,10 +4,9 @@
 from rest.functions.timeline import skatersonice_get, penalties_include
 from rest.functions.periodevent import scorersfromevents_get
 from rest.functions.shift import shift_get
-from rest.functions.shot import shot_list_get
 from rest.functions.helper import shot_leaffan_sync, list_sumup, deviation_avg_get, minmax_get
 from rest.functions.periodevent import periodevent_get
-from rest.functions.chartparameters import chart_color6, plotlines_color, title, font_size
+from rest.functions.chartparameters import chart_color6, plotlines_color, title, font_size, corner_annotations
 
 def _rosterinformation_add(logger, player_corsi_dic, toi_dic, scorer_dic, roster_list):
     """ enrich corsi dictionary with roster information like time-on-ice or line-number """
@@ -116,6 +115,7 @@ def gamecorsi_get(logger, shot_list, shift_list, periodevent_list, matchinfo_dic
     return player_corsi_dic
 
 def gameshots5v5_get(logger, match_id, match_info_dic, team, shot_list):
+    # pylint: disable=R0914
     logger.debug('gameshots5v5_get()')
 
     # get shifts and shots
@@ -188,6 +188,7 @@ def gameshots5v5_get(logger, match_id, match_info_dic, team, shot_list):
     return (shots_for_5v5, shots_against_5v5, shots_ongoal_for_5v5, shots_ongoal_against_5v5)
 
 def pace_data_get(logger, ismobile, teamstat_dic, teams_dic):
+    # pylint: disable=R0914    
     """ get pace data """
     logger.debug('pace_data_get()')
 
@@ -335,6 +336,14 @@ def shotrates_updates_get(logger, data_dic):
     updates_dic = {}
 
     for ele in data_dic:
+
+        minmax_dic = {
+            'x_min': round(data_dic[ele]['x_min'] - 1, 0),
+            'y_min': round(data_dic[ele]['y_min'] - 1, 0),
+            'x_max': round(data_dic[ele]['x_max'] + 1, 0),
+            'y_max': round(data_dic[ele]['y_max'] + 1, 0)
+        }
+
         updates_dic[ele] = {
             'text': ele,
             'chartoptions':  {
@@ -348,19 +357,25 @@ def shotrates_updates_get(logger, data_dic):
                 'xAxis': {
                     # pylint: disable=E0602
                     'title': title(_('Corsi For per 60 minutes at 5v5 (Cf/60)'), font_size),
-                    'min': data_dic[ele]['x_min'] - 1,
-                    'max':  data_dic[ele]['x_max'] + 1,
+                    'min': minmax_dic['x_min'],
+                    'max':  minmax_dic['x_max'],
+                    'tickInterval': 1,
+                    'gridLineWidth': 1,
                     'plotBands': [{'from':  data_dic[ele]['x_avg'] -  data_dic[ele]['x_deviation']/2, 'to':  data_dic[ele]['x_avg'] +  data_dic[ele]['x_deviation']/2, 'color': chart_color6}],
                     'plotLines': [{'zIndex': 3, 'color': plotlines_color, 'width': 2, 'value':  data_dic[ele]['x_avg']}],
                 },
                 'yAxis': {
                     # pylint: disable=E0602
                     'title': title(_('Corsi Against per 60 minutes at 5v5 (Ca/60)'), font_size),
-                    'min': data_dic[ele]['y_min'] - 1,
-                    'max':  data_dic[ele]['y_max'] + 1,
+                    'min': minmax_dic['y_min'],
+                    'max':  minmax_dic['y_max'],
+                    'tickInterval': 1,
+                    'gridLineWidth': 1,
                     'plotBands': [{'from':  data_dic[ele]['y_avg'] -  data_dic[ele]['y_deviation']/2, 'to':  data_dic[ele]['y_avg'] +  data_dic[ele]['y_deviation']/2, 'color': chart_color6}],
                     'plotLines': [{'zIndex': 3, 'color': plotlines_color, 'width': 3, 'value':  data_dic[ele]['y_avg']}],
                 },
+                # pylint: disable=E0602
+                'annotations': corner_annotations(None, minmax_dic, _('Bad'), _('Dull'), _('Fun'), _('Good')),
             }
         }
 

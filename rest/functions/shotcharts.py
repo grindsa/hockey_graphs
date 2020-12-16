@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """ list of functions for shots """
 import math
-# pylint: disable=E0401
+# pylint: disable=E0401, C0302
 from rest.functions.chartparameters import chartstyle, credit, exporting, responsive_gameflow, responsive_y1, responsive_y1_label, responsive_y2, responsive_bubble, plotoptions_marker_disable, title, subtitle, legend, tooltip, labels, font_size, font_size_mobile, legend_valign_mobile, corner_annotations, variables_get, gameflow_annotations, shotzonelabel
 from rest.functions.chartparameters import text_color, plotlines_color, chart_color1, chart_color2, chart_color3, chart_color4, chart_color5, chart_color6, chart_color8, chart_color9, shot_posthit_color, shot_missed_color, shot_blocked_color, shot_goal_color, shot_sog_color, line_color, line1_color, line2_color, line3_color, line4_color, line5_color
 
@@ -588,7 +588,7 @@ def shotzonechart_create(logger, ctitle, csubtitle, ismobile, request, shotzonea
 
 def gamecorsichart_create(logger, ctitle, csubtitle, ismobile, player_corsi_dic):
     """ create corsi chart for a certain game """
-    # pylint: disable=E0602
+    # pylint: disable=E0602, R0915
     logger.debug('gamecorsichart_create()')
 
     variable_dic = variables_get(ismobile)
@@ -988,6 +988,14 @@ def shotrates_chart_get(logger, ctitle, csubtitle, ismobile, shotrates_dic):
 
     variable_dic = variables_get(ismobile)
 
+
+    minmax_dic = {
+        'x_min': round(shotrates_dic['x_min'] - 1, 0),
+        'y_min': round(shotrates_dic['y_min'] - 1, 0),
+        'x_max': round(shotrates_dic['x_max'] + 1, 0),
+        'y_max': round(shotrates_dic['y_max'] + 1, 0)
+    }
+
     chart_options = {
 
         'chart': {
@@ -1011,9 +1019,10 @@ def shotrates_chart_get(logger, ctitle, csubtitle, ismobile, shotrates_dic):
 
         'xAxis': {
             'title': title(_('Corsi For per 60 minutes at 5v5 (Cf/60)'), font_size),
-            'labels': {'style': {'fontSize': font_size},},
-            'min': shotrates_dic['x_min'] - 1,
-            'max': shotrates_dic['x_max'] + 1,
+            'labels': {'style': {'fontSize': font_size}},
+            'tickInterval': 1,
+            'min': minmax_dic['x_min'],
+            'max': minmax_dic['x_max'],
             'showFirstLabel': 1,
             'showLastLabel': 1,
             'gridLineWidth': 1,
@@ -1024,18 +1033,19 @@ def shotrates_chart_get(logger, ctitle, csubtitle, ismobile, shotrates_dic):
         'yAxis': {
             'title': title(_('Corsi Against per 60 minutes at 5v5 (Ca/60)'), font_size),
             'maxPadding': 0.1,
+            'tickInterval': 1,
             'reversed': 1,
             'showFirstLabel': 1,
             'showLastLabel': 1,
-            'min': shotrates_dic['y_min'] - 1,
-            'max': shotrates_dic['y_max'] + 1,
+            'min': minmax_dic['y_min'],
+            'max': minmax_dic['y_max'],
             'labels': {'style': {'fontSize': font_size},},
             'gridLineWidth': 1,
             'plotBands': [{'from': shotrates_dic['y_avg'] - shotrates_dic['y_deviation']/2, 'to': shotrates_dic['y_avg'] + shotrates_dic['y_deviation']/2, 'color': chart_color6}],
             'plotLines': [{'zIndex': 3, 'color': plotlines_color, 'width': 2, 'value': shotrates_dic['y_avg']}],
         },
 
-        'annotations': corner_annotations(ismobile, _('Dull'), _('Bad'), _('Good'), _('Fun')),
+        'annotations': corner_annotations(ismobile, minmax_dic, _('Bad'), _('Dull'), _('Fun'), _('Good')),
 
         'series': [{'zIndex': 2, 'name': _('Standard Deviation'), 'color': plotlines_color, 'marker': {'symbol': 'square'}, 'data': shotrates_dic['data']}]
 

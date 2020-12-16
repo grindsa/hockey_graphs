@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 """ list of functions for team comparison """
+# pylint: disable=E0401, R0914
 from rest.functions.helper import pctg_float_get, list_sumup, deviation_avg_get
-from rest.functions.chartparameters import chart_color1, chart_color3, chart_color6, plotlines_color, title, font_size
+from rest.functions.chartparameters import chart_color1, chart_color3, chart_color6, plotlines_color, title, font_size, corner_annotations
 
 def pdo_breakdown_data_get(logger, ismobile, teamstat_dic, teams_dic):
     """ get data for breakdown chart """
@@ -39,7 +40,7 @@ def pdo_breakdown_data_get(logger, ismobile, teamstat_dic, teams_dic):
     for team_id in _teamstat_sum_dic:
         shortcut = teams_dic[team_id]['shortcut']
         logo = teams_dic[team_id]['team_logo']
-        logo_url = '<span><img src="{0}" alt="{1}" width="{2}" height="{3}"></span>'.format(teams_dic[team_id]['team_logo'], teams_dic[team_id]['shortcut'], overview_width, overview_height),
+        logo_url = '<span><img src="{0}" alt="{1}" width="{2}" height="{3}"></span>'.format(teams_dic[team_id]['team_logo'], teams_dic[team_id]['shortcut'], overview_width, overview_height)
         team_name = teams_dic[team_id]['team_name']
         # harmonize lengh by adding list elements at the beginning
         if len(_teamstat_sum_dic[team_id]) < update_amount:
@@ -95,13 +96,19 @@ def overview_updates_get(logger, data_dic):
 
     return updates_dic
 
-def breakdown_updates_get(logger, data_dic):
+def breakdown_updates_get(logger, data_dic, string_1=None, string_2=None, string_3=None, string_4=None, ismobile=False):
     # pylint: disable=E0602
     """ build structure for pdo breakdown chart """
     logger.debug('breakdown_updates_get()')
 
     updates_dic = {}
     for ele in data_dic:
+        minmax_dic = {
+            'x_min': round(data_dic[ele]['x_min'] - 1, 0),
+            'y_min': round(data_dic[ele]['y_min'] - 1, 0),
+            'x_max': round(data_dic[ele]['x_max'] + 1, 0),
+            'y_max': round(data_dic[ele]['y_max'] + 1, 0)
+        }
         updates_dic[ele] = {
             'text': ele,
             'chartoptions':  {
@@ -113,24 +120,30 @@ def breakdown_updates_get(logger, data_dic):
                 }],
                 'xAxis': {
                     'title': title(_('Shooting percentage (Sh%)'), font_size),
-                    'min': data_dic[ele]['x_min'] - 1,
-                    'max':  data_dic[ele]['x_max'] + 1,
+                    'min': minmax_dic['x_min'],
+                    'max': minmax_dic['x_max'],
+                    'tickInterval': 1,
+                    'gridLineWidth': 1,
                     'plotBands': [{'from':  data_dic[ele]['x_avg'] -  data_dic[ele]['x_deviation']/2, 'to':  data_dic[ele]['x_avg'] +  data_dic[ele]['x_deviation']/2, 'color': chart_color6}],
                     'plotLines': [{'zIndex': 3, 'color': plotlines_color, 'width': 2, 'value':  data_dic[ele]['x_avg']}],
                 },
                 'yAxis': {
                     'title': title(_('Save percentage (Sv%)'), font_size),
-                    'min': data_dic[ele]['y_min'] - 1,
-                    'max':  data_dic[ele]['y_max'] + 1,
+                    'min': minmax_dic['y_min'],
+                    'max': minmax_dic['y_max'],
+                    'tickInterval': 1,
+                    'gridLineWidth': 1,
                     'plotBands': [{'from':  data_dic[ele]['y_avg'] -  data_dic[ele]['y_deviation']/2, 'to':  data_dic[ele]['y_avg'] +  data_dic[ele]['y_deviation']/2, 'color': chart_color6}],
                     'plotLines': [{'zIndex': 3, 'color': plotlines_color, 'width': 3, 'value':  data_dic[ele]['y_avg']}],
                 },
             }
         }
+        if string_1 and string_2 and string_3 and string_4:
+            updates_dic[ele]['chartoptions']['annotations'] = corner_annotations(ismobile, minmax_dic, string_1, string_2, string_3, string_4)
 
     return updates_dic
 
-def pdo_overview_data_get(logger, ismobile, data_dic):
+def pdo_overview_data_get(logger, _ismobile, data_dic):
     """ collect data for pdo overview chart """
     logger.debug('pdo_overview_data_get()')
 
