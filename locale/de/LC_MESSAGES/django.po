@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-12-10 20:43+0100\n"
-"PO-Revision-Date: 2020-12-10 20:48+0100\n"
+"PO-Revision-Date: 2020-12-16 15:28+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -363,11 +363,11 @@ msgstr "Prozentuale Plus-/Minus-Bilanz aller Schussversuche"
 
 #: .\rest\functions\teamcomparison.py:76
 msgid "Special team performance"
-msgstr ""
+msgstr "Effizienz in Über- und Unterzahl"
 
 #: .\rest\functions\teamcomparison.py:77
 msgid "Ability to score / prevent goals"
-msgstr ""
+msgstr "erfolgreiche Powerplays / Penalty Killings"
 
 #: .\rest\functions\teamcomparison.py:95
 msgid "Team heatmaps"
