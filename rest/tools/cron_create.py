@@ -6,7 +6,7 @@ from __future__ import absolute_import
 import os
 import sys
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 from crontab import CronTab
 from pytz import timezone
 
@@ -45,7 +45,10 @@ def create_cron_entries(logger, tzone):
     # get matches of the day
     # today = '2020-02-16'
     today = datetime.fromtimestamp(uts_now, tz=tzone).strftime("%Y-%m-%d")
-    match_list = matchdays_get(logger, None, 'date', today)
+    yesterday = (datetime.today() - timedelta(days=1)).strftime("%Y-%m-%d")
+
+    match_list_today = matchdays_get(logger, None, 'date', today)
+    match_list_yesterday = matchdays_get(logger, None, 'date', yesterday)
 
     # initialize the crontab
     cron = CronTab(tabfile=filename, user=False)
@@ -58,33 +61,47 @@ def create_cron_entries(logger, tzone):
     self.hour.on(1)
     self.minute.on(5)
 
+    ltime = time.strftime("%d.%m.%Y")
+
     # we have matches today and need to create the cron_entries for polling
-    if match_list:
+    if match_list_today or match_list_yesterday:
 
+        message = ltime+' hockey_graphs: crontab entries created for:'
+
+        if match_list_today:
         # we need timestamp from first and last match to estimate the range from cron
-        if 'matches' in match_list[today]:
-            (fhour, _fmin) = datetime.fromtimestamp(match_list[today]['matches'][0]['date_uts'], tz=tzone).strftime("%H:%M").split(':')
-            (lhour, _lmin) = datetime.fromtimestamp(match_list[today]['matches'][-1]['date_uts'], tz=tzone).strftime("%H:%M").split(':')
+            if 'matches' in match_list_today[today]:
+                (fhour, _fmin) = datetime.fromtimestamp(match_list_today[today]['matches'][0]['date_uts'], tz=tzone).strftime("%H:%M").split(':')
+                (lhour, _lmin) = datetime.fromtimestamp(match_list_today[today]['matches'][-1]['date_uts'], tz=tzone).strftime("%H:%M").split(':')
 
-            # create cron-entry to get live statistics
-            lstats = cron.new(command=path + '/matchdata_update.py -o', comment='update match statistics', user='root')
-            lstats.hour.during(int(fhour), int(lhour)+3).every(1)
-            lstats.minute.every(2)
+                # create cron-entry to get live statistics
+                lstats = cron.new(command=path + '/matchdata_update.py -o', comment='update match statistics', user='root')
+                lstats.hour.during(int(fhour), int(lhour)+3).every(1)
+                lstats.minute.every(2)
 
-            # update shifts at 11pm
-            shifts = cron.new(command=path+'/matchdata_update.py -i 24 --shifts', comment='update shifts', user='root')
-            shifts.hour.on(23)
-            shifts.minute.on(00)
+                # update shifts at 11pm
+                shifts = cron.new(command=path+'/matchdata_update.py -i 24 --shifts', comment='update shifts', user='root')
+                shifts.hour.on(23)
+                shifts.minute.on(00)
 
-            if(hasattr(settings, 'WA_ADMIN_NUMBER') and hasattr(settings, 'WA_SRV') and hasattr(settings, 'WA_PORT')):
+                message = '{0}{1}'.format(message, today)
 
-                # send whatsapp message
-                ltime = time.strftime("%d.%m.%Y")
-                message = ltime+' hockey_graphs: crontab entries created for matchday: {0}'.format(today)
-                try:
-                    simple_send(settings.WA_SRV, settings.WA_PORT, settings.WA_ADMIN_NUMBER, message)
-                except BaseException:
-                    pass
+        if match_list_yesterday:
+            if 'matches' in match_list_yesterday[yesterday]:
+                # update shifts at 11pm
+                shifts = cron.new(command=path+'/matchdata_update.py -i 24 --shifts', comment='update shifts', user='root')
+                shifts.hour.on(3, 9, 15)
+                shifts.minute.on(00)
+
+                message = '{0}, {1}'.format(message, yesterday)
+
+        if(hasattr(settings, 'WA_ADMIN_NUMBER') and hasattr(settings, 'WA_SRV') and hasattr(settings, 'WA_PORT')):
+            # send whatsapp message
+            message = ltime+' hockey_graphs: crontab entries created for matchday: {0}'.format(today)
+            try:
+                simple_send(settings.WA_SRV, settings.WA_PORT, settings.WA_ADMIN_NUMBER, message)
+            except BaseException:
+                pass
 
     cron.write(filename)
 
