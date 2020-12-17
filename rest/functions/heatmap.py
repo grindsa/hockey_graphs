@@ -11,7 +11,11 @@ def  _teampcomparison_data_sumup(logger, teamstat_dic):
 
     for team_id in teamstat_dic:
         # sumup data per team
-        teamstat_sum_dic[team_id] = list_sumup(logger, teamstat_dic[team_id], ['match_id', 'shots_for_5v5', 'shots_against_5v5', 'shots_ongoal_for', 'shots_ongoal_against', 'goals_for', 'goals_against', 'saves', 'matchduration', 'faceoffswon', 'faceoffslost', 'rebounds_for', 'rebounds_against', 'goals_rebound_for', 'goals_rebound_against', 'breaks_for', 'breaks_against', 'goals_break_for', 'goals_break_against', 'goals_pp', 'goals_pp_against', 'ppcount', 'shcount'])
+        teamstat_sum_dic[team_id] = list_sumup(logger, teamstat_dic[team_id], ['match_id', 'shots_for_5v5', 'shots_against_5v5', 'shots_ongoal_for', 'shots_ongoal_against', 'goals_for', 'goals_against', 'saves', 'matchduration', 'faceoffswon', 'faceoffslost', 'rebounds_for', 'rebounds_against', 'goals_rebound_for', 'goals_rebound_against', 'breaks_for', 'breaks_against', 'goals_break_for', 'goals_break_against', 'goals_pp', 'goals_pp_against', 'ppcount', 'shcount', 'points'])
+
+        # add amount of games
+        for idx, match in enumerate(teamstat_sum_dic[team_id], 1):
+            match['games'] = idx
 
         # check how many items we have to create in update_dic
         if update_amount < len(teamstat_sum_dic[team_id]):
@@ -43,6 +47,9 @@ def  _teampcomparison_data_sumup(logger, teamstat_dic):
             ele['goals_pp_for_pctg'] = pctg_float_get(ele['sum_goals_pp'], ele['sum_ppcount'])
             ele['goals_pp_kill_pctg'] = 100 - pctg_float_get(ele['sum_goals_pp_against'], ele['sum_shcount'])
 
+            # points per game
+            ele['ppg'] = round(ele['sum_points'] / ele['games'], 2)
+
     return (teamstat_sum_dic, update_amount)
 
 
@@ -64,7 +71,8 @@ def _teamcomparison_hm_chartseries_get(logger, data_dic):
         {'name': 'Br+%', 'key': 'goals_break_for_pctg'},
         {'name': 'Br-%', 'key': 'goals_break_against_pctg'},
         {'name': 'PP%', 'key': 'goals_pp_for_pctg'},
-        {'name': 'Pk%', 'key': 'goals_pp_kill_pctg'}
+        {'name': 'Pk%', 'key': 'goals_pp_kill_pctg'},
+        {'name': 'Ppg', 'key': 'ppg'}
     ]
 
     for ele in data_dic:
@@ -75,7 +83,7 @@ def _teamcomparison_hm_chartseries_get(logger, data_dic):
             chartseries_dic[ele]['y_category'].append(value['name'])
 
         x_cnt = 0
-        for datapoint in sorted(data_dic[ele], key=lambda i: i['team_name']):
+        for datapoint in sorted(data_dic[ele], key=lambda i: i['ppg'], reverse=True):
             # short by team and add shortcut to x_val
             # chartseries_dic[ele]['x_category'].append(datapoint['shortcut'])
             y_cnt = 0
@@ -176,7 +184,8 @@ def teamcomparison_hmdata_get(logger, ismobile, teamstat_dic, teams_dic):
                 'goals_break_for_pctg': ele['goals_rebound_for_pctg'],
                 'goals_break_against_pctg': ele['goals_rebound_against_pctg'],
                 'goals_pp_for_pctg': ele['goals_pp_for_pctg'],
-                'goals_pp_kill_pctg': ele['goals_pp_kill_pctg']
+                'goals_pp_kill_pctg': ele['goals_pp_kill_pctg'],
+                'ppg': ele['ppg']
             })
 
     chart_options = _teamcomparison_hm_chartseries_get(logger, heatmap_lake)
