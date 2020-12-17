@@ -16,6 +16,8 @@ export class SeasonSelector extends React.Component {
           // color pink if magenta sponsored events get selected
           if (seasonlist[key].name.includes('agenta')){
             color = 'w3-pink'
+          }else if (seasonlist[key].name.includes('2021')) {
+            color = 'pdelcolor'
           }
           break
         }

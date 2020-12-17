@@ -9,6 +9,8 @@ body,p,h1,h2,h3,h4,table,td,th,ul,ol,textarea,input {
 
 .pcolor {color:#ffffff !important; background-color:#333333 !important}
 .scolor {color:#ffffff !important; background-color:#999999 !important}
+/* .pdelcolor {color:#ffffff !important; background-color:#cd1414 !important} */
+.pdelcolor {color:#ffffff !important; background-color:#d61825 !important}
 
 body {
   font-size:12px;
