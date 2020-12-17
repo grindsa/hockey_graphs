@@ -9,7 +9,7 @@ The latest version is hosted at [http://hockeygraphs.dynamop.de/](https://hockey
 
 ## Project status
 
-The project is under heavy development.  So far charts for single del-matches will be provided. Team-statistics, team benchmarking and player statistics are on my todo-list and will hopefully follow soon.
+The project is under heavy development.  So far charts for single del matches and team-benchmarking will be provided. Team-statistics and player statistics are on my to-do-list and will hopefully follow soon.
 
 In case you are missing a certain chart you would like to see let me know. Just create an [issue](https://github.com/grindsa/hockey_graphs/issues/new) or drop an email to <grindelsack@gmail.com>. Suggestions for improvements and objective criticism are welcome at any time.
 
