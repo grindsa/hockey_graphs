@@ -126,3 +126,59 @@ def pdo_breakdown_chart(logger, ctitle, csubtitle, ismobile, pdo_list):
         'annotations': corner_annotations(ismobile, minmax_dic, _('Dull'), _('Unlucky'), _('Lucky'), _('Fun')),
     }
     return chart_options
+
+def ppg_chart_get(logger, ctitle, csubtitle, ismobile, ppg_data):
+    # pylint: disable=E0602
+    """ points per game / shotpercentage breakdown"""
+    logger.debug('ppg_chart_get()')
+
+    variable_dic = variables_get(ismobile)
+
+    # dirty hack
+    if ppg_data['y_min'] == 0:
+        ppg_data['y_min'] = 1
+    if ppg_data['y_max'] == 100:
+        ppg_data['y_max'] = 99
+
+    chart_options = {
+
+        'chart': {
+            'type': 'scatter',
+            'height': '80%',
+            'style': chartstyle()
+        },
+
+        'exporting': exporting(filename=ctitle),
+        'title': title(ctitle, variable_dic['title_size'], decoration=True),
+        'subtitle': subtitle(csubtitle, variable_dic['subtitle_size']),
+        'credits': credit(),
+        'legend': {'enabled': 1},
+        'responsive': responsive_y1(),
+
+        'tooltip': {
+            'useHTML': 1,
+            'headerFormat': '',
+            'pointFormat': '<span><b>{point.team_name}</b></span></br><span style="font-size: %s">%s: {point.y}</span><br><span style="font-size: %s">%s: {point.games}</span><br/><span style="font-size: %s">%s: {point.points}</span><br/>' % (font_size, _('Points per Game'), font_size, _('Matches'), font_size, _('Points'))
+        },
+
+        'xAxis': {
+            'labels': {
+                'enabled': 0
+            },
+            'tickInterval': 0,
+        },
+
+        'yAxis': {
+            'title': title(_('Point per Game (Ppg)'), font_size),
+            'maxPadding': 0.1,
+            'min': 0,
+            'tickInterval': 0.5,
+            'labels': {'style': {'fontSize': font_size},},
+            'gridLineWidth': 1,
+            'plotBands': [{'from': ppg_data['y_avg'] - ppg_data['y_deviation']/2, 'to': ppg_data['y_avg'] + ppg_data['y_deviation']/2, 'color': chart_color6}],
+            'plotLines': [{'zIndex': 3, 'color': plotlines_color, 'width': 2, 'value': ppg_data['y_avg']}],
+        },
+
+        'series': [{'zIndex': 1, 'name': _('Standard Deviation'), 'color': plotlines_color, 'marker': {'symbol': 'square'}, 'data': ppg_data['data']}],
+    }
+    return chart_options

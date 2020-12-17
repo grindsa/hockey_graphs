@@ -188,7 +188,7 @@ def gameshots5v5_get(logger, match_id, match_info_dic, team, shot_list):
     return (shots_for_5v5, shots_against_5v5, shots_ongoal_for_5v5, shots_ongoal_against_5v5)
 
 def pace_data_get(logger, ismobile, teamstat_dic, teams_dic):
-    # pylint: disable=R0914    
+    # pylint: disable=R0914
     """ get pace data """
     logger.debug('pace_data_get()')
 
@@ -296,6 +296,7 @@ def pace_chartseries_get(logger, data_dic, minmax=False):
             chartseries_dic[ele]['{0}_avg'.format(value)] = deviation_dic[value]['average']
 
             if minmax:
+                # set minmax to the same values
                 (min_, max_) = minmax_get(deviation_dic[value]['min'], deviation_dic[value]['max'], deviation_dic[value]['average'])
                 chartseries_dic[ele]['{0}_min_minmax'.format(value)] = min_
                 chartseries_dic[ele]['{0}_max_minmax'.format(value)] = max_

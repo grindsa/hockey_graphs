@@ -3,6 +3,104 @@
 # pylint: disable=E0401, R0914
 from rest.functions.helper import pctg_float_get, list_sumup, deviation_avg_get
 from rest.functions.chartparameters import chart_color1, chart_color3, chart_color6, plotlines_color, title, font_size, corner_annotations
+from rest.functions.corsi import pace_chartseries_get
+
+def _ppg_sumup(logger, teamstat_dic):
+    """ get data for breakdown chart """
+    logger.debug('_ppg_sumup()')
+    update_amount = 0
+    _teamstat_sum_dic = {}
+    for team_id in teamstat_dic:
+        # sumup data per team
+        _teamstat_sum_dic[team_id] = list_sumup(logger, teamstat_dic[team_id], ['match_id', 'shots_ongoal_for', 'goals_for', 'points'])
+
+        # add amount of games
+        for idx, match in enumerate(_teamstat_sum_dic[team_id], 1):
+            match['games'] = idx
+
+        # check how many items we have to create in update_dic
+        if update_amount < len(_teamstat_sum_dic[team_id]):
+            update_amount = len(_teamstat_sum_dic[team_id])
+
+    return (_teamstat_sum_dic, update_amount)
+
+def ppg_data_get(logger, ismobile, teamstat_dic, teams_dic):
+    """ get data for breakdown chart """
+    logger.debug('ppg_data_get()')
+
+    if ismobile:
+        image_width = 25
+        image_height = 25
+    else:
+        image_width = 40
+        image_height = 40
+
+    # get summary
+    (ppghsum_dic, update_amount) = _ppg_sumup(logger, teamstat_dic)
+
+    # build temporary dictionary for data. we build the final sorted in next step
+    ppg_lake = {}
+    for ele in range(1, update_amount+1):
+        ppg_lake[ele] = []
+
+    for team_id in ppghsum_dic:
+        # harmonize lengh by adding list elements at the beginning
+        if len(ppghsum_dic[team_id]) < update_amount:
+            for ele in range(0, update_amount - len(ppghsum_dic[team_id])):
+                ppghsum_dic[team_id].insert(0, ppghsum_dic[team_id][0])
+
+        for idx, ele in enumerate(ppghsum_dic[team_id], 1):
+
+            ppg_lake[idx].append({
+                'team_name': teams_dic[team_id]['team_name'],
+                'shortcut':  teams_dic[team_id]['shortcut'],
+                'marker': {'width': image_width, 'height': image_height, 'symbol': 'url({0})'.format(teams_dic[team_id]['team_logo'])},
+                # points per games
+                'ppg': round(ele['sum_points'] / ele['games'], 2),
+                'sh_pctg':  pctg_float_get(ele['sum_goals_for'], ele['sum_shots_ongoal_for']),
+                'games': ele['games'],
+                'goals_for': ele['goals_for'],
+                'shots_ongoal_for': ele['sum_shots_ongoal_for'],
+                'points': ele['sum_points'],
+                # 'x': pctg_float_get(ele['sum_goals_for'], ele['sum_shots_ongoal_for']),
+                'y': round(ele['sum_points'] / ele['games'], 2)
+            })
+
+    # build final dictionary for chartseries
+    ppg_chartseries_dic = pace_chartseries_get(logger, ppg_lake)
+
+    return ppg_chartseries_dic
+
+def ppg_updates_get(logger, data_dic, ctitle):
+    """ get updates for points per game chart """
+    logger.debug('ppg_updates_get()')
+
+    updates_dic = {}
+    for ele in data_dic:
+        updates_dic[ele] = {
+            'text': ele,
+            'chartoptions':  {
+                'series': [{
+                    # pylint: disable=E0602
+                    'name': _('Standard Deviation'),
+                    'color': plotlines_color,
+                    'marker': {'symbol': 'square'},
+                    'data': data_dic[ele]['data']
+                }],
+
+                'yAxis': {
+                    'title': title(ctitle, font_size),
+                    'min': 0,
+                    'tickInterval': 0.5,
+                    # 'max':  data_dic[ele]['y_max'] + 2,
+                    'plotBands': [{'from':  data_dic[ele]['y_avg'] -  data_dic[ele]['y_deviation']/2, 'to':  data_dic[ele]['y_avg'] +  data_dic[ele]['y_deviation']/2, 'color': chart_color6}],
+                    'plotLines': [{'zIndex': 3, 'color': plotlines_color, 'width': 3, 'value':  data_dic[ele]['y_avg']}],
+                },
+            }
+        }
+
+    return updates_dic
+
 
 def pdo_breakdown_data_get(logger, ismobile, teamstat_dic, teams_dic):
     """ get data for breakdown chart """

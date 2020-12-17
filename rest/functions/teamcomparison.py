@@ -12,8 +12,8 @@ from rest.functions.faceoff import faceoff_overview_get, faceoffs_updates_get
 from rest.functions.faceoffcharts import faceoff_overview_chart
 from rest.functions.helper import mobile_check, language_get
 from rest.functions.comment import comment_get
-from rest.functions.pdo import pdo_breakdown_data_get, pdo_overview_data_get, breakdown_updates_get, overview_updates_get
-from rest.functions.pdocharts import pdo_breakdown_chart, pdo_overview_chart
+from rest.functions.pdo import pdo_breakdown_data_get, pdo_overview_data_get, breakdown_updates_get, overview_updates_get, ppg_data_get, ppg_updates_get
+from rest.functions.pdocharts import pdo_breakdown_chart, pdo_overview_chart, ppg_chart_get
 from rest.functions.season import seasonid_get
 from rest.functions.shotcharts import pace_chart_get, shotrates_chart_get, shotshare_chart_get, rebound_overview_chart, break_overview_chart
 from rest.functions.pppk import pppk_data_get
@@ -44,6 +44,7 @@ def teamcomparison_get(logger, request, fkey=None, fvalue=None):
 
     result = []
 
+    stat_entry = {}
     stat_entry = _teamcomparison_heatmap_get(logger, ismobile, language, teamstat_dic, teams_dic)
     if stat_entry:
         result.append(stat_entry)
@@ -74,7 +75,33 @@ def teamcomparison_get(logger, request, fkey=None, fvalue=None):
     if stat_entry:
         result.append(stat_entry)
 
+    # points per game vs. shotefficiency
+    stat_entry = _ppg_get(logger, ismobile, teamstat_dic, teams_dic)
+    if stat_entry:
+        result.append(stat_entry)
+
     return result
+
+def _ppg_get(logger, ismobile, teamstat_dic, teams_dic):
+    """ build structure for pace chart """
+    logger.debug('_ppg_get()')
+
+    ppg_data = ppg_data_get(logger, ismobile, teamstat_dic, teams_dic)
+
+    # pylint: disable=E0602
+    title = _('Points per Game')
+    subtitle = _('Ranking considering match postponements or cancellation')
+
+    if ppg_data:
+        stat_entry = {
+            'title': title,
+            'chart':  ppg_chart_get(logger, title, subtitle, ismobile, ppg_data[len(ppg_data.keys())]),
+            'updates': ppg_updates_get(logger, ppg_data, title)
+        }
+    else:
+        stat_entry = {}
+
+    return stat_entry
 
 def _pppk_pctg_get(logger, ismobile, teamstat_dic, teams_dic):
     """ build structure for pace chart """
@@ -144,7 +171,7 @@ def _5v5_pace_get(logger, ismobile, teamstat_dic, teams_dic):
 
     if shotrates_dic:
         # shotrates
-        # pylint: disable=E0602        
+        # pylint: disable=E0602
         title = _('5v5 Shot rates Cf/60 vs Ca/60')
         subtitle = _('Shots generated during 5-on-5 play (on 60min adjusted)')
         stat_entry = {
