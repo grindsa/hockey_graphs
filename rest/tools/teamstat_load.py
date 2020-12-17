@@ -54,8 +54,8 @@ def arg_parse():
     for match in _tmp_list:
         match_list.append(int(match))
 
-    if not allmatches and not openmatches and not pastmatches and not interval:
-        print('either -a -i -o -p parameter must be specified')
+    if not matchlist and not allmatches and not openmatches and not pastmatches and not interval:
+        print('either -a -i -o -p or --matchlist parameter must be specified')
         sys.exit(0)
 
     return(debug, season, match_list, addshifts, openmatches, pastmatches, interval, allmatches)
