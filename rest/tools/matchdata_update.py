@@ -171,7 +171,7 @@ if __name__ == '__main__':
 
     with DelAppHelper(None, DEBUG) as del_app_helper:
         for match_id in MATCH_LIST:
-            LOGGER.error('process match: {0}'.format(match_id))
+            LOGGER.debug('process match: {0}'.format(match_id))
 
             # get matchheader
             gameheader_dic = del_app_helper.gameheader_get(match_id)
