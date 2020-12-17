@@ -5,6 +5,7 @@ hockey_graphs is private software project to create a set of tools rendering cha
 The latest version is hosted at [http://hockeygraphs.dynamop.de/](https://hockeygraphs.dynamop.de/) and contains various charts based on data from
 - 2019/2020 season
 - [Magenta Sport Hockey Cup](https://www.magentasport.de/eishockey/magentasportcup)
+- 2020/2021 season
 
 ## Project status
 
