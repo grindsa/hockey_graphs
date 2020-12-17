@@ -4,6 +4,7 @@ import logging
 # pylint: disable=E0401, C0413
 import sys
 import calendar
+import json
 import configparser
 from datetime import datetime
 import math
@@ -22,6 +23,18 @@ def config_load(logger=None, mfilter=None, cfg_file='hockeygraphs.cfg'):
     config.optionxform = str
     config.read(cfg_file)
     return config
+
+def json_load(file_name):
+    """ load json structure from file """
+    print_debug(DEBUG, 'json_load({0})\n'.format(file_name))
+    with open(file_name, encoding='utf8') as json_file:
+        data = json.load(json_file)
+    return data
+
+def json_store(file_name_, data_):
+    """ store structure as json to file """
+    with open(file_name_, 'w', encoding='utf-8') as out_file:
+        json.dump(data_, out_file, ensure_ascii=False, indent=4)
 
 def url_build(environ, include_path=False):
     """ get url """

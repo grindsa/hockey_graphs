@@ -4,17 +4,18 @@
 # pylint: disable=E0401, C0413
 import os
 import sys
+import pathlib
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir, os.path.pardir)))
 import argparse
 from rest.functions.gameheader import gameheader_add
-from rest.functions.helper import logger_setup, uts_now
+from rest.functions.helper import logger_setup, uts_now, json_store
 from rest.functions.match import openmatch_list_get, match_add, pastmatch_list_get, sincematch_list_get
 from rest.functions.periodevent import periodevent_add
 from rest.functions.player import player_list_get, player_add
 from rest.functions.playerstat import playerstat_add, playerstat_get
 from rest.functions.roster import roster_add
-from rest.functions.season import season_latest_get
+from rest.functions.season import season_latest_get, season_get
 from rest.functions.shift import shift_add
 from rest.functions.shot import shot_add, zone_name_get
 from rest.functions.teamstat import teamstat_add
@@ -91,6 +92,7 @@ def arg_parse():
     parser.add_argument('-d', '--debug', help='debug mode', action="store_true", default=False)
     parser.add_argument('--shifts', help='debug mode', action="store_true", default=False)
     parser.add_argument('-s', '--season', help='season id', default=None)
+    parser.add_argument('--save', help='save directory', default=None)
     mlist = parser.add_mutually_exclusive_group()
     mlist.add_argument('--matchlist', help='list of del matchids', default=[])
     mlist.add_argument('-o', '--openmatches', help='open matches from latest season', action="store_true", default=False)
@@ -109,6 +111,7 @@ def arg_parse():
     season = args.season
     matchlist = args.matchlist
     interval = int(args.interval)
+    save = args.save
 
     # process matchlist
     try:
@@ -123,12 +126,18 @@ def arg_parse():
         print('either -i -o -p parameter must be specified')
         sys.exit(0)
 
-    return(debug, season, match_list, addshifts, openmatches, pastmatches, interval)
+    return(debug, season, match_list, addshifts, openmatches, pastmatches, interval, save)
 
+def _path_check_create(logger, path):
+    """ check save path - create if does not exist """
+    logger.debug('_path_check({0})'.format(path))
+    pathlib.Path(path).mkdir(parents=True, exist_ok=True)
 
 if __name__ == '__main__':
 
-    (DEBUG, SEASON_ID, MATCH_LIST, ADDSHIFTS, OPENMATCHES, PASTMATCHES, INTERVAL) = arg_parse()
+    (DEBUG, SEASON_ID, MATCH_LIST, ADDSHIFTS, OPENMATCHES, PASTMATCHES, INTERVAL, SAVE) = arg_parse()
+
+    TOURNAMENT_ID = None
 
     # initialize logger
     LOGGER = logger_setup(DEBUG)
@@ -136,6 +145,17 @@ if __name__ == '__main__':
     if not SEASON_ID:
         # get season_id
         SEASON_ID = season_latest_get(LOGGER)
+
+    # get tournament_id
+    TOURNAMENT_ID = season_get(LOGGER, 'id', SEASON_ID, ['tournament'])
+
+    if SAVE:
+        if TOURNAMENT_ID:
+            SAVE = '{0}/{1}'.format(SAVE, TOURNAMENT_ID)
+            _path_check_create(LOGGER, SAVE)
+        else:
+            LOGGER.error('NO TOURNAMENT_ID found. Setting save to "None"')
+            SAVE = None
 
     # unix timestamp
     UTS = uts_now()
@@ -151,7 +171,8 @@ if __name__ == '__main__':
 
     with DelAppHelper(None, DEBUG) as del_app_helper:
         for match_id in MATCH_LIST:
-            # print('process match: {0}'.format(match_id))
+            LOGGER.error('process match: {0}'.format(match_id))
+
             # get matchheader
             gameheader_dic = del_app_helper.gameheader_get(match_id)
             gameheader_add(LOGGER, 'match_id', match_id, {'match_id': match_id, 'gameheader': gameheader_dic})
@@ -180,9 +201,9 @@ if __name__ == '__main__':
 
             try:
                 # get teamstat
-                home_dic = del_app_helper.teamstats_get(match_id, True)
-                visitor_dic = del_app_helper.teamstats_get(match_id, False)
-                teamstat_add(LOGGER, 'match_id', match_id, {'match_id': match_id, 'home': home_dic, 'visitor': visitor_dic})
+                thome_dic = del_app_helper.teamstats_get(match_id, True)
+                tvisitor_dic = del_app_helper.teamstats_get(match_id, False)
+                teamstat_add(LOGGER, 'match_id', match_id, {'match_id': match_id, 'home': thome_dic, 'visitor': tvisitor_dic})
             except BaseException:
                 LOGGER.debug('ERROR: teamstats_get() failed.')
 
@@ -198,3 +219,18 @@ if __name__ == '__main__':
                 shots_process(LOGGER, shots_dic['match'])
             except BaseException:
                 LOGGER.debug('ERROR: shots_get() failed.')
+
+
+            if SAVE:
+                match_dir = '{0}/matches/{1}'.format(SAVE, match_id)
+                _path_check_create(LOGGER, match_dir)
+                json_store('{0}/{1}'.format(match_dir, 'game-header.json'), gameheader_dic)
+                json_store('{0}/{1}'.format(match_dir, 'player-stats-home.json'), home_dic)
+                json_store('{0}/{1}'.format(match_dir, 'player-stats-guest.json'), visitor_dic)
+                json_store('{0}/{1}'.format(match_dir, 'period-events.json'), event_dic)
+                json_store('{0}/{1}'.format(match_dir, 'roster.json'), roster_dic)
+                json_store('{0}/{1}'.format(match_dir, 'team-stats-home.json'), thome_dic)
+                json_store('{0}/{1}'.format(match_dir, 'team-stats-guest.json'), tvisitor_dic)
+                json_store('{0}/{1}'.format(match_dir, 'shots.json'), shots_dic)
+                if ADDSHIFTS:
+                    json_store('{0}/{1}'.format(match_dir, 'shifts.json'), shift_dic)

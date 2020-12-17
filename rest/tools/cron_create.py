@@ -80,7 +80,7 @@ def create_cron_entries(logger, tzone):
                 lstats.minute.every(2)
 
                 # update shifts at 11pm
-                shifts = cron.new(command=path+'/matchdata_update.py -i 24 --shifts', comment='update shifts', user='root')
+                shifts = cron.new(command=path+'/matchdata_update.py -i 24 --shifts --save /var/www/hockey_graphs/data', comment='update shifts', user='root')
                 shifts.hour.on(23)
                 shifts.minute.on(00)
 
@@ -89,7 +89,7 @@ def create_cron_entries(logger, tzone):
         if match_list_yesterday:
             if 'matches' in match_list_yesterday[yesterday]:
                 # update shifts at 11pm
-                shifts = cron.new(command=path+'/matchdata_update.py -i 24 --shifts', comment='update shifts', user='root')
+                shifts = cron.new(command=path+'/matchdata_update.py -i 24 --shifts --save /var/www/hockey_graphs/data', comment='update shifts', user='root')
                 shifts.hour.on(3, 9, 15)
                 shifts.minute.on(00)
 
