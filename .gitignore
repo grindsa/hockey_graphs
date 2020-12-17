@@ -138,3 +138,4 @@ static/rest_framework
 static/drf-yasg
 static/admin
 rest/tools/hockeygraphs.cfg
+hockey_graphs/urls.py
