@@ -8,7 +8,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "hockey_graphs.settings")
 import django
 django.setup()
 from rest.models import Teammatchstat
-from rest.functions.gameheader import gameheader_get
+from rest.functions.gameheader import gameheader_get, points_get
 from rest.functions.match import match_info_get
 from rest.functions.corsi import gameshots5v5_get
 from rest.functions.helper import pctg_float_get
@@ -39,6 +39,9 @@ def teammatchstat_add(logger, match_dic):
         (shots_for_5v5, shots_against_5v5, shots_ongoal_for_5v5, shots_ongoal_against_5v5) = gameshots5v5_get(logger, match_id, match_info_dic, team, shot_list)
 
         game_header = gameheader_get(logger, 'match_id', match_id, ['gameheader'])
+
+        points = points_get(logger, team, game_header)
+
         if 'lastEventTime' in game_header:
             lasteventtime = game_header['lastEventTime']
         else:
@@ -82,6 +85,7 @@ def teammatchstat_add(logger, match_dic):
             'shcount': match_dic[team]['shCount'],
             'ppefficiency': match_dic[team]['ppEfficiency'],
             'shefficiency': match_dic[team]['shEfficiency'],
+            'points': points,
         }
 
         try:

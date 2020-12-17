@@ -30,7 +30,7 @@ class Match(models.Model):
     visitor_team = models.ForeignKey(Team, related_name='visitor_team', on_delete=models.CASCADE)
     result = models.CharField(max_length=5, blank=True, null=True)
     finish = models.BooleanField(default=False)
-    disable = models.BooleanField(default=False)    
+    disable = models.BooleanField(default=False)
     def __str__(self):
         return '{0} ({1}-{2})'.format(self.match_id, self.home_team, self.visitor_team)
 
@@ -133,3 +133,4 @@ class Teammatchstat(models.Model):
     shcount = models.IntegerField(default=0)
     ppefficiency = models.FloatField(default=0)
     shefficiency = models.FloatField(default=0)
+    points = models.FloatField(default=0)
