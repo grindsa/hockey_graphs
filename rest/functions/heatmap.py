@@ -131,10 +131,16 @@ def _datapoint_reformat(datapoint):
     for ele in datapoint:
         if ele['reverse']:
             # high values are bad (usually aginst values)
-            ele['value'] = 100 - round((ele['ovalue'] - _tmp_dic[ele['y']]['min']) / (_tmp_dic[ele['y']]['max'] - _tmp_dic[ele['y']]['min']) * 100, 2)
+            try:
+                ele['value'] = 100 - round((ele['ovalue'] - _tmp_dic[ele['y']]['min']) / (_tmp_dic[ele['y']]['max'] - _tmp_dic[ele['y']]['min']) * 100, 2)
+            except BaseException:
+                ele['value'] = 0
         else:
             # low values are bad
-            ele['value'] = round((ele['ovalue'] - _tmp_dic[ele['y']]['min']) / (_tmp_dic[ele['y']]['max'] - _tmp_dic[ele['y']]['min']) * 100, 2)
+            try:
+                ele['value'] = round((ele['ovalue'] - _tmp_dic[ele['y']]['min']) / (_tmp_dic[ele['y']]['max'] - _tmp_dic[ele['y']]['min']) * 100, 2)
+            except BaseException:
+                ele['value'] = 100
 
         ele['dataLabels'] = {'format': '{0}'.format(int(ele['ovalue']))}
 
