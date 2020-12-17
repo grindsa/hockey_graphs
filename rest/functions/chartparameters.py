@@ -40,8 +40,7 @@ line3_color = chart_color4
 line4_color = chart_color2
 line5_color = chart_color5
 
-
-def credit(text='©2020 GrindSa (https://hockeygraphs.dynamop.de)', href='https://github.com/grindsa/hockey_graphs'):
+def credit(text='©2020 GrindSa (https://hockeygraphs.dynamop.de)', href='https://hockeygraphs.dynamop.de'):
     """ add credits """
     return {'text': text, 'href': href}
 
