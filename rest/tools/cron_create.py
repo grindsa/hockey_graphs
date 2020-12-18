@@ -100,7 +100,7 @@ def create_cron_entries(logger, tzone):
                 ndshifts.minute.on(0)
 
                 # update teamstats at 11pm
-                ndteamstats = cron.new(command=path+'/teamstat_load.py.py -i 30', comment='teamstats', user='root')
+                ndteamstats = cron.new(command=path+'/teamstat_load.py -i 30', comment='teamstats', user='root')
                 ndteamstats.hour.on(3, 9, 15)
                 ndteamstats.minute.on(5)
 
