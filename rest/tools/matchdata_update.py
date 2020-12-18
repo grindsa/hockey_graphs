@@ -160,7 +160,9 @@ if __name__ == '__main__':
         else:
             LOGGER.error('NO TOURNAMENT_ID found. Setting save to "None"')
             SAVE_DIR = None
-
+    else:
+        SAVE_DIR = None
+        
     # unix timestamp
     UTS = uts_now()
 
@@ -239,10 +241,10 @@ if __name__ == '__main__':
                     json_store('{0}/{1}'.format(match_dir, 'shifts.json'), shift_dic)
 
     if GITREPO and SAVE:
-        # check changes into repo       
+        # check changes into repo
         repo = git.Repo(SAVE)
         if repo.is_dirty(untracked_files=True):
-            commit_message = datetime.fromtimestamp(UTS).strftime("%Y-%m-%d %H:%M")        
+            commit_message = datetime.fromtimestamp(UTS).strftime("%Y-%m-%d %H:%M")
             LOGGER.debug('Changes detected. Creating commit: {0}'.format(commit_message))
             repo.git.add(all=True)
             repo.index.commit(commit_message)
