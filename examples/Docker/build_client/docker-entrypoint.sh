@@ -14,7 +14,7 @@ if [ $1 = "deploy" ]; then
     cd /tmp
     rsync -rvze 'ssh -i id_ed25519 -o "StrictHostKeyChecking=no"' ./rest hockeygraphs@hockeygraphs.dynamop.de:~
     rsync -rvze 'ssh -i id_ed25519 -o "StrictHostKeyChecking=no"' ./locale hockeygraphs@hockeygraphs.dynamop.de:~
-    rsync -rvze 'ssh -i id_ed25519 -o "StrictHostKeyChecking=no"' ./ui/dist hockeygraphs@hockeygraphs.dynamop.de:ui
+    rsync -rvzeb 'ssh -i id_ed25519 -o "StrictHostKeyChecking=no"' ./ui/dist hockeygraphs@hockeygraphs.dynamop.de:ui
 
     # apply schema migrations
     ssh -i id_ed25519 hockeygraphs@hockeygraphs.dynamop.de 'python3 manage.py makemigrations && python3 manage.py migrate'
