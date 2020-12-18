@@ -5,6 +5,8 @@
 import os
 import sys
 import pathlib
+import git
+from datetime import datetime
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir, os.path.pardir)))
 import argparse
@@ -93,6 +95,7 @@ def arg_parse():
     parser.add_argument('--shifts', help='debug mode', action="store_true", default=False)
     parser.add_argument('-s', '--season', help='season id', default=None)
     parser.add_argument('--save', help='save directory', default=None)
+    parser.add_argument('--gitrepo', help='git repository', action="store_true", default=False)
     mlist = parser.add_mutually_exclusive_group()
     mlist.add_argument('--matchlist', help='list of del matchids', default=[])
     mlist.add_argument('-o', '--openmatches', help='open matches from latest season', action="store_true", default=False)
@@ -112,6 +115,7 @@ def arg_parse():
     matchlist = args.matchlist
     interval = int(args.interval)
     save = args.save
+    gitrepo = args.gitrepo
 
     # process matchlist
     try:
@@ -126,7 +130,7 @@ def arg_parse():
         print('either -i -o -p parameter must be specified')
         sys.exit(0)
 
-    return(debug, season, match_list, addshifts, openmatches, pastmatches, interval, save)
+    return(debug, season, match_list, addshifts, openmatches, pastmatches, interval, save, gitrepo)
 
 def _path_check_create(logger, path):
     """ check save path - create if does not exist """
@@ -135,7 +139,7 @@ def _path_check_create(logger, path):
 
 if __name__ == '__main__':
 
-    (DEBUG, SEASON_ID, MATCH_LIST, ADDSHIFTS, OPENMATCHES, PASTMATCHES, INTERVAL, SAVE) = arg_parse()
+    (DEBUG, SEASON_ID, MATCH_LIST, ADDSHIFTS, OPENMATCHES, PASTMATCHES, INTERVAL, SAVE, GITREPO) = arg_parse()
 
     TOURNAMENT_ID = None
 
@@ -151,11 +155,11 @@ if __name__ == '__main__':
 
     if SAVE:
         if TOURNAMENT_ID:
-            SAVE = '{0}/{1}'.format(SAVE, TOURNAMENT_ID)
+            SAVE_DIR = '{0}/{1}'.format(SAVE, TOURNAMENT_ID)
             _path_check_create(LOGGER, SAVE)
         else:
             LOGGER.error('NO TOURNAMENT_ID found. Setting save to "None"')
-            SAVE = None
+            SAVE_DIR = None
 
     # unix timestamp
     UTS = uts_now()
@@ -220,9 +224,8 @@ if __name__ == '__main__':
             except BaseException:
                 LOGGER.debug('ERROR: shots_get() failed.')
 
-
-            if SAVE:
-                match_dir = '{0}/matches/{1}'.format(SAVE, match_id)
+            if SAVE_DIR:
+                match_dir = '{0}/matches/{1}'.format(SAVE_DIR, match_id)
                 _path_check_create(LOGGER, match_dir)
                 json_store('{0}/{1}'.format(match_dir, 'game-header.json'), gameheader_dic)
                 json_store('{0}/{1}'.format(match_dir, 'player-stats-home.json'), home_dic)
@@ -234,3 +237,13 @@ if __name__ == '__main__':
                 json_store('{0}/{1}'.format(match_dir, 'shots.json'), shots_dic)
                 if ADDSHIFTS:
                     json_store('{0}/{1}'.format(match_dir, 'shifts.json'), shift_dic)
+
+    if GITREPO and SAVE:
+        # check changes into repo       
+        repo = git.Repo(SAVE)
+        if repo.is_dirty(untracked_files=True):
+            commit_message = datetime.fromtimestamp(UTS).strftime("%Y-%m-%d %H:%M")        
+            LOGGER.debug('Changes detected. Creating commit: {0}'.format(commit_message))
+            repo.git.add(all=True)
+            repo.index.commit(commit_message)
+            repo.remotes.origin.push()

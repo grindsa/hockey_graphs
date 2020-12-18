@@ -2,3 +2,4 @@ django-cors-headers
 djangorestframework
 django-filter
 python-crontab
+gitpython
