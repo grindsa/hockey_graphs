@@ -5,11 +5,11 @@
 import os
 import sys
 import pathlib
-import git
+import argparse
 from datetime import datetime
+import git
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir, os.path.pardir)))
-import argparse
 from rest.functions.gameheader import gameheader_add
 from rest.functions.helper import logger_setup, uts_now, json_store
 from rest.functions.match import openmatch_list_get, match_add, pastmatch_list_get, sincematch_list_get
@@ -19,7 +19,7 @@ from rest.functions.playerstat import playerstat_add, playerstat_get
 from rest.functions.roster import roster_add
 from rest.functions.season import season_latest_get, season_get
 from rest.functions.shift import shift_add
-from rest.functions.shot import shot_add, zone_name_get
+from rest.functions.shot import shot_add, shot_delete, zone_name_get
 from rest.functions.teamstat import teamstat_add
 from delapphelper import DelAppHelper
 
@@ -162,7 +162,7 @@ if __name__ == '__main__':
             SAVE_DIR = None
     else:
         SAVE_DIR = None
-        
+
     # unix timestamp
     UTS = uts_now()
 
@@ -220,6 +220,8 @@ if __name__ == '__main__':
                 shift_add(LOGGER, 'match_id', match_id, {'match_id': match_id, 'shift': shift_dic})
 
             try:
+                # delete shots for the match to cope with renumbering (rember EBBvBHV in 12/20)
+                shot_delete(LOGGER, 'match_id', match_id)
                 # get shots
                 shots_dic = del_app_helper.shots_get(match_id)
                 shots_process(LOGGER, shots_dic['match'])
@@ -227,18 +229,18 @@ if __name__ == '__main__':
                 LOGGER.debug('ERROR: shots_get() failed.')
 
             if SAVE_DIR:
-                match_dir = '{0}/matches/{1}'.format(SAVE_DIR, match_id)
-                _path_check_create(LOGGER, match_dir)
-                json_store('{0}/{1}'.format(match_dir, 'game-header.json'), gameheader_dic)
-                json_store('{0}/{1}'.format(match_dir, 'player-stats-home.json'), home_dic)
-                json_store('{0}/{1}'.format(match_dir, 'player-stats-guest.json'), visitor_dic)
-                json_store('{0}/{1}'.format(match_dir, 'period-events.json'), event_dic)
-                json_store('{0}/{1}'.format(match_dir, 'roster.json'), roster_dic)
-                json_store('{0}/{1}'.format(match_dir, 'team-stats-home.json'), thome_dic)
-                json_store('{0}/{1}'.format(match_dir, 'team-stats-guest.json'), tvisitor_dic)
-                json_store('{0}/{1}'.format(match_dir, 'shots.json'), shots_dic)
+                MATCH_DIR = '{0}/matches/{1}'.format(SAVE_DIR, match_id)
+                _path_check_create(LOGGER, MATCH_DIR)
+                json_store('{0}/{1}'.format(MATCH_DIR, 'game-header.json'), gameheader_dic)
+                json_store('{0}/{1}'.format(MATCH_DIR, 'player-stats-home.json'), home_dic)
+                json_store('{0}/{1}'.format(MATCH_DIR, 'player-stats-guest.json'), visitor_dic)
+                json_store('{0}/{1}'.format(MATCH_DIR, 'period-events.json'), event_dic)
+                json_store('{0}/{1}'.format(MATCH_DIR, 'roster.json'), roster_dic)
+                json_store('{0}/{1}'.format(MATCH_DIR, 'team-stats-home.json'), thome_dic)
+                json_store('{0}/{1}'.format(MATCH_DIR, 'team-stats-guest.json'), tvisitor_dic)
+                json_store('{0}/{1}'.format(MATCH_DIR, 'shots.json'), shots_dic)
                 if ADDSHIFTS:
-                    json_store('{0}/{1}'.format(match_dir, 'shifts.json'), shift_dic)
+                    json_store('{0}/{1}'.format(MATCH_DIR, 'shifts.json'), shift_dic)
 
     if GITREPO and SAVE:
         # check changes into repo
