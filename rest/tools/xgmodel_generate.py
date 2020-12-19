@@ -4,17 +4,13 @@
 # pylint: disable=E0401, C0413
 import os
 import sys
-import time
-from datetime import datetime
-from pytz import timezone
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir, os.path.pardir)))
 
 from rest.functions.helper import logger_setup, json_store
-from rest.functions.match import match_list_get
 from rest.functions.player import player_dic_get
 from rest.functions.shot import shot_list_get
-from rest.functions.xg import model_build, pctg_calculate
+from rest.functions.xg import model_build, pctg_calculate, xg_add
 
 if __name__ == "__main__":
 
@@ -45,4 +41,6 @@ if __name__ == "__main__":
     # add percentage values to model
     MODEL_DIC = pctg_calculate(MODEL_DIC)
 
-    json_store('model_data.json', MODEL_DIC)
+    result = xg_add(LOGGER, 'id', 1, {'xg_data': MODEL_DIC})
+    print(result)
+    # json_store('model_data.json', MODEL_DIC)

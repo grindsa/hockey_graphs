@@ -1,10 +1,24 @@
 # -*- coding: utf-8 -*-
 """ list of functions for shots """
-# pylint: disable=E0401, C0413
-import sys
-import os
+# pylint: disable=E0401, R0914
 from rest.functions.helper import pctg_float_get
 from rest.functions.shot import shotside_get
+from rest.models import Xg
+
+def xg_add(logger, fkey, fvalue, data_dic):
+    """ add team to database """
+    logger.debug('xg_add({0}:{1})'.format(fkey, fvalue))
+    try:
+        # add authorization
+        obj, _created = Xg.objects.update_or_create(**{fkey: fvalue}, defaults=data_dic)
+        obj.save()
+        result = obj.id
+    except BaseException as err_:
+        logger.critical('error in xg_add(): {0}'.format(err_))
+        result = None
+
+    logger.debug('xg_add({0}:{1}) ended with {2}'.format(fkey, fvalue, result))
+    return result
 
 def _handness_pctg_get(shot_tree_dic):
     """ calculate handness percentage """
@@ -38,7 +52,6 @@ def _shot_percentage_get(shot_tree_dic):
 
     return shot_tree_dic
 
-
 def pctg_calculate(tree_dic):
     """ enrich dictionary with percentage """
 
@@ -57,6 +70,15 @@ def pctg_calculate(tree_dic):
     tree_dic = _handness_pctg_get(tree_dic)
 
     return tree_dic
+
+
+def _handness_get(shot, player_dic):
+    """ get handness """
+    if shot['player_id'] in player_dic:
+        handness = player_dic[shot['player_id']]['stick']
+    else:
+        handness = 'left'
+    return handness
 
 def model_build(logger, shot_list, player_dic, rebound_interval=5, break_interval=5):
     """ build the xg model tree """
@@ -85,10 +107,7 @@ def model_build(logger, shot_list, player_dic, rebound_interval=5, break_interva
 
         if team and side:
             # handness of shooter
-            if shot['player_id'] in player_dic:
-                handness = player_dic[shot['player_id']]['stick']
-            else:
-                handness = 'left'
+            handness = _handness_get(shot, player_dic)
 
             # store get coordinates for better readability
             coordinate_x = shot['coordinate_x']
@@ -131,15 +150,14 @@ def model_build(logger, shot_list, player_dic, rebound_interval=5, break_interva
                 model_tree['shots'][team][coordinate_x][coordinate_y]['rb_shots'] += 1
                 if rb_diff not in model_tree['rebounds']:
                     # create entry in rebounds tree
-                    model_tree['rebounds'][rb_diff] = {}
-                    model_tree['rebounds'][rb_diff]['shots'] = 0
-                    model_tree['rebounds'][rb_diff]['goals'] = 0
+                    model_tree['rebounds'][rb_diff] = {'shots': 0, 'goals': 0}
+
                 # store entry in tree
                 model_tree['rebounds'][rb_diff]['shots'] += 1
                 if shot['match_shot_resutl_id'] == 4:
                     # this rebound leads to a goal
                     model_tree['shots'][team][coordinate_x][coordinate_y]['rb_goals'] += 1
-                    model_tree['rebounds'][rb_diff]['goals'] +=1
+                    model_tree['rebounds'][rb_diff]['goals'] += 1
 
             # break detection
             br_diff = abs(shot['timestamp'] - prev_time)
@@ -147,15 +165,14 @@ def model_build(logger, shot_list, player_dic, rebound_interval=5, break_interva
                 # this is a break
                 model_tree['shots'][team][coordinate_x][coordinate_y]['br_shots'] += 1
                 if br_diff not in model_tree['breaks']:
-                    model_tree['breaks'][br_diff] = {}
-                    model_tree['breaks'][br_diff]['shots'] = 0
-                    model_tree['breaks'][br_diff]['goals'] = 0
+                    model_tree['breaks'][br_diff] = {'shots': 0, 'goals': 0}
+
                 # store entry in tree
                 model_tree['breaks'][br_diff]['shots'] += 1
                 if shot['match_shot_resutl_id'] == 4:
                     # this break leads to a goal
                     model_tree['shots'][team][coordinate_x][coordinate_y]['br_goals'] += 1
-                    model_tree['breaks'][br_diff]['goals'] +=1
+                    model_tree['breaks'][br_diff]['goals'] += 1
 
             # store team and timestamp for comparison in next interation
             prev_team = team

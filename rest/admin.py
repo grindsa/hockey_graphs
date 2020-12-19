@@ -3,7 +3,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from rest.models import Comment, Gameheader, Match, Periodevent, Player, Playerstat, Roster, Season, Shift, Shot, Team, Teamstat, Teammatchstat
+from rest.models import Comment, Gameheader, Match, Periodevent, Player, Playerstat, Roster, Season, Shift, Shot, Team, Teamstat, Teammatchstat, Xg
 
 class MatchAdmin(admin.ModelAdmin):
     """ match admin """
@@ -19,8 +19,8 @@ class PeriodeventAdmin(admin.ModelAdmin):
 
 class PlayerAdmin(admin.ModelAdmin):
     """ player admin """
-    fields = ['player_id', 'first_name', 'last_name', 'jersey']
-    list_display = ['player_id', 'first_name', 'last_name', 'jersey']
+    fields = ['player_id', 'first_name', 'last_name', 'jersey', 'stick', 'height', 'weight']
+    list_display = ['player_id', 'first_name', 'last_name', 'jersey', 'stick', 'height', 'weight']
     ordering = ['player_id']
 
 class PlayerstatAdmin(admin.ModelAdmin):
@@ -83,6 +83,11 @@ class TeammatchstatAdmin(admin.ModelAdmin):
     list_display = ['match', 'team', 'goals_for', 'goals_against', 'goals_pp', 'goals_pp_against', 'goals_sh', 'shots_for', 'shots_for_5v5', 'shots_ongoal_for', 'shots_ongoal_for_5v5', 'shots_ongoal_pctg', 'shots_against', 'shots_against_5v5', 'shots_ongoal_against', 'shots_ongoal_against_5v5', 'saves', 'saves_pctg', 'faceoffswon', 'faceoffslost', 'faceoffswon_pctg', 'penaltyminutes', 'powerplayseconds', 'rebounds_for', 'rebounds_against', 'goals_rebound_for', 'goals_rebound_against', 'breaks_for', 'breaks_against', 'goals_break_for', 'goals_break_against', 'ppcount', 'shcount', 'points']
     ordering = ['match_id', 'team_id']
 
+#class XgAdmin(admin.ModelAdmin):
+    """ admin class for xg model """
+#    # fields = ['xg_data']
+#    # list_display = ['xg_data']
+
 admin.site.register(Comment, CommentAdmin)
 admin.site.register(Match, MatchAdmin)
 admin.site.register(Periodevent, PeriodeventAdmin)
@@ -96,3 +101,4 @@ admin.site.register(Season, SeasonAdmin)
 admin.site.register(Team, TeamAdmin)
 admin.site.register(Teamstat, TeamstatAdmin)
 admin.site.register(Teammatchstat, TeammatchstatAdmin)
+#admin.site.register(Xg, XgAdmin)
