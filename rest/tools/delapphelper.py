@@ -377,7 +377,10 @@ class DelAppHelper():
         return requests.get(url, headers=self.headers, verify=False).json()
 
     def teamplayers_get(self, season_name, team_id=3, league_id=1):
-        """ get periodevents from del.org """
+        """ get playerinformation per team via rest """
+        # 1 - for DEL Regular season
+        # 3 - for DEL Playoffs
+        # 4 - for Magenta Cup
         self.logger.debug('DelAppHelper.teamplayers_get({0}:{1})\n'.format(season_name, team_id))
         url = '{0}/league-team-stats/{1}/{2}/{3}.json'.format(self.del_api, season_name, league_id, team_id)
         return requests.get(url, headers=self.headers, verify=False).json()

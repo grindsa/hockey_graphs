@@ -51,6 +51,9 @@ class Player(models.Model):
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
     jersey = models.IntegerField(default=0)
+    stick = models.CharField(max_length=5, blank=True, null=True)
+    weight = models.IntegerField(default=0)
+    height = models.IntegerField(default=0)
     def __str__(self):
         return self.last_name
 
@@ -134,3 +137,22 @@ class Teammatchstat(models.Model):
     ppefficiency = models.FloatField(default=0)
     shefficiency = models.FloatField(default=0)
     points = models.FloatField(default=0)
+
+class Xg(models.Model):
+    x = models.IntegerField(default=0)
+    y = models.IntegerField(default=0)
+    shots = models.IntegerField(default=0)
+    goals = models.IntegerField(default=0)
+    shots_pctg = models.FloatField(default=0)
+    lefthand_shots = models.IntegerField(default=0)
+    lefthand_goals = models.IntegerField(default=0)
+    lefthand_shots_pctg = models.FloatField(default=0)
+    righthand_shots = models.IntegerField(default=0)
+    righthand_goals = models.IntegerField(default=0)
+    righthand_shots_pctg = models.FloatField(default=0)
+    rebound_shots = models.IntegerField(default=0)
+    rebound_goals = models.IntegerField(default=0)
+    rebound_shots_pctg = models.FloatField(default=0)
+    break_shots = models.IntegerField(default=0)
+    break_goals = models.IntegerField(default=0)
+    break_shots_pctg = models.FloatField(default=0)
