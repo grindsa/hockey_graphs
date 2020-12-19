@@ -47,6 +47,17 @@ def shot_list_get(logger, fkey=None, fvalue=None, vlist=('shot_id', 'match_shot_
 
     return list(shot_list)
 
+def shot_delete(logger, fkey, fvalue):
+    """ add team to database """
+    logger.debug('shot_add({0}:{1})'.format(fkey, fvalue))
+    try:
+        # delete shots for a certain filter
+        Shot.objects.filter(**{fkey: fvalue}).delete()
+    except BaseException as err_:
+        logger.critical('error in shot_add(): {0}'.format(err_))
+
+    logger.debug('shot_delete({0}:{1}) ended'.format(fkey, fvalue))
+
 def shot_add(logger, fkey, fvalue, data_dic):
     """ add team to database """
     logger.debug('shot_add({0}:{1})'.format(fkey, fvalue))
