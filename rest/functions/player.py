@@ -8,6 +8,16 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "hockey_graphs.settings")
 import django
 django.setup()
 from rest.models import Player
+from rest.functions.helper import list2dic
+
+def player_dic_get(logger):
+    """ query players(s) and return a dict """
+    logger.debug('player_dic_get()')
+
+    player_list = player_list_get(logger, None, None, ['player_id', 'first_name', 'last_name', 'jersey', 'stick', 'weight',  'height'])
+    player_dic = list2dic(logger, player_list, 'player_id')
+
+    return player_dic
 
 def player_list_get(logger, fkey=None, fvalue=None, vlist=('player_id', 'first_name', 'last_name', 'jersey')):
     """ query player(s) from database based with optional filtering """

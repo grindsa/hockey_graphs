@@ -132,6 +132,7 @@ dmypy.json
 # mystuff
 settings.py
 data
+model_data.json
 migrations
 node_modules
 static/rest_framework

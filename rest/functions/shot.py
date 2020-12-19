@@ -73,6 +73,29 @@ def shot_add(logger, fkey, fvalue, data_dic):
     logger.debug('shot_add({0}:{1}) ended with {2}'.format(fkey, fvalue, result))
     return result
 
+def shotside_get(shot_, home_id_, visitor_id_):
+    """ guess side of the shot (left/right) """
+
+    coordinate_y_ = shot_['coordinate_y']
+    team_id = shot_['team_id']
+    if team_id == home_id_:
+        team_ = 'home'
+        if coordinate_y_ < 0:
+            side_ = 'right'
+        else:
+            side_ = 'left'
+    elif team_id == visitor_id_:
+        team_ = 'visitor'
+        if coordinate_y_ < 0:
+            side_ = 'left'
+        else:
+            side_ = 'right'
+    else:
+        team_ = None
+        side_ = None
+
+    return (team_, side_)
+
 def zone_name_get(logger, coordinate_x, coordinate_y):
     """ get coordinates """
     (meter_x, meter_y) = _shoot_coordinates_convert(logger, coordinate_x, coordinate_y)
