@@ -52,7 +52,8 @@ def matchdays_get(logger, request, fkey=None, fvalue=None, vlist=('match_id', 's
         base_url = ''
 
     # we need to group the list by matchdays
-    for match in match_list:
+    for match in sorted(match_list, key=lambda i: i['date_uts'], reverse=False):
+    # for match in match_list:
         dateobj = datestr_to_date(match['date'], '%Y-%m-%d')
         match_day = date_to_datestr(dateobj, '%d.%m.%Y')
         match_uts = date_to_uts_utc(match['date'], '%Y-%m-%d')
