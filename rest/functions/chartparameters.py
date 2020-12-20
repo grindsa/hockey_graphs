@@ -184,13 +184,13 @@ def gameflow_annotations(ismobile, y_max, home_logo, visitor_logo):
     }]
     return result
 
-def _corner_magic(minmax_dic):
+def _corner_magic(minmax_dic, pctg=4):
     """ do some magic to position the points """
 
     # points will be positioned relative to axis min/max
     x_diff = minmax_dic['x_max'] - minmax_dic['x_min']
     y_diff = minmax_dic['y_max'] - minmax_dic['y_min']
-    factor = 4 # we are moving each annotation by four percent from axis
+    factor = pctg # we are moving each annotation by four percent from axis
 
     x_min = minmax_dic['x_min'] + x_diff * factor/100
     x_max = minmax_dic['x_max'] - x_diff * factor/100
@@ -199,10 +199,10 @@ def _corner_magic(minmax_dic):
 
     return (x_min, x_max, y_min, y_max)
 
-def corner_annotations(ismobile, minmax_dic, upper_left_text, lower_left_text, upper_right_text, lower_right_text):
+def corner_annotations(_ismobile, minmax_dic, upper_left_text, lower_left_text, upper_right_text, lower_right_text, pctg=4):
     """ annotations in all four corners """
 
-    (x_min, x_max, y_min, y_max) = _corner_magic(minmax_dic)
+    (x_min, x_max, y_min, y_max) = _corner_magic(minmax_dic, pctg)
 
     upper_left = {'x': x_min, 'y': y_max, 'xAxis': 0, 'yAxis': 0}
     upper_right = {'x': x_max, 'y': y_max, 'xAxis': 0, 'yAxis': 0}

@@ -99,6 +99,7 @@ class Teamstat(models.Model):
     visitor = jsonfield.JSONField(default=dict)
 
 class Teammatchstat(models.Model):
+    """ stats per team per match """
     match = models.ForeignKey(Match, on_delete=models.CASCADE, default=0)
     team = models.ForeignKey(Team, on_delete=models.CASCADE, default=0)
     goals_for = models.IntegerField(default=0)
@@ -130,7 +131,8 @@ class Teammatchstat(models.Model):
     breaks_against = models.IntegerField(default=0)
     goals_break_for = models.IntegerField(default=0)
     goals_break_against = models.IntegerField(default=0)
-    penaltyminutes = models.IntegerField(default=0)
+    penaltyminutes_drawn = models.IntegerField(default=0)
+    penaltyminutes_taken = models.IntegerField(default=0)
     powerplayseconds = models.IntegerField(default=0)
     ppcount = models.IntegerField(default=0)
     shcount = models.IntegerField(default=0)
@@ -139,4 +141,5 @@ class Teammatchstat(models.Model):
     points = models.FloatField(default=0)
 
 class Xg(models.Model):
+    """ table to store Xg model """
     xg_data = jsonfield.JSONField(default=dict)

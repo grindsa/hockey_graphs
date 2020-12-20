@@ -16,8 +16,8 @@ from rest.functions.pdo import pdo_breakdown_data_get, pdo_overview_data_get, br
 from rest.functions.pdocharts import pdo_breakdown_chart, pdo_overview_chart, ppg_chart_get
 from rest.functions.season import seasonid_get
 from rest.functions.shotcharts import pace_chart_get, shotrates_chart_get, shotshare_chart_get, rebound_overview_chart, break_overview_chart
-from rest.functions.pppk import pppk_data_get
-from rest.functions.pppkchart import pppk_chart_get
+from rest.functions.pppk import pppk_data_get, discipline_updates_get
+from rest.functions.pppkchart import pppk_chart_get, discipline_chart_get
 # from rest.functions.bananachart import banana_chart1_create, banana_chart2_create
 from rest.functions.shot import rebound_overview_get, break_overview_get, rebound_updates_get
 from rest.functions.team import team_dic_get
@@ -71,9 +71,7 @@ def teamcomparison_get(logger, request, fkey=None, fvalue=None):
         result.append(stat_entry)
 
     # Special teams performance
-    stat_entry = _pppk_pctg_get(logger, ismobile, teamstat_dic, teams_dic)
-    if stat_entry:
-        result.append(stat_entry)
+    result.extend(_pppk_pctg_get(logger, ismobile, teamstat_dic, teams_dic))
 
     # points per game vs. shotefficiency
     stat_entry = _ppg_get(logger, ismobile, teamstat_dic, teams_dic)
@@ -107,22 +105,38 @@ def _pppk_pctg_get(logger, ismobile, teamstat_dic, teams_dic):
     """ build structure for pace chart """
     logger.debug('_pppk_pctg_get()')
 
-    pppk_data = pppk_data_get(logger, ismobile, teamstat_dic, teams_dic)
+    # create empty list returning data
+    stat_entry_list = []
 
-    # pylint: disable=E0602
-    title = _('Special team performance')
-    subtitle = _('Ability to score / prevent goals')
+    (pppk_data, discipline_data) = pppk_data_get(logger, ismobile, teamstat_dic, teams_dic)
 
     if pppk_data:
+
+        # discipline chart
+        # pylint: disable=E0602
+        title = _('Penalty Minutes (For/Against)')
+        subtitle = _('Average number of Penalty Minutes per game')
+
+        stat_entry = {
+            'title': title,
+            'chart':  discipline_chart_get(logger, title, subtitle, ismobile, discipline_data[len(discipline_data.keys())]),
+            'updates': discipline_updates_get(logger, discipline_data, _('Undisciplined'), _('Friendly'), _('Chippy'), _('Disciplined'))
+        }
+        stat_entry_list.append(stat_entry)
+
+        # penalty scoring and killing chart
+        # pylint: disable=E0602
+        title = _('Special team performance')
+        subtitle = _('Ability to score / prevent goals')
+
         stat_entry = {
             'title': title,
             'chart':  pppk_chart_get(logger, title, subtitle, ismobile, pppk_data[len(pppk_data.keys())]),
             'updates': breakdown_updates_get(logger, pppk_data, _('Defensive'), _('Overstrained'), _('Agressive'), _('Offensive'))
         }
-    else:
-        stat_entry = {}
+        stat_entry_list.append(stat_entry)
 
-    return stat_entry
+    return stat_entry_list
 
 def _teamcomparison_heatmap_get(logger, ismobile, language, teamstat_dic, teams_dic):
     """ build structure for pace chart """
