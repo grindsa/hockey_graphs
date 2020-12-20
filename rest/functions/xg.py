@@ -5,7 +5,7 @@ from rest.functions.helper import pctg_float_get
 from rest.functions.shot import shotside_get
 from rest.models import Xg
 
-def xg_add(logger, fkey, fvalue, data_dic):
+def xgmodel_add(logger, fkey, fvalue, data_dic):
     """ add team to database """
     logger.debug('xg_add({0}:{1})'.format(fkey, fvalue))
     try:
@@ -19,6 +19,19 @@ def xg_add(logger, fkey, fvalue, data_dic):
 
     logger.debug('xg_add({0}:{1}) ended with {2}'.format(fkey, fvalue, result))
     return result
+
+def xgmodel_get(logger, fkey='id', fvalue=1, vlist=['xg_data']):
+    """ get info for a specifc match_id """
+    logger.debug('xgmodel_get({0}:{1})'.format(fkey, fvalue))
+    try:
+        if len(vlist) == 1:
+            xgmodel_dic = list(Xg.objects.filter(**{fkey: fvalue}).values_list(vlist[0], flat=True))[0]
+        else:
+            xgmodel_dic = Xg.objects.filter(**{fkey: fvalue}).values(*vlist)[0]
+    except BaseException:
+        xgmodel_dic = {}
+
+    return xgmodel_dic
 
 def _handness_pctg_get(shot_tree_dic):
     """ calculate handness percentage """
@@ -71,7 +84,6 @@ def pctg_calculate(tree_dic):
 
     return tree_dic
 
-
 def _handness_get(shot, player_dic):
     """ get handness """
     if shot['player_id'] in player_dic:
@@ -80,7 +92,7 @@ def _handness_get(shot, player_dic):
         handness = 'left'
     return handness
 
-def model_build(logger, shot_list, player_dic, rebound_interval=5, break_interval=5):
+def xgmodel_build(logger, shot_list, player_dic, rebound_interval=5, break_interval=5):
     """ build the xg model tree """
     logger.debug('model_build()')
 
@@ -179,3 +191,76 @@ def model_build(logger, shot_list, player_dic, rebound_interval=5, break_interva
             prev_time = shot['timestamp']
 
     return model_tree
+
+def shotlist_process(logger, shot_list, model_tree, rebound_interval, break_interval):
+    """ process shot_dic """
+    logger.debug('shot_dic_process()')
+
+    # create dictionaries and variables we need
+    shotsum_dic = {'home': {}, 'visitor': {}}
+    goal_dic = {'home': [], 'visitor': []}
+    prev_team = None
+    prev_time = 0
+
+    for shot in shot_list:
+        # check if shot comes from home or visitor that we can lookup the right part of the model
+        if shot['team_id'] == shot['match__home_team_id']:
+            team = 'home'
+        else:
+            team = 'visitor'
+
+        # add goals to dictionary
+        if shot['match_shot_resutl_id'] == 4:
+            goal_dic[team].append('{0} {1} ({2})'.format(shot['player__first_name'], shot['player__last_name'], shot['timestamp']))
+
+        # create playerspecific subtree in shotsum_dic if does not exist
+        if shot['player_id'] not in shotsum_dic[team]:
+            shotsum_dic[team][shot['player_id']] = {'jersey': shot['player__jersey'], 'name': '{0} {1}'.format(shot['player__first_name'], shot['player__last_name']), 'handness': shot['player__stick'], 'shots': []}
+
+        # create a temporary dictionary to be added to player specific shot list
+        tmp_dic = {}
+
+        if str(shot['coordinate_y']) in model_tree['handness'][team]:
+            # add left/right hand percentage for this specific y-coordinate
+            tmp_dic['handness_pctg'] = model_tree['handness'][team][str(shot['coordinate_y'])][shot['player__stick']]['shots_pctg']
+
+        if str(shot['coordinate_y']) in model_tree['shots'][team][str(shot['coordinate_x'])]:
+            # add shot percentage for this specific coordinate
+            tmp_dic['shot_pctg'] = model_tree['shots'][team][str(shot['coordinate_x'])][str(shot['coordinate_y'])]['shots_pctg']
+
+            # depending of player handness add hadness specific shoot percentage
+            if shot['player__stick'] == 'left':
+                tmp_dic['handness_pctg'] = model_tree['shots'][team][str(shot['coordinate_x'])][str(shot['coordinate_y'])]['lh_shots_pctg']
+            elif shot['player__stick'] == 'right':
+                tmp_dic['handness_pctg'] = model_tree['shots'][team][str(shot['coordinate_x'])][str(shot['coordinate_y'])]['rh_shots_pctg']
+
+        # time difference to previous shot
+        shot_diff = abs(shot['timestamp'] - prev_time)
+
+        # rebound detection
+        if shot['team_id'] == prev_team and shot_diff <= rebound_interval:
+            # add sucess percentage for rebound timeframe
+            tmp_dic['rb_pctg'] = model_tree['rebounds'][str(shot_diff)]['shots_pctg']
+            if str(shot['coordinate_y']) in model_tree['shots'][team][str(shot['coordinate_x'])]:
+                # add rebound success percentage for this particular shoot-position
+                tmp_dic['rb_shots_pctg'] = model_tree['shots'][team][str(shot['coordinate_x'])][str(shot['coordinate_y'])]['rb_shots_pctg']
+
+        # break detection
+        if shot['team_id'] != prev_team and shot_diff <= break_interval:
+            # add sucess percentage for break timeframe
+            tmp_dic['br_pctg'] = model_tree['breaks'][str(shot_diff)]['shots_pctg']
+            if str(shot['coordinate_y']) in model_tree['shots'][team][str(shot['coordinate_x'])]:
+                # add break success percentage for this particular shoot-position
+                tmp_dic['br_shots_pctg'] = model_tree['shots'][team][str(shot['coordinate_x'])][str(shot['coordinate_y'])]['br_shots_pctg']
+
+        # store shot in list
+        shotsum_dic[team][shot['player_id']]['shots'].append(tmp_dic)
+
+        # store term and timestamp for comparison in next interation
+        prev_team = shot['team_id']
+        prev_time = shot['timestamp']
+
+    return (shotsum_dic, goal_dic)
+
+
+# def xgf_calculate(logger, shot)
