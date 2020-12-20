@@ -120,7 +120,7 @@ def discipline_chart_get(logger, ctitle, csubtitle, ismobile, pppk_data):
         'tooltip': {
             'useHTML': 1,
             'headerFormat': '',
-            'pointFormat': '<span><b>{point.team_name}</b></span></br><span style="font-size: %s">%s: {point.x}%s</span><br><span style="font-size: %s">%s: {point.y}%s</span><br/>' % (font_size, _('Shooting percentage (Sh%)'), '%', font_size, _('Save percentage (Sv%)'), '%s')
+            'pointFormat': '<span><b>{point.team_name}</b></span></br><span style="font-size: %s">%s: {point.penaltyminutes_drawn}min</span><br><span style="font-size: %s">%s: {point.penaltyminutes_taken}min</span><br/>' % (font_size, _('Penaltyminutes drawn'), font_size, _('Penaltyminutes taken'))
         },
 
         'xAxis': {
