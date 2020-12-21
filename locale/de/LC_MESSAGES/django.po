@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-12-20 16:15+0100\n"
-"PO-Revision-Date: 2020-12-20 16:15+0100\n"
+"PO-Revision-Date: 2020-12-21 19:51+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -257,7 +257,7 @@ msgstr "Undiszipliert"
 
 #: .\rest\functions\pppkchart.py:152 .\rest\functions\teamcomparison.py:123
 msgid "Friendly"
-msgstr "Nett"
+msgstr "Fair"
 
 #: .\rest\functions\pppkchart.py:152 .\rest\functions\teamcomparison.py:123
 msgid "Chippy"
@@ -427,8 +427,6 @@ msgid "Penalty Minutes (For/Against)"
 msgstr "Anzahl Strafminuten (Eigen und  Fremd)"
 
 #: .\rest\functions\teamcomparison.py:118
-#, fuzzy
-#| msgid "Average amount of Penalty minutes per game"
 msgid "Average number of Penalty Minutes per game"
 msgstr "Durchschnittliche Anzahl von Strafminuten pro Spiel"
 
