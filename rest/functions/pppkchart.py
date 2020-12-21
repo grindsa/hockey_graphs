@@ -144,7 +144,7 @@ def discipline_chart_get(logger, ctitle, csubtitle, ismobile, pppk_data):
             'tickInterval': 0.5,
             'labels': {'style': {'fontSize': font_size},},
             'gridLineWidth': 1,
-            'plotBands': [{'from': pppk_data['y_avg'] - pppk_data['y_deviation']/2, 'to': pppk_data['y_avg'] + pppk_data['y_deviation']/2, 'color': chart_color6}],
+            'plotBands': [{'from': pppk_data['y_avg'] - pppk_data['x_deviation']/2, 'to': pppk_data['y_avg'] + pppk_data['x_deviation']/2, 'color': chart_color6}],
             'plotLines': [{'zIndex': 3, 'color': plotlines_color, 'width': 2, 'value': pppk_data['y_avg']}],
         },
 

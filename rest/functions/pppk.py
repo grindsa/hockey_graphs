@@ -121,7 +121,8 @@ def discipline_updates_get(logger, data_dic, string_1=None, string_2=None, strin
                     'max': minmax_dic['y_max'],
                     'tickInterval': 0.5,
                     'gridLineWidth': 1,
-                    'plotBands': [{'from':  data_dic[ele]['y_avg'] -  data_dic[ele]['y_deviation']/2, 'to':  data_dic[ele]['y_avg'] +  data_dic[ele]['y_deviation']/2, 'color': chart_color6}],
+                    # we use x_deviation on purpose to make data better comparable
+                    'plotBands': [{'from':  data_dic[ele]['y_avg'] -  data_dic[ele]['x_deviation']/2, 'to':  data_dic[ele]['y_avg'] +  data_dic[ele]['x_deviation']/2, 'color': chart_color6}],
                     'plotLines': [{'zIndex': 3, 'color': plotlines_color, 'width': 3, 'value':  data_dic[ele]['y_avg']}],
                 },
             }
