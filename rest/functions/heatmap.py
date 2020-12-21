@@ -187,8 +187,8 @@ def teamcomparison_hmdata_get(logger, ismobile, teamstat_dic, teams_dic):
                 'faceoff_success_rate': ele['faceoff_success_rate'],
                 'goals_rebound_for_pctg': ele['goals_rebound_for_pctg'],
                 'goals_rebound_against_pctg': ele['goals_rebound_against_pctg'],
-                'goals_break_for_pctg': ele['goals_rebound_for_pctg'],
-                'goals_break_against_pctg': ele['goals_rebound_against_pctg'],
+                'goals_break_for_pctg': ele['goals_break_for_pctg'],
+                'goals_break_against_pctg': ele['goals_break_against_pctg'],
                 'goals_pp_for_pctg': ele['goals_pp_for_pctg'],
                 'goals_pp_kill_pctg': ele['goals_pp_kill_pctg'],
                 'ppg': ele['ppg']
