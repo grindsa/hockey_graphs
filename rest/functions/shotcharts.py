@@ -2,6 +2,7 @@
 """ list of functions for shots """
 import math
 # pylint: disable=E0401, C0302
+from rest.functions.helper import period_get
 from rest.functions.chartparameters import chartstyle, credit, exporting, responsive_gameflow, responsive_y1, responsive_y1_label, responsive_y2, responsive_bubble, plotoptions_marker_disable, title, subtitle, legend, tooltip, labels, font_size, font_size_mobile, legend_valign_mobile, corner_annotations, variables_get, gameflow_annotations, shotzonelabel
 from rest.functions.chartparameters import text_color, plotlines_color, chart_color1, chart_color2, chart_color3, chart_color4, chart_color5, chart_color6, chart_color8, chart_color9, shot_posthit_color, shot_missed_color, shot_blocked_color, shot_goal_color, shot_sog_color, line_color, line1_color, line2_color, line3_color, line4_color, line5_color
 
@@ -133,39 +134,43 @@ def shotsumchart_create(logger, ctitle, csubtitle, ismobile, shot_sum_dic, shot_
 
     return chart_options
 
-def gameflowchart_create(logger, ctitle, csubtitle, ismobile, shot_flow_dic, goal_dic, plotline_list, matchinfo_dic):
+def gameflowchart_create(logger, ctitle, csubtitle, ismobile, gameflow_dic, goal_dic, plotline_list, matchinfo_dic):
     """ create flow chart """
     # pylint: disable=E0602
     logger.debug('gameflowchart_create()')
 
     variable_dic = variables_get(ismobile)
 
-    # calculate max and min vals to keep y-axis centered
-    y_max = max(list(shot_flow_dic['home_team'].values()))
-    if y_max < max(list(shot_flow_dic['visitor_team'].values())):
-        y_max = max(list(shot_flow_dic['visitor_team'].values()))
-    y_min = y_max * -1
-
     # x_list
-    min_list = list(shot_flow_dic['home_team'].keys())
+    min_list = []
+    for i in range(61):
+        min_list.append(i)
 
     # game flow from home team
-    home_team_list = []
-    for min_, value in shot_flow_dic['home_team'].items():
-        # set marker on graph if there was a goal in this min
-        if min_ in goal_dic['home_team'].keys():
-            home_team_list.append({'y' : value * -1, 'marker' : {'fillColor': chart_color8, 'enabled': 1, 'radius': 5, 'symbol': 'circle'}, 'dataLabels': {'enabled': 1, 'useHTML': 1, 'color': chart_color8, 'format': '{0}'.format(goal_dic['home_team'][min_])}})
-        else:
-            home_team_list.append(value * -1)
+    data_dic = {}
 
-    # game flow from visitor team
-    visitor_team_list = []
-    for min_, value in shot_flow_dic['visitor_team'].items():
-        # set marker on graph if there was a goal in this min
-        if min_ in goal_dic['visitor_team'].keys():
-            visitor_team_list.append({'y' : value, 'marker' : {'fillColor': chart_color9, 'enabled': 1, 'radius': 5, 'symbol': 'circle'}, 'dataLabels': {'y': 25, 'enabled': 1, 'useHTML': 1, 'color': chart_color9, 'format': '{0}'.format(goal_dic['visitor_team'][min_])}})
-        else:
-            visitor_team_list.append(value)
+    y_max = 0
+    for team in gameflow_dic:
+        data_dic[team] = {}
+        for period in gameflow_dic[team]:
+            data_dic[team][period] = []
+            for min_, value in  gameflow_dic[team][period].items():
+                # adjust y_max value
+                if y_max <= value:
+                    y_max = value
+                # negate value in case of home-time (needed to show spline on the left side)
+                if team == 'home_team':
+                    value = value * -1
+                # game flow from home team
+                if min_ in goal_dic[team].keys():
+                    # set marker on graph if there was a goal in this min
+                    data_dic[team][period].append({'x': min_, 'y': value, 'marker': {'fillColor': chart_color8, 'enabled': 1, 'radius': 5, 'symbol': 'circle'}, 'dataLabels': {'enabled': 1, 'useHTML': 1, 'color': chart_color8, 'format': '{0}'.format(goal_dic[team][min_])}})
+                    goal_dic[team].pop(min_)
+                else:
+                    data_dic[team][period].append({'x': min_, 'y': value})
+
+    # calulate y_min
+    y_min = y_max * -1
 
     chart_options = {
         'chart': {
@@ -200,42 +205,44 @@ def gameflowchart_create(logger, ctitle, csubtitle, ismobile, shot_flow_dic, goa
             'showLastLabel': 1,
             'breaks': [{'from': 0, 'to': 1, 'breakSize': 0}, {'from': 20, 'to': 21, 'breakSize': 0}, {'from': 40, 'to': 41, 'breakSize': 0}, {'from': 60, 'to': 61, 'breakSize': 0}],
             'plotLines': [{
-                'color': plotlines_color,
-                'width': 2,
+                # 'color': plotlines_color,
+                'color': '#ffffff',
+                'width': 3,
                 'value': 20,
+                'zIndex': 5
             }, {
-                'color': plotlines_color,
-                'width': 2,
+                # 'color': plotlines_color,
+                'color': '#ffffff',
+                'width': 3,
                 'value': 40,
+                'zIndex': 5
             }, {
-                'color': plotlines_color,
-                'width': 2,
+                # 'color': plotlines_color,
+                'color': '#ffffff',
+                'width': 4,
                 'value': 60,
+                'zIndex': 5
             }],
             'plotBands': plotline_list,
         },
         'yAxis': [
             {
-                'title': {
-                    'text': _('Shot attempts per 60min (SH60)'),
-                    'style': {'color': text_color, 'font-size': font_size},
-                },
+                'title': {'text': _('Shot attempts per 60min (SH60)'), 'style': {'color': text_color, 'font-size': font_size}},
                 'tickInterval': 100,
                 'maxPadding': 0.1,
                 'labels': {'style': {'fontSize': font_size},},
                 'min': y_min,
                 'max': y_max,
+                'plotLines': [{'color': '#ffffff', 'width': 3, 'value': 0, 'zIndex': 5}],
             }],
-        'series': [{
-            'name': matchinfo_dic['home_team__shortcut'],
-            'data': home_team_list,
-            'color': chart_color1,
-        }, {
-            'name': matchinfo_dic['visitor_team__shortcut'],
-            'data': visitor_team_list,
-            'color': chart_color2,
-        }]
+        'series': []
     }
+
+    for ele in [1, 2, 3, 4]:
+        if ele in data_dic['home_team']:
+            chart_options['series'].append({'name': matchinfo_dic['home_team__shortcut'], 'data': data_dic['home_team'][ele], 'color': chart_color1, 'states': {'inactive': {'opacity': 1}}})
+        if ele in data_dic['visitor_team']:
+            chart_options['series'].append({'name': matchinfo_dic['visitor_team__shortcut'], 'data': data_dic['visitor_team'][ele], 'color': chart_color2, 'states': {'inactive': {'opacity': 1}}})
 
     return chart_options
 

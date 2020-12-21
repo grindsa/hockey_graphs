@@ -26,7 +26,6 @@ def config_load(logger=None, mfilter=None, cfg_file='hockeygraphs.cfg'):
 
 def json_load(file_name):
     """ load json structure from file """
-    print_debug(DEBUG, 'json_load({0})\n'.format(file_name))
     with open(file_name, encoding='utf8') as json_file:
         data = json.load(json_file)
     return data
@@ -231,7 +230,6 @@ def list_sumup(logger, input_list, filter_values, reverse=False):
 
 def shot_leaffan_sync(shot, ltime, ldate):
     """ keep shot sync with leaffan.net """
-
     (mday, _time) = shot['real_date'].split(' ', 2)
     if ltime <= shot['timestamp']:
         # usually seonds in match should always increase.. if not - this is a mistake and hould be skippt
@@ -252,8 +250,8 @@ def shot_leaffan_sync(shot, ltime, ldate):
     return (process_shot, ltime, ldate)
 
 def deviation_avg_get(logger, input_list, value_list=None):
+    """ add standard deviation """
     logger.debug('_deviation_add()')
-
     _tmp_lake = {}
     for value in value_list:
         _tmp_lake[value] = []
@@ -301,3 +299,16 @@ def language_get(logger, request):
 
     logger.debug('language_get() ended with: {0}'.format(language))
     return language
+
+def period_get(value, vtype='min'):
+    """ get period from value """
+    if vtype == 'min':
+        if value <= 20:
+            period = 1
+        elif value <= 40:
+            period = 2
+        elif value <= 60:
+            period = 3
+        else:
+            period = 4
+    return period

@@ -6,11 +6,12 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "hockey_graphs.settings")
 import math
+from scipy.signal import savgol_filter
 import django
 django.setup()
 from shapely.geometry import Point
 from rest.models import Shot
-from rest.functions.helper import maxval_get, list_sumup
+from rest.functions.helper import maxval_get, list_sumup, period_get
 from rest.functions.chartparameters import chart_color2, chart_color3, title
 import functions.rink_dimensions as rd
 
@@ -344,6 +345,44 @@ def gameflow_aggregate(logger, shot_sec_dic, x_max):
     shot_flow_dic['visitor_team'][math.ceil(x_max/60)] = round(visitor_team_cnt * 60/div_, 0)
 
     return shot_flow_dic
+
+def _period_split(_logger, shotflow_dic):
+    # logger.debug('periods_split()')
+    gameflow_dic = {'home_team': {}, 'visitor_team': {}}
+
+    for team in shotflow_dic:
+        for min_, value in shotflow_dic[team].items():
+            period = period_get(min_)
+            # we need to set a value to avoid negative values during smoothing
+            if value == 0:
+                value = 20
+            # we need to separate the data by period
+            if period not in gameflow_dic[team]:
+                gameflow_dic[team][period] = {}
+            # period beginning copy the first value at the beginning
+            if min_ in (21, 41, 61):
+                gameflow_dic[team][period][int(min_-1)] = value
+            gameflow_dic[team][period][int(min_)] = value
+
+    return gameflow_dic
+
+def gameflow_get(logger, showflow_dic):
+    """ sum up shots per seconds """
+    # logger.debug('gameflow_get()')
+
+    # split minute dic into periods and fix 0-values at the beginning of a period
+    gameflow_dic = _period_split(logger, showflow_dic)
+
+    # this is the smoothing part: we smooth across all values of a single period by using a Savitzky-Golay filter
+    for team in ['home_team', 'visitor_team']:
+        for period in gameflow_dic[team]:
+            x_list = list(gameflow_dic[team][period].keys())
+            if len(x_list) >= 9:
+                y_list = savgol_filter(list(gameflow_dic[team][period].values()), 9, 3) # window size 9, polynomial order 3
+                for idx, ele in enumerate(x_list):
+                    gameflow_dic[team][period][int(ele)] = round(y_list[idx], 0)
+
+    return gameflow_dic
 
 def shotsperzone_count(logger, shot_list, matchinfo_dic):
     """ shots per zone """
