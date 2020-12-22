@@ -9,7 +9,7 @@ import django
 django.setup()
 from django.conf import settings
 from rest.functions.corsi import gamecorsi_get
-from rest.functions.shot import shot_list_get, shotspermin_count, shotspermin_aggregate, shotspersec_count, shotstatus_count, shotstatus_aggregate, shotsperzone_count, shotsperzone_aggregate, shotcoordinates_get, gameflow_get
+from rest.functions.shot import shot_list_get, shotspermin_count, shotspermin_aggregate, shotstatus_count, shotstatus_aggregate, shotsperzone_count, shotsperzone_aggregate, shotcoordinates_get, gameflow_get
 from rest.functions.shotcharts import shotsumchart_create, gameflowchart_create, shotstatussumchart_create, shotmapchart_create, gamecorsichart_create, gamecorsippctgchart_create, puckpossessionchart_create, shotzonechart_create
 from rest.functions.toicharts import gametoichart_create
 from rest.functions.heatmapcharts import gamematchupchart_create
@@ -102,14 +102,13 @@ def _gameflow_get(logger, title, subtitle, ismobile, request, fkey, fvalue, matc
     """ prepare shots per match chart """
     logger.debug('_shots_per_match_get({0}:{1})'.format(fkey, fvalue))
 
-    shot_table = {}
-    shot_chart = {}
+    stat_entry = {}
 
     if shot_list:
-        # get shots and goals per second
-        (shotflow_dic, goal_dic) = shotspersec_count(logger, shot_list, matchinfo_dic)
+        # get shots and goals per min
+        (shotmin_dic, goal_dic) = shotspermin_count(logger, shot_list, matchinfo_dic)
 
-        gameflow_dic = gameflow_get(logger, shotflow_dic)
+        gameflow_dic = gameflow_get(logger, shotmin_dic)
 
         # create plotlines to be addedd to chart
         plotline_list = penaltyplotlines_get(logger, fkey, fvalue, chart_color7)
@@ -117,12 +116,11 @@ def _gameflow_get(logger, title, subtitle, ismobile, request, fkey, fvalue, matc
         # create the chart
         shot_chart = gameflowchart_create(logger, title, subtitle, ismobile, gameflow_dic, goal_dic, plotline_list, matchinfo_dic)
 
-    stat_entry = {
-        'title': title,
-        'chart': shot_chart,
-        'table': shot_table,
-        'tabs': False
-    }
+        stat_entry = {
+            'title': title,
+            'chart': shot_chart,
+            'tabs': False
+        }
 
     return stat_entry
 

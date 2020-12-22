@@ -312,3 +312,18 @@ def period_get(value, vtype='min'):
         else:
             period = 4
     return period
+
+def sliding_window(logger, in_list, size=5):
+    """ implement forward and backward sliding window for a list of elements """
+    logger.debug('sliding_window()')
+
+    backward_list = []
+    forward_list = []
+    for idx, current in enumerate(range(len(in_list)), start=0-size):
+        # print(idx, current)
+        if idx < 0:
+            idx = 0
+        backward_list.append(in_list[idx:current+1])
+        forward_list.append(in_list[current:current+size])
+
+    return (backward_list, forward_list)

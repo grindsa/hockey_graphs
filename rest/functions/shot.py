@@ -11,7 +11,7 @@ import django
 django.setup()
 from shapely.geometry import Point
 from rest.models import Shot
-from rest.functions.helper import maxval_get, list_sumup, period_get
+from rest.functions.helper import maxval_get, list_sumup, period_get, sliding_window
 from rest.functions.chartparameters import chart_color2, chart_color3, title
 import functions.rink_dimensions as rd
 
@@ -269,9 +269,7 @@ def shotspersec_count(logger, shot_list, matchinfo_dic):
         if shot['match_shot_resutl_id'] == 4:
             goal_dic[team][min_] = shot['player__last_name']
 
-    shot_flow_dic = gameflow_aggregate(logger, shot_sec_dic, x_max)
-
-    return (shot_flow_dic, goal_dic)
+    return (shot_sec_dic, goal_dic)
 
 def shotspermin_aggregate(logger, shot_min_dic):
     """ sum up shots per minute """
@@ -306,56 +304,14 @@ def shotstatus_aggregate(logger, shot_status_dic):
 
     return shotsum_dic
 
-def gameflow_aggregate(logger, shot_sec_dic, x_max):
-    """ sum up shots per seconds """
-    logger.debug('shotspersec_aggregate()')
-
-    shot_flow_dic = {'home_team': {}, 'visitor_team': {}}
-
-    divisor = 0
-    home_team_cnt = 0
-    visitor_team_cnt = 0
-
-    for sec_ in range(0, x_max):
-
-        # reset counter during period start
-        if sec_ in [1201, 2401, 3601]:
-            home_team_cnt = 0
-            visitor_team_cnt = 0
-            divisor = 0
-
-        # increase divisor
-        divisor += 1
-
-        # increase counter in case there is a shot
-        if sec_ in shot_sec_dic['home_team'] and bool(shot_sec_dic['home_team'][sec_]):
-            home_team_cnt += 1
-        if sec_ in shot_sec_dic['visitor_team'] and bool(shot_sec_dic['visitor_team'][sec_]):
-            visitor_team_cnt += 1
-
-        # store counters but only the minute interval
-        if sec_ % 60 == 0:
-            min_ = sec_/60
-            div_ = divisor/60
-            shot_flow_dic['home_team'][min_] = round(home_team_cnt * 60/div_, 0)
-            shot_flow_dic['visitor_team'][min_] = round(visitor_team_cnt * 60/div_, 0)
-
-    # calculate last second
-    shot_flow_dic['home_team'][math.ceil(x_max/60)] = round(home_team_cnt * 60/div_, 0)
-    shot_flow_dic['visitor_team'][math.ceil(x_max/60)] = round(visitor_team_cnt * 60/div_, 0)
-
-    return shot_flow_dic
-
 def _period_split(_logger, shotflow_dic):
     # logger.debug('periods_split()')
     gameflow_dic = {'home_team': {}, 'visitor_team': {}}
 
     for team in shotflow_dic:
         for min_, value in shotflow_dic[team].items():
+            # get period
             period = period_get(min_)
-            # we need to set a value to avoid negative values during smoothing
-            if value == 0:
-                value = 20
             # we need to separate the data by period
             if period not in gameflow_dic[team]:
                 gameflow_dic[team][period] = {}
@@ -366,12 +322,44 @@ def _period_split(_logger, shotflow_dic):
 
     return gameflow_dic
 
-def gameflow_get(logger, showflow_dic):
+def p60_calculate(logger, shotperiod_dic, wsize=3):
     """ sum up shots per seconds """
-    # logger.debug('gameflow_get()')
+    logger.debug('p60_calculate()')
 
-    # split minute dic into periods and fix 0-values at the beginning of a period
-    gameflow_dic = _period_split(logger, showflow_dic)
+    # this is the final flow dic
+    shot_flow_dic = {}
+
+    # this is the smoothing part: we smooth across all values of a single period by using a Savitzky-Golay filter
+    for team in ['home_team', 'visitor_team']:
+        shot_flow_dic[team] = {}
+        for period in shotperiod_dic[team]:
+            shot_flow_dic[team][period] = {}
+            minutes_list = list(shotperiod_dic[team][period].keys())
+            # get list of minutes for sliding window per iteration
+            (bw_min_list, _fw_min_list) = sliding_window(logger, minutes_list, wsize)
+
+            # go over the list and calculate the 60 values based on windows size
+            for min_list in bw_min_list:
+                # the minute is the last element in list
+                min_ = min_list[len(min_list)-1]
+
+                tmp_shotcount = 0
+                for _min in min_list:
+                    tmp_shotcount = tmp_shotcount + shotperiod_dic[team][period][_min]
+
+                shot_flow_dic[team][period][min_] = round(tmp_shotcount * 60/len(min_list), 0)
+
+            # hack 0 values at the beginning of a period
+            for min_ in shot_flow_dic[team][period]:
+                # we need to set a value to avoid negative values during smoothing
+                if shot_flow_dic[team][period][min_] == 0:
+                    shot_flow_dic[team][period][min_] = 20
+
+    return shot_flow_dic
+
+def _gameflow_dict_smooth(logger, gameflow_dic, wsize=9, porder=3):
+    """ sum up shots per seconds """
+    logger.debug('_gameflow_dict_smooth({0}:{1})'.format(wsize, porder))
 
     # this is the smoothing part: we smooth across all values of a single period by using a Savitzky-Golay filter
     for team in ['home_team', 'visitor_team']:
@@ -381,6 +369,21 @@ def gameflow_get(logger, showflow_dic):
                 y_list = savgol_filter(list(gameflow_dic[team][period].values()), 9, 3) # window size 9, polynomial order 3
                 for idx, ele in enumerate(x_list):
                     gameflow_dic[team][period][int(ele)] = round(y_list[idx], 0)
+
+    return gameflow_dic
+
+def gameflow_get(logger, shotmin_dic):
+    """ sum up shots per seconds """
+    logger.debug('gameflow_get()')
+
+    # split minute dic into periods and fix 0-values at the beginning of a period
+    shotperiod_dic = _period_split(logger, shotmin_dic)
+
+    # calculate 60 values with a sliding window - slideing window is one minute longer than specificied below
+    gameflow_dic = p60_calculate(logger, shotperiod_dic, wsize=4)
+
+    # smooth dictionary by using a Savitzky-Golay filter with a windows size of 9 and an polynomical order of 3
+    gameflow_dic = _gameflow_dict_smooth(logger, gameflow_dic, wsize=9, porder=3)
 
     return gameflow_dic
 
