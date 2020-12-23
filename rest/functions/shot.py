@@ -322,7 +322,7 @@ def _period_split(_logger, shotflow_dic):
 
     return gameflow_dic
 
-def p60_calculate(logger, shotperiod_dic, wsize=3):
+def _p60_calculate(logger, shotperiod_dic, wsize=3):
     """ sum up shots per seconds """
     logger.debug('p60_calculate()')
 
@@ -357,7 +357,7 @@ def p60_calculate(logger, shotperiod_dic, wsize=3):
 
     return shot_flow_dic
 
-def _gameflow_dict_smooth(logger, gameflow_dic, wsize=9, porder=3):
+def _gameflow_dic_smooth(logger, gameflow_dic, wsize=9, porder=3):
     """ sum up shots per seconds """
     logger.debug('_gameflow_dict_smooth({0}:{1})'.format(wsize, porder))
 
@@ -380,10 +380,10 @@ def gameflow_get(logger, shotmin_dic):
     shotperiod_dic = _period_split(logger, shotmin_dic)
 
     # calculate 60 values with a sliding window - slideing window is one minute longer than specificied below
-    gameflow_dic = p60_calculate(logger, shotperiod_dic, wsize=4)
+    gameflow_dic = _p60_calculate(logger, shotperiod_dic, wsize=4)
 
     # smooth dictionary by using a Savitzky-Golay filter with a windows size of 9 and an polynomical order of 3
-    gameflow_dic = _gameflow_dict_smooth(logger, gameflow_dic, wsize=9, porder=3)
+    gameflow_dic = _gameflow_dic_smooth(logger, gameflow_dic, wsize=9, porder=3)
 
     return gameflow_dic
 
