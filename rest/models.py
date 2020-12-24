@@ -17,6 +17,10 @@ class Team(models.Model):
     team_name = models.CharField(max_length=30)
     shortcut = models.CharField(max_length=5)
     logo = models.CharField(max_length=35, blank=True)
+    color_primary = models.CharField(max_length=7, blank=True)
+    color_secondary = models.CharField(max_length=7, blank=True)
+    color_penalty_primary = models.CharField(max_length=7, blank=True)
+    color_penalty_secondary = models.CharField(max_length=7, blank=True)
     def __str__(self):
         return self.team_name
 

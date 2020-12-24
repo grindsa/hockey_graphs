@@ -67,8 +67,8 @@ class ShotAdmin(admin.ModelAdmin):
 
 class TeamAdmin(admin.ModelAdmin):
     """ teamadmin"""
-    fields = ['team_id', 'team_name', 'shortcut', 'logo']
-    list_display = ['team_id', 'team_name', 'shortcut', 'logo']
+    fields = ['team_id', 'team_name', 'shortcut', 'logo', 'color_primary', 'color_secondary', 'color_penalty_primary', 'color_penalty_secondary']
+    list_display = ['team_id', 'team_name', 'shortcut', 'logo', 'color_primary', 'color_secondary', 'color_penalty_primary', 'color_penalty_secondary']
     ordering = ['team_id']
 
 class TeamstatAdmin(admin.ModelAdmin):
