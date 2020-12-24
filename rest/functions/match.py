@@ -12,12 +12,13 @@ from rest.models import Match
 from rest.functions.helper import url_build, pctg_get, min2sec
 from rest.functions.teamstat import teamstat_get
 
-def match_info_get(logger, match_id, request, vlist=('date', 'result', 'home_team_id', 'home_team__team_name', 'home_team__shortcut', 'home_team__logo', 'visitor_team_id', 'visitor_team__team_name', 'visitor_team__shortcut', 'visitor_team__logo')):
+def match_info_get(logger, match_id, request, vlist=('date', 'result', 'home_team_id', 'home_team__team_name', 'home_team__shortcut', 'home_team__logo', 'home_team__color_primary', 'home_team__color_secondary', 'home_team__color_penalty_primary', 'home_team__color_penalty_secondary', 'visitor_team_id', 'visitor_team__team_name', 'visitor_team__shortcut', 'visitor_team__logo', 'visitor_team__color_primary', 'visitor_team__color_secondary', 'visitor_team__color_penalty_primary', 'visitor_team__color_penalty_secondary', )):
     """ get info for a specifc match_id """
     logger.debug('match_info_get()')
     try:
         match_dic = Match.objects.filter(match_id=match_id).values(*vlist)[0]
-    except BaseException:
+    except BaseException as err:
+        logger.error(err)
         match_dic = {}
 
     # change logo link
@@ -72,7 +73,7 @@ def matchstats_get(logger, match_id):
         matchstat_dic = teamstat_get(logger, 'match', match_id)[0]
     except BaseException:
         matchstat_dic = {}
-    
+
     if matchstat_dic:
         stat_dic = {
             'shotsOnGoal': _('Shots on Goal'),

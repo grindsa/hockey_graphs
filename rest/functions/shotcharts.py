@@ -2,12 +2,11 @@
 """ list of functions for shots """
 import math
 # pylint: disable=E0401, C0302
-from rest.functions.helper import period_get
 from rest.functions.chartparameters import chartstyle, credit, exporting, responsive_gameflow, responsive_y1, responsive_y1_label, responsive_y2, responsive_bubble, plotoptions_marker_disable, title, subtitle, legend, tooltip, labels, font_size, font_size_mobile, legend_valign_mobile, corner_annotations, variables_get, gameflow_annotations, shotzonelabel
-from rest.functions.chartparameters import text_color, plotlines_color, chart_color1, chart_color2, chart_color3, chart_color4, chart_color5, chart_color6, chart_color8, chart_color9, shot_posthit_color, shot_missed_color, shot_blocked_color, shot_goal_color, shot_sog_color, line_color, line1_color, line2_color, line3_color, line4_color, line5_color
+from rest.functions.chartparameters import text_color, plotlines_color, chart_color1, chart_color2, chart_color3, chart_color4, chart_color6, chart_color8, shot_posthit_color, shot_missed_color, shot_blocked_color, shot_goal_color, shot_sog_color, line_color, line1_color, line2_color, line3_color, line4_color, line5_color
 
 # pylint: disable=R0914
-def shotsumchart_create(logger, ctitle, csubtitle, ismobile, shot_sum_dic, shot_min_dic, goal_dic, plotline_list, machinfo_dic):
+def shotsumchart_create(logger, ctitle, csubtitle, ismobile, shot_sum_dic, shot_min_dic, goal_dic, plotline_list, machinfo_dic, color_dic):
     # pylint: disable=E0602
     """ create shotsum chart """
     logger.debug('shotsumchart_create()')
@@ -102,39 +101,39 @@ def shotsumchart_create(logger, ctitle, csubtitle, ismobile, shot_sum_dic, shot_
         'series': [{
             'name': '{0} {1}'.format(machinfo_dic['home_team__shortcut'], _('per min')),
             'data': home_team_bar,
-            'color': chart_color1,
+            'color': color_dic['home_team_color'],
         }, {
             'name': '{0} pro min'.format(machinfo_dic['visitor_team__shortcut']),
             'data': visitor_team_bar,
-            'color': chart_color2,
+            'color': color_dic['visitor_team_color_secondary'],
         }, {
             'type': 'spline',
             'name': '{0} Sum'.format(machinfo_dic['home_team__shortcut']),
             'data': home_team_spline,
-            'color': chart_color3,
+            'color': color_dic['home_team_color'],
             'yAxis': 1,
             'zIndex': 3,
         }, {
             'type': 'spline',
             'name': '{0} Sum'.format(machinfo_dic['visitor_team__shortcut']),
             'data': visitor_team_spline,
-            'color': chart_color4,
+            'color': color_dic['visitor_team_color_secondary'],
             'yAxis': 1,
             'zIndex': 2,
         }, {
             'name': 'PP {0}'.format(machinfo_dic['home_team__shortcut']),
-            'color': chart_color5,
+            'color': color_dic['home_team_penalty_color'],
             'marker': {'symbol': 'square'},
         }, {
             'name': 'PP {0}'.format(machinfo_dic['visitor_team__shortcut']),
-            'color': chart_color6,
+            'color': color_dic['visitor_team_penalty_color'],
             'marker': {'symbol': 'square'},
         }]
     }
 
     return chart_options
 
-def gameflowchart_create(logger, ctitle, csubtitle, ismobile, gameflow_dic, goal_dic, plotline_list, matchinfo_dic):
+def gameflowchart_create(logger, ctitle, csubtitle, ismobile, gameflow_dic, goal_dic, plotline_list, matchinfo_dic, color_dic):
     """ create flow chart """
     # pylint: disable=E0602
     logger.debug('gameflowchart_create()')
@@ -164,7 +163,7 @@ def gameflowchart_create(logger, ctitle, csubtitle, ismobile, gameflow_dic, goal
                 # game flow from home team
                 if min_ in goal_dic[team].keys():
                     # set marker on graph if there was a goal in this min
-                    data_dic[team][period].append({'x': min_, 'y': value, 'marker': {'fillColor': chart_color8, 'enabled': 1, 'radius': 5, 'symbol': 'circle'}, 'dataLabels': {'enabled': 1, 'useHTML': 1, 'color': chart_color8, 'format': '{0}'.format(goal_dic[team][min_])}})
+                    data_dic[team][period].append({'x': min_, 'y': value, 'marker': {'fillColor': chart_color8, 'enabled': 1, 'radius': 5, 'symbol': 'circle'}, 'dataLabels': {'borderWidth': 1, 'backgroundColor': '#ffffff', 'borderColor': chart_color8, 'enabled': 1, 'useHTML': 1, 'color': chart_color8, 'format': '{0}'.format(goal_dic[team][min_])}})
                     goal_dic[team].pop(min_)
                 else:
                     data_dic[team][period].append({'x': min_, 'y': value})
@@ -230,7 +229,7 @@ def gameflowchart_create(logger, ctitle, csubtitle, ismobile, gameflow_dic, goal
                 'title': {'text': _('Shot attempts per 60min (SH60)'), 'style': {'color': text_color, 'font-size': font_size}},
                 'tickInterval': 100,
                 'maxPadding': 0.1,
-                'labels': {'style': {'fontSize': font_size},},
+                'labels': {'style': {'fontSize': font_size}},
                 'min': y_min,
                 'max': y_max,
                 'plotLines': [{'color': '#ffffff', 'width': 3, 'value': 0, 'zIndex': 5}],
@@ -240,9 +239,9 @@ def gameflowchart_create(logger, ctitle, csubtitle, ismobile, gameflow_dic, goal
 
     for ele in [1, 2, 3, 4]:
         if ele in data_dic['home_team']:
-            chart_options['series'].append({'name': matchinfo_dic['home_team__shortcut'], 'data': data_dic['home_team'][ele], 'color': chart_color1, 'states': {'inactive': {'opacity': 1}}})
+            chart_options['series'].append({'name': matchinfo_dic['home_team__shortcut'], 'data': data_dic['home_team'][ele], 'color': color_dic['home_team_color_primary'], 'states': {'inactive': {'opacity': 1}}})
         if ele in data_dic['visitor_team']:
-            chart_options['series'].append({'name': matchinfo_dic['visitor_team__shortcut'], 'data': data_dic['visitor_team'][ele], 'color': chart_color2, 'states': {'inactive': {'opacity': 1}}})
+            chart_options['series'].append({'name': matchinfo_dic['visitor_team__shortcut'], 'data': data_dic['visitor_team'][ele], 'color': color_dic['visitor_team_color_secondary'], 'states': {'inactive': {'opacity': 1}}})
 
     return chart_options
 
@@ -480,7 +479,6 @@ def shotmapchart_create(logger, ctitle, csubtitle, ismobile, shotmap_list):
     }
 
     return chart_options
-
 
 def shotzonedata_build(logger, ismobile, shotzoneaggr_dic):
     """ create shotzone data """
@@ -851,7 +849,7 @@ def gamecorsippctgchart_create(logger, ctitle, csubtitle, ismobile, player_corsi
     }
     return chart_options
 
-def puckpossessionchart_create(logger, ctitle, csubtitle, ismobile, shotsum_dic, goal_dic, matchinfo_dic):
+def puckpossessionchart_create(logger, ctitle, csubtitle, ismobile, shotsum_dic, goal_dic, matchinfo_dic, color_dic):
     """ create area chart showing puck possession """
     # pylint: disable=E0602
     logger.debug('puckpossessionchart_create()')
@@ -864,11 +862,9 @@ def puckpossessionchart_create(logger, ctitle, csubtitle, ismobile, shotsum_dic,
     for min_, value in shotsum_dic['home_team'].items():
         # set marker on graph if there was a goal in this min
         if min_ in goal_dic['home_team']:
-            y1_list.append({'y' : value, 'marker' : {'enabled': 1, 'width': 25, 'height': 25, 'symbol': 'url({0})'.format(matchinfo_dic['home_team_logo'])}, 'dataLabels': {'enabled': 1, 'color': chart_color3, 'format': '{0}'.format(goal_dic['home_team'][min_])}})
-            # y1_list.append({'y' : value, 'marker' : {'enabled': 1, 'radius': 7, 'symbol': 'circle', 'fillColor': chart_color1, 'lineWidth': 2, 'lineColor': '#ffffff'}, 'dataLabels': {'enabled': 1, 'color': text_color, 'format': '{0}'.format(goal_dic['home_team'][min_])}})
+            y1_list.append({'y' : value, 'marker' : {'enabled': 1, 'width': 25, 'height': 25, 'symbol': 'url({0})'.format(matchinfo_dic['home_team_logo'])}, 'dataLabels': {'y': -10, 'borderWidth': 1, 'backgroundColor': '#ffffff', 'borderColor': chart_color8, 'useHTML': 1, 'enabled': 1, 'color': chart_color8, 'format': '{0}'.format(goal_dic['home_team'][min_])}})
         elif min_ in goal_dic['visitor_team']:
-            y1_list.append({'y' : value, 'marker' : {'enabled': 1, 'width': 25, 'height': 25, 'symbol': 'url({0})'.format(matchinfo_dic['visitor_team_logo'])}, 'dataLabels': {'enabled': 1, 'color': chart_color4, 'format': '{0}'.format(goal_dic['visitor_team'][min_])}})
-            # y1_list.append({'y' : value, 'marker' : {'enabled': 1, 'radius': 7, 'symbol': 'circle', 'fillColor': chart_color2, 'lineWidth': 2, 'lineColor': '#ffffff'}, 'dataLabels': {'enabled': 1, 'color': text_color, 'format': '{0}'.format(goal_dic['visitor_team'][min_])}})
+            y1_list.append({'y' : value, 'marker' : {'enabled': 1, 'width': 25, 'height': 25, 'symbol': 'url({0})'.format(matchinfo_dic['visitor_team_logo'])}, 'dataLabels': {'y': -10, 'borderWidth': 1, 'backgroundColor': '#ffffff', 'borderColor': chart_color8, 'useHTML': 1, 'enabled': 1, 'color': chart_color8, 'format': '{0}'.format(goal_dic['visitor_team'][min_])}})
         else:
             y1_list.append(value)
 
@@ -928,8 +924,8 @@ def puckpossessionchart_create(logger, ctitle, csubtitle, ismobile, shotsum_dic,
                 'reversedStacks': 0,
             }],
         'series': [
-            {'name': '{0}'.format(matchinfo_dic['home_team__shortcut']), 'data': y1_list, 'color': '#7cb5ec', 'zIndex': 2},
-            {'name': '{0}'.format(matchinfo_dic['visitor_team__shortcut']), 'data': y2_list, 'color': '#b0b3b5', 'zIndex': 1}
+            {'name': '{0}'.format(matchinfo_dic['home_team__shortcut']), 'data': y1_list, 'color': color_dic['home_team_color'], 'zIndex': 2},
+            {'name': '{0}'.format(matchinfo_dic['visitor_team__shortcut']), 'data': y2_list, 'color': color_dic['visitor_team_color'], 'zIndex': 1}
         ]
     }
     return chart_options

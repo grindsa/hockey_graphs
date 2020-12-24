@@ -60,6 +60,7 @@ def exporting(_button=None, filename=None, allowhtml=1):
 def plotoptions_marker_disable(ele):
     """ plotoptions for spline """
     return {ele: {'marker': {'enabled': 0}}}
+    # return {ele: {'marker': {'enabled': 0}, 'fillOpacity': 0.9}}
 
 def title(text, font_size_=title_font_size, decoration=False):
     """ set title """
@@ -248,6 +249,46 @@ def color_axis(color_list=None, showinlegend=1):
     }
 
     return result
+
+def chart_colors_get(logger, matchinfo_dic):
+    """ get colors for chart """
+    color_dic = {'home_team_color': chart_color1, 'visitor_team_color': chart_color2, 'home_team_penalty_color': chart_color7, 'visitor_team_penalty_color': chart_color6}
+
+    # set primary colors
+    if 'home_team__color_primary' in matchinfo_dic and bool(matchinfo_dic['home_team__color_primary']):
+        color_dic['home_team_color'] = matchinfo_dic['home_team__color_primary']
+        color_dic['home_team_color_primary'] = matchinfo_dic['home_team__color_primary']
+    if 'visitor_team__color_primary' in matchinfo_dic and bool(matchinfo_dic['visitor_team__color_primary']):
+        color_dic['visitor_team_color'] = matchinfo_dic['visitor_team__color_primary']
+        color_dic['visitor_team_color_primary'] = matchinfo_dic['visitor_team__color_primary']
+    if 'home_team__color_penalty_primary' in matchinfo_dic and bool(matchinfo_dic['home_team__color_penalty_primary']):
+        color_dic['home_team_color_penalty'] = matchinfo_dic['home_team__color_penalty_primary']
+        color_dic['home_team_color_penalty_primary'] = matchinfo_dic['home_team__color_penalty_primary']
+    if 'visitor_team__color_penalty_primary' in matchinfo_dic and bool(matchinfo_dic['visitor_team__color_penalty_primary']):
+        color_dic['visitor_team_color_penalty'] = matchinfo_dic['visitor_team__color_penalty_primary']
+        color_dic['visitor_team_color_penalty_primary'] = matchinfo_dic['visitor_team__color_penalty_primary']
+
+    # set seconday colors
+    if 'home_team__color_secondary' in matchinfo_dic and bool(matchinfo_dic['home_team__color_secondary']):
+        color_dic['home_team_color_secondary'] = matchinfo_dic['home_team__color_secondary']
+    if 'visitor_team__color_secondary' in matchinfo_dic and bool(matchinfo_dic['visitor_team__color_secondary']):
+        color_dic['visitor_team_color_secondary'] = matchinfo_dic['visitor_team__color_secondary']
+    if 'home_team__color_penalty_secondary' in matchinfo_dic and bool(matchinfo_dic['home_team__color_penalty_secondary']):
+        color_dic['home_team_color_penalty_secondary'] = matchinfo_dic['home_team__color_penalty_secondary']
+    if 'visitor_team__color_penalty_secondary' in matchinfo_dic and bool(matchinfo_dic['visitor_team__color_penalty_secondary']):
+        color_dic['visitor_team_color_penalty_secondary'] = matchinfo_dic['visitor_team__color_penalty_secondary']
+
+    # corner case handling if either colors are similar - in this case switch to backup color
+    if color_dic['home_team_color'] == color_dic['visitor_team_color'] or color_dic['home_team_color_penalty'] == color_dic['visitor_team_color_penalty']:
+        logger.debug('flip to secondary color for visitor team')
+        if 'visitor_team__color_secondary' in matchinfo_dic and bool(matchinfo_dic['visitor_team__color_secondary']):
+            color_dic['visitor_team_color'] = matchinfo_dic['visitor_team__color_secondary']
+            color_dic['visitor_team_color_penalty'] = matchinfo_dic['visitor_team__color_penalty_secondary']
+        else:
+            color_dic['visitor_team_color'] = chart_color2
+            color_dic['visitor_team_color_penalty'] = chart_color6
+
+    return color_dic
 
 def variables_get(ismobile):
     """ build variables based on mobile detection """

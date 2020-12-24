@@ -20,7 +20,7 @@ from rest.functions.shift import shift_get, toifromshifts_get
 from rest.functions.roster import roster_get
 from rest.functions.periodevent import periodevent_get, penaltyplotlines_get
 from rest.functions.playerstat import playerstat_get, toifromplayerstats_get, matchupmatrix_get
-from rest.functions.chartparameters import chart_color7
+from rest.functions.chartparameters import chart_colors_get
 from rest.functions.helper import url_build, mobile_check
 
 def matchstatistics_get(logger, request, fkey=None, fvalue=None):
@@ -36,6 +36,9 @@ def matchstatistics_get(logger, request, fkey=None, fvalue=None):
     if fkey:
         # we need some match_information
         matchinfo_dic = match_info_get(logger, fvalue, request.META)
+
+        # get colors to be used
+        color_dic = chart_colors_get(logger, matchinfo_dic)
 
         # pylint: disable=E0602
         vs_name = _('vs.')
@@ -60,11 +63,11 @@ def matchstatistics_get(logger, request, fkey=None, fvalue=None):
 
         # create chart for shots per match
         # pylint: disable=E0602
-        result.append(_gameshots_get(logger, _('Shots per minute'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list))
+        result.append(_gameshots_get(logger, _('Shots per minute'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list, color_dic))
 
         # create shotflowchart
         # pylint: disable=E0602
-        result.append(_gameflow_get(logger, _('Gameflow'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list))
+        result.append(_gameflow_get(logger, _('Gameflow'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list, color_dic))
 
         # create chart for shotstatus
         # pylint: disable=E0602
@@ -84,7 +87,7 @@ def matchstatistics_get(logger, request, fkey=None, fvalue=None):
 
         # puck possession
         # pylint: disable=E0602
-        result.append(_gamepuckpossession_get(logger, _('Puck possession'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list))
+        result.append(_gamepuckpossession_get(logger, _('Puck possession'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list, color_dic))
 
         # time on ice per player
         # pylint: disable=E0602
@@ -98,7 +101,7 @@ def matchstatistics_get(logger, request, fkey=None, fvalue=None):
 
     return result
 
-def _gameflow_get(logger, title, subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list):
+def _gameflow_get(logger, title, subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list, color_dic):
     """ prepare shots per match chart """
     logger.debug('_shots_per_match_get({0}:{1})'.format(fkey, fvalue))
 
@@ -111,10 +114,10 @@ def _gameflow_get(logger, title, subtitle, ismobile, request, fkey, fvalue, matc
         gameflow_dic = gameflow_get(logger, shotmin_dic)
 
         # create plotlines to be addedd to chart
-        plotline_list = penaltyplotlines_get(logger, fkey, fvalue, chart_color7)
+        plotline_list = penaltyplotlines_get(logger, fkey, fvalue, color_dic['home_team_color_penalty_primary'], color_dic['visitor_team_color_penalty_secondary'])
 
         # create the chart
-        shot_chart = gameflowchart_create(logger, title, subtitle, ismobile, gameflow_dic, goal_dic, plotline_list, matchinfo_dic)
+        shot_chart = gameflowchart_create(logger, title, subtitle, ismobile, gameflow_dic, goal_dic, plotline_list, matchinfo_dic, color_dic)
 
         stat_entry = {
             'title': title,
@@ -124,7 +127,7 @@ def _gameflow_get(logger, title, subtitle, ismobile, request, fkey, fvalue, matc
 
     return stat_entry
 
-def _gamepuckpossession_get(logger, title, subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list):
+def _gamepuckpossession_get(logger, title, subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list, color_dic):
     """ create chart for puck possession """
     logger.debug('_gamepuckpossession_get({0}:{1})'.format(fkey, fvalue))
 
@@ -139,7 +142,7 @@ def _gamepuckpossession_get(logger, title, subtitle, ismobile, request, fkey, fv
         # aggregate shots per min
         shotsum_dic = shotspermin_aggregate(logger, shotmin_dic)
 
-        shot_chart = puckpossessionchart_create(logger, title, subtitle, ismobile, shotsum_dic, goal_dic, matchinfo_dic)
+        shot_chart = puckpossessionchart_create(logger, title, subtitle, ismobile, shotsum_dic, goal_dic, matchinfo_dic, color_dic)
         # pylint: disable=E0602
         shot_table = shotsperiodtable_get(logger, _('Shots per period'), shotmin_dic, matchinfo_dic)
 
@@ -185,7 +188,7 @@ def _gameshootstatus_get(logger, title, subtitle, ismobile, request, fkey, fvalu
 
     return stat_entry
 
-def _gameshots_get(logger, title, subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list):
+def _gameshots_get(logger, title, subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list, color_dic):
     """ prepare shots per match chart """
     logger.debug('_gameshots_get({0}:{1})'.format(fkey, fvalue))
 
@@ -199,13 +202,12 @@ def _gameshots_get(logger, title, subtitle, ismobile, request, fkey, fvalue, mat
         shotsum_dic = shotspermin_aggregate(logger, shotmin_dic)
 
         # create plotlines to be addedd to chart
-        plotline_list = penaltyplotlines_get(logger, fkey, fvalue)
-
+        plotline_list = penaltyplotlines_get(logger, fkey, fvalue, color_dic['home_team_color_penalty_primary'], color_dic['visitor_team_color_penalty_secondary'])
 
         # pylint: disable=E0602
         stat_entry = {
             'title': title,
-            'chart': shotsumchart_create(logger, title, subtitle, ismobile, shotsum_dic, shotmin_dic, goal_dic, plotline_list, matchinfo_dic),
+            'chart': shotsumchart_create(logger, title, subtitle, ismobile, shotsum_dic, shotmin_dic, goal_dic, plotline_list, matchinfo_dic, color_dic),
             'table': shotsperiodtable_get(logger, _('Shots per period'), shotmin_dic, matchinfo_dic),
             'tabs': False
         }
