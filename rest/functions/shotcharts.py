@@ -862,6 +862,7 @@ def puckpossessionchart_create(logger, ctitle, csubtitle, ismobile, shotsum_dic,
 
     y1_list = []
     for min_, value in shotsum_dic['home_team'].items():
+        
         # on the fly zero value fix at gamestart
         #if shotsum_dic['home_team'][min_] == 0 and shotsum_dic['visitor_team'][min_] == 0:
         #    # we need to modify "value" for home-team as this is used in the chart

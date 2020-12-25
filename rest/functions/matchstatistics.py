@@ -143,7 +143,7 @@ def _gamepuckpossession_get(logger, title, subtitle, ismobile, request, fkey, fv
         shotsum_dic = shotspermin_aggregate(logger, shotmin_dic)
 
         shot_chart = puckpossessionchart_create(logger, title, subtitle, ismobile, shotsum_dic, goal_dic, matchinfo_dic, color_dic)
-        
+
         # pylint: disable=E0602
         shot_table = shotsperiodtable_get(logger, _('Shots per period'), shotmin_dic, matchinfo_dic)
 
