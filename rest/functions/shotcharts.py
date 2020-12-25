@@ -2,7 +2,7 @@
 """ list of functions for shots """
 import math
 # pylint: disable=E0401, C0302
-from rest.functions.chartparameters import chartstyle, credit, exporting, responsive_gameflow, responsive_y1, responsive_y1_label, responsive_y2, responsive_bubble, plotoptions_marker_disable, title, subtitle, legend, tooltip, labels, font_size, font_size_mobile, legend_valign_mobile, corner_annotations, variables_get, gameflow_annotations, shotzonelabel
+from rest.functions.chartparameters import chartstyle, credit, exporting, responsive_gameflow, responsive_y1, responsive_y1_label, responsive_y2, responsive_bubble, plotoptions_marker_disable, title, subtitle, legend, tooltip, labels, font_size, font_size_mobile, legend_valign_mobile, corner_annotations, variables_get, gameflow_annotations, shotzonelabel, puckpossession_annotations
 from rest.functions.chartparameters import text_color, plotlines_color, chart_color1, chart_color2, chart_color3, chart_color4, chart_color6, chart_color8, shot_posthit_color, shot_missed_color, shot_blocked_color, shot_goal_color, shot_sog_color, line_color, line1_color, line2_color, line3_color, line4_color, line5_color
 
 # pylint: disable=R0914
@@ -857,8 +857,17 @@ def puckpossessionchart_create(logger, ctitle, csubtitle, ismobile, shotsum_dic,
 
     min_list = list(shotsum_dic['home_team'].keys())
 
+    # max x value (OT or not OT) needed for annotation module
+    x_max = min_list[-1]
+
     y1_list = []
     for min_, value in shotsum_dic['home_team'].items():
+        # on the fly zero value fix at gamestart
+        #if shotsum_dic['home_team'][min_] == 0 and shotsum_dic['visitor_team'][min_] == 0:
+        #    # we need to modify "value" for home-team as this is used in the chart
+        #    value = 1
+        #    shotsum_dic['visitor_team'][min_] = 1
+
         # set marker on graph if there was a goal in this min
         if min_ in goal_dic['home_team']:
             y1_list.append({'y' : value, 'marker' : {'enabled': 1, 'width': 25, 'height': 25, 'symbol': 'url({0})'.format(matchinfo_dic['home_team_logo'])}, 'dataLabels': {'y': -10, 'borderWidth': 1, 'backgroundColor': '#ffffff', 'borderColor': chart_color8, 'useHTML': 1, 'enabled': 1, 'color': chart_color8, 'format': '{0}'.format(goal_dic['home_team'][min_])}})
@@ -872,7 +881,7 @@ def puckpossessionchart_create(logger, ctitle, csubtitle, ismobile, shotsum_dic,
     chart_options = {
 
         'chart': {
-            'type': 'area',
+            'type': 'areaspline',
             'height': '80%',
             'style': chartstyle()
         },
@@ -883,6 +892,7 @@ def puckpossessionchart_create(logger, ctitle, csubtitle, ismobile, shotsum_dic,
         'credits': credit(),
         'legend': legend(),
         'responsive': responsive_y1(),
+        'annotations': puckpossession_annotations(ismobile, x_max, matchinfo_dic['home_team_logo'], matchinfo_dic['visitor_team_logo']),
 
         'tooltip': {
             'pointFormat': '<span style="color:{series.color}">{series.name}</span>: <b>{point.percentage:.1f}%</b> ({point.y:,.0f} shots)<br/>',
@@ -890,7 +900,7 @@ def puckpossessionchart_create(logger, ctitle, csubtitle, ismobile, shotsum_dic,
         },
 
         'plotOptions': {
-            'area': {
+            'areaspline': {
                 'stacking': 'percent',
                 'lineColor': '#ffffff',
                 'lineWidth': 2,

@@ -185,6 +185,28 @@ def gameflow_annotations(ismobile, y_max, home_logo, visitor_logo):
     }]
     return result
 
+def puckpossession_annotations(ismobile, x_bar_max, home_logo, visitor_logo):
+    """ puckpossession_annotations in all four corners """
+
+    if ismobile:
+        img_width = 35
+        home = {'x': round(0.85 * x_bar_max, 0), 'y': 25, 'xAxis': 0, 'yAxis': 0}
+        visitor = {'x': round(0.85 * x_bar_max, 0), 'y': 95, 'xAxis': 0, 'yAxis': 0}
+    else:
+        img_width = 55
+        home = {'x': round(0.9 * x_bar_max, 0), 'y': 15, 'xAxis': 0, 'yAxis': 0}
+        visitor = {'x': round(0.9 * x_bar_max, 0), 'y': 95, 'xAxis': 0, 'yAxis': 0}
+
+    img_height = img_width
+
+    result = [{
+        'shapes': [
+            {'type': 'image', 'src': home_logo, 'width': img_width, 'height': img_height, 'point': home},
+            {'type': 'image', 'src': visitor_logo, 'width': img_width, 'height': img_height, 'point': visitor}
+        ]
+    }]
+    return result
+
 def _corner_magic(minmax_dic, pctg=4):
     """ do some magic to position the points """
 
@@ -256,7 +278,7 @@ def chart_colors_get(logger, matchinfo_dic):
         'home_team_color': chart_color1,
         'home_team_color_primary': chart_color1,
         'visitor_team_color': chart_color2,
-        'visitor_team_color_secondary': chart_color2,        
+        'visitor_team_color_secondary': chart_color2,
         'home_team_color_penalty': chart_color7,
         'visitor_team_color_penalty': chart_color6,
         'home_team_color_penalty_primary': chart_color7,
