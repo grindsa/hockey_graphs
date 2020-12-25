@@ -252,7 +252,16 @@ def color_axis(color_list=None, showinlegend=1):
 
 def chart_colors_get(logger, matchinfo_dic):
     """ get colors for chart """
-    color_dic = {'home_team_color': chart_color1, 'visitor_team_color': chart_color2, 'home_team_color_penalty': chart_color7, 'visitor_team_color_penalty': chart_color6}
+    color_dic = {
+        'home_team_color': chart_color1,
+        'home_team_color_primary': chart_color1,
+        'visitor_team_color': chart_color2,
+        'visitor_team_color_secondary': chart_color2,        
+        'home_team_color_penalty': chart_color7,
+        'visitor_team_color_penalty': chart_color6,
+        'home_team_color_penalty_primary': chart_color7,
+        'visitor_team_color_penalty_secondary': chart_color6
+        }
 
     # set primary colors
     if 'home_team__color_primary' in matchinfo_dic and bool(matchinfo_dic['home_team__color_primary']):

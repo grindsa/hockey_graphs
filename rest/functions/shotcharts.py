@@ -122,11 +122,11 @@ def shotsumchart_create(logger, ctitle, csubtitle, ismobile, shot_sum_dic, shot_
             'zIndex': 2,
         }, {
             'name': 'PP {0}'.format(machinfo_dic['home_team__shortcut']),
-            'color': color_dic['home_team_penalty_color'],
+            'color': color_dic['home_team_color_penalty'],
             'marker': {'symbol': 'square'},
         }, {
             'name': 'PP {0}'.format(machinfo_dic['visitor_team__shortcut']),
-            'color': color_dic['visitor_team_penalty_color'],
+            'color': color_dic['visitor_team_color_penalty'],
             'marker': {'symbol': 'square'},
         }]
     }
@@ -923,8 +923,8 @@ def puckpossessionchart_create(logger, ctitle, csubtitle, ismobile, shotsum_dic,
                 'reversedStacks': 0,
             }],
         'series': [
-            {'name': '{0}'.format(matchinfo_dic['home_team__shortcut']), 'data': y1_list, 'color': color_dic['home_team_color'], 'zIndex': 2},
-            {'name': '{0}'.format(matchinfo_dic['visitor_team__shortcut']), 'data': y2_list, 'color': color_dic['visitor_team_color'], 'zIndex': 1}
+            {'name': '{0}'.format(matchinfo_dic['home_team__shortcut']), 'data': y1_list, 'color': color_dic['home_team_color_primary'], 'zIndex': 2},
+            {'name': '{0}'.format(matchinfo_dic['visitor_team__shortcut']), 'data': y2_list, 'color': color_dic['visitor_team_color_secondary'], 'zIndex': 1}
         ]
     }
     return chart_options
