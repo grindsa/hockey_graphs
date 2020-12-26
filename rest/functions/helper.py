@@ -227,7 +227,6 @@ def list_sumup(logger, input_list, filter_values, reverse=False):
 
     return match_list
 
-
 def shot_leaffan_sync(shot, ltime, ldate):
     """ keep shot sync with leaffan.net """
     (mday, _time) = shot['real_date'].split(' ', 2)

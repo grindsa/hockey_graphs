@@ -64,5 +64,8 @@ if __name__ == "__main__":
         # we also need the XGMODEL_DIC to check if we have the shotcoordinates in our structure
         (shotstat_dic, goal_dic) = shotlist_process(LOGGER, shot_list, XGMODEL_DIC, REBOUND_INTERVAL, BREAK_INTERVAL)
 
+        from pprint import pprint
+        pprint(shotstat_dic)
+
         # lets apply the magic algorithm to estimate xGF
         # playerxgf_dic = xgf_calculate(shotstat_dic, QUANTIFIER_DIC)

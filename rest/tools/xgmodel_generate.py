@@ -41,6 +41,6 @@ if __name__ == "__main__":
     # add percentage values to model
     MODEL_DIC = pctg_calculate(MODEL_DIC)
 
-    result = xgmodel_add(LOGGER, 'id', 1, {'xg_data': MODEL_DIC})
-    print(result)
-    # json_store('model_data.json', MODEL_DIC)
+    # result = xgmodel_add(LOGGER, 'id', 1, {'xg_data': MODEL_DIC})
+    # print(result)
+    json_store('model_data.json', MODEL_DIC)

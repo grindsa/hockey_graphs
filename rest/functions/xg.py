@@ -1,9 +1,74 @@
 # -*- coding: utf-8 -*-
 """ list of functions for shots """
 # pylint: disable=E0401, R0914
+import sys
+
 from rest.functions.helper import pctg_float_get
 from rest.functions.shot import shotside_get
 from rest.models import Xg
+from sklearn.neighbors import NearestNeighbors, BallTree
+import numpy as np
+
+def _surrondingpoints_get(logger, x_point, y_point):
+    # logger.debug('_surrondingpoints_get([{0}, {1}])'.format(x_point, y_point))
+    surroundingpoint_list = []
+    for x_num in range(x_point-1, x_point+2):
+        for y_num in range(y_point-1, y_point+2):
+            if not bool(x_num == x_point and y_num == y_point):
+                surroundingpoint_list.append([x_num, y_num])
+
+    return surroundingpoint_list
+
+def _surroundingpointval_avg_get(logger, x_point, y_point, model_tree, stick, depth=0):
+    # logger.debug('_surroundingpointval_avg_get({0}, {1}) depth: {2}'.format(x_point, y_point, depth))
+
+    shot_pctg_list = []
+    handness_shot_pctg_list = []
+
+    if depth <= 5:
+        # get surrounding points
+        point_list = _surrondingpoints_get(logger, x_point, y_point)
+
+        for x_val, y_val in point_list:
+            # convert to strings as keys in model-dic are stored as strings
+            x_ele = str(x_val)
+            y_ele = str(y_val)
+
+            # check if we have the point in model
+            if x_ele in model_tree and y_ele in model_tree[x_ele]:
+                # print('yeap')
+                (point_shot_pctg, point_handness_shots_pctg) = _coordinates_pctg_get(logger, x_ele, y_ele, model_tree, stick)
+                shot_pctg_list.append(point_shot_pctg)
+                handness_shot_pctg_list.append(point_handness_shots_pctg)
+            else:
+                (point_shot_pctg, point_handness_shots_pctg) = _surroundingpointval_avg_get(logger, x_val, y_val, model_tree, stick, depth+1)
+
+    shot_pctg = 0
+    handness_shot_pctg = 0
+    if len(shot_pctg_list) != 0:
+        shot_pctg = round(np.mean(shot_pctg_list), 0)
+    if len(handness_shot_pctg_list) != 0:
+        handness_shot_pctg = round(np.mean(handness_shot_pctg_list), 0)
+
+    return (shot_pctg, handness_shot_pctg)
+
+def _coordinates_pctg_get(logger, x_point, y_point, model_tree, stick):
+    # logger.debug('_coordinates_pctg_get({0}, {1})'.format(x_point, y_point))
+
+    # add shot percentage for this specific coordinate
+    shot_pctg = model_tree[x_point][y_point]['shots_pctg']
+
+    # depending of player handness add hadness specific shoot percentage
+    # add shot percentage for this specific coordinate
+    shot_pctg = model_tree[x_point][y_point]['shots_pctg']
+
+    # depending of player handness add hadness specific shoot percentage
+    if stick == 'left':
+        handness_shots_pctg = model_tree[x_point][y_point]['lh_shots_pctg']
+    elif stick == 'right':
+        handness_shots_pctg = model_tree[x_point][y_point]['rh_shots_pctg']
+
+    return (shot_pctg, handness_shots_pctg)
 
 def xgmodel_add(logger, fkey, fvalue, data_dic):
     """ add team to database """
@@ -225,14 +290,9 @@ def shotlist_process(logger, shot_list, model_tree, rebound_interval, break_inte
             tmp_dic['handness_pctg'] = model_tree['handness'][team][str(shot['coordinate_y'])][shot['player__stick']]['shots_pctg']
 
         if str(shot['coordinate_y']) in model_tree['shots'][team][str(shot['coordinate_x'])]:
-            # add shot percentage for this specific coordinate
-            tmp_dic['shot_pctg'] = model_tree['shots'][team][str(shot['coordinate_x'])][str(shot['coordinate_y'])]['shots_pctg']
-
-            # depending of player handness add hadness specific shoot percentage
-            if shot['player__stick'] == 'left':
-                tmp_dic['handness_pctg'] = model_tree['shots'][team][str(shot['coordinate_x'])][str(shot['coordinate_y'])]['lh_shots_pctg']
-            elif shot['player__stick'] == 'right':
-                tmp_dic['handness_pctg'] = model_tree['shots'][team][str(shot['coordinate_x'])][str(shot['coordinate_y'])]['rh_shots_pctg']
+            (tmp_dic['shots_pctg'], tmp_dic['handness_shots_pctg']) = _coordinates_pctg_get(logger, str(shot['coordinate_x']), str(shot['coordinate_y']), model_tree['shots'][team], shot['player__stick'])
+        else:
+            (tmp_dic['shots_pctg'], tmp_dic['handness_shots_pctg']) = _surroundingpointval_avg_get(logger, shot['coordinate_x'], shot['coordinate_y'], model_tree['shots'][team], shot['player__stick'])
 
         # time difference to previous shot
         shot_diff = abs(shot['timestamp'] - prev_time)
