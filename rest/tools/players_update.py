@@ -27,7 +27,7 @@ if __name__ == '__main__':
     # 3 - for DEL Playoffs
     # 4 - for Magenta Cup
     # LEAGUE_LIST = [1, 3]
-    LEAGUE_LIST = [4]
+    LEAGUE_LIST = [1]
 
     # get list of teams
     TEAM_DIC = team_dic_get(LOGGER, None)
