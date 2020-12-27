@@ -27,8 +27,10 @@ def match_info_get(logger, match_id, request, vlist=('date', 'result', 'home_tea
     except BaseException:
         base_url = None
 
-    match_dic['home_team_logo'] = '{0}{1}{2}'.format(base_url, settings.STATIC_URL, match_dic['home_team__logo'])
-    match_dic['visitor_team_logo'] = '{0}{1}{2}'.format(base_url, settings.STATIC_URL, match_dic['visitor_team__logo'])
+    if 'home_team_logo' in match_dic:
+        match_dic['home_team_logo'] = '{0}{1}{2}'.format(base_url, settings.STATIC_URL, match_dic['home_team__logo'])
+    if 'visitor_team_logo' in match_dic:
+        match_dic['visitor_team_logo'] = '{0}{1}{2}'.format(base_url, settings.STATIC_URL, match_dic['visitor_team__logo'])
 
     return match_dic
 
