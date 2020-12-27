@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
 """ list of functions for shots """
 # pylint: disable=E0401, R0914
-import sys
-
+import numpy as np
 from rest.functions.helper import pctg_float_get
 from rest.functions.shot import shotside_get
 from rest.models import Xg
-from sklearn.neighbors import NearestNeighbors, BallTree
-import numpy as np
 
-def _surrondingpoints_get(logger, x_point, y_point):
+def _surrondingpoints_get(_logger, x_point, y_point):
+    """ get points around a x/y value """
     # logger.debug('_surrondingpoints_get([{0}, {1}])'.format(x_point, y_point))
     surroundingpoint_list = []
     for x_num in range(x_point-1, x_point+2):
@@ -19,42 +17,86 @@ def _surrondingpoints_get(logger, x_point, y_point):
 
     return surroundingpoint_list
 
-def _surroundingpointval_avg_get(logger, x_point, y_point, model_tree, stick, depth=0):
-    # logger.debug('_surroundingpointval_avg_get({0}, {1}) depth: {2}'.format(x_point, y_point, depth))
-
+def _shotlists_get(logger, model_tree, point_list, depth):
+    """ get value lists """
     shot_pctg_list = []
-    handness_shot_pctg_list = []
+    lh_shots_pctg_list = []
+    rh_shots_pctg_list = []
+    rb_shots_pctg_list = []
+    br_shots_pctg_list = []
+
+    for x_val, y_val in point_list:
+        # convert to strings as keys in model-dic are stored as strings
+        x_ele = str(x_val)
+        y_ele = str(y_val)
+
+        # check if we have the point in model
+        if x_ele in model_tree and y_ele in model_tree[x_ele]:
+            if 'tmp' in model_tree[x_ele][y_ele]:
+                logger.debug('reuse formerly created: {0}:{1}, depth: {2}'.format(x_ele, y_ele, depth))
+            (point_shot_pctg, point_lh_shots_pctg, point_rh_shots_pctg, point_rb_shots_pctg, point_br_shots_pctg) = _coordinates_pctg_get(logger, model_tree, x_ele, y_ele)
+            shot_pctg_list.append(point_shot_pctg)
+            lh_shots_pctg_list.append(point_lh_shots_pctg)
+            rh_shots_pctg_list.append(point_rh_shots_pctg)
+            rb_shots_pctg_list.append(point_rb_shots_pctg)
+            br_shots_pctg_list.append(point_br_shots_pctg)
+        else:
+            model_tree = _surroundingpointval_avg_get(logger, x_val, y_val, model_tree, depth+1)
+
+    return (depth, shot_pctg_list, lh_shots_pctg_list, rh_shots_pctg_list, rb_shots_pctg_list, br_shots_pctg_list)
+
+def _surroundingpointval_avg_get(logger, x_point, y_point, model_tree, depth=0):
+    """ main function to fill missing data with data from surrounding points """
+    # logger.debug('_surroundingpointval_avg_get({0}, {1}) depth: {2}'.format(x_point, y_point, depth))
 
     if depth <= 5:
         # get surrounding points
         point_list = _surrondingpoints_get(logger, x_point, y_point)
 
-        for x_val, y_val in point_list:
-            # convert to strings as keys in model-dic are stored as strings
-            x_ele = str(x_val)
-            y_ele = str(y_val)
+        # get the lists of shots to calculate percentage values
+        (depth, shot_pctg_list, lh_shots_pctg_list, rh_shots_pctg_list, rb_shots_pctg_list, br_shots_pctg_list) = _shotlists_get(logger, model_tree, point_list, depth)
 
-            # check if we have the point in model
-            if x_ele in model_tree and y_ele in model_tree[x_ele]:
-                # print('yeap')
-                (point_shot_pctg, point_handness_shots_pctg) = _coordinates_pctg_get(logger, x_ele, y_ele, model_tree, stick)
-                shot_pctg_list.append(point_shot_pctg)
-                handness_shot_pctg_list.append(point_handness_shots_pctg)
-            else:
-                (point_shot_pctg, point_handness_shots_pctg) = _surroundingpointval_avg_get(logger, x_val, y_val, model_tree, stick, depth+1)
+        # calcuate average value from list
+        shot_pctg = _avg_calculate(shot_pctg_list, 0)
+        lh_shots_pctg = _avg_calculate(lh_shots_pctg_list, 0)
+        rh_shots_pctg = _avg_calculate(rh_shots_pctg_list, 0)
+        rb_shots_pctg = _avg_calculate(rb_shots_pctg_list, 0)
+        br_shots_pctg = _avg_calculate(br_shots_pctg_list, 0)
 
-    shot_pctg = 0
-    handness_shot_pctg = 0
-    if len(shot_pctg_list) != 0:
-        shot_pctg = round(np.mean(shot_pctg_list), 0)
-    if len(handness_shot_pctg_list) != 0:
-        handness_shot_pctg = round(np.mean(handness_shot_pctg_list), 0)
+        # store data in model to speedup later processing
+        model_tree = _model_update(logger, model_tree, x_point, y_point, shot_pctg, lh_shots_pctg, rh_shots_pctg, rb_shots_pctg, br_shots_pctg, depth)
 
-    return (shot_pctg, handness_shot_pctg)
+    return model_tree
 
-def _coordinates_pctg_get(logger, x_point, y_point, model_tree, stick):
+def _avg_calculate(input_list, decimals=1):
+    avg_value = 0
+    if len(input_list) != 0:
+        avg_value = round(np.mean(input_list), decimals)
+    return avg_value
+
+def _model_update(logger, model_tree, x_point, y_point, shot_pctg, lh_shot_pctg, rh_shot_pctg, rb_shots_pctg, br_shots_pctg, depth):
+    # logger.debug('_model_update({0}:{1}) depth: {2}'.format(x_point, y_point, depth))
+    # x/y points must be stored as strings
+    if str(x_point) not in model_tree:
+        logger.debug('create x: {0}, depth: {1}'.format(x_point, depth))
+        model_tree[str(x_point)] = {}
+    if str(y_point) not in model_tree[str(x_point)]:
+        logger.debug('create [x, y]: [{0},{1}], depth: {2}'.format(x_point, y_point, depth))
+        model_tree[str(x_point)][str(y_point)] = {}
+        # create this entry to check reuse
+        model_tree[str(x_point)][str(y_point)]['tmp'] = True
+
+    # update model
+    model_tree[str(x_point)][str(y_point)]['shots_pctg'] = shot_pctg
+    model_tree[str(x_point)][str(y_point)]['rb_shots_pctg'] = rb_shots_pctg
+    model_tree[str(x_point)][str(y_point)]['br_shots_pctg'] = br_shots_pctg
+    model_tree[str(x_point)][str(y_point)]['lh_shots_pctg'] = lh_shot_pctg
+    model_tree[str(x_point)][str(y_point)]['rh_shots_pctg'] = rh_shot_pctg
+
+    return model_tree
+
+def _coordinates_pctg_get(_logger, model_tree, x_point, y_point):
     # logger.debug('_coordinates_pctg_get({0}, {1})'.format(x_point, y_point))
-
     # add shot percentage for this specific coordinate
     shot_pctg = model_tree[x_point][y_point]['shots_pctg']
 
@@ -62,13 +104,14 @@ def _coordinates_pctg_get(logger, x_point, y_point, model_tree, stick):
     # add shot percentage for this specific coordinate
     shot_pctg = model_tree[x_point][y_point]['shots_pctg']
 
-    # depending of player handness add hadness specific shoot percentage
-    if stick == 'left':
-        handness_shots_pctg = model_tree[x_point][y_point]['lh_shots_pctg']
-    elif stick == 'right':
-        handness_shots_pctg = model_tree[x_point][y_point]['rh_shots_pctg']
+    # rb and br percentage (only needed for entries we calculate based on surroundings)
+    #  print(model_tree[x_point][y_point])
+    rb_shots_pctg = model_tree[x_point][y_point]['rb_shots_pctg']
+    br_shots_pctg = model_tree[x_point][y_point]['br_shots_pctg']
+    lh_shots_pctg = model_tree[x_point][y_point]['lh_shots_pctg']
+    rh_shots_pctg = model_tree[x_point][y_point]['rh_shots_pctg']
 
-    return (shot_pctg, handness_shots_pctg)
+    return (shot_pctg, lh_shots_pctg, rh_shots_pctg, rb_shots_pctg, br_shots_pctg)
 
 def xgmodel_add(logger, fkey, fvalue, data_dic):
     """ add team to database """
@@ -85,6 +128,7 @@ def xgmodel_add(logger, fkey, fvalue, data_dic):
     logger.debug('xg_add({0}:{1}) ended with {2}'.format(fkey, fvalue, result))
     return result
 
+# pylint: disable=W0102
 def xgmodel_get(logger, fkey='id', fvalue=1, vlist=['xg_data']):
     """ get info for a specifc match_id """
     logger.debug('xgmodel_get({0}:{1})'.format(fkey, fvalue))
@@ -159,6 +203,7 @@ def _handness_get(shot, player_dic):
 
 def xgmodel_build(logger, shot_list, player_dic, rebound_interval=5, break_interval=5):
     """ build the xg model tree """
+    # pylint: disable=R0915
     logger.debug('model_build()')
 
     # initialize empty dictionary storing the model
@@ -289,10 +334,15 @@ def shotlist_process(logger, shot_list, model_tree, rebound_interval, break_inte
             # add left/right hand percentage for this specific y-coordinate
             tmp_dic['handness_pctg'] = model_tree['handness'][team][str(shot['coordinate_y'])][shot['player__stick']]['shots_pctg']
 
-        if str(shot['coordinate_y']) in model_tree['shots'][team][str(shot['coordinate_x'])]:
-            (tmp_dic['shots_pctg'], tmp_dic['handness_shots_pctg']) = _coordinates_pctg_get(logger, str(shot['coordinate_x']), str(shot['coordinate_y']), model_tree['shots'][team], shot['player__stick'])
+        if str(shot['coordinate_x']) not in model_tree['shots'][team] or str(shot['coordinate_y']) not in model_tree['shots'][team][str(shot['coordinate_x'])]:
+            model_tree['shots'][team] = _surroundingpointval_avg_get(logger, shot['coordinate_x'], shot['coordinate_y'], model_tree['shots'][team])
+
+        (tmp_dic['shots_pctg'], rh_shots_pctg, lh_shots_pctg, rb_shots_pctg, br_shots_pctg) = _coordinates_pctg_get(logger, model_tree['shots'][team], str(shot['coordinate_x']), str(shot['coordinate_y']))
+
+        if shot['player__stick'] == 'left':
+            tmp_dic['handness_shots_pctg'] = lh_shots_pctg
         else:
-            (tmp_dic['shots_pctg'], tmp_dic['handness_shots_pctg']) = _surroundingpointval_avg_get(logger, shot['coordinate_x'], shot['coordinate_y'], model_tree['shots'][team], shot['player__stick'])
+            tmp_dic['handness_shots_pctg'] = rh_shots_pctg
 
         # time difference to previous shot
         shot_diff = abs(shot['timestamp'] - prev_time)
@@ -301,17 +351,13 @@ def shotlist_process(logger, shot_list, model_tree, rebound_interval, break_inte
         if shot['team_id'] == prev_team and shot_diff <= rebound_interval:
             # add sucess percentage for rebound timeframe
             tmp_dic['rb_pctg'] = model_tree['rebounds'][str(shot_diff)]['shots_pctg']
-            if str(shot['coordinate_y']) in model_tree['shots'][team][str(shot['coordinate_x'])]:
-                # add rebound success percentage for this particular shoot-position
-                tmp_dic['rb_shots_pctg'] = model_tree['shots'][team][str(shot['coordinate_x'])][str(shot['coordinate_y'])]['rb_shots_pctg']
+            tmp_dic['rb_shots_pctg'] = rb_shots_pctg
 
         # break detection
         if shot['team_id'] != prev_team and shot_diff <= break_interval:
             # add sucess percentage for break timeframe
             tmp_dic['br_pctg'] = model_tree['breaks'][str(shot_diff)]['shots_pctg']
-            if str(shot['coordinate_y']) in model_tree['shots'][team][str(shot['coordinate_x'])]:
-                # add break success percentage for this particular shoot-position
-                tmp_dic['br_shots_pctg'] = model_tree['shots'][team][str(shot['coordinate_x'])][str(shot['coordinate_y'])]['br_shots_pctg']
+            tmp_dic['br_shots_pctg'] = br_shots_pctg
 
         # store shot in list
         shotsum_dic[team][shot['player_id']]['shots'].append(tmp_dic)
@@ -323,4 +369,74 @@ def shotlist_process(logger, shot_list, model_tree, rebound_interval, break_inte
     return (shotsum_dic, goal_dic)
 
 
-# def xgf_calculate(logger, shot)
+def xgf_calculate(logger, shot_stat_dic, quantifier_dic):
+    """ calculate xgf per player """
+    logger.debug('xgf_calculate()')
+
+    player_xgf_dic = {}
+
+    for team in shot_stat_dic:
+        player_xgf_dic[team] = {}
+
+        for player_id_ in shot_stat_dic[team]:
+
+            player_xgf_dic[team][player_id_] = {'jersey': shot_stat_dic[team][player_id_]['jersey'], 'name': shot_stat_dic[team][player_id_]['name'], 'shot_weight_sum': 0, 'shot_weight_sum_list': []}
+            # interate shots
+            for shot in shot_stat_dic[team][player_id_]['shots']:
+
+                if shot['shots_pctg'] > 0:
+                    # add shot
+                    shot_sum = shot['shots_pctg'] * quantifier_dic['shots_pctg']
+                    shot_divisor = 1
+
+                    # consider hadness (if greater than 0)
+                    if shot['handness_pctg'] > 0:
+                        shot_sum = shot_sum + shot['handness_pctg'] * quantifier_dic['handness_pctg']
+                        shot_divisor += 1
+
+                    # consider shot specific handness (if greater than 0)
+                    if shot['handness_shots_pctg'] > 0:
+                        shot_sum = shot_sum + shot['handness_shots_pctg'] * quantifier_dic['handness_shots_pctg']
+                        shot_divisor += 1
+
+                    # consider rebounds (if avaialble)
+                    if 'rb_pctg' in shot:
+                        shot_sum = shot_sum + shot['rb_pctg'] * quantifier_dic['rb_pctg']
+                        shot_divisor += 1
+                        # consider rebounds per coordinate if greater than 0
+                        if shot['rb_shots_pctg'] > 0:
+                            shot_sum = shot_sum + shot['rb_shots_pctg'] * quantifier_dic['rb_shots_pctg']
+                            shot_divisor += 1
+
+                    # consider breaks (if avaialble)
+                    if 'br_pctg' in shot:
+                        shot_sum = shot_sum + shot['br_pctg'] * quantifier_dic['br_pctg']
+                        shot_divisor += 1
+                        # consider brigger per coordinate if greater than 0
+                        if shot['br_shots_pctg'] > 0:
+                            shot_sum = shot_sum + shot['br_shots_pctg'] * quantifier_dic['br_shots_pctg']
+                            shot_divisor += 1
+
+                    # calculate shot likelyhood
+                    shot_weight = round(shot_sum/shot_divisor, 1)
+
+                    player_xgf_dic[team][player_id_]['shot_weight_sum_list'].append(shot_weight)
+
+                    # sum up shot_weight
+                    player_xgf_dic[team][player_id_]['shot_weight_sum'] = player_xgf_dic[team][player_id_]['shot_weight_sum'] + shot_weight
+
+    return player_xgf_dic
+
+def xgscore_get(logger, playerxgf_dic):
+    """ calculate xgf per player """
+    logger.debug('xgscore_get()')
+
+    xgf_dic = {'home': 0, 'visitor': 0}
+    for team in playerxgf_dic:
+        for player_id in playerxgf_dic[team]:
+            xgf = round(playerxgf_dic[team][player_id]['shot_weight_sum']/100, 0)
+            if xgf >= 1:
+                # print(player_id, playerxgf_dic[team][player_id]['jersey'], playerxgf_dic[team][player_id]['name'], round(playerxgf_dic[team][player_id]['shot_weight_sum']/100, 0), playerxgf_dic[team][player_id]['shot_weight_sum'])
+                xgf_dic[team] += int(xgf)
+
+    return xgf_dic
