@@ -32,7 +32,6 @@ def arg_parse():
 
     return(debug, season, tournament)
 
-
 if __name__ == '__main__':
 
     # create pseudo-device for REST-API calls against mobile api

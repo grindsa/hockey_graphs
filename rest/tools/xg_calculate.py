@@ -3,6 +3,7 @@
 """ calculate xg values """
 import os
 import sys
+import argparse
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir, os.path.pardir)))
 
@@ -10,6 +11,28 @@ from rest.functions.helper import config_load, logger_setup, json_load
 from rest.functions.shot import shot_list_get
 from rest.functions.match import match_info_get, match_list_get
 from rest.functions.xg import xgmodel_get, shotlist_process, xgf_calculate, xgscore_get
+
+def arg_parse():
+    """ simple argparser """
+    parser = argparse.ArgumentParser(description='xg_calculate.py - xG calculator')
+    parser.add_argument('-d', '--debug', help='debug mode', action="store_true", default=False)
+    parser.add_argument('-m', '--model_file', help='file containing the model data', default=None)
+    parser.add_argument('-q', '--quantifier_file', help='file containing weights for calculation', default=None)
+    args = parser.parse_args()
+
+    debug = args.debug
+    model_file = args.model_file
+    quantifier_file = args.quantifier_file
+
+    if not model_file:
+        print('specify model file with "-m" parameter')
+        sys.exit(0)
+
+    if not quantifier_file:
+        print('specify quantifier file with "-q" parameter')
+        sys.exit(0)
+
+    return(debug, model_file, quantifier_file)
 
 def _config_load(logger, cfg_file=os.path.dirname(__file__)+'/'+'hockeygraphs.cfg'):
     """" load config from file """
@@ -29,10 +52,8 @@ def _config_load(logger, cfg_file=os.path.dirname(__file__)+'/'+'hockeygraphs.cf
 
 if __name__ == "__main__":
 
-    # DEBUG mode on/off
-    DEBUG = False
-
-    MODEL_FILE = 'model_data.json'
+    # get commandline arguments
+    (DEBUG, MODEL_FILE, QUANTIFIER_FILE) = arg_parse()
 
     # initialize logger
     LOGGER = logger_setup(DEBUG)
@@ -44,21 +65,12 @@ if __name__ == "__main__":
     # XGMODEL_DIC = xgmodel_get(LOGGER)
     XGMODEL_DIC = json_load(MODEL_FILE)
 
+    # quantifier dictionary
+    QUANTIFIER_DIC = json_load(QUANTIFIER_FILE)
 
     # get list of matches to investigate
     MATCH_LIST = match_list_get(LOGGER, 'season_id', 1, ['match_id'])
     # MATCH_LIST = [1767]
-
-    # quantifier dictionary
-    QUANTIFIER_DIC = {
-        'shots_pctg': 1,
-        'handness_pctg': 1.5,
-        'handness_shots_pctg': 1.0,
-        'rb_pctg': 1,
-        'rb_shots_pctg': 1.5,
-        'br_pctg': 1,
-        'br_shots_pctg': 1.5,
-    }
 
     # define value list for match specific shot_dictionary
     VLIST = ['shot_id', 'match_id', 'match_shot_resutl_id', 'player_id', 'player__first_name', 'player__last_name', 'player__jersey', 'player__stick', 'team_id', 'coordinate_x', 'coordinate_y', 'match__home_team_id', 'match__visitor_team_id', 'timestamp']

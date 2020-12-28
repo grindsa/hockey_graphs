@@ -7,9 +7,10 @@ import numpy as np
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir, os.path.pardir)))
 
+# pylint: disable=E0401, C0413
 from rest.functions.helper import config_load, logger_setup, json_load, json_store, uts_now
 from rest.functions.shot import shot_list_get
-from rest.functions.match import match_info_get, match_list_get
+from rest.functions.match import match_list_get
 from rest.functions.xg import xgmodel_get, shotlist_process, xgf_calculate, xgscore_get
 
 def _config_load(logger, cfg_file=os.path.dirname(__file__)+'/'+'hockeygraphs.cfg'):
@@ -28,8 +29,8 @@ def _config_load(logger, cfg_file=os.path.dirname(__file__)+'/'+'hockeygraphs.cf
 
     return (rebound_interval, break_interval)
 
-def dump_it(g_result_dic, filename='result.json', limit=20):
-
+def dump_it(g_result_dic_, filename='result.json', limit=20):
+    """ dump and shrink result dictionary """
     ele_list = ['home_correct', 'visitor_correct', 'winloss_correct', 'result_correct']
 
     # new_result_dic = {'home_correct': {}, 'visitor_correct': {}, 'winloss_correct': {}, 'result_correct': {}}
@@ -38,7 +39,8 @@ def dump_it(g_result_dic, filename='result.json', limit=20):
     for ele in ele_list:
         new_result_dic[ele] = []
         cnt = 0
-        for result in sorted(g_result_dic[ele], key=lambda i: (i[ele], i['result_correct'], i['winloss_correct'], i['g_cnt']), reverse=True):
+        # pylint: disable=W0640
+        for result in sorted(g_result_dic_[ele], key=lambda i: (i[ele], i['result_correct'], i['winloss_correct'], i['g_cnt']), reverse=True):
             cnt += 1
             new_result_dic[ele].append(result)
             if cnt >= limit:
@@ -50,12 +52,61 @@ def dump_it(g_result_dic, filename='result.json', limit=20):
 
     return new_result_dic
 
+def _inputparameters_get(logger, parameter_file, start_val, max_val, step):
+    """" load config from file """
+    logger.debug('inputparameters_get()')
+
+    # quantifier dictionary
+    input_parameters_ = {
+        'shot_pctg': {'start': start_val, 'max': max_val, 'step': step},
+        'handness_pctg': {'start': start_val, 'max': max_val, 'step': step},
+        'handness_shots_pctg': {'start': start_val, 'max': max_val, 'step': step},
+        'rb_pctg': {'start': start_val, 'max': max_val, 'step': step},
+        'rb_shots_pctg': {'start': start_val, 'max': max_val, 'step': step},
+        'br_pctg': {'start': start_val, 'max': max_val, 'step': step},
+        'br_shots_pctg': {'start': start_val, 'max': max_val, 'step': step}
+    }
+
+    # process parameters file if exists
+    if os.path.exists(parameter_file):
+        # load start values from file
+        parameter_dic = json_load(parameter_file)
+
+        # overwrite start_value we have it in parameter file
+        for parameter in input_parameters_:
+            if parameter in parameter_dic:
+                input_parameters_[parameter]['start'] = parameter_dic[parameter]
+
+    return input_parameters_
+
+def shotstats_get(logger, match_list):
+    """" load config from file """
+    logger.debug('stats_get()')
+
+    g_shotstat_dict = {}
+    g_goal_dic_ = {}
+    for match_id_ in match_list:
+
+        # get list of shots
+        vlist = ['shot_id', 'match_id', 'match_shot_resutl_id', 'player_id', 'player__first_name', 'player__last_name', 'player__jersey', 'player__stick', 'team_id', 'coordinate_x', 'coordinate_y', 'match__home_team_id', 'match__visitor_team_id', 'timestamp']
+        shot_list = shot_list_get(LOGGER, 'match_id', match_id_, vlist)
+
+        # convert shots and goals into structure we can process later on
+        # we also need the XGMODEL_DIC to check if we have the shotcoordinates in our structure
+        (shotstat_dic, goal_dic) = shotlist_process(LOGGER, shot_list, XGMODEL_DIC, REBOUND_INTERVAL, BREAK_INTERVAL)
+        g_shotstat_dict[match_id_] = shotstat_dic
+        g_goal_dic_[match_id_] = {'home': len(goal_dic['home']), 'visitor': len(goal_dic['visitor'])}
+
+    return(g_shotstat_dict, g_goal_dic_)
+
 if __name__ == "__main__":
 
     # DEBUG mode on/off
     DEBUG = False
 
     MODEL_FILE = 'model_data.json'
+    PARAMETER_FILE = 'model_parameters.json'
+    RESULT_FILE = 'result.json'
 
     # initialize logger
     LOGGER = logger_setup(DEBUG)
@@ -72,7 +123,7 @@ if __name__ == "__main__":
     # MATCH_LIST = [1820]
 
     START_VAL = 0.5
-    MAX_VAL = 2.5
+    MAX_VAL = 3.0
     STEP = 0.5
 
     # START_VAL = 1.0
@@ -80,43 +131,22 @@ if __name__ == "__main__":
     # STEP = 0.1
 
     # quantifier dictionary
-    input_parameters = {
-        'shot_pctg': {'start': START_VAL, 'max': MAX_VAL, 'step': STEP},
-        'handness_pctg': {'start': START_VAL, 'max': MAX_VAL, 'step': STEP},
-        'handness_shots_pctg': {'start': START_VAL, 'max': MAX_VAL, 'step': STEP},
-        'rb_pctg': {'start': START_VAL, 'max': MAX_VAL, 'step': STEP},
-        'rb_shots_pctg': {'start': START_VAL, 'max': MAX_VAL, 'step': STEP},
-        'br_pctg': {'start': START_VAL, 'max': MAX_VAL, 'step': STEP},
-        'br_shots_pctg': {'start': START_VAL, 'max': MAX_VAL, 'step': STEP},
-    }
+    input_parameters = _inputparameters_get(LOGGER, PARAMETER_FILE, START_VAL, MAX_VAL, STEP)
 
-    g_shotstat_dict = {}
-    g_goal_dic = {}
-    for match_id in MATCH_LIST:
+    # get global shot and goal stats
+    (g_shotstat_dic, g_goal_dic) = shotstats_get(LOGGER, MATCH_LIST)
 
-        match_dic = match_info_get(LOGGER, match_id, None, ['date', 'home_team__shortcut', 'visitor_team__shortcut', 'result'])
-
-        # get list of shots
-        VLIST = ['shot_id', 'match_id', 'match_shot_resutl_id', 'player_id', 'player__first_name', 'player__last_name', 'player__jersey', 'player__stick', 'team_id', 'coordinate_x', 'coordinate_y', 'match__home_team_id', 'match__visitor_team_id', 'timestamp']
-        shot_list = shot_list_get(LOGGER, 'match_id', match_id, VLIST)
-
-        # convert shots and goals into structure we can process later on
-        # we also need the XGMODEL_DIC to check if we have the shotcoordinates in our structure
-        (shotstat_dic, goal_dic) = shotlist_process(LOGGER, shot_list, XGMODEL_DIC, REBOUND_INTERVAL, BREAK_INTERVAL)
-        g_shotstat_dict[match_id] = shotstat_dic
-        g_goal_dic[match_id] = {'home': len(goal_dic['home']), 'visitor': len(goal_dic['visitor'])}
-
-
-    # g_result_dic = {'home_correct': [], 'visitor_correct': [], 'winloss_correct': [], 'result_correct': []}
     # load result dic from file to continue on a certain point
-    g_result_dic = json_load('result.json')
+    if os.path.exists(RESULT_FILE):
+        g_result_dic = json_load(RESULT_FILE)
+    else:
+        g_result_dic = {'home_correct': [], 'visitor_correct': [], 'winloss_correct': [], 'result_correct': []}
 
     # set startpoint for measurement
     uts_start = uts_now()
 
     # initialze counter
-    g_cnt = 0
-
+    G_CNT = 0
     for shots_pctg in np.arange(input_parameters['shot_pctg']['start'], input_parameters['shot_pctg']['max'] + input_parameters['shot_pctg']['step'], input_parameters['shot_pctg']['step']):
         for handness_pctg in np.arange(input_parameters['handness_pctg']['start'], input_parameters['handness_pctg']['max'] + input_parameters['handness_pctg']['step'], input_parameters['handness_pctg']['step']):
             for handness_shots_pctg in np.arange(input_parameters['handness_shots_pctg']['start'], input_parameters['handness_shots_pctg']['max'] + input_parameters['handness_shots_pctg']['step'], input_parameters['handness_shots_pctg']['step']):
@@ -124,7 +154,7 @@ if __name__ == "__main__":
                     for rb_shots_pctg in np.arange(input_parameters['rb_shots_pctg']['start'], input_parameters['rb_shots_pctg']['max'] + input_parameters['rb_shots_pctg']['step'], input_parameters['rb_shots_pctg']['step']):
                         for br_pctg in np.arange(input_parameters['br_pctg']['start'], input_parameters['br_pctg']['max'] + input_parameters['br_pctg']['step'], input_parameters['br_pctg']['step']):
                             for br_shots_pctg in np.arange(input_parameters['br_shots_pctg']['start'], input_parameters['br_shots_pctg']['max'] + input_parameters['br_shots_pctg']['step'], input_parameters['br_shots_pctg']['step']):
-                                g_cnt += 1
+                                G_CNT += 1
                                 # print(round(shots_pctg, 1), round(handness_pctg, 1), round(handness_shots_pctg, 1), round(rb_pctg, 1), round(rb_shots_pctg, 1), round(br_pctg, 1), round(br_shots_pctg, 1))
                                 quantifier_dic = {
                                     'shots_pctg': round(shots_pctg, 1),
@@ -136,48 +166,51 @@ if __name__ == "__main__":
                                     'br_shots_pctg': round(br_shots_pctg, 1),
                                 }
 
-                                match_cnt = 0
-                                home_correct = 0
-                                visitor_correct = 0
-                                winloss_correct = 0
-                                result_correct = 0
+                                MATCH_CNT = 0
+                                HOME_CORRECT = 0
+                                VISITOR_CORRECT = 0
+                                WINLOSS_CORRECT = 0
+                                RESULT_CORRECT = 0
 
-                                for match_id in g_shotstat_dict:
-                                    match_cnt += 1
-                                    playerxgf_dic = xgf_calculate(LOGGER, shotstat_dic, quantifier_dic)
+                                for match_id in g_shotstat_dic:
+                                    MATCH_CNT += 1
+                                    playerxgf_dic = xgf_calculate(LOGGER, g_shotstat_dic[match_id], quantifier_dic)
                                     xgf_dic = xgscore_get(LOGGER, playerxgf_dic)
                                     # print(xgf_dic['home'], xgf_dic['visitor'], g_goal_dic[match_id]['home'], g_goal_dic[match_id]['visitor'])
 
                                     # check homescore
                                     if xgf_dic['home'] == g_goal_dic[match_id]['home']:
-                                        home_correct += 1
+                                        HOME_CORRECT += 1
                                     # check visitor score
                                     if xgf_dic['visitor'] == g_goal_dic[match_id]['visitor']:
-                                        visitor_correct += 1
+                                        VISITOR_CORRECT += 1
 
                                     # check full score
                                     if xgf_dic['home'] == g_goal_dic[match_id]['home'] and xgf_dic['visitor'] == g_goal_dic[match_id]['visitor']:
-                                        result_correct += 1
+                                        RESULT_CORRECT += 1
 
                                     # check for winloss
                                     if xgf_dic['home'] < xgf_dic['visitor'] and g_goal_dic[match_id]['home'] < g_goal_dic[match_id]['visitor']:
-                                        winloss_correct += 1
+                                        WINLOSS_CORRECT += 1
                                     elif xgf_dic['home'] > xgf_dic['visitor'] and g_goal_dic[match_id]['home'] > g_goal_dic[match_id]['visitor']:
-                                        winloss_correct += 1
+                                        WINLOSS_CORRECT += 1
                                     elif xgf_dic['home'] == xgf_dic['visitor'] and g_goal_dic[match_id]['home'] == g_goal_dic[match_id]['visitor']:
-                                        winloss_correct += 1
+                                        WINLOSS_CORRECT += 1
 
-                                tmp_dic = {'g_cnt': g_cnt, 'match_cnt': match_cnt, 'home_correct': home_correct, 'visitor_correct': visitor_correct, 'winloss_correct': winloss_correct, 'result_correct': result_correct, 'quantifier_dic': quantifier_dic}
+                                tmp_dic = {'g_cnt': G_CNT, 'match_cnt': MATCH_CNT, 'home_correct': HOME_CORRECT, 'visitor_correct': VISITOR_CORRECT, 'winloss_correct': WINLOSS_CORRECT, 'result_correct': RESULT_CORRECT, 'quantifier_dic': quantifier_dic}
                                 # store results in different trees
                                 g_result_dic['home_correct'].append(tmp_dic)
                                 g_result_dic['visitor_correct'].append(tmp_dic)
                                 g_result_dic['winloss_correct'].append(tmp_dic)
                                 g_result_dic['result_correct'].append(tmp_dic)
+
                         print('{0}: dump shot_pctg: {1}, handness_pctg: {2}, handness_shots_pctg: {3}'.format(uts_now()-uts_start, round(shots_pctg, 1), round(handness_pctg, 1), round(handness_shots_pctg, 1)))
                         # dump here
-                        g_result_dic = dump_it(g_result_dic)
+                        g_result_dic = dump_it(g_result_dic, RESULT_FILE)
+                        json_store(PARAMETER_FILE, quantifier_dic)
+
                 # print status
-                print('g_cnt', g_cnt, 'match_cnt', match_cnt, 'home_correct', home_correct, 'visitor_correct', visitor_correct, 'winloss_correct', winloss_correct, 'result_correct', result_correct)
+                print('g_cnt', G_CNT, 'match_cnt', MATCH_CNT, 'home_correct', HOME_CORRECT, 'visitor_correct', VISITOR_CORRECT, 'winloss_correct', WINLOSS_CORRECT, 'result_correct', RESULT_CORRECT)
         # dump with uts at the end
         uts = uts_now()
         g_result_dic = dump_it(g_result_dic, 'result_handness_{0}.json'.format(uts))
