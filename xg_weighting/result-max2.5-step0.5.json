@@ -1,0 +1,1370 @@
+{
+    "home_correct": [
+        {
+            "g_cnt": 1806,
+            "match_cnt": 365,
+            "home_correct": 104,
+            "visitor_correct": 97,
+            "winloss_correct": 230,
+            "result_correct": 26,
+            "quantifier_dic": {
+                "shots_pctg": 1.5,
+                "handness_pctg": 2.5,
+                "handness_shots_pctg": 1.0,
+                "rb_pctg": 1.5,
+                "rb_shots_pctg": 2.5,
+                "br_pctg": 1.5,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 1805,
+            "match_cnt": 365,
+            "home_correct": 104,
+            "visitor_correct": 97,
+            "winloss_correct": 230,
+            "result_correct": 26,
+            "quantifier_dic": {
+                "shots_pctg": 1.5,
+                "handness_pctg": 2.5,
+                "handness_shots_pctg": 1.0,
+                "rb_pctg": 1.5,
+                "rb_shots_pctg": 2.5,
+                "br_pctg": 1.0,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 1810,
+            "match_cnt": 365,
+            "home_correct": 104,
+            "visitor_correct": 96,
+            "winloss_correct": 229,
+            "result_correct": 26,
+            "quantifier_dic": {
+                "shots_pctg": 1.5,
+                "handness_pctg": 2.5,
+                "handness_shots_pctg": 1.0,
+                "rb_pctg": 2.0,
+                "rb_shots_pctg": 2.0,
+                "br_pctg": 1.5,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 1809,
+            "match_cnt": 365,
+            "home_correct": 104,
+            "visitor_correct": 96,
+            "winloss_correct": 229,
+            "result_correct": 26,
+            "quantifier_dic": {
+                "shots_pctg": 1.5,
+                "handness_pctg": 2.5,
+                "handness_shots_pctg": 1.0,
+                "rb_pctg": 2.0,
+                "rb_shots_pctg": 2.0,
+                "br_pctg": 1.0,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 1802,
+            "match_cnt": 365,
+            "home_correct": 104,
+            "visitor_correct": 97,
+            "winloss_correct": 228,
+            "result_correct": 26,
+            "quantifier_dic": {
+                "shots_pctg": 1.5,
+                "handness_pctg": 2.5,
+                "handness_shots_pctg": 1.0,
+                "rb_pctg": 1.5,
+                "rb_shots_pctg": 2.0,
+                "br_pctg": 1.5,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 1801,
+            "match_cnt": 365,
+            "home_correct": 104,
+            "visitor_correct": 98,
+            "winloss_correct": 228,
+            "result_correct": 26,
+            "quantifier_dic": {
+                "shots_pctg": 1.5,
+                "handness_pctg": 2.5,
+                "handness_shots_pctg": 1.0,
+                "rb_pctg": 1.5,
+                "rb_shots_pctg": 2.0,
+                "br_pctg": 1.0,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 1818,
+            "match_cnt": 365,
+            "home_correct": 104,
+            "visitor_correct": 96,
+            "winloss_correct": 230,
+            "result_correct": 25,
+            "quantifier_dic": {
+                "shots_pctg": 1.5,
+                "handness_pctg": 2.5,
+                "handness_shots_pctg": 1.0,
+                "rb_pctg": 2.5,
+                "rb_shots_pctg": 2.0,
+                "br_pctg": 1.5,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 1817,
+            "match_cnt": 365,
+            "home_correct": 104,
+            "visitor_correct": 96,
+            "winloss_correct": 230,
+            "result_correct": 25,
+            "quantifier_dic": {
+                "shots_pctg": 1.5,
+                "handness_pctg": 2.5,
+                "handness_shots_pctg": 1.0,
+                "rb_pctg": 2.5,
+                "rb_shots_pctg": 2.0,
+                "br_pctg": 1.0,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 1798,
+            "match_cnt": 365,
+            "home_correct": 104,
+            "visitor_correct": 97,
+            "winloss_correct": 230,
+            "result_correct": 25,
+            "quantifier_dic": {
+                "shots_pctg": 1.5,
+                "handness_pctg": 2.5,
+                "handness_shots_pctg": 1.0,
+                "rb_pctg": 1.0,
+                "rb_shots_pctg": 2.5,
+                "br_pctg": 1.5,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 1797,
+            "match_cnt": 365,
+            "home_correct": 104,
+            "visitor_correct": 97,
+            "winloss_correct": 230,
+            "result_correct": 25,
+            "quantifier_dic": {
+                "shots_pctg": 1.5,
+                "handness_pctg": 2.5,
+                "handness_shots_pctg": 1.0,
+                "rb_pctg": 1.0,
+                "rb_shots_pctg": 2.5,
+                "br_pctg": 1.0,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 1811,
+            "match_cnt": 365,
+            "home_correct": 104,
+            "visitor_correct": 95,
+            "winloss_correct": 229,
+            "result_correct": 25,
+            "quantifier_dic": {
+                "shots_pctg": 1.5,
+                "handness_pctg": 2.5,
+                "handness_shots_pctg": 1.0,
+                "rb_pctg": 2.0,
+                "rb_shots_pctg": 2.0,
+                "br_pctg": 2.0,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 1819,
+            "match_cnt": 365,
+            "home_correct": 104,
+            "visitor_correct": 95,
+            "winloss_correct": 230,
+            "result_correct": 24,
+            "quantifier_dic": {
+                "shots_pctg": 1.5,
+                "handness_pctg": 2.5,
+                "handness_shots_pctg": 1.0,
+                "rb_pctg": 2.5,
+                "rb_shots_pctg": 2.0,
+                "br_pctg": 2.0,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 1486,
+            "match_cnt": 365,
+            "home_correct": 103,
+            "visitor_correct": 104,
+            "winloss_correct": 225,
+            "result_correct": 32,
+            "quantifier_dic": {
+                "shots_pctg": 1.5,
+                "handness_pctg": 1.5,
+                "handness_shots_pctg": 1.0,
+                "rb_pctg": 1.5,
+                "rb_shots_pctg": 2.5,
+                "br_pctg": 1.5,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 1485,
+            "match_cnt": 365,
+            "home_correct": 103,
+            "visitor_correct": 104,
+            "winloss_correct": 225,
+            "result_correct": 32,
+            "quantifier_dic": {
+                "shots_pctg": 1.5,
+                "handness_pctg": 1.5,
+                "handness_shots_pctg": 1.0,
+                "rb_pctg": 1.5,
+                "rb_shots_pctg": 2.5,
+                "br_pctg": 1.0,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 1504,
+            "match_cnt": 365,
+            "home_correct": 103,
+            "visitor_correct": 102,
+            "winloss_correct": 228,
+            "result_correct": 29,
+            "quantifier_dic": {
+                "shots_pctg": 1.5,
+                "handness_pctg": 1.5,
+                "handness_shots_pctg": 1.0,
+                "rb_pctg": 2.5,
+                "rb_shots_pctg": 2.5,
+                "br_pctg": 2.5,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 1503,
+            "match_cnt": 365,
+            "home_correct": 103,
+            "visitor_correct": 102,
+            "winloss_correct": 228,
+            "result_correct": 29,
+            "quantifier_dic": {
+                "shots_pctg": 1.5,
+                "handness_pctg": 1.5,
+                "handness_shots_pctg": 1.0,
+                "rb_pctg": 2.5,
+                "rb_shots_pctg": 2.5,
+                "br_pctg": 2.0,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 1502,
+            "match_cnt": 365,
+            "home_correct": 103,
+            "visitor_correct": 102,
+            "winloss_correct": 228,
+            "result_correct": 29,
+            "quantifier_dic": {
+                "shots_pctg": 1.5,
+                "handness_pctg": 1.5,
+                "handness_shots_pctg": 1.0,
+                "rb_pctg": 2.5,
+                "rb_shots_pctg": 2.5,
+                "br_pctg": 1.5,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 1501,
+            "match_cnt": 365,
+            "home_correct": 103,
+            "visitor_correct": 102,
+            "winloss_correct": 228,
+            "result_correct": 29,
+            "quantifier_dic": {
+                "shots_pctg": 1.5,
+                "handness_pctg": 1.5,
+                "handness_shots_pctg": 1.0,
+                "rb_pctg": 2.5,
+                "rb_shots_pctg": 2.5,
+                "br_pctg": 1.0,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 1814,
+            "match_cnt": 365,
+            "home_correct": 103,
+            "visitor_correct": 96,
+            "winloss_correct": 231,
+            "result_correct": 26,
+            "quantifier_dic": {
+                "shots_pctg": 1.5,
+                "handness_pctg": 2.5,
+                "handness_shots_pctg": 1.0,
+                "rb_pctg": 2.0,
+                "rb_shots_pctg": 2.5,
+                "br_pctg": 1.5,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 1813,
+            "match_cnt": 365,
+            "home_correct": 103,
+            "visitor_correct": 96,
+            "winloss_correct": 231,
+            "result_correct": 26,
+            "quantifier_dic": {
+                "shots_pctg": 1.5,
+                "handness_pctg": 2.5,
+                "handness_shots_pctg": 1.0,
+                "rb_pctg": 2.0,
+                "rb_shots_pctg": 2.5,
+                "br_pctg": 1.0,
+                "br_shots_pctg": 2.5
+            }
+        }
+    ],
+    "visitor_correct": [
+        {
+            "g_cnt": 2408,
+            "match_cnt": 365,
+            "home_correct": 89,
+            "visitor_correct": 127,
+            "winloss_correct": 244,
+            "result_correct": 29,
+            "quantifier_dic": {
+                "shots_pctg": 2.0,
+                "handness_pctg": 2.5,
+                "handness_shots_pctg": 0.5,
+                "rb_pctg": 1.0,
+                "rb_shots_pctg": 2.5,
+                "br_pctg": 2.5,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 2407,
+            "match_cnt": 365,
+            "home_correct": 89,
+            "visitor_correct": 127,
+            "winloss_correct": 244,
+            "result_correct": 29,
+            "quantifier_dic": {
+                "shots_pctg": 2.0,
+                "handness_pctg": 2.5,
+                "handness_shots_pctg": 0.5,
+                "rb_pctg": 1.0,
+                "rb_shots_pctg": 2.5,
+                "br_pctg": 2.0,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 2406,
+            "match_cnt": 365,
+            "home_correct": 89,
+            "visitor_correct": 127,
+            "winloss_correct": 244,
+            "result_correct": 29,
+            "quantifier_dic": {
+                "shots_pctg": 2.0,
+                "handness_pctg": 2.5,
+                "handness_shots_pctg": 0.5,
+                "rb_pctg": 1.0,
+                "rb_shots_pctg": 2.5,
+                "br_pctg": 1.5,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 2405,
+            "match_cnt": 365,
+            "home_correct": 89,
+            "visitor_correct": 127,
+            "winloss_correct": 244,
+            "result_correct": 29,
+            "quantifier_dic": {
+                "shots_pctg": 2.0,
+                "handness_pctg": 2.5,
+                "handness_shots_pctg": 0.5,
+                "rb_pctg": 1.0,
+                "rb_shots_pctg": 2.5,
+                "br_pctg": 1.0,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 1942,
+            "match_cnt": 365,
+            "home_correct": 97,
+            "visitor_correct": 127,
+            "winloss_correct": 225,
+            "result_correct": 24,
+            "quantifier_dic": {
+                "shots_pctg": 2.0,
+                "handness_pctg": 1.0,
+                "handness_shots_pctg": 0.5,
+                "rb_pctg": 2.0,
+                "rb_shots_pctg": 2.5,
+                "br_pctg": 1.5,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 1941,
+            "match_cnt": 365,
+            "home_correct": 97,
+            "visitor_correct": 127,
+            "winloss_correct": 225,
+            "result_correct": 24,
+            "quantifier_dic": {
+                "shots_pctg": 2.0,
+                "handness_pctg": 1.0,
+                "handness_shots_pctg": 0.5,
+                "rb_pctg": 2.0,
+                "rb_shots_pctg": 2.5,
+                "br_pctg": 1.0,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 1950,
+            "match_cnt": 365,
+            "home_correct": 97,
+            "visitor_correct": 127,
+            "winloss_correct": 224,
+            "result_correct": 24,
+            "quantifier_dic": {
+                "shots_pctg": 2.0,
+                "handness_pctg": 1.0,
+                "handness_shots_pctg": 0.5,
+                "rb_pctg": 2.5,
+                "rb_shots_pctg": 2.5,
+                "br_pctg": 1.5,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 1949,
+            "match_cnt": 365,
+            "home_correct": 97,
+            "visitor_correct": 127,
+            "winloss_correct": 224,
+            "result_correct": 24,
+            "quantifier_dic": {
+                "shots_pctg": 2.0,
+                "handness_pctg": 1.0,
+                "handness_shots_pctg": 0.5,
+                "rb_pctg": 2.5,
+                "rb_shots_pctg": 2.5,
+                "br_pctg": 1.0,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 2414,
+            "match_cnt": 365,
+            "home_correct": 89,
+            "visitor_correct": 126,
+            "winloss_correct": 244,
+            "result_correct": 29,
+            "quantifier_dic": {
+                "shots_pctg": 2.0,
+                "handness_pctg": 2.5,
+                "handness_shots_pctg": 0.5,
+                "rb_pctg": 1.5,
+                "rb_shots_pctg": 2.5,
+                "br_pctg": 1.5,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 2403,
+            "match_cnt": 365,
+            "home_correct": 86,
+            "visitor_correct": 126,
+            "winloss_correct": 244,
+            "result_correct": 29,
+            "quantifier_dic": {
+                "shots_pctg": 2.0,
+                "handness_pctg": 2.5,
+                "handness_shots_pctg": 0.5,
+                "rb_pctg": 1.0,
+                "rb_shots_pctg": 2.0,
+                "br_pctg": 2.0,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 2402,
+            "match_cnt": 365,
+            "home_correct": 86,
+            "visitor_correct": 126,
+            "winloss_correct": 244,
+            "result_correct": 29,
+            "quantifier_dic": {
+                "shots_pctg": 2.0,
+                "handness_pctg": 2.5,
+                "handness_shots_pctg": 0.5,
+                "rb_pctg": 1.0,
+                "rb_shots_pctg": 2.0,
+                "br_pctg": 1.5,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 2401,
+            "match_cnt": 365,
+            "home_correct": 86,
+            "visitor_correct": 126,
+            "winloss_correct": 244,
+            "result_correct": 29,
+            "quantifier_dic": {
+                "shots_pctg": 2.0,
+                "handness_pctg": 2.5,
+                "handness_shots_pctg": 0.5,
+                "rb_pctg": 1.0,
+                "rb_shots_pctg": 2.0,
+                "br_pctg": 1.0,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 2416,
+            "match_cnt": 365,
+            "home_correct": 89,
+            "visitor_correct": 126,
+            "winloss_correct": 243,
+            "result_correct": 29,
+            "quantifier_dic": {
+                "shots_pctg": 2.0,
+                "handness_pctg": 2.5,
+                "handness_shots_pctg": 0.5,
+                "rb_pctg": 1.5,
+                "rb_shots_pctg": 2.5,
+                "br_pctg": 2.5,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 2415,
+            "match_cnt": 365,
+            "home_correct": 89,
+            "visitor_correct": 126,
+            "winloss_correct": 243,
+            "result_correct": 29,
+            "quantifier_dic": {
+                "shots_pctg": 2.0,
+                "handness_pctg": 2.5,
+                "handness_shots_pctg": 0.5,
+                "rb_pctg": 1.5,
+                "rb_shots_pctg": 2.5,
+                "br_pctg": 2.0,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 2413,
+            "match_cnt": 365,
+            "home_correct": 89,
+            "visitor_correct": 126,
+            "winloss_correct": 243,
+            "result_correct": 29,
+            "quantifier_dic": {
+                "shots_pctg": 2.0,
+                "handness_pctg": 2.5,
+                "handness_shots_pctg": 0.5,
+                "rb_pctg": 1.5,
+                "rb_shots_pctg": 2.5,
+                "br_pctg": 1.0,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 1933,
+            "match_cnt": 365,
+            "home_correct": 98,
+            "visitor_correct": 126,
+            "winloss_correct": 225,
+            "result_correct": 25,
+            "quantifier_dic": {
+                "shots_pctg": 2.0,
+                "handness_pctg": 1.0,
+                "handness_shots_pctg": 0.5,
+                "rb_pctg": 1.5,
+                "rb_shots_pctg": 2.5,
+                "br_pctg": 1.0,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 1945,
+            "match_cnt": 365,
+            "home_correct": 95,
+            "visitor_correct": 126,
+            "winloss_correct": 221,
+            "result_correct": 25,
+            "quantifier_dic": {
+                "shots_pctg": 2.0,
+                "handness_pctg": 1.0,
+                "handness_shots_pctg": 0.5,
+                "rb_pctg": 2.5,
+                "rb_shots_pctg": 2.0,
+                "br_pctg": 1.0,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 1952,
+            "match_cnt": 365,
+            "home_correct": 95,
+            "visitor_correct": 126,
+            "winloss_correct": 225,
+            "result_correct": 23,
+            "quantifier_dic": {
+                "shots_pctg": 2.0,
+                "handness_pctg": 1.0,
+                "handness_shots_pctg": 0.5,
+                "rb_pctg": 2.5,
+                "rb_shots_pctg": 2.5,
+                "br_pctg": 2.5,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 1951,
+            "match_cnt": 365,
+            "home_correct": 95,
+            "visitor_correct": 126,
+            "winloss_correct": 225,
+            "result_correct": 23,
+            "quantifier_dic": {
+                "shots_pctg": 2.0,
+                "handness_pctg": 1.0,
+                "handness_shots_pctg": 0.5,
+                "rb_pctg": 2.5,
+                "rb_shots_pctg": 2.5,
+                "br_pctg": 2.0,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 1944,
+            "match_cnt": 365,
+            "home_correct": 95,
+            "visitor_correct": 126,
+            "winloss_correct": 225,
+            "result_correct": 23,
+            "quantifier_dic": {
+                "shots_pctg": 2.0,
+                "handness_pctg": 1.0,
+                "handness_shots_pctg": 0.5,
+                "rb_pctg": 2.0,
+                "rb_shots_pctg": 2.5,
+                "br_pctg": 2.5,
+                "br_shots_pctg": 2.5
+            }
+        }
+    ],
+    "winloss_correct": [
+        {
+            "g_cnt": 2418,
+            "match_cnt": 365,
+            "home_correct": 90,
+            "visitor_correct": 123,
+            "winloss_correct": 246,
+            "result_correct": 30,
+            "quantifier_dic": {
+                "shots_pctg": 2.0,
+                "handness_pctg": 2.5,
+                "handness_shots_pctg": 0.5,
+                "rb_pctg": 2.0,
+                "rb_shots_pctg": 2.0,
+                "br_pctg": 1.5,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 2417,
+            "match_cnt": 365,
+            "home_correct": 90,
+            "visitor_correct": 123,
+            "winloss_correct": 246,
+            "result_correct": 30,
+            "quantifier_dic": {
+                "shots_pctg": 2.0,
+                "handness_pctg": 2.5,
+                "handness_shots_pctg": 0.5,
+                "rb_pctg": 2.0,
+                "rb_shots_pctg": 2.0,
+                "br_pctg": 1.0,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 2744,
+            "match_cnt": 365,
+            "home_correct": 84,
+            "visitor_correct": 115,
+            "winloss_correct": 246,
+            "result_correct": 23,
+            "quantifier_dic": {
+                "shots_pctg": 2.5,
+                "handness_pctg": 1.5,
+                "handness_shots_pctg": 0.5,
+                "rb_pctg": 2.0,
+                "rb_shots_pctg": 2.5,
+                "br_pctg": 2.5,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 2743,
+            "match_cnt": 365,
+            "home_correct": 84,
+            "visitor_correct": 115,
+            "winloss_correct": 246,
+            "result_correct": 23,
+            "quantifier_dic": {
+                "shots_pctg": 2.5,
+                "handness_pctg": 1.5,
+                "handness_shots_pctg": 0.5,
+                "rb_pctg": 2.0,
+                "rb_shots_pctg": 2.5,
+                "br_pctg": 2.0,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 2742,
+            "match_cnt": 365,
+            "home_correct": 84,
+            "visitor_correct": 116,
+            "winloss_correct": 246,
+            "result_correct": 23,
+            "quantifier_dic": {
+                "shots_pctg": 2.5,
+                "handness_pctg": 1.5,
+                "handness_shots_pctg": 0.5,
+                "rb_pctg": 2.0,
+                "rb_shots_pctg": 2.5,
+                "br_pctg": 1.5,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 2420,
+            "match_cnt": 365,
+            "home_correct": 90,
+            "visitor_correct": 123,
+            "winloss_correct": 245,
+            "result_correct": 30,
+            "quantifier_dic": {
+                "shots_pctg": 2.0,
+                "handness_pctg": 2.5,
+                "handness_shots_pctg": 0.5,
+                "rb_pctg": 2.0,
+                "rb_shots_pctg": 2.0,
+                "br_pctg": 2.5,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 2419,
+            "match_cnt": 365,
+            "home_correct": 90,
+            "visitor_correct": 123,
+            "winloss_correct": 245,
+            "result_correct": 30,
+            "quantifier_dic": {
+                "shots_pctg": 2.0,
+                "handness_pctg": 2.5,
+                "handness_shots_pctg": 0.5,
+                "rb_pctg": 2.0,
+                "rb_shots_pctg": 2.0,
+                "br_pctg": 2.0,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 2410,
+            "match_cnt": 365,
+            "home_correct": 89,
+            "visitor_correct": 124,
+            "winloss_correct": 245,
+            "result_correct": 30,
+            "quantifier_dic": {
+                "shots_pctg": 2.0,
+                "handness_pctg": 2.5,
+                "handness_shots_pctg": 0.5,
+                "rb_pctg": 1.5,
+                "rb_shots_pctg": 2.0,
+                "br_pctg": 1.5,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 2422,
+            "match_cnt": 365,
+            "home_correct": 87,
+            "visitor_correct": 125,
+            "winloss_correct": 245,
+            "result_correct": 29,
+            "quantifier_dic": {
+                "shots_pctg": 2.0,
+                "handness_pctg": 2.5,
+                "handness_shots_pctg": 0.5,
+                "rb_pctg": 2.0,
+                "rb_shots_pctg": 2.5,
+                "br_pctg": 1.5,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 2421,
+            "match_cnt": 365,
+            "home_correct": 87,
+            "visitor_correct": 125,
+            "winloss_correct": 245,
+            "result_correct": 29,
+            "quantifier_dic": {
+                "shots_pctg": 2.0,
+                "handness_pctg": 2.5,
+                "handness_shots_pctg": 0.5,
+                "rb_pctg": 2.0,
+                "rb_shots_pctg": 2.5,
+                "br_pctg": 1.0,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 2904,
+            "match_cnt": 365,
+            "home_correct": 76,
+            "visitor_correct": 112,
+            "winloss_correct": 245,
+            "result_correct": 25,
+            "quantifier_dic": {
+                "shots_pctg": 2.5,
+                "handness_pctg": 2.0,
+                "handness_shots_pctg": 0.5,
+                "rb_pctg": 2.0,
+                "rb_shots_pctg": 2.5,
+                "br_pctg": 2.5,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 2903,
+            "match_cnt": 365,
+            "home_correct": 76,
+            "visitor_correct": 112,
+            "winloss_correct": 245,
+            "result_correct": 25,
+            "quantifier_dic": {
+                "shots_pctg": 2.5,
+                "handness_pctg": 2.0,
+                "handness_shots_pctg": 0.5,
+                "rb_pctg": 2.0,
+                "rb_shots_pctg": 2.5,
+                "br_pctg": 2.0,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 2902,
+            "match_cnt": 365,
+            "home_correct": 76,
+            "visitor_correct": 112,
+            "winloss_correct": 245,
+            "result_correct": 25,
+            "quantifier_dic": {
+                "shots_pctg": 2.5,
+                "handness_pctg": 2.0,
+                "handness_shots_pctg": 0.5,
+                "rb_pctg": 2.0,
+                "rb_shots_pctg": 2.5,
+                "br_pctg": 1.5,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 2901,
+            "match_cnt": 365,
+            "home_correct": 76,
+            "visitor_correct": 113,
+            "winloss_correct": 245,
+            "result_correct": 25,
+            "quantifier_dic": {
+                "shots_pctg": 2.5,
+                "handness_pctg": 2.0,
+                "handness_shots_pctg": 0.5,
+                "rb_pctg": 2.0,
+                "rb_shots_pctg": 2.5,
+                "br_pctg": 1.0,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 2732,
+            "match_cnt": 365,
+            "home_correct": 87,
+            "visitor_correct": 120,
+            "winloss_correct": 245,
+            "result_correct": 25,
+            "quantifier_dic": {
+                "shots_pctg": 2.5,
+                "handness_pctg": 1.5,
+                "handness_shots_pctg": 0.5,
+                "rb_pctg": 1.5,
+                "rb_shots_pctg": 2.0,
+                "br_pctg": 2.5,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 2731,
+            "match_cnt": 365,
+            "home_correct": 87,
+            "visitor_correct": 120,
+            "winloss_correct": 245,
+            "result_correct": 25,
+            "quantifier_dic": {
+                "shots_pctg": 2.5,
+                "handness_pctg": 1.5,
+                "handness_shots_pctg": 0.5,
+                "rb_pctg": 1.5,
+                "rb_shots_pctg": 2.0,
+                "br_pctg": 2.0,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 2730,
+            "match_cnt": 365,
+            "home_correct": 87,
+            "visitor_correct": 120,
+            "winloss_correct": 245,
+            "result_correct": 25,
+            "quantifier_dic": {
+                "shots_pctg": 2.5,
+                "handness_pctg": 1.5,
+                "handness_shots_pctg": 0.5,
+                "rb_pctg": 1.5,
+                "rb_shots_pctg": 2.0,
+                "br_pctg": 1.5,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 2741,
+            "match_cnt": 365,
+            "home_correct": 84,
+            "visitor_correct": 116,
+            "winloss_correct": 245,
+            "result_correct": 23,
+            "quantifier_dic": {
+                "shots_pctg": 2.5,
+                "handness_pctg": 1.5,
+                "handness_shots_pctg": 0.5,
+                "rb_pctg": 2.0,
+                "rb_shots_pctg": 2.5,
+                "br_pctg": 1.0,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 2752,
+            "match_cnt": 365,
+            "home_correct": 82,
+            "visitor_correct": 114,
+            "winloss_correct": 245,
+            "result_correct": 21,
+            "quantifier_dic": {
+                "shots_pctg": 2.5,
+                "handness_pctg": 1.5,
+                "handness_shots_pctg": 0.5,
+                "rb_pctg": 2.5,
+                "rb_shots_pctg": 2.5,
+                "br_pctg": 2.5,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 2751,
+            "match_cnt": 365,
+            "home_correct": 82,
+            "visitor_correct": 114,
+            "winloss_correct": 245,
+            "result_correct": 21,
+            "quantifier_dic": {
+                "shots_pctg": 2.5,
+                "handness_pctg": 1.5,
+                "handness_shots_pctg": 0.5,
+                "rb_pctg": 2.5,
+                "rb_shots_pctg": 2.5,
+                "br_pctg": 2.0,
+                "br_shots_pctg": 2.5
+            }
+        }
+    ],
+    "result_correct": [
+        {
+            "g_cnt": 2249,
+            "match_cnt": 365,
+            "home_correct": 93,
+            "visitor_correct": 124,
+            "winloss_correct": 237,
+            "result_correct": 35,
+            "quantifier_dic": {
+                "shots_pctg": 2.0,
+                "handness_pctg": 2.0,
+                "handness_shots_pctg": 0.5,
+                "rb_pctg": 1.5,
+                "rb_shots_pctg": 2.0,
+                "br_pctg": 1.0,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 2257,
+            "match_cnt": 365,
+            "home_correct": 94,
+            "visitor_correct": 122,
+            "winloss_correct": 239,
+            "result_correct": 34,
+            "quantifier_dic": {
+                "shots_pctg": 2.0,
+                "handness_pctg": 2.0,
+                "handness_shots_pctg": 0.5,
+                "rb_pctg": 2.0,
+                "rb_shots_pctg": 2.0,
+                "br_pctg": 1.0,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 2245,
+            "match_cnt": 365,
+            "home_correct": 94,
+            "visitor_correct": 124,
+            "winloss_correct": 238,
+            "result_correct": 34,
+            "quantifier_dic": {
+                "shots_pctg": 2.0,
+                "handness_pctg": 2.0,
+                "handness_shots_pctg": 0.5,
+                "rb_pctg": 1.0,
+                "rb_shots_pctg": 2.5,
+                "br_pctg": 1.0,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 2241,
+            "match_cnt": 365,
+            "home_correct": 91,
+            "visitor_correct": 121,
+            "winloss_correct": 235,
+            "result_correct": 34,
+            "quantifier_dic": {
+                "shots_pctg": 2.0,
+                "handness_pctg": 2.0,
+                "handness_shots_pctg": 0.5,
+                "rb_pctg": 1.0,
+                "rb_shots_pctg": 2.0,
+                "br_pctg": 1.0,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 2265,
+            "match_cnt": 365,
+            "home_correct": 93,
+            "visitor_correct": 120,
+            "winloss_correct": 240,
+            "result_correct": 33,
+            "quantifier_dic": {
+                "shots_pctg": 2.0,
+                "handness_pctg": 2.0,
+                "handness_shots_pctg": 0.5,
+                "rb_pctg": 2.5,
+                "rb_shots_pctg": 2.0,
+                "br_pctg": 1.0,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 2250,
+            "match_cnt": 365,
+            "home_correct": 92,
+            "visitor_correct": 122,
+            "winloss_correct": 238,
+            "result_correct": 33,
+            "quantifier_dic": {
+                "shots_pctg": 2.0,
+                "handness_pctg": 2.0,
+                "handness_shots_pctg": 0.5,
+                "rb_pctg": 1.5,
+                "rb_shots_pctg": 2.0,
+                "br_pctg": 1.5,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 2261,
+            "match_cnt": 365,
+            "home_correct": 93,
+            "visitor_correct": 123,
+            "winloss_correct": 237,
+            "result_correct": 33,
+            "quantifier_dic": {
+                "shots_pctg": 2.0,
+                "handness_pctg": 2.0,
+                "handness_shots_pctg": 0.5,
+                "rb_pctg": 2.0,
+                "rb_shots_pctg": 2.5,
+                "br_pctg": 1.0,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 2253,
+            "match_cnt": 365,
+            "home_correct": 94,
+            "visitor_correct": 125,
+            "winloss_correct": 237,
+            "result_correct": 33,
+            "quantifier_dic": {
+                "shots_pctg": 2.0,
+                "handness_pctg": 2.0,
+                "handness_shots_pctg": 0.5,
+                "rb_pctg": 1.5,
+                "rb_shots_pctg": 2.5,
+                "br_pctg": 1.0,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 2243,
+            "match_cnt": 365,
+            "home_correct": 90,
+            "visitor_correct": 119,
+            "winloss_correct": 236,
+            "result_correct": 33,
+            "quantifier_dic": {
+                "shots_pctg": 2.0,
+                "handness_pctg": 2.0,
+                "handness_shots_pctg": 0.5,
+                "rb_pctg": 1.0,
+                "rb_shots_pctg": 2.0,
+                "br_pctg": 2.0,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 2242,
+            "match_cnt": 365,
+            "home_correct": 90,
+            "visitor_correct": 119,
+            "winloss_correct": 236,
+            "result_correct": 33,
+            "quantifier_dic": {
+                "shots_pctg": 2.0,
+                "handness_pctg": 2.0,
+                "handness_shots_pctg": 0.5,
+                "rb_pctg": 1.0,
+                "rb_shots_pctg": 2.0,
+                "br_pctg": 1.5,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 2244,
+            "match_cnt": 365,
+            "home_correct": 90,
+            "visitor_correct": 119,
+            "winloss_correct": 235,
+            "result_correct": 33,
+            "quantifier_dic": {
+                "shots_pctg": 2.0,
+                "handness_pctg": 2.0,
+                "handness_shots_pctg": 0.5,
+                "rb_pctg": 1.0,
+                "rb_shots_pctg": 2.0,
+                "br_pctg": 2.5,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 1480,
+            "match_cnt": 365,
+            "home_correct": 102,
+            "visitor_correct": 104,
+            "winloss_correct": 225,
+            "result_correct": 33,
+            "quantifier_dic": {
+                "shots_pctg": 1.5,
+                "handness_pctg": 1.5,
+                "handness_shots_pctg": 1.0,
+                "rb_pctg": 1.0,
+                "rb_shots_pctg": 2.5,
+                "br_pctg": 2.5,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 1479,
+            "match_cnt": 365,
+            "home_correct": 102,
+            "visitor_correct": 104,
+            "winloss_correct": 225,
+            "result_correct": 33,
+            "quantifier_dic": {
+                "shots_pctg": 1.5,
+                "handness_pctg": 1.5,
+                "handness_shots_pctg": 1.0,
+                "rb_pctg": 1.0,
+                "rb_shots_pctg": 2.5,
+                "br_pctg": 2.0,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 1478,
+            "match_cnt": 365,
+            "home_correct": 102,
+            "visitor_correct": 105,
+            "winloss_correct": 225,
+            "result_correct": 33,
+            "quantifier_dic": {
+                "shots_pctg": 1.5,
+                "handness_pctg": 1.5,
+                "handness_shots_pctg": 1.0,
+                "rb_pctg": 1.0,
+                "rb_shots_pctg": 2.5,
+                "br_pctg": 1.5,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 1477,
+            "match_cnt": 365,
+            "home_correct": 102,
+            "visitor_correct": 105,
+            "winloss_correct": 225,
+            "result_correct": 33,
+            "quantifier_dic": {
+                "shots_pctg": 1.5,
+                "handness_pctg": 1.5,
+                "handness_shots_pctg": 1.0,
+                "rb_pctg": 1.0,
+                "rb_shots_pctg": 2.5,
+                "br_pctg": 1.0,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 1329,
+            "match_cnt": 365,
+            "home_correct": 97,
+            "visitor_correct": 97,
+            "winloss_correct": 223,
+            "result_correct": 33,
+            "quantifier_dic": {
+                "shots_pctg": 1.5,
+                "handness_pctg": 1.0,
+                "handness_shots_pctg": 1.0,
+                "rb_pctg": 2.0,
+                "rb_shots_pctg": 2.0,
+                "br_pctg": 1.0,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 2259,
+            "match_cnt": 365,
+            "home_correct": 93,
+            "visitor_correct": 120,
+            "winloss_correct": 241,
+            "result_correct": 32,
+            "quantifier_dic": {
+                "shots_pctg": 2.0,
+                "handness_pctg": 2.0,
+                "handness_shots_pctg": 0.5,
+                "rb_pctg": 2.0,
+                "rb_shots_pctg": 2.0,
+                "br_pctg": 2.0,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 2258,
+            "match_cnt": 365,
+            "home_correct": 93,
+            "visitor_correct": 120,
+            "winloss_correct": 241,
+            "result_correct": 32,
+            "quantifier_dic": {
+                "shots_pctg": 2.0,
+                "handness_pctg": 2.0,
+                "handness_shots_pctg": 0.5,
+                "rb_pctg": 2.0,
+                "rb_shots_pctg": 2.0,
+                "br_pctg": 1.5,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 2260,
+            "match_cnt": 365,
+            "home_correct": 93,
+            "visitor_correct": 120,
+            "winloss_correct": 240,
+            "result_correct": 32,
+            "quantifier_dic": {
+                "shots_pctg": 2.0,
+                "handness_pctg": 2.0,
+                "handness_shots_pctg": 0.5,
+                "rb_pctg": 2.0,
+                "rb_shots_pctg": 2.0,
+                "br_pctg": 2.5,
+                "br_shots_pctg": 2.5
+            }
+        },
+        {
+            "g_cnt": 2269,
+            "match_cnt": 365,
+            "home_correct": 92,
+            "visitor_correct": 122,
+            "winloss_correct": 239,
+            "result_correct": 32,
+            "quantifier_dic": {
+                "shots_pctg": 2.0,
+                "handness_pctg": 2.0,
+                "handness_shots_pctg": 0.5,
+                "rb_pctg": 2.5,
+                "rb_shots_pctg": 2.5,
+                "br_pctg": 1.0,
+                "br_shots_pctg": 2.5
+            }
+        }
+    ]
+}
