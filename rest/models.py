@@ -96,6 +96,19 @@ class Shot(models.Model):
     polygon = models.CharField(max_length=20)
     zone = models.CharField(max_length=20)
 
+class Socialnetwork(models.Model):
+    """ socialnetwork """
+    match = models.ForeignKey(Match, on_delete=models.CASCADE)
+    source = models.CharField(max_length=20)
+    name = models.CharField(max_length=25)
+    name_alternate = models.CharField(max_length=25, blank=True, null=True)
+    identifier = models.CharField(max_length=50)
+    created_at = models.CharField(max_length=20)
+    created_uts = models.IntegerField(default=0)
+    text_raw = models.CharField(max_length=300)
+    text_cleaned = models.CharField(max_length=300)
+    tag = models.CharField(max_length=10)
+
 class Teamstat(models.Model):
     """ shifts """
     match = models.ForeignKey(Match, on_delete=models.CASCADE)

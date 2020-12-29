@@ -3,7 +3,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from rest.models import Comment, Gameheader, Match, Periodevent, Player, Playerstat, Roster, Season, Shift, Shot, Team, Teamstat, Teammatchstat, Xg
+from rest.models import Comment, Gameheader, Match, Periodevent, Player, Playerstat, Roster, Season, Shift, Shot, Socialnetwork, Team, Teamstat, Teammatchstat, Xg
 
 class MatchAdmin(admin.ModelAdmin):
     """ match admin """
@@ -65,6 +65,11 @@ class ShotAdmin(admin.ModelAdmin):
     list_display = [field.name for field in Shot._meta.get_fields()]
     ordering = ['shot_id']
 
+class SocialnetworkAdmin(admin.ModelAdmin):
+    fields = ['match', 'source', 'created_at', 'created_uts', 'identifier', 'name', 'name_alternate', 'text_cleaned', 'text_raw', 'tag']
+    list_display = ['match', 'source', 'created_at', 'created_uts', 'identifier', 'name', 'name_alternate', 'text_cleaned', 'text_raw', 'tag']
+    ordering = ['match_id', 'created_uts']
+
 class TeamAdmin(admin.ModelAdmin):
     """ teamadmin"""
     fields = ['team_id', 'team_name', 'shortcut', 'logo', 'color_primary', 'color_secondary', 'color_penalty_primary', 'color_penalty_secondary']
@@ -84,7 +89,7 @@ class TeammatchstatAdmin(admin.ModelAdmin):
     ordering = ['match_id', 'team_id']
 
 #class XgAdmin(admin.ModelAdmin):
-    """ admin class for xg model """
+#     """ admin class for xg model """
 #    # fields = ['xg_data']
 #    # list_display = ['xg_data']
 
@@ -98,6 +103,7 @@ admin.site.register(Gameheader, GameheaderAdmin)
 admin.site.register(Shift, ShiftAdmin)
 admin.site.register(Shot, ShotAdmin)
 admin.site.register(Season, SeasonAdmin)
+admin.site.register(Socialnetwork, SocialnetworkAdmin)
 admin.site.register(Team, TeamAdmin)
 admin.site.register(Teamstat, TeamstatAdmin)
 admin.site.register(Teammatchstat, TeammatchstatAdmin)
