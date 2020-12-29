@@ -123,8 +123,8 @@ if __name__ == "__main__":
     # MATCH_LIST = [1820]
 
     START_VAL = 0.5
-    MAX_VAL = 3.0
-    STEP = 0.5
+    MAX_VAL = 2.5
+    STEP = 0.2
 
     # START_VAL = 1.0
     # MAX_VAL = 1.1
@@ -132,6 +132,9 @@ if __name__ == "__main__":
 
     # quantifier dictionary
     input_parameters = _inputparameters_get(LOGGER, PARAMETER_FILE, START_VAL, MAX_VAL, STEP)
+
+    from pprint import pprint
+    pprint(input_parameters)
 
     # get global shot and goal stats
     (g_shotstat_dic, g_goal_dic) = shotstats_get(LOGGER, MATCH_LIST)

@@ -131,6 +131,9 @@ dmypy.json
 
 # mystuff
 settings.py
+wip
+xg_weighting
+
 data
 model_data.json
 migrations
