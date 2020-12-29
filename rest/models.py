@@ -96,7 +96,7 @@ class Shot(models.Model):
     polygon = models.CharField(max_length=20)
     zone = models.CharField(max_length=20)
 
-class Socialnetwork(models.Model):
+class Socialnetworkevent(models.Model):
     """ socialnetwork """
     match = models.ForeignKey(Match, on_delete=models.CASCADE)
     source = models.CharField(max_length=20)

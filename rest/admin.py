@@ -3,7 +3,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from rest.models import Comment, Gameheader, Match, Periodevent, Player, Playerstat, Roster, Season, Shift, Shot, Socialnetwork, Team, Teamstat, Teammatchstat, Xg
+from rest.models import Comment, Gameheader, Match, Periodevent, Player, Playerstat, Roster, Season, Shift, Shot, Socialnetworkevent, Team, Teamstat, Teammatchstat, Xg
 
 class MatchAdmin(admin.ModelAdmin):
     """ match admin """
@@ -65,7 +65,7 @@ class ShotAdmin(admin.ModelAdmin):
     list_display = [field.name for field in Shot._meta.get_fields()]
     ordering = ['shot_id']
 
-class SocialnetworkAdmin(admin.ModelAdmin):
+class SocialnetworkeventAdmin(admin.ModelAdmin):
     fields = ['match', 'source', 'created_at', 'created_uts', 'identifier', 'name', 'name_alternate', 'text_cleaned', 'text_raw', 'tag']
     list_display = ['match', 'source', 'created_at', 'created_uts', 'identifier', 'name', 'name_alternate', 'text_cleaned', 'text_raw', 'tag']
     ordering = ['match_id', 'created_uts']
@@ -103,7 +103,7 @@ admin.site.register(Gameheader, GameheaderAdmin)
 admin.site.register(Shift, ShiftAdmin)
 admin.site.register(Shot, ShotAdmin)
 admin.site.register(Season, SeasonAdmin)
-admin.site.register(Socialnetwork, SocialnetworkAdmin)
+admin.site.register(Socialnetworkevent, SocialnetworkeventAdmin)
 admin.site.register(Team, TeamAdmin)
 admin.site.register(Teamstat, TeamstatAdmin)
 admin.site.register(Teammatchstat, TeammatchstatAdmin)
