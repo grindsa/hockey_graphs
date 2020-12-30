@@ -21,6 +21,7 @@ class Team(models.Model):
     color_secondary = models.CharField(max_length=7, blank=True)
     color_penalty_primary = models.CharField(max_length=7, blank=True)
     color_penalty_secondary = models.CharField(max_length=7, blank=True)
+    twitter_name = models.CharField(max_length=15, blank=True)    
     def __str__(self):
         return self.team_name
 
@@ -103,10 +104,10 @@ class Socialnetworkevent(models.Model):
     name = models.CharField(max_length=25)
     name_alternate = models.CharField(max_length=25, blank=True, null=True)
     identifier = models.CharField(max_length=50)
-    created_at = models.CharField(max_length=20)
+    created_at = models.CharField(max_length=50)
     created_uts = models.IntegerField(default=0)
     text_raw = models.CharField(max_length=300)
-    text_cleaned = models.CharField(max_length=300)
+    text_cleaned = models.CharField(max_length=300, blank=True, null=True)
     tag = models.CharField(max_length=10)
 
 class Teamstat(models.Model):

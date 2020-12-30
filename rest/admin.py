@@ -72,8 +72,8 @@ class SocialnetworkeventAdmin(admin.ModelAdmin):
 
 class TeamAdmin(admin.ModelAdmin):
     """ teamadmin"""
-    fields = ['team_id', 'team_name', 'shortcut', 'logo', 'color_primary', 'color_secondary', 'color_penalty_primary', 'color_penalty_secondary']
-    list_display = ['team_id', 'team_name', 'shortcut', 'logo', 'color_primary', 'color_secondary', 'color_penalty_primary', 'color_penalty_secondary']
+    fields = ['team_id', 'team_name', 'shortcut', 'logo', 'color_primary', 'color_secondary', 'color_penalty_primary', 'color_penalty_secondary', 'twitter_name']
+    list_display = ['team_id', 'team_name', 'shortcut', 'logo', 'color_primary', 'color_secondary', 'color_penalty_primary', 'color_penalty_secondary', 'twitter_name']
     ordering = ['team_id']
 
 class TeamstatAdmin(admin.ModelAdmin):
