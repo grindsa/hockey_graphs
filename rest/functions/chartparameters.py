@@ -40,6 +40,8 @@ line3_color = chart_color4
 line4_color = chart_color2
 line5_color = chart_color5
 
+twitter_color = '#1DA1F2'
+
 def credit(text='©2020 GrindSa (https://hockeygraphs.dynamop.de)', href='https://hockeygraphs.dynamop.de'):
     """ add credits """
     return {'text': text, 'href': href}
@@ -309,15 +311,26 @@ def chart_colors_get(logger, matchinfo_dic):
     if 'visitor_team__color_penalty_secondary' in matchinfo_dic and bool(matchinfo_dic['visitor_team__color_penalty_secondary']):
         color_dic['visitor_team_color_penalty_secondary'] = matchinfo_dic['visitor_team__color_penalty_secondary']
 
+    from pprint import pprint
+    pprint(color_dic)
+
+    # cornercase handling switchcolor for visitor team to primary colors
+    if color_dic['home_team_color_primary'] == color_dic['visitor_team_color_secondary'] or color_dic['home_team_color_penalty_primary'] == color_dic['visitor_team_color_penalty_secondary']:
+        logger.debug('flip to primary color for visitor team')
+        color_dic['visitor_team_color'] = matchinfo_dic['visitor_team__color_primary']
+        color_dic['visitor_team_color_penalty'] = matchinfo_dic['visitor_team__color_penalty_primary']
+        color_dic['visitor_team_color_penalty_secondary'] = matchinfo_dic['visitor_team__color_penalty_primary']
+        color_dic['visitor_team_color_secondary'] = matchinfo_dic['visitor_team__color_primary']
+
     # corner case handling if either colors are similar - in this case switch to backup color
-    if color_dic['home_team_color'] == color_dic['visitor_team_color'] or color_dic['home_team_color_penalty'] == color_dic['visitor_team_color_penalty']:
-        logger.debug('flip to secondary color for visitor team')
-        if 'visitor_team__color_secondary' in matchinfo_dic and bool(matchinfo_dic['visitor_team__color_secondary']):
-            color_dic['visitor_team_color'] = matchinfo_dic['visitor_team__color_secondary']
-            color_dic['visitor_team_color_penalty'] = matchinfo_dic['visitor_team__color_penalty_secondary']
-        else:
-            color_dic['visitor_team_color'] = chart_color2
-            color_dic['visitor_team_color_penalty'] = chart_color6
+    #if color_dic['home_team_color'] == color_dic['visitor_team_color'] or color_dic['home_team_color_penalty'] == color_dic['visitor_team_color_penalty']:
+    #    logger.debug('flip to secondary color for visitor team')
+    #    if 'visitor_team__color_secondary' in matchinfo_dic and bool(matchinfo_dic['visitor_team__color_secondary']):
+    #        color_dic['visitor_team_color'] = matchinfo_dic['visitor_team__color_secondary']
+    #        color_dic['visitor_team_color_penalty'] = matchinfo_dic['visitor_team__color_penalty_secondary']
+    #    else:
+    #        color_dic['visitor_team_color'] = chart_color2
+    #        color_dic['visitor_team_color_penalty'] = chart_color6
 
     return color_dic
 
