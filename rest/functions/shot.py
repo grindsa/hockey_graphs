@@ -11,7 +11,7 @@ import django
 django.setup()
 from shapely.geometry import Point
 from rest.models import Shot
-from rest.functions.helper import maxval_get, list_sumup, period_get, sliding_window
+from rest.functions.helper import maxval_get, list_sumup, period_get, sliding_window, date_to_uts_utc
 from rest.functions.chartparameters import chart_color2, chart_color3, title
 import functions.rink_dimensions as rd
 
@@ -270,6 +270,19 @@ def shotspersec_count(logger, shot_list, matchinfo_dic):
             goal_dic[team][min_] = shot['player__last_name']
 
     return (shot_sec_dic, goal_dic)
+
+def shotspermin_combine(logger, shot_min_dic):
+    """ sum up shots per minute """
+    logger.debug('shotspermin_aggregate()')
+
+    shotsum_dic = {}
+    for team in shot_min_dic:
+        for min_ in shot_min_dic[team]:
+            if min_ not in shotsum_dic:
+                shotsum_dic[min_] = 0
+            shotsum_dic[min_] += shot_min_dic[team][min_]
+
+    return shotsum_dic
 
 def shotspermin_aggregate(logger, shot_min_dic):
     """ sum up shots per minute """
@@ -702,3 +715,32 @@ def rebound_updates_get(logger, _ctitle, data_dic, key1, key2):
         }
 
     return updates_dic
+
+def shottime2date_map(logger, shot_list):
+    """ create a dictionary including a mapping between gametime and realtime (uts) - this is needed to map the tweets """
+    logger.debug('shottime2date_map()')
+
+    # mapping from match-minute to game time
+    mindate_dic = {}
+
+    prev_tst = 0
+    prev_uts = 0
+    max_min = 60
+    for shot in shot_list:
+        #  convert date from shot into a unit-timestamp #?????????
+        uts = date_to_uts_utc(shot['real_date']) - 3600
+        # we only count if timestamp increases as well as unix timestamp (we ignore manual corrections at the end of the file)
+        if prev_tst <= shot['timestamp'] and prev_uts <= uts:
+            # get min out of seconds
+            min_ = math.ceil(shot['timestamp']/60)
+            mindate_dic[min_] = uts
+            # ovetime detection
+            if shot['timestamp'] > 3600:
+                max_min = 65
+
+    # fill empty min artifically (no shots during this minute)
+    for min_ in  range(1, max_min+1):
+        if min_ not in mindate_dic:
+            mindate_dic[min_] = mindate_dic[min_-1] + 60
+
+    return mindate_dic
