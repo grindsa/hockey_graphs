@@ -5,6 +5,7 @@ import HighchartsReact from 'highcharts-react-official';
 import HighchartsMore from 'highcharts/highcharts-more';
 import HighchartsExporting from 'highcharts/modules/exporting';
 import HighchartsOfflineExporting from "highcharts/modules/offline-exporting";
+import Timeline from 'highcharts/modules/timeline.js';
 import Heatmap from 'highcharts/modules/heatmap.js';
 import { createTableHeader, createTableBody, createSelectOptions, overviewClassnames } from './matchstatisticservice.js'
 import { asyncGET, isEmpty } from '../sharedfunctions.js';
@@ -14,6 +15,7 @@ import { createnostatMessage, createnoChartMessage } from '../localization.js';
 HighchartsExporting(Highcharts);
 HighchartsOfflineExporting(Highcharts);
 HighchartsMore(Highcharts);
+Timeline(Highcharts);
 Heatmap(Highcharts);
 
 export class MatchStatistics extends React.Component {
