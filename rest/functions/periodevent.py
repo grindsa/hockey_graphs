@@ -12,7 +12,6 @@ django.setup()
 from rest.models import Periodevent
 from rest.functions.chartparameters import chart_color5, chart_color6
 
-
 def periodevent_add(logger, fkey, fvalue, data_dic):
     """ add team to database """
     logger.debug('periodevent_add({0}:{1})'.format(fkey, fvalue))

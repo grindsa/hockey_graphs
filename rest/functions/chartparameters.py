@@ -126,7 +126,6 @@ def responsive_y1():
         }]
     }
 
-
 def responsive_y1_label():
     """ options for responsiveness """
     return {
@@ -310,9 +309,6 @@ def chart_colors_get(logger, matchinfo_dic):
         color_dic['home_team_color_penalty_secondary'] = matchinfo_dic['home_team__color_penalty_secondary']
     if 'visitor_team__color_penalty_secondary' in matchinfo_dic and bool(matchinfo_dic['visitor_team__color_penalty_secondary']):
         color_dic['visitor_team_color_penalty_secondary'] = matchinfo_dic['visitor_team__color_penalty_secondary']
-
-    from pprint import pprint
-    pprint(color_dic)
 
     # cornercase handling switchcolor for visitor team to primary colors
     if color_dic['home_team_color_primary'] == color_dic['visitor_team_color_secondary'] or color_dic['home_team_color_penalty_primary'] == color_dic['visitor_team_color_penalty_secondary']:
