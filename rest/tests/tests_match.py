@@ -2,11 +2,11 @@
 """ unittests for matchs.py """
 # pylint: disable= C0415, W0212
 import sys
+import os
 from django.test import TestCase
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir, os.path.pardir)))
 from rest.functions.helper import testdata_load
-
-sys.path.insert(0, '.')
-sys.path.insert(1, '..')
 
 class MatchTestCase(TestCase):
     """ Match test class """
