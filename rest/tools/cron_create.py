@@ -79,10 +79,20 @@ def create_cron_entries(logger, tzone):
                 lstats.hour.during(int(fhour), int(lhour)+3).every(1)
                 lstats.minute.every(2)
 
-                # update shifts at 11pm
+                # create cron-entry to get live statistics
+                ltag = cron.new(command=path + '/tag_fetcher.py -i 24 -b 4', comment='update twitter tags', user='root')
+                ltag.hour.during(int(fhour)-1, int(lhour)+3).every(1)
+                ltag.minute.every(10)
+
+                # update shifts at 11:05pm
                 shifts = cron.new(command=path+'/matchdata_update.py -i 24 --shifts --save /var/www/hockey_graphs/data --gitrepo', comment='update shifts', user='root')
                 shifts.hour.on(23)
-                shifts.minute.on(00)
+                shifts.minute.on(5)
+
+                # update twitter tags at 11:00pm
+                tag = cron.new(command=path+'/tag_fetcher.py -i 24 -b 4 --save /var/www/hockey_graphs/data', comment='update twitter tags', user='root')
+                tag.hour.on(23)
+                tag.minute.on(0)
 
                 # update teamstats at 11pm
                 teamstats = cron.new(command=path+'/teamstat_load.py.py -i 24', comment='teamstats', user='root')
@@ -103,6 +113,10 @@ def create_cron_entries(logger, tzone):
                 ndteamstats = cron.new(command=path+'/teamstat_load.py -i 30', comment='teamstats', user='root')
                 ndteamstats.hour.on(3, 9, 15)
                 ndteamstats.minute.on(5)
+
+                ndtag = cron.new(command=path+'/tag_fetcher.py -i 24 -b 4 --save /var/www/hockey_graphs/data', comment='update twitter tags', user='root')
+                ndtag.hour.on(3)
+                ndtag.minute.on(0)
 
                 message = '{0}, {1}'.format(message, yesterday)
 
