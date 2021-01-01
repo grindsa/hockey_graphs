@@ -4,6 +4,7 @@ import logging
 # pylint: disable=E0401, C0413
 import sys
 import calendar
+import pathlib
 import json
 import configparser
 from datetime import datetime
@@ -326,3 +327,8 @@ def sliding_window(logger, in_list, size=5):
         forward_list.append(in_list[current:current+size])
 
     return (backward_list, forward_list)
+
+def path_check_create(logger, path):
+    """ check save path - create if does not exist """
+    logger.debug('_path_check({0})'.format(path))
+    pathlib.Path(path).mkdir(parents=True, exist_ok=True)
