@@ -105,18 +105,19 @@ def goalsfromevents_get(logger, period_events):
 
     return goal_dic
 
-def goalplotlines_get(logger, events_dic, goal_dic, home_team_color, visitor_team_color):
+def goalplotlines_get(logger, events_dic, goal_dic, home_team_name, home_team_color, visitor_team_name, visitor_team_color):
     """ create plotlines from goal information """
     logger.debug('_gamematchup_get()')
 
     plotline_list = []
     for team in goal_dic:
         color = visitor_team_color
+        team_name = visitor_team_name
         if team == 'home_team':
             color = home_team_color
-
+            team_name = home_team_name
         for goal in goal_dic[team]:
              plotline_list.append({'color': color, 'from': goal['uts']-50, 'to': goal['uts']+50})
-             events_dic[goal['uts']] = {'created_at': goal['data']['realTime'], 'created_uts': goal['uts'], 'color': color, 'name_alternate': 'TOR: {0}'.format(goal['data']['currentScore']), 'source': 'grindsa'}
+             events_dic[goal['uts']] = {'created_at': goal['data']['realTime'], 'created_uts': goal['uts'], 'color': color, 'name_alternate': 'TOR {0}: {1}'.format(team_name, goal['data']['currentScore']), 'source': 'grindsa'}
 
     return (plotline_list, events_dic)

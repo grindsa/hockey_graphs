@@ -401,7 +401,7 @@ def _chatterchart_get(logger, title, subtitle, ismobile, request, fkey, fvalue, 
         events_dic = eventspermin_combine(logger, socialnetworkevents_dic, matchinfo_dic['home_team__twitter_name'], matchinfo_dic['visitor_team__twitter_name'])
 
         #plotline_list = []
-        (plotline_list, events_dic) = goalplotlines_get(logger, events_dic, goal_dic, color_dic['home_team_color_primary'], color_dic['visitor_team_color_secondary'])
+        (plotline_list, events_dic) = goalplotlines_get(logger, events_dic, goal_dic, matchinfo_dic['home_team__shortcut'], color_dic['home_team_color_primary'], matchinfo_dic['visitor_team__shortcut'], color_dic['visitor_team_color_secondary'])
 
         stat_entry = {
             'title': title,

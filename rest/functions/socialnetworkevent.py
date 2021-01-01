@@ -28,7 +28,7 @@ def eventspermin_combine(logger, socialnetworksevents_list, home_twitter_name, v
     tweet_sec_list = {}
     for event in socialnetworksevents_list:
         # ignore tweets from team twitter accounts
-        if not event['name_alternate'].lower() in [home_twitter_name.lower(), visitor_twitter_name.lower()]:
+        if not event['name_alternate'].lower() in [home_twitter_name.lower(), visitor_twitter_name.lower(), 'delrefsde']:
             tweet_sec_list[event['created_uts']] = event
 
     return tweet_sec_list
@@ -62,7 +62,7 @@ def socialnetworkevent_get(logger, fkey, fvalue, vlist=('match', 'source', 'name
 
 def tags_build(logger, home_team, visitor_team):
     """" get build taglist """
-    logger.debug('tweets_get()')
+    logger.debug('tags_build()')
     result = ['#{0}vs{1}'.format(home_team.lower(), visitor_team.lower()), '#{0}{1}'.format(home_team.lower(), visitor_team.lower())]
     return result
 
