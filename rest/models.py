@@ -106,7 +106,7 @@ class Socialnetworkevent(models.Model):
     identifier = models.CharField(max_length=50)
     created_at = models.CharField(max_length=50)
     created_uts = models.IntegerField(default=0)
-    text_raw = models.CharField(max_length=300)
+    text_raw = models.CharField(max_length=400)
     text_cleaned = models.CharField(max_length=300, blank=True, null=True)
     tag = models.CharField(max_length=10)
 

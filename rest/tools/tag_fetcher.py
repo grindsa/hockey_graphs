@@ -9,7 +9,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.
 # pylint: disable=E0401, C0413
 from rest.functions.helper import config_load, logger_setup, uts_now, path_check_create, json_store
 from rest.functions.match import sincematch_list_get
-from rest.functions.season import season_latest_get
+from rest.functions.season import season_latest_get, season_get
 from rest.functions.socialnetworkevent import socialnetworkevent_add, twitter_login, tweets_get, tags_build
 
 def arg_parse():
@@ -81,7 +81,7 @@ def _config_load(logger, cfg_file=os.path.dirname(__file__)+'/'+'hockeygraphs.cf
 if __name__ == "__main__":
 
     # get commandline arguments
-    (DEBUG, SEASON_ID, MATCH_LIST, INTERVAL, BUFFER_HR, SAVE_DIR) = arg_parse()
+    (DEBUG, SEASON_ID, MATCH_LIST, INTERVAL, BUFFER_HR, SAVE) = arg_parse()
 
     # initialize logger
     LOGGER = logger_setup(DEBUG)
@@ -92,6 +92,20 @@ if __name__ == "__main__":
     # get season_id if not specified
     if not SEASON_ID:
         SEASON_ID = season_latest_get(LOGGER)
+
+    # get tournament_id
+    TOURNAMENT_ID = season_get(LOGGER, 'id', SEASON_ID, ['tournament'])
+
+    if SAVE:
+        if TOURNAMENT_ID:
+            SAVE_DIR = '{0}/{1}'.format(SAVE, TOURNAMENT_ID)
+            path_check_create(LOGGER, SAVE)
+        else:
+            LOGGER.error('NO TOURNAMENT_ID found. Setting save to "None"')
+            SAVE_DIR = None
+    else:
+        SAVE_DIR = None
+
 
     # unix timestamp
     UTS = uts_now()
