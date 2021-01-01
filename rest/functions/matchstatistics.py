@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """ list of functions for matches """
-# pylint: disable=E0401, C0413
+# pylint: disable=E0401, C0413, R0914
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
@@ -9,6 +9,8 @@ import django
 django.setup()
 from django.conf import settings
 from rest.functions.corsi import gamecorsi_get
+from rest.functions.socialnetworkeventcharts import chatterchart_create
+from rest.functions.socialnetworkevent import socialnetworkevent_get, eventspermin_combine
 from rest.functions.shot import shot_list_get, shotspermin_count, shotspermin_aggregate, shotstatus_count, shotstatus_aggregate, shotsperzone_count, shotsperzone_aggregate, shotcoordinates_get, gameflow_get
 from rest.functions.shotcharts import shotsumchart_create, gameflowchart_create, shotstatussumchart_create, shotmapchart_create, gamecorsichart_create, gamecorsippctgchart_create, puckpossessionchart_create, shotzonechart_create
 from rest.functions.toicharts import gametoichart_create
@@ -18,7 +20,7 @@ from rest.functions.toitables import gametoi_table
 from rest.functions.match import match_info_get, matchstats_get
 from rest.functions.shift import shift_get, toifromshifts_get
 from rest.functions.roster import roster_get
-from rest.functions.periodevent import periodevent_get, penaltyplotlines_get
+from rest.functions.periodevent import periodevent_get, penaltyplotlines_get, goalsfromevents_get, goalplotlines_get
 from rest.functions.playerstat import playerstat_get, toifromplayerstats_get, matchupmatrix_get
 from rest.functions.chartparameters import chart_colors_get
 from rest.functions.helper import url_build, mobile_check
@@ -45,7 +47,7 @@ def matchstatistics_get(logger, request, fkey=None, fvalue=None):
         subtitle = '{0} {2} {1}'.format(matchinfo_dic['home_team__team_name'], matchinfo_dic['visitor_team__team_name'], vs_name)
 
         # get list of shots
-        shot_list = shot_list_get(logger, fkey, fvalue, ['timestamp', 'match_shot_resutl_id', 'team_id', 'player__first_name', 'player__last_name', 'zone', 'coordinate_x', 'coordinate_y', 'player__jersey'])
+        shot_list = shot_list_get(logger, fkey, fvalue, ['timestamp', 'match_shot_resutl_id', 'real_date', 'team_id', 'player__first_name', 'player__last_name', 'zone', 'coordinate_x', 'coordinate_y', 'player__jersey'])
 
         # get list of shifts
         shift_list = shift_get(logger, fkey, fvalue, ['shift'])
@@ -95,6 +97,9 @@ def matchstatistics_get(logger, request, fkey=None, fvalue=None):
 
         # pylint: disable=E0602
         result.append(_gamematchup_get(logger, _('5v5 Matchup'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list, shift_list, roster_list, periodevent_list))
+
+        # pylint: disable=E0602
+        result.append(_chatterchart_get(logger, _('Real-Time Fan Reactions'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list, periodevent_list, color_dic))
 
     else:
         result = {'error': 'Please specify a matchid'}
@@ -364,6 +369,7 @@ def _gametoi_get(logger, title, subtitle, ismobile, request, fkey, fvalue, match
 
 def _gamematchup_get(logger, title, subtitle, ismobile, request, _fkey, _fvalue, matchinfo_dic, shot_list, shift_list, roster_list, periodevent_list):
     """ game matchup """
+    logger.debug('_gamematchup_get()')
 
     stat_entry = {'title': title, 'table': {}, 'tabs': False, 'chart': {}}
     if shift_list:
@@ -374,6 +380,32 @@ def _gamematchup_get(logger, title, subtitle, ismobile, request, _fkey, _fvalue,
         stat_entry = {
             'title': title,
             'chart': gamematchupchart_create(logger, title, subtitle, ismobile, lineup_dic, matchup_matrix, plotline_dic, matchinfo_dic),
+            'table': {},
+            'tabs': False
+        }
+
+    return stat_entry
+
+def _chatterchart_get(logger, title, subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list, periodevent_list, color_dic):
+    # pylint: disable=R0913
+    """ chatter chart """
+    logger.debug('_chatterchart_get()')
+    stat_entry = {'title': title, 'table': {}, 'tabs': False, 'chart': {}}
+
+    if shot_list:
+        # get shots and goals per min
+        goal_dic = goalsfromevents_get(logger, periodevent_list)
+
+        # get social network events per match
+        socialnetworkevents_dic = socialnetworkevent_get(logger, fkey, fvalue)
+        events_dic = eventspermin_combine(logger, socialnetworkevents_dic, matchinfo_dic['home_team__twitter_name'], matchinfo_dic['visitor_team__twitter_name'])
+
+        #plotline_list = []
+        (plotline_list, events_dic) = goalplotlines_get(logger, events_dic, goal_dic, color_dic['home_team_color_primary'], color_dic['visitor_team_color_secondary'])
+
+        stat_entry = {
+            'title': title,
+            'chart': chatterchart_create(logger, title, subtitle, ismobile, events_dic, plotline_list),
             'table': {},
             'tabs': False
         }

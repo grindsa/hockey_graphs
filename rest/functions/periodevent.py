@@ -10,6 +10,7 @@ import django
 django.setup()
 
 from rest.models import Periodevent
+from rest.functions.helper import date_to_uts_utc
 from rest.functions.chartparameters import chart_color5, chart_color6
 
 def periodevent_add(logger, fkey, fvalue, data_dic):
@@ -80,3 +81,42 @@ def scorersfromevents_get(logger, period_events):
                     if player['jersey'] not in scorer_dic[team]['assist_list']:
                         scorer_dic[team]['assist_list'].append(player['jersey'])
     return scorer_dic
+
+
+def goalsfromevents_get(logger, period_events):
+    """ create dictionry containing scorers and assists """
+    logger.debug('scorersfromevents_get()')
+
+    goal_dic = {'home_team': [], 'visitor_team': []}
+
+    # timezone offset
+    tz_offset = 3600
+
+    # filter for goals
+    for period in period_events:
+        for event in period_events[period]:
+            # filter for goals and period events
+            if event['type'] == 'goal':
+                # differenciate between home and visitor
+                team = '{0}_team'.format(event['data']['team'])
+                # calculate uts
+                event['uts'] = date_to_uts_utc(event['data']['realTime']) - tz_offset
+                goal_dic[team].append(event)
+
+    return goal_dic
+
+def goalplotlines_get(logger, events_dic, goal_dic, home_team_color, visitor_team_color):
+    """ create plotlines from goal information """
+    logger.debug('_gamematchup_get()')
+
+    plotline_list = []
+    for team in goal_dic:
+        color = visitor_team_color
+        if team == 'home_team':
+            color = home_team_color
+
+        for goal in goal_dic[team]:
+             plotline_list.append({'color': color, 'from': goal['uts']-50, 'to': goal['uts']+50})
+             events_dic[goal['uts']] = {'created_at': goal['data']['realTime'], 'created_uts': goal['uts'], 'color': color, 'name_alternate': 'TOR: {0}'.format(goal['data']['currentScore']), 'source': 'grindsa'}
+
+    return (plotline_list, events_dic)

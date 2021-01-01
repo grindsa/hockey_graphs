@@ -3,8 +3,8 @@
 # pylint: disable=E0401, C0413
 import sys
 import os
-import twitter
 import re
+import twitter
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "hockey_graphs.settings")
 import django
@@ -12,55 +12,26 @@ django.setup()
 from rest.models import Socialnetworkevent
 from rest.functions.helper import date_to_uts_utc
 
-def _tweet_clean(text, tag_list):
+def _tweet_clean(text):
     """" clean tweets (remove hashtages and links) tweets """
     # regexp = r'https://t.co\S+|pic\.twitter\.com\S+|@\S+|#\S+'
     regexp = r'https://t.co\S+|pic\.twitter\.com\S+|@\S+'
     text_cleaned = re.sub(regexp, '', text)
     text_cleaned = re.sub(r'\s{2}', '', text_cleaned)
-    #text_cleaned = text
-    #for tag in tag_list:
-    #    text_cleaned = text_cleaned.replace(tag, '')
+
     return text_cleaned
 
-def eventspermin_combine(logger, shot_time_dic, socialnetworksevents_list, home_twitter_name, visitor_twitter_name):
+def eventspermin_combine(logger, socialnetworksevents_list, home_twitter_name, visitor_twitter_name):
     """ add team to database """
     logger.debug('eventspermin_combine()')
 
-    min_uts_list = list(shot_time_dic.values())
-
-    tweet_min_list = {}
+    tweet_sec_list = {}
     for event in socialnetworksevents_list:
-        for idx, uts in enumerate(min_uts_list, 1):
-            # check the uts from mapping dict against uts from tweet
-            # match it in the moment where the min uts is higher min is then n-1
-            if event['created_uts'] <= uts:
-                # ignore tweets from team twitter accounts
-                if not event['name_alternate'].lower() in [home_twitter_name.lower(), visitor_twitter_name.lower()]:
-                    # print(idx-1, uts, event['created_uts'], event['created_at'], event['name_alternate'], event['text_raw'].encode('utf-8'))
-                    # print('\n')
-                    if idx-1 not in tweet_min_list:
-                        tweet_min_list[idx-1] = []
-                    tweet_min_list[idx-1].append(event)
-                    break
-    return tweet_min_list
+        # ignore tweets from team twitter accounts
+        if not event['name_alternate'].lower() in [home_twitter_name.lower(), visitor_twitter_name.lower()]:
+            tweet_sec_list[event['created_uts']] = event
 
-def events_stretch(logger, events_dic):
-    """ a more or less (un)successful attempt to distribute tweets """
-    logger.debug('eventspermin_combine()')
-
-    n_events_dic = {}
-    leftover_dic = {}
-    for min_ in events_dic:
-        # resize to two events per minute max
-        if len(events_dic[min_]) > 2:
-            n_events_dic[min_] = events_dic[min_][:2]
-            leftover_dic[min_] = events_dic[min_][2:]
-        else:
-            n_events_dic[min_] = events_dic[min_]
-
-    return n_events_dic
-
+    return tweet_sec_list
 
 def socialnetworkevent_add(logger, fkey, fvalue, data_dic):
     """ add team to database """
@@ -76,7 +47,7 @@ def socialnetworkevent_add(logger, fkey, fvalue, data_dic):
     logger.debug('socialnetwork_add({0}:{1}) ended with {2}'.format(fkey, fvalue, result))
     return result
 
-def socialnetworkevent_get(logger, fkey, fvalue, vlist=('match', 'source', 'name_alternate', 'created_at', 'created_uts', 'text_raw')):
+def socialnetworkevent_get(logger, fkey, fvalue, vlist=('match', 'source', 'name', 'name_alternate', 'created_at', 'created_uts', 'text_raw')):
     """ get info for a specifc match_id """
     logger.debug('socialnetwork_get({0}:{1})'.format(fkey, fvalue))
     try:
@@ -118,7 +89,7 @@ def tweets_get(logger, twitter_api, hashtag_list):
         query = twitter_api.search.tweets(q=querystring, count=100, exclude_replies=False, tweet_mode="extended")
         for tweet_ in sorted(query['statuses'], key=lambda i: i['id'], reverse=False):
             tweet_uts = date_to_uts_utc(tweet_['created_at'])
-            text_cleaned = _tweet_clean(tweet_['full_text'], hashtag_list)
+            text_cleaned = _tweet_clean(tweet_['full_text'])
             tweet_list.append({
                 'name': tweet_['user']['name'],
                 'screen_name': tweet_['user']['screen_name'],
@@ -166,10 +137,10 @@ def _mapping_periodevents_add(logger, time_mapping_dic, periodevent_list):
                 if 'time' in event['data'] and isinstance(event['data']['time'], dict):
                     if 'from' in event['data']['time']:
                         if event['data']['time']['from']['scoreboardTime'] not in time_mapping_dic:
-                            time_mapping_dic[event['data']['time']['from']['scoreboardTime']] =  event['data']['time']['from']['realTime']
+                            time_mapping_dic[event['data']['time']['from']['scoreboardTime']] = event['data']['time']['from']['realTime']
                     if 'to' in event['data']['time']:
                         if event['data']['time']['to']['scoreboardTime'] not in time_mapping_dic:
-                            time_mapping_dic[event['data']['time']['to']['scoreboardTime']] =  event['data']['time']['to']['realTime']
+                            time_mapping_dic[event['data']['time']['to']['scoreboardTime']] = event['data']['time']['to']['realTime']
     return time_mapping_dic
 
 def _mapping_uts_convert(logger, time_mapping_dic):
@@ -222,7 +193,4 @@ def time2date_map(logger, shot_list, shift_list, periodevent_list):
     # convert "human time" to uts
     sec_mapping_uts_dic = _mapping_uts_convert(logger, time_mapping_dic)
 
-    # convert seconds to min
-    min_mapping_uts_dic = _mapping_to_min(logger, sec_mapping_uts_dic)
-
-    return min_mapping_uts_dic
+    return sec_mapping_uts_dic
