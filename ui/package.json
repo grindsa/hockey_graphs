@@ -3,7 +3,7 @@
   "version": "0.2.0",
   "description": "react based user interface for hockey_graphs REST api",
   "main": "index.js",
-  "license": "GPL-3.0-or-later",
+  "license": "GPL",
   "repository": {
     "type": "git",
     "url": "git://github.com/grindsa/hockey_graphs.git"
@@ -11,14 +11,20 @@
   "scripts": {
     "start": "webpack-dev-server",
     "compile": "webpack",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint src/**/*.js src/**/*.jsx"
   },
   "author": "",
-  "license": "GPL",
   "devDependencies": {
     "@babel/core": "^7.12.10",
     "@babel/preset-react": "^7.12.10",
     "babel-loader": "^8.2.2",
+    "eslint": "^7.17.0",
+    "eslint-config-airbnb": "^18.2.1",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jsx-a11y": "^6.4.1",
+    "eslint-plugin-react": "^7.22.0",
+    "eslint-plugin-react-hooks": "^4.2.0",
     "html-webpack-plugin": "^4.5.0",
     "webpack": "^4.44.2",
     "webpack-cli": "^3.3.12",
