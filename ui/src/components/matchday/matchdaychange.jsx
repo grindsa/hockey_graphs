@@ -1,44 +1,33 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { Calendar } from './calendar';
 
-export class ChangeMatchday extends React.Component {
-  /* this class displays a header allowing matchday changes */
+export const ChangeMatchday = (props) => {
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      showCalendar: 'none',
-    };
-    this.toggleCalendar = this.toggleCalendar.bind(this);
+  const [showCalendar, setShowCalendar] = useState('none')
+  const toggleCalendar = (event) => {
+    showCalendar: showCalendar === 'none' ? setShowCalendar('block') : setShowCalendar('none');
   }
 
-  async toggleCalendar(){
-      let { showCalendar } = this.state;
-      await this.setState({ showCalendar: showCalendar === 'none' ? 'block' : 'none' });
-  }
-
-  render(){
-    return(
-      <div className="w3-container w3-padding scolor">
-        <div className="w3-col w3-left w3-padding-top" style={{width:'10%'}}>
-            <i className="w3-padding-top fa fa-calendar-day w3-large fa-lg w3-margin-left w3-left" onClick={() => this.toggleCalendar()}/>
-            <Calendar
-              display={this.state.showCalendar}
-              toggleCalendar={this.toggleCalendar}
-              language={this.props.language}
-              matchdaylist={this.props.matchdaylist}
-              current={this.props.current}
-              date={this.props.date}
-              handleDayClick = {this.props.handleDayClick}
-            />
-        </div>
-        <div className="w3-col w3-center" style={{width:'80%'}}>
-        <HeadBar next={this.props.next}  previous={this.props.previous} date={this.props.date} onChangeMatchDay={this.props.onChangeMatchDay} />
-        </div>
-        <div className="w3-col w3-left" style={{width:'10%'}}></div>
+  return(
+    <div className="w3-container w3-padding scolor">
+      <div className="w3-col w3-left w3-padding-top" style={{width:'10%'}}>
+        <i className="w3-padding-top fa fa-calendar-day w3-large fa-lg w3-margin-left w3-left" onClick={() => toggleCalendar(event)}/>
+        <Calendar
+          display={showCalendar}
+          toggleCalendar={toggleCalendar}
+          language={props.language}
+          matchdaylist={props.matchdaylist}
+          current={props.current}
+          date={props.date}
+          handleDayClick = {props.handleDayClick}
+        />
+      </div>
+      <div className="w3-col w3-center" style={{width:'80%'}}>
+      <HeadBar next={props.next}  previous={props.previous} date={props.date} onChangeMatchDay={props.onChangeMatchDay} />
+      </div>
+      <div className="w3-col w3-left" style={{width:'10%'}}></div>
     </div>
-    )
-  }
+  )
 }
 
 const HeadBar = (props) => {
