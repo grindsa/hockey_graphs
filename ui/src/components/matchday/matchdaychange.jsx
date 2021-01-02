@@ -41,34 +41,28 @@ export class ChangeMatchday extends React.Component {
   }
 }
 
-class HeadBar extends React.Component {
-  render(){
-    return(
-      <h1 className='pseudohead'>
-         <HeadPrevious previous={this.props.previous} onChangeMatchDay={this.props.onChangeMatchDay} />
-         {this.props.date}
-         <HeadNext next={this.props.next} onChangeMatchDay={this.props.onChangeMatchDay} />
-      </h1>
-    )
+const HeadBar = (props) => {
+  return(
+    <h1 className='pseudohead'>
+       <HeadPrevious previous={props.previous} onChangeMatchDay={props.onChangeMatchDay} />
+       {props.date}
+       <HeadNext next={props.next} onChangeMatchDay={props.onChangeMatchDay} />
+    </h1>
+  )
+}
+
+const HeadPrevious = ({previous, onChangeMatchDay}) => {
+  if (previous){
+    return(<a href='#' onClick={() => onChangeMatchDay(previous)}><i className="w3-margin-right fa fa-arrow-left" /></a>)
+  }else{
+    return(<i className="w3-margin-right fa fa-arrow-left w3-opacity-max" />)
   }
 }
 
-class HeadPrevious extends React.Component {
-  render(){
-    if (this.props.previous){
-      return(<a href='#' onClick={() => this.props.onChangeMatchDay(this.props.previous)}><i className="w3-margin-right fa fa-arrow-left" /></a>)
-    }else{
-      return(<i className="w3-margin-right fa fa-arrow-left w3-opacity-max" />)
-    }
-  }
-}
-
-class HeadNext extends React.Component {
-  render(){
-    if (this.props.next){
-      return(<a href='#' onClick={() => this.props.onChangeMatchDay(this.props.next)}><i className="w3-margin-left fa fa-arrow-right" /></a>)
-    }else{
-      return(<i className="w3-margin-left fa fa-arrow-right w3-opacity-max" />)
-    }
+const HeadNext = ({next, onChangeMatchDay}) => {
+  if (next){
+    return(<a href='#' onClick={() => onChangeMatchDay(next)}><i className="w3-margin-left fa fa-arrow-right" /></a>)
+  }else{
+    return(<i className="w3-margin-left fa fa-arrow-right w3-opacity-max" />)
   }
 }
