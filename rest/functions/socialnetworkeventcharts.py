@@ -25,6 +25,7 @@ def chatterchart_create(logger, ctitle, csubtitle, ismobile, events_dic, plotban
         timestamp = uts_to_date_utc(date_to_uts_utc(event['created_at']), '%H:%M')
 
         if 'text_raw' in event:
+            timestamp = uts_to_date_utc(int(date_to_uts_utc(event['created_at']) + 3600), '%H:%M')
             # this is a regular event
             text_shorten = textwrap.shorten(event['text_raw'], variable_dic['timeline_wrap_length'])
             data_list.append({'x': cnt, 'name': timestamp, 'aname': '@{0}'.format(event['name_alternate']), 'scolor': twitter_color, 'label': text_shorten, 'description': event['text_raw'], 'dataLabels': {'style': {'fontSize': variable_dic['timeline_font_size']}}})
