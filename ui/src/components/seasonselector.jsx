@@ -1,12 +1,8 @@
 import React from 'react';
 
-export class SeasonSelector extends React.Component {
+export const SeasonSelector = (props) => {
 
-  constructor(props) {
-    super(props);
-  }
-
-  getShortcut(seasonValue, seasonlist){
+  const getShortcut = (seasonValue, seasonlist) => {
     var seasonname = ''
     var color = 'pcolor'
     if (seasonValue != 0){
@@ -27,37 +23,30 @@ export class SeasonSelector extends React.Component {
     return[seasonname, classNames]
   }
 
-  render() {
-    const [seasonname, classNames] = this.getShortcut(this.props.seasonValue, this.props.seasonlist)
-    return (
-      <div className = "w3-dropdown-hover w3-left w3-margin">
-        <div className = "pcolor">
-          <span className={classNames}>{seasonname}</span>
-        </div>
-        <SeasonList seasonlist={ this.props.seasonlist } onchangeSeason={ this.props.onchangeSeason }/>
+  const [seasonname, classNames] = getShortcut(props.seasonValue, props.seasonlist)
+  return (
+    <div className = "w3-dropdown-hover w3-left w3-margin">
+      <div className = "pcolor">
+        <span className={classNames}>{seasonname}</span>
       </div>
-    );
-  }
+      <SeasonList seasonlist={ props.seasonlist } onchangeSeason={ props.onchangeSeason }/>
+    </div>
+  );
 }
 
-class SeasonList extends React.Component {
+const SeasonList = ({seasonlist, onchangeSeason}) => {
+  /* build a list of seasons */
 
-  constructor(props) {
-    super(props);
+  let mlist
+  if (seasonlist){
+    mlist = seasonlist.map((season, index) =>{
+      return(<div key={index} className = "w3-bar-item w3-button" onClick={() => onchangeSeason(season.id)}>{season.name}</div>)
+    });
   }
 
-  render(){
-    if (this.props.seasonlist){
-      var mlist = this.props.seasonlist.map((season, index) =>{
-        return(<div key={index} className = "w3-bar-item w3-button" onClick={() => this.props.onchangeSeason(season.id)}>{season.name}</div>)
-      });
-    }else{
-      let mlist
-    }
-    return(
-      <div className = "w3-dropdown-content w3-bar-block w3-border pcolor">
-        {mlist}
-      </div>
-    )
-  }
+  return(
+    <div className = "w3-dropdown-content w3-bar-block w3-border pcolor">
+      {mlist}
+    </div>
+  )
 }
