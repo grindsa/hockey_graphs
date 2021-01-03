@@ -1,7 +1,7 @@
 import React from 'react';
 
 export const SeasonSelector = (props) => {
-
+  /* show select season */
   const getShortcut = (seasonValue, seasonlist) => {
     var seasonname = ''
     var color = 'pcolor'
@@ -36,14 +36,12 @@ export const SeasonSelector = (props) => {
 
 const SeasonList = ({seasonlist, onchangeSeason}) => {
   /* build a list of seasons */
-
   let mlist
   if (seasonlist){
     mlist = seasonlist.map((season, index) =>{
       return(<div key={index} className = "w3-bar-item w3-button" onClick={() => onchangeSeason(season.id)}>{season.name}</div>)
     });
   }
-
   return(
     <div className = "w3-dropdown-content w3-bar-block w3-border pcolor">
       {mlist}
