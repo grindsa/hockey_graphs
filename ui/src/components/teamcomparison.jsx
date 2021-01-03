@@ -8,7 +8,7 @@ import { asyncGET, isEmpty } from './sharedfunctions.js';
 import { createnostatMessage } from './localization.js';
 
 export const TeamComparison = (props) => {
-
+  // team-comparison
   const [teamcomparisonList, setTeamcomparisonList] = useState([])
   const [selectedstat, setSelectedstat] = useState(0)
 

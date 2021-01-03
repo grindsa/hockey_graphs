@@ -12,8 +12,6 @@ export const checkTcUpdate = function(tcomparison, prevtcomparison, season, prev
   if (lang !== prevlang && season !== 0){
     mupdate = true
   }
-
-
   return mupdate
 }
 
