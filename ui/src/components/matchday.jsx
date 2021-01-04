@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import { MatchStatistics } from './matchday/matchstatistics';
 import { ChangeMatchday } from './matchday/matchdaychange';
-import { changeMatchDay, checkMatchdayUpdate }  from './matchday/matchdaystateservice';
+import { changeMatchDay }  from './matchday/matchdaystateservice';
 import { asyncGET, isEmpty } from './sharedfunctions.js';
 
 export const MatchDayList = (props) => {
@@ -25,7 +25,7 @@ export const MatchDayList = (props) => {
           MatchDay = Dictionary[keyName]['matches']
           /* we need these variables in other functions thus lets put them into state */
           mdate = Dictionary[keyName]['date']
-        	currentKeyName = keyName
+          currentKeyName = keyName
           previousKeyName = Dictionary[keyName]['previous']
           nextKeyName = Dictionary[keyName]['next']
         }
@@ -69,7 +69,7 @@ export const MatchDayList = (props) => {
   }, [props.matchdays,  props.season])
 
   if(!selectedMatch){
-    const MatchDay = filterMatchDay(matchdaydic).map((Match, index) =>{
+    const MatchDay = filterMatchDay(matchdaydic).map((Match) =>{
       return(
         <tr key={Match.match_id} className="w3-hover-blue" onClick={() => handleMatchSelect(Match)}>
           <td className="w3-right-align middle" style={{width:'35%'}}>{Match.home_team_name}</td>

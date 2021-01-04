@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from "prop-types";
 
 export const LanguageSelector = ({onClick, langValue}) => {
   return (
@@ -9,3 +10,8 @@ export const LanguageSelector = ({onClick, langValue}) => {
     </div>
   );
 }
+
+LanguageSelector.propTypes = {
+    langValue: PropTypes.string.isRequired,
+    onClick: PropTypes.func.isRequired,
+};

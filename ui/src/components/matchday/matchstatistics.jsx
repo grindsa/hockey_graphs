@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react';
+import PropTypes from "prop-types";
 import { isMobileOnly } from 'react-device-detect';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
@@ -9,7 +10,7 @@ import Timeline from 'highcharts/modules/timeline.js';
 import Heatmap from 'highcharts/modules/heatmap.js';
 import { createTableHeader, createTableBody, createSelectOptions, overviewClassnames } from './matchstatisticservice.js'
 import { asyncGET, isEmpty } from '../sharedfunctions.js';
-import { createnostatMessage, createnoChartMessage } from '../localization.js';
+import { createnoChartMessage } from '../localization.js';
 
 // Load Highcharts modules
 HighchartsExporting(Highcharts);
@@ -20,7 +21,7 @@ Heatmap(Highcharts);
 
 export const MatchStatistics = (props) => {
   /* main component for matchstatistics */
-  const [match, setMatch] = useState(props.match)
+  // const [match, setMatch] = useState(props.match)
   const [matchstatistics, setMatchstatistics] = useState([])
   const [selectedstat, setSelectedstat] = useState(0)
 
@@ -53,7 +54,7 @@ export const MatchStatistics = (props) => {
       </React.Fragment>
     );
   }else{
-    const nostatmessage = createnostatMessage(props.language)
+    // const nostatmessage = createnostatMessage(props.language)
     // <div className="w3-padding-16 w3-center">{nostatmessage}</div>
     return (
       <React.Fragment>
@@ -70,13 +71,15 @@ const MatchData = (props) => {
     setActiveTab(newIndex)
   };
 
+  let home_format
+  let visitor_format
   if(props.tabs){
     if (activeTab === 0){
-      var home_format = "w3-col tablink w3-bottombar tab-red w3-hover-light-grey w3-padding my-half"
-      var visitor_format = "w3-col tablink w3-bottombar w3-hover-light-grey w3-padding my-half"
+      home_format = "w3-col tablink w3-bottombar tab-red w3-hover-light-grey w3-padding my-half"
+      visitor_format = "w3-col tablink w3-bottombar w3-hover-light-grey w3-padding my-half"
     }else{
-      var visitor_format = "w3-col tablink w3-bottombar tab-red w3-hover-light-grey w3-padding my-half"
-      var home_format = "w3-col tablink w3-bottombar w3-hover-light-grey w3-padding my-half"
+      visitor_format = "w3-col tablink w3-bottombar tab-red w3-hover-light-grey w3-padding my-half"
+      home_format = "w3-col tablink w3-bottombar w3-hover-light-grey w3-padding my-half"
     }
     return (
       <React.Fragment>
@@ -119,6 +122,11 @@ const MatchHeader = (props) => {
       </div>
   );
 }
+
+MatchHeader.propTypes = {
+    match: PropTypes.object,
+    reset: PropTypes.func.isRequired,
+};
 
 const Selector = (props) => {
   /* selector for different statistics */
@@ -175,6 +183,10 @@ const MatchOverview = ({options}) => {
   )
 }
 
+MatchOverview.propTypes = {
+    options: PropTypes.object,
+};
+
 const TableRow = (props) => {
   /* single row in matchstats we need to assing color classes based on values */
   var [leftClassNames, rightClassNames] = overviewClassnames(props.leftvalue, props.rightvalue)
@@ -188,6 +200,14 @@ const TableRow = (props) => {
     </React.Fragment>
   )
 }
+
+TableRow.propTypes = {
+    leftvalue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    leftwidth: PropTypes.string,
+    rightvalue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    rightwidth: PropTypes.string,
+    statname: PropTypes.string,
+};
 
 const Table = ({data}) => {
   /* render table with data */

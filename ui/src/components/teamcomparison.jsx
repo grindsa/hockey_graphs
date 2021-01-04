@@ -2,8 +2,7 @@ import React, {useState, useEffect} from 'react';
 import { isMobileOnly } from 'react-device-detect';
 import { Chart } from './teamcomparison/chart';
 import { Selector } from './teamcomparison/selector';
-
-import { checkTcUpdate }  from './teamcomparison/teamcomparisonstateservice.js';
+// import { checkTcUpdate }  from './teamcomparison/teamcomparisonstateservice.js';
 import { asyncGET, isEmpty } from './sharedfunctions.js';
 import { createnostatMessage } from './localization.js';
 

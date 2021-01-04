@@ -1,32 +1,33 @@
 import React from 'react';
-import { isEmpty } from '../sharedfunctions.js';
 
 export const createTableHeader = function(data){
   /* create database header */
+  let tableheader
   if (data){
     if(data.tooltip){
-      var tableheader = data.th.map((th, index) =>{
+      tableheader = data.th.map((th, index) =>{
         return(
           <th key={index} className="w3-tooltip {data.align[index]}">{th} <span className="w3-text w3-tag w3-round-xlarge mytooltip pcolor">{data.tooltip[index]}</span></th>
         )
       });
     }else{
-      var tableheader = data.th.map((th, index) =>{
+      tableheader = data.th.map((th, index) =>{
         return(
           <th key={index} className="w3-tooltip {data.align[index]}">{th}</th>
         )
       });
     }
   }else{
-    var tableheader = null;
+    tableheader = null;
   }
   return tableheader
 }
 
 export const createTableBody = function(data){
-  /* create database header */
+  /* create bopdy */
+  let tablebody
   if (data){
-    var tablebody = data.td.map((tr, index) =>{
+    tablebody = data.td.map((tr, index) =>{
       var trow = tr.map((td, index) =>{
         const image = td.toString().includes("img")
         const badge = td.toString().includes("w3-badge line")
@@ -50,7 +51,7 @@ export const createTableBody = function(data){
       )
     });
   }else{
-    var tablebody = null;
+    tablebody = null;
   }
   return tablebody
 }
@@ -66,32 +67,33 @@ export const createSelectOptions = function(data){
 }
 
 export const overviewClassnames = function(leftValue, rightValue){
-  /* specify classes for matchstat overview*/
-
+  /* specify classes for matchstat overview compare shots/gols/pp */
+  let leftcolor
+  let rightcolor
   if (leftValue === 0 && rightValue !== 0){
     /*  cases like ppgoal visitor_team) */
-    var leftcolor = ''
-    var rightcolor = ' pcolor'
+    leftcolor = ''
+    rightcolor = ' pcolor'
   }else if (leftValue !== 0 && rightValue === 0){
     /*  cases like ppgoal home_team) */
-    var leftcolor = ' pcolor'
-    var rightcolor = ''
+    leftcolor = ' pcolor'
+    rightcolor = ''
   }else if (leftValue === 0 && rightValue === 0){
     /* both values */
-    var leftcolor = ''
-    var rightcolor = ''
+    leftcolor = ''
+    rightcolor = ''
   }else if(leftValue === rightValue) {
     /* equal values but not zero */
-    var leftcolor = ' scolor'
-    var rightcolor = ' scolor'
+    leftcolor = ' scolor'
+    rightcolor = ' scolor'
   }else if(leftValue > rightValue) {
     /* home team has better value than visitor */
-    var leftcolor = ' pcolor'
-    var rightcolor = ' scolor'
+    leftcolor = ' pcolor'
+    rightcolor = ' scolor'
   }else{
     /* vistior team does better than home_team */
-    var leftcolor = ' scolor'
-    var rightcolor = ' pcolor'
+    leftcolor = ' scolor'
+    rightcolor = ' pcolor'
   }
   /* final classnames */
   var leftClassNames = 'w3-container w3-right-align w3-right' + leftcolor

@@ -1,11 +1,13 @@
 import React, {useState} from 'react';
+import PropTypes from "prop-types";
 import { Calendar } from './calendar';
 
 export const ChangeMatchday = (props) => {
 
   const [showCalendar, setShowCalendar] = useState('none')
-  const toggleCalendar = (event) => {
-    showCalendar: showCalendar === 'none' ? setShowCalendar('block') : setShowCalendar('none');
+
+  const toggleCalendar = () => {
+    setShowCalendar(showCalendar === 'none' ? 'block' : 'none')
   }
 
   return(
@@ -54,4 +56,26 @@ const HeadNext = ({next, onChangeMatchDay}) => {
   }else{
     return(<i className="w3-margin-left fa fa-arrow-right w3-opacity-max" />)
   }
+}
+
+ChangeMatchday.propTypes = {
+    current: PropTypes.string,
+    next: PropTypes.string,
+    previous: PropTypes.string,
+    date: PropTypes.string.isRequired,
+    language: PropTypes.string.isRequired,
+    matchdaylist: PropTypes.array.isRequired,
+    onChangeMatchDay: PropTypes.func.isRequired,
+    handleDayClick: PropTypes.func.isRequired,
+};
+
+HeadBar.propTypes = {
+    date: PropTypes.string,
+    next: PropTypes.string,
+    previous: PropTypes.string,
+    onChangeMatchDay: PropTypes.func.isRequired,
+}
+
+ChangeMatchday.propTypes = {
+    onChangeMatchDay: PropTypes.func.isRequired,
 }

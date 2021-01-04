@@ -1,56 +1,53 @@
 export const creatstatList = function(language){
   /* build statnames based on language setting */
+  var statlist = [{id: 0, name: 'Match statistics'}, {id: 1, name: 'Team benchmarks'}]
   if (language == 'DE'){
-    var statlist = [{id: 0, name: 'Spielstatistiken'}, {id: 1, name: 'Teamvergleich'}]
-  }else{
-    var statlist = [{id: 0, name: 'Match statistics'}, {id: 1, name: 'Team benchmarks'}]
+    statlist = [{id: 0, name: 'Spielstatistiken'}, {id: 1, name: 'Teamvergleich'}]
   }
   return statlist
 }
 
 export const createnostatMessage = function(language){
   /* build no message based on language setting */
+  var nostatmessage = 'No statistics available.'
   if (language == 'DE'){
-    var nostatmessage = 'Keine Statistiken verfügbar'
-  }else{
-    var nostatmessage = 'No statistics available.'
+    nostatmessage = 'Keine Statistiken verfügbar'
   }
   return nostatmessage
 }
 
 export const createnoChartMessage = function(language){
   /* build no message based on language setting */
+  var nostatmessage = 'No data to render chart.'
   if (language == 'DE'){
-    var nostatmessage = 'Keine Daten verfügbar.'
-  }else{
-    var nostatmessage = 'No data to render chart.'
+    nostatmessage = 'Keine Daten verfügbar.'
   }
   return nostatmessage
 }
 
 
 export const createTcSliderText = function(language, select, max){
+  let slidermessage
   if (language == 'DE'){
     if (select === max) {
-      var slidermessage = 'Gesamte Saison'
+      slidermessage = 'Gesamte Saison'
     /* }else if (max - select === 1) {
       var slidermessage = 'letztes Spiel' */
     }else{
-      var slidermessage = select + '. Spieletag'
+      slidermessage = select + '. Spieletag'
     }
   }else{
     if (select === max) {
-      var slidermessage = 'Full Season'
+      slidermessage = 'Full Season'
     }else if (select === 1) {
-      var slidermessage = '1st Matchday'
+      slidermessage = '1st Matchday'
     }else if (select === 2) {
-      var slidermessage = '2nd Matchday'
+      slidermessage = '2nd Matchday'
     }else if (select === 3) {
-      var slidermessage = '3rd Matchday'
+      slidermessage = '3rd Matchday'
     }else{
-      var slidermessage = select + 'th Matchday'
+      slidermessage = select + 'th Matchday'
     }
   }
-
   return slidermessage
 }

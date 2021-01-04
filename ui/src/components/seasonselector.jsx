@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from "prop-types";
 
 export const SeasonSelector = (props) => {
   /* show select season */
@@ -34,6 +35,12 @@ export const SeasonSelector = (props) => {
   );
 }
 
+SeasonSelector.propTypes = {
+    seasonValue: PropTypes.number.isRequired,
+    seasonlist: PropTypes.array,
+    onchangeSeason: PropTypes.func.isRequired,
+};
+
 const SeasonList = ({seasonlist, onchangeSeason}) => {
   /* build a list of seasons */
   let mlist
@@ -48,3 +55,8 @@ const SeasonList = ({seasonlist, onchangeSeason}) => {
     </div>
   )
 }
+
+SeasonList.propTypes = {
+    seasonlist: PropTypes.array,
+    onchangeSeason: PropTypes.func.isRequired,
+};

@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from "prop-types";
 
 export const StatSelector = (props) => {
   // show selected stat-option
@@ -12,14 +13,19 @@ export const StatSelector = (props) => {
   );
 }
 
+StatSelector.propTypes = {
+    statValue: PropTypes.number.isRequired,
+    statlist: PropTypes.array.isRequired,
+    onchangeStat: PropTypes.func.isRequired,
+};
+
 const StatList = ({statlist, onchangeStat}) => {
   // generate list of stats
+  let mlist
   if (statlist){
-    var mlist = statlist.map((stat, index) =>{
+    mlist = statlist.map((stat, index) =>{
       return(<div key={index} className = "w3-bar-item w3-button" onClick={() => onchangeStat(stat.id)}>{stat.name}</div>)
     });
-  }else{
-    let mlist
   }
   return(
     <div className = "w3-dropdown-content w3-bar-block w3-border pcolor">
@@ -27,3 +33,8 @@ const StatList = ({statlist, onchangeStat}) => {
     </div>
   )
 }
+
+StatList.propTypes = {
+    statlist: PropTypes.array.isRequired,
+    onchangeStat: PropTypes.func.isRequired,
+};

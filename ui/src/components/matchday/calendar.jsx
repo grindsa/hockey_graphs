@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react';
+import PropTypes from "prop-types";
 import DayPicker from 'react-day-picker';
 import 'react-day-picker/lib/style.css';
 
@@ -8,7 +9,7 @@ export const Calendar = (props) => {
   const [firstMatchDay, setFirstMatchDay] = useState(null)
   const [lastMatchDay, setLastMatchDay] = useState(null)
   const [disabledDaysList, setDisabledDaysList] = useState([])
-  const [showCalendar, setShowCalendar] = useState(false)
+  // const [showCalendar, setShowCalendar] = useState(false)
 
   const createdisabledDaysList = (matchdaylist) => {
     var disabledDaysList = []
@@ -29,7 +30,7 @@ export const Calendar = (props) => {
     if (props.matchdaylist.length > 0){
       setFirstMatchDay(props.matchdaylist[0])
       setLastMatchDay(props.matchdaylist[props.matchdaylist.length - 1])
-      setShowCalendar(true)
+      // setShowCalendar(true)
       const disabledDaysList = createdisabledDaysList(props.matchdaylist.sort())
       setDisabledDaysList(disabledDaysList)
     }
@@ -53,7 +54,7 @@ export const Calendar = (props) => {
     ]};
 
   const WEEKDAYS_LONG = { DE: ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag']};
-  const FIRST_DAY_OF_WEEK = { DE: 1};
+  // const FIRST_DAY_OF_WEEK = { DE: 1};
   const LABELS = {DE: { nextMonth: 'Nächster Monat', previousMonth: 'vorheriger Monat' }};
   return (
     <div className="w3-modal" style={{display: props.display}}>
@@ -79,3 +80,12 @@ export const Calendar = (props) => {
     </div>
   )
 }
+
+Calendar.propTypes = {
+    current: PropTypes.string,
+    display: PropTypes.string.isRequired,
+    language: PropTypes.string.isRequired,
+    matchdaylist: PropTypes.array.isRequired,
+    handleDayClick: PropTypes.func.isRequired,
+    toggleCalendar: PropTypes.func.isRequired,
+};

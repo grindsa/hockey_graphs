@@ -51,10 +51,10 @@ export const Chart = (props) => {
     // get the number of dataupdates as this will be the max-val for the slider
     const slidermaxval = Object.keys(props.options.updates).length
     const slidertext = createTcSliderText(props.language, slidervalue, slidermaxval)
-    var className = ""
+    var classNames = ""
 
     if (isMobile) {
-      var classNames = "w3-center w3-margin-left w3-margin-right"
+      classNames = "w3-center w3-margin-left w3-margin-right"
     }
     return (
       <React.Fragment>
