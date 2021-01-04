@@ -1,11 +1,11 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 
 import Cookies from 'universal-cookie';
 import { LanguageSelector } from '../components/languageselector';
 import { SeasonSelector } from '../components/seasonselector';
 import { StatSelector } from '../components/statselector';
 import { Canvas } from '../components/canvas';
-import { asyncGET, CookieSet } from '../components/sharedfunctions.js';
+import { asyncGET, CookieSet, isEmpty } from '../components/sharedfunctions.js';
 import { config } from '../components/constants.js';
 import { creatstatList } from '../components/localization.js'
 import '../css/mytheme.css';
@@ -15,97 +15,89 @@ const app_name = 'hockeygraphs@grinda'
 // entry url for  backend
 const rest_url = config.url.API_URL
 
-export class App extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      endpoints: [],
-      seasonlist: [],
-      language: 'DE',
-      selectedSeason: 0,
-      StatList: [{id: 0, name: 'Spielstatistiken'}, {id: 1, name: 'Teamvergleich'}],
-      selectedStat: 0
-    }
+export const App = (props) => {
 
-    this.changeSeason = this.changeSeason.bind(this);
-    this.changeStat = this.changeStat.bind(this);
+  const [endpoints, setEndpoints] = useState([])
+  const [seasonlist, setSeasonlist] = useState([])
+  const [statList, setStatList] = useState([{id: 0, name: 'Spielstatistiken'}, {id: 1, name: 'Teamvergleich'}])
+  const [language, setLanguage] = useState('DE')
+  const [selectedSeason, setSelectedSeason] = useState(0)
+  const [selectedStat, setSelectedStat] = useState(0)
+
+  const changeSeason = (newSeason) => {
+    // change season
+    setSelectedSeason(newSeason)
+    // update cookie
+    CookieSet(app_name, {'selectedStat': selectedStat, 'endpoints': endpoints, 'language': language, 'selectedSeason': selectedSeason})
   }
 
-  async componentDidMount(){
+  const changeStat = (newStat) => {
+    // change stat
+    setSelectedStat(newStat)
+    // update cookie
+    CookieSet(app_name, {'selectedStat': selectedStat, 'endpoints': endpoints, 'language': language, 'selectedSeason': selectedSeason})
+  }
 
-    // get rest endpoints
-    const endpoints = await asyncGET(rest_url, 'endpoints')
-    this.setState({endpoints: endpoints });
-    // get and set seasonlist
-    const seasonlist = await asyncGET(endpoints.seasons)
-    await this.setState({seasonlist: seasonlist});
+  const toggleLanguage = () => {
+    // change language
+    setLanguage(language === 'DE' ? 'EN' : 'DE')
+  }
 
+  useEffect(() => {
+    // similar to component did update fetchendpoint addresses
+    const ep_get = async () => {
+      const endpoints = await asyncGET(rest_url, 'endpoints')
+      if (!isEmpty(endpoints)){
+        setEndpoints(endpoints)
+      }}
+    ep_get()
     // parse cookie and read data
     const cookie = new Cookies();
     if (cookie.get(app_name)){
-      const langValue = cookie.get(app_name).language
-      await this.setState({language: langValue });
-
-      var selectedSeason = cookie.get(app_name).selectedSeason
-      if(selectedSeason){
-        await this.setState({selectedSeason: selectedSeason});
-      }
-
-      /* var selectedStat = cookie.get(app_name).selectedStat
-      if(selectedStat){
-        await this.setState({selectedStat: selectedStat});
-      } */
-
+      // get and set language
+      const languageValue = cookie.get(app_name).language
+      setLanguage(languageValue)
+      // get and set season
+      const selectedseasonValue = cookie.get(app_name).selectedSeason
+      setSelectedSeason(selectedseasonValue)
     }
+  }, [])
 
-    // set default value (no cookie)
-    if (this.state.selectedSeason === 0){
-      var seasonid = this.state.seasonlist.results[this.state.seasonlist.count-1].id
-      await this.setState({selectedSeason: seasonid});
-    }
-
-    // create list of stat based on language preferences
-    const statlist = creatstatList(this.state.language)
-    this.setState({StatList: statlist });
-  }
-
-  async changeSeason(newSeason){
-    // change season
-    await this.setState({selectedSeason: newSeason})
+  useEffect(() => {
+    // monitor updates of language var and change statlist
+    const newstatlist = creatstatList(language)
+    setStatList(newstatlist)
     // update cookie
-    CookieSet(app_name, this.state)
-  }
+    CookieSet(app_name, {'selectedStat': selectedStat, 'endpoints': endpoints, 'language': language, 'selectedSeason': selectedSeason})
+    },[language])
 
-  async changeStat(newStat){
-    // change stat
-    await this.setState({selectedStat: newStat})
+  useEffect(() => {
+    // endpoint have changed - update season-list
+    const sea_get = async () => {
+      const seasonlist = await asyncGET(endpoints.seasons)
+      if (!isEmpty(seasonlist)){
+        setSeasonlist(seasonlist)
+        // there is no season list defined in cookie take latest seasion
+        if (selectedSeason === 0){
+          var seasonid = seasonlist.results[seasonlist.count-1].id
+          setSelectedSeason(seasonid)
+        }
+      }}
+    sea_get()
+
     // update cookie
-    CookieSet(app_name, this.state)
-  }
+    CookieSet(app_name, {'selectedStat': selectedStat, 'endpoints': endpoints, 'language': language, 'selectedSeason': selectedSeason})
+    },[endpoints])
 
-  async toggleLanguage(){
-    let { language } = this.state;
-    // change language
-    await this.setState({ language: language === 'DE' ? 'EN' : 'DE' });
-    // update cookie
-    CookieSet(app_name, this.state)
-    // create list of stat based on language preferences
-    const statlist = creatstatList(this.state.language)
-    this.setState({StatList: statlist });
-  }
-
-  render() {
-    // <i className="far fa-square fa-lg w3-xlarge  w3-bar-item" />
-    return (
-      <div className="mainwidth">
-        <div className="w3-bar pcolor">
-          <SeasonSelector seasonValue={this.state.selectedSeason} seasonlist={ this.state.seasonlist.results } onchangeSeason={ this.changeSeason } />
-          <StatSelector statlist={this.state.StatList} statValue={this.state.selectedStat} onchangeStat={ this.changeStat }/>
-          <a href="https://github.com/grindsa/hockey_graphs"><span className="w3-margin-right w3-round pcolor w3-right w3-margin-top">?</span></a>
-          <LanguageSelector langValue={ this.state.language } onClick={() => this.toggleLanguage()} />
-        </div>
-        <Canvas state={this.state} />
+  return (
+    <div className="mainwidth">
+      <div className="w3-bar pcolor">
+        <SeasonSelector seasonValue={selectedSeason} seasonlist={ seasonlist.results } onchangeSeason={ changeSeason } />
+        <StatSelector statlist={ statList} statValue={ selectedStat} onchangeStat={ changeStat }/>
+        <a href="https://github.com/grindsa/hockey_graphs"><span className="w3-margin-right w3-round pcolor w3-right w3-margin-top">?</span></a>
+        <LanguageSelector langValue={language } onClick={() => toggleLanguage()} />
       </div>
-    );
-  }
+      <Canvas selectedStat={ selectedStat } endpoints={ endpoints } language={ language } selectedSeason={ selectedSeason } />
+    </div>
+  );
 }
