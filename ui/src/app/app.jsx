@@ -15,7 +15,7 @@ const app_name = 'hockeygraphs@grinda'
 // entry url for  backend
 const rest_url = config.url.API_URL
 
-export const App = (props) => {
+export const App = () => {
 
   const [endpoints, setEndpoints] = useState([])
   const [seasonlist, setSeasonlist] = useState([])
@@ -28,14 +28,14 @@ export const App = (props) => {
     // change season
     setSelectedSeason(newSeason)
     // update cookie
-    CookieSet(app_name, {'selectedStat': selectedStat, 'endpoints': endpoints, 'language': language, 'selectedSeason': selectedSeason})
+    CookieSet(app_name, {'selectedStat': selectedStat, 'endpoints': endpoints, 'language': language, 'selectedSeason': newSeason})
   }
 
   const changeStat = (newStat) => {
     // change stat
     setSelectedStat(newStat)
     // update cookie
-    CookieSet(app_name, {'selectedStat': selectedStat, 'endpoints': endpoints, 'language': language, 'selectedSeason': selectedSeason})
+    CookieSet(app_name, {'selectedStat': newStat, 'endpoints': endpoints, 'language': language, 'selectedSeason': selectedSeason})
   }
 
   const toggleLanguage = () => {
