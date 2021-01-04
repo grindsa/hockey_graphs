@@ -29,6 +29,7 @@ module.exports = {
   resolve: {
     extensions: [ '.js', '.jsx' ]
   },
+  devtool: 'inline-source-map',
   plugins: [
     new HtmlWebPackPlugin({
       template: path.join(__dirname, 'src', 'index.html'),
