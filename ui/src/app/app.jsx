@@ -1,13 +1,15 @@
 import React, {useState, useEffect} from 'react';
-
 import Cookies from 'universal-cookie';
 import { LanguageSelector } from '../components/languageselector';
 import { SeasonSelector } from '../components/seasonselector';
 import { StatSelector } from '../components/statselector';
+import { MatchDayList } from '../components/matchday';
+import { TeamComparison } from '../components/teamcomparison';
 import { Canvas } from '../components/canvas';
 import { asyncGET, CookieSet, isEmpty } from '../components/sharedfunctions.js';
 import { config } from '../components/constants.js';
 import { creatstatList } from '../components/localization.js'
+import { useRoutes, A } from "hookrouter";
 import '../css/mytheme.css';
 
 const app_name = 'hockeygraphs@grinda'
@@ -89,6 +91,11 @@ export const App = () => {
     CookieSet(app_name, {'selectedStat': selectedStat, 'endpoints': endpoints, 'language': language, 'selectedSeason': selectedSeason})
     },[endpoints])
 
+  const routes = {
+      '/matchstatistics': () => <MatchDayList />,
+      '/teamcomparison/:stat/:season': ({stat, season}) => <TeamComparison  teamcomparison={ endpoints.teamcomparison } language={ language } season={ season } stat={stat} />,
+    };
+  const routeResult = useRoutes(routes);
   return (
     <div className="mainwidth">
       <div className="w3-bar pcolor">
@@ -97,7 +104,11 @@ export const App = () => {
         <a href="https://github.com/grindsa/hockey_graphs"><span className="w3-margin-right w3-round pcolor w3-right w3-margin-top">?</span></a>
         <LanguageSelector langValue={language } onClick={() => toggleLanguage()} />
       </div>
-      <Canvas selectedStat={ selectedStat } endpoints={ endpoints } language={ language } selectedSeason={ selectedSeason } />
+      <div>
+      {routeResult}
+      </div>
     </div>
   );
 }
+
+// <Canvas selectedStat={ selectedStat } endpoints={ endpoints } language={ language } selectedSeason={ selectedSeason } />

@@ -31,6 +31,14 @@ export const TeamComparison = (props) => {
     }
   }, [props.teamcomparison, props.season, props.language])
 
+
+  useEffect(() => {
+      if (props.stat){
+        console.log('foo')
+        setSelectedstat(props.stat-1)
+      }
+  }, [props.stat, props.teamcomparisonList])
+
   const nostatmessage = createnostatMessage(props.language)
   if (!isEmpty(teamcomparisonList)){
     // get chart to be shown
