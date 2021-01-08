@@ -5,6 +5,7 @@ import { Selector } from './teamcomparison/selector';
 // import { checkTcUpdate }  from './teamcomparison/teamcomparisonstateservice.js';
 import { asyncGET, isEmpty } from './sharedfunctions.js';
 import { createnostatMessage } from './localization.js';
+import { navigate } from "hookrouter";
 
 export const TeamComparison = (props) => {
   // team-comparison
@@ -14,7 +15,8 @@ export const TeamComparison = (props) => {
   const handleStatChange = (event) => {
     const newValue = event.target.value
     if (selectedstat !== newValue){
-      setSelectedstat(newValue)
+      const linkValue =  parseInt(newValue) + 1
+      navigate('/teamcomparison/' + props.season + '/' + linkValue)
     }
   }
 
@@ -34,7 +36,6 @@ export const TeamComparison = (props) => {
 
   useEffect(() => {
       if (props.stat){
-        console.log('foo')
         setSelectedstat(props.stat-1)
       }
   }, [props.stat, props.teamcomparisonList])
