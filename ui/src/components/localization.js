@@ -1,8 +1,8 @@
 export const creatstatList = function(language){
   /* build statnames based on language setting */
-  var statlist = [{id: 0, name: 'Match statistics'}, {id: 1, name: 'Team benchmarks'}]
+  var statlist = [{id: 0, name: 'Match statistics', route: '/matchstatistics'}, {id: 1, name: 'Team benchmarks', route: '/teamcomparison'}]
   if (language == 'DE'){
-    statlist = [{id: 0, name: 'Spielstatistiken'}, {id: 1, name: 'Teamvergleich'}]
+    statlist = [{id: 0, name: 'Spielstatistiken', route: '/matchstatistics'}, {id: 1, name: 'Teamvergleich', route: '/teamcomparison'}]
   }
   return statlist
 }
