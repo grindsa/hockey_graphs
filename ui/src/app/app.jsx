@@ -3,7 +3,7 @@ import Cookies from 'universal-cookie';
 import { LanguageSelector } from '../components/languageselector';
 import { SeasonSelector } from '../components/seasonselector';
 import { StatSelector } from '../components/statselector';
-import { SiteRoutes } from '../components/routes'
+import { Routes } from '../components/routes'
 import { useRoutes } from "hookrouter";
 // import { Canvas } from '../components/canvas';
 import { asyncGET, CookieSet, isEmpty } from '../components/sharedfunctions.js';
@@ -91,7 +91,7 @@ export const App = () => {
     CookieSet(app_name, {'selectedStat': selectedStat, 'endpoints': endpoints, 'language': language, 'selectedSeason': selectedSeason})
     },[endpoints])
 
-  const routes = SiteRoutes(endpoints, language, selectedSeason, selectedStat, setSelectedSeason)
+  const routes = Routes(endpoints, language, selectedSeason, selectedStat, setSelectedSeason)
 
   const routeResult = useRoutes(routes);
   return (
@@ -108,5 +108,3 @@ export const App = () => {
     </div>
   );
 }
-
-// <Canvas selectedStat={ selectedStat } endpoints={ endpoints } language={ language } selectedSeason={ selectedSeason } />
