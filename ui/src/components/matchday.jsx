@@ -1,8 +1,9 @@
 import React, {useState, useEffect} from 'react';
 import { MatchStatistics } from './matchday/matchstatistics';
 import { ChangeMatchday } from './matchday/matchdaychange';
-import { changeMatchDay }  from './matchday/matchdaystateservice';
+import { changeMatchDay, getMatch }  from './matchday/matchdaystateservice';
 import { asyncGET, isEmpty } from './sharedfunctions.js';
+import { navigate } from "hookrouter";
 
 export const MatchDayList = (props) => {
   // class which creates and displays list of matches for cert day
@@ -28,6 +29,7 @@ export const MatchDayList = (props) => {
           currentKeyName = keyName
           previousKeyName = Dictionary[keyName]['previous']
           nextKeyName = Dictionary[keyName]['next']
+          break;
         }
     }
     return  MatchDay
@@ -42,6 +44,7 @@ export const MatchDayList = (props) => {
   const handleMatchSelect = (selectedMatch) => {
     /* handler triggerd by clickcing on a single match */
     setSelectedMatch(selectedMatch)
+    navigate('/matchstatistics/' + props.season + '/' + selectedMatch['match_id'])
   }
 
   const handleDayClick = (day) => {
@@ -53,6 +56,10 @@ export const MatchDayList = (props) => {
   const resetMatchSelect = () => {
     /* handler triggered by back button in matchstatistics */
     setSelectedMatch(null)
+    if(props.matchid){
+      // we need to navigate if we get a reset and a match
+      navigate('/matchstatistics/' + props.season )
+    }
   }
 
   useEffect(() => {
@@ -67,6 +74,16 @@ export const MatchDayList = (props) => {
     }
 
   }, [props.matchdays,  props.season])
+
+  if(props.matchid && !isEmpty(matchdaydic)) {
+    const [matchday, selMatch] = getMatch(matchdaydic, props.matchid)
+    if (selMatch != selectedMatch){
+      handleMatchSelect(selMatch)
+    }
+    if (matchday != currentKeyName){
+      handleMatchDayChange(matchday)
+    }
+  }
 
   if(!selectedMatch){
     const MatchDay = filterMatchDay(matchdaydic).map((Match) =>{

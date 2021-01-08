@@ -27,3 +27,20 @@ export const checkMatchdayUpdate = function(matchdays, prevmatchdays, season, pr
   }
   return mupdate
 }
+
+export const getMatch = function(matchdaydic, matchid){
+  // lookup match for daydic based on matchid
+  console.log('firein')
+  let selectedMatch
+  let matchDay
+  for (var matchday in matchdaydic){
+    for (var match in matchdaydic[matchday]['matches']){
+      if (matchdaydic[matchday]['matches'][match]['match_id'] === matchid){
+        selectedMatch = matchdaydic[matchday]['matches'][match]
+        matchDay = matchday
+        break;
+      }
+    }
+  }
+  return [matchDay, selectedMatch]
+}
