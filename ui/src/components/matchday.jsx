@@ -6,6 +6,7 @@ import { asyncGET, isEmpty } from './sharedfunctions.js';
 import { navigate } from "hookrouter";
 
 export const MatchDayList = (props) => {
+
   // class which creates and displays list of matches for cert day
   const [matchdaydic, setMatchdaydic] = useState({})
   const [selectedMatch, setSelectedMatch] = useState(null)
@@ -41,12 +42,12 @@ export const MatchDayList = (props) => {
     setCurrentKeyName(newDay)
   }
 
-  const handleMatchSelect = (selectedMatch, stat) => {
+  const handleMatchSelect = (selectedMatch, stat=null, redirect=true) => {
     /* handler triggerd by clickcing on a single match */
     setSelectedMatch(selectedMatch)
-    if (stat){
+    if (stat && redirect){
       navigate('/matchstatistics/' + props.season + '/' + selectedMatch['match_id'] + '/' + stat);
-    }else{
+    }else if (redirect){
       navigate('/matchstatistics/' + props.season + '/' + selectedMatch['match_id'] )
     }
   }
@@ -82,7 +83,7 @@ export const MatchDayList = (props) => {
   if(props.matchid && !isEmpty(matchdaydic)) {
     const [matchday, selMatch] = getMatch(matchdaydic, props.matchid)
     if (selMatch != selectedMatch){
-      handleMatchSelect(selMatch, props.stat)
+      handleMatchSelect(selMatch, props.stat, false)
     }
     if (matchday != currentKeyName){
       handleMatchDayChange(matchday)

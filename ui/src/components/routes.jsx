@@ -47,16 +47,21 @@ export const Routes = (endpoints, language, selectedSeason, setSelectedSeason, s
       '/matchstatistics': () => <MatchDayList matchdays={endpoints.matchdays} matchstatistics={endpoints.matchstatistics} language={language} season={selectedSeason} />,
       // just the season
       '/matchstatistics/:season': ({season}) => mdl_route(endpoints.matchdays, endpoints.matchstatistics, language, selectedSeason, season, setSelectedSeason, selectedStat, changeStat, null, null),
+      '/matchstatistics/:season/': ({season}) => mdl_route(endpoints.matchdays, endpoints.matchstatistics, language, selectedSeason, season, setSelectedSeason, selectedStat, changeStat, null, null),
       // season and match
       '/matchstatistics/:season/:matchid': ({season, matchid}) => mdl_route(endpoints.matchdays, endpoints.matchstatistics, language, selectedSeason, season, setSelectedSeason, selectedStat, changeStat, matchid, null),
+      '/matchstatistics/:season/:matchid/': ({season, matchid}) => mdl_route(endpoints.matchdays, endpoints.matchstatistics, language, selectedSeason, season, setSelectedSeason, selectedStat, changeStat, matchid, null),
       // season, match and stat
       '/matchstatistics/:season/:matchid/:stat': ({season, matchid, stat}) => mdl_route(endpoints.matchdays, endpoints.matchstatistics, language, selectedSeason, season, setSelectedSeason, selectedStat, changeStat, matchid, stat),
+      '/matchstatistics/:season/:matchid/:stat/': ({season, matchid, stat}) => mdl_route(endpoints.matchdays, endpoints.matchstatistics, language, selectedSeason, season, setSelectedSeason, selectedStat, changeStat, matchid, stat),
 
       // just the path
       '/teamcomparison': () => tc_route(endpoints.teamcomparison, language, selectedSeason, selectedSeason, setSelectedSeason, selectedStat, changeStat, "1"),
       // just the season
       '/teamcomparison/:season': ({season}) => tc_route(endpoints.teamcomparison, language, selectedSeason, season, setSelectedSeason, selectedStat, changeStat, "1"),
+      '/teamcomparison/:season/': ({season}) => tc_route(endpoints.teamcomparison, language, selectedSeason, season, setSelectedSeason, selectedStat, changeStat, "1"),
       // season and statnumber
-      '/teamcomparison/:season/:stat': ({season, stat}) => tc_route(endpoints.teamcomparison, language, selectedSeason, season, setSelectedSeason, selectedStat, changeStat, stat)
+      '/teamcomparison/:season/:stat': ({season, stat}) => tc_route(endpoints.teamcomparison, language, selectedSeason, season, setSelectedSeason, selectedStat, changeStat, stat),
+      '/teamcomparison/:season/:stat/': ({season, stat}) => tc_route(endpoints.teamcomparison, language, selectedSeason, season, setSelectedSeason, selectedStat, changeStat, stat)
     })
 }

@@ -4,7 +4,7 @@ import { LanguageSelector } from '../components/languageselector';
 import { SeasonSelector } from '../components/seasonselector';
 import { StatSelector } from '../components/statselector';
 import { Routes } from '../components/routes'
-import { useRoutes, navigate } from "hookrouter";
+import { navigate, useRoutes, useRedirect } from "hookrouter";
 // import { Canvas } from '../components/canvas';
 import { asyncGET, CookieSet, isEmpty } from '../components/sharedfunctions.js';
 import { config } from '../components/constants.js';
@@ -99,6 +99,11 @@ export const App = () => {
     },[endpoints])
 
   const routes = Routes(endpoints, language, selectedSeason, setSelectedSeason, selectedStat, changeStat)
+
+  // define redirects
+  // useRedirect('/', '/matchstatistics')
+  useRedirect('/matchstatistics/', '/matchstatistics')
+  useRedirect('/teamcomparison/', '/teamcomparison')
 
   const routeResult = useRoutes(routes);
   return (
