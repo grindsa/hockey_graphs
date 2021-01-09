@@ -58,7 +58,7 @@ def _inputparameters_get(logger, parameter_file, start_val, max_val, step):
 
     # quantifier dictionary
     input_parameters_ = {
-        'shot_pctg': {'start': start_val, 'max': max_val, 'step': step},
+        'shots_pctg': {'start': start_val, 'max': max_val, 'step': step},
         'handness_pctg': {'start': start_val, 'max': max_val, 'step': step},
         'handness_shots_pctg': {'start': start_val, 'max': max_val, 'step': step},
         'rb_pctg': {'start': start_val, 'max': max_val, 'step': step},
@@ -123,8 +123,8 @@ if __name__ == "__main__":
     # MATCH_LIST = [1820]
 
     START_VAL = 0.5
-    MAX_VAL = 2.5
-    STEP = 0.2
+    MAX_VAL = 3.0
+    STEP = 0.5
 
     # START_VAL = 1.0
     # MAX_VAL = 1.1
@@ -150,13 +150,48 @@ if __name__ == "__main__":
 
     # initialze counter
     G_CNT = 0
-    for shots_pctg in np.arange(input_parameters['shot_pctg']['start'], input_parameters['shot_pctg']['max'] + input_parameters['shot_pctg']['step'], input_parameters['shot_pctg']['step']):
-        for handness_pctg in np.arange(input_parameters['handness_pctg']['start'], input_parameters['handness_pctg']['max'] + input_parameters['handness_pctg']['step'], input_parameters['handness_pctg']['step']):
-            for handness_shots_pctg in np.arange(input_parameters['handness_shots_pctg']['start'], input_parameters['handness_shots_pctg']['max'] + input_parameters['handness_shots_pctg']['step'], input_parameters['handness_shots_pctg']['step']):
-                for rb_pctg in np.arange(input_parameters['rb_pctg']['start'], input_parameters['rb_pctg']['max'] + input_parameters['rb_pctg']['step'], input_parameters['rb_pctg']['step']):
-                    for rb_shots_pctg in np.arange(input_parameters['rb_shots_pctg']['start'], input_parameters['rb_shots_pctg']['max'] + input_parameters['rb_shots_pctg']['step'], input_parameters['rb_shots_pctg']['step']):
-                        for br_pctg in np.arange(input_parameters['br_pctg']['start'], input_parameters['br_pctg']['max'] + input_parameters['br_pctg']['step'], input_parameters['br_pctg']['step']):
-                            for br_shots_pctg in np.arange(input_parameters['br_shots_pctg']['start'], input_parameters['br_shots_pctg']['max'] + input_parameters['br_shots_pctg']['step'], input_parameters['br_shots_pctg']['step']):
+    for shots_pctg in np.arange(START_VAL, input_parameters['shots_pctg']['max'] + input_parameters['shots_pctg']['step'], input_parameters['shots_pctg']['step']):
+        if shots_pctg < input_parameters['shots_pctg']['start']:
+            continue
+        else:
+            input_parameters['shots_pctg']['start'] = START_VAL
+
+        for handness_pctg in np.arange(START_VAL, input_parameters['handness_pctg']['max'] + input_parameters['handness_pctg']['step'], input_parameters['handness_pctg']['step']):
+            if handness_pctg < input_parameters['handness_pctg']['start']:
+                continue
+            else:
+                input_parameters['handness_pctg']['start'] = START_VAL
+
+            for handness_shots_pctg in np.arange(START_VAL, input_parameters['handness_shots_pctg']['max'] + input_parameters['handness_shots_pctg']['step'], input_parameters['handness_shots_pctg']['step']):
+                if handness_shots_pctg < input_parameters['handness_shots_pctg']['start']:
+                    continue
+                else:
+                    input_parameters['handness_shots_pctg']['start'] = START_VAL
+
+                for rb_pctg in np.arange(START_VAL, input_parameters['rb_pctg']['max'] + input_parameters['rb_pctg']['step'], input_parameters['rb_pctg']['step']):
+                    if rb_pctg < input_parameters['rb_pctg']['start']:
+                        continue
+                    else:
+                        input_parameters['rb_pctg']['start'] = START_VAL
+
+                    for rb_shots_pctg in np.arange(START_VAL, input_parameters['rb_shots_pctg']['max'] + input_parameters['rb_shots_pctg']['step'], input_parameters['rb_shots_pctg']['step']):
+                        if rb_shots_pctg < input_parameters['rb_shots_pctg']['start']:
+                            continue
+                        else:
+                            input_parameters['rb_shots_pctg']['start'] = START_VAL
+
+                        for br_pctg in np.arange(START_VAL, input_parameters['br_pctg']['max'] + input_parameters['br_pctg']['step'], input_parameters['br_pctg']['step']):
+                            if br_pctg < input_parameters['br_pctg']['start']:
+                                continue
+                            else:
+                                input_parameters['br_pctg']['start'] = START_VAL
+
+                            for br_shots_pctg in np.arange(START_VAL, input_parameters['br_shots_pctg']['max'] + input_parameters['br_shots_pctg']['step'], input_parameters['br_shots_pctg']['step']):
+                                if br_shots_pctg < input_parameters['br_shots_pctg']['start']:
+                                    continue
+                                else:
+                                    input_parameters['br_shots_pctg']['start'] = START_VAL
+
                                 G_CNT += 1
                                 # print(round(shots_pctg, 1), round(handness_pctg, 1), round(handness_shots_pctg, 1), round(rb_pctg, 1), round(rb_shots_pctg, 1), round(br_pctg, 1), round(br_shots_pctg, 1))
                                 quantifier_dic = {
@@ -207,7 +242,7 @@ if __name__ == "__main__":
                                 g_result_dic['winloss_correct'].append(tmp_dic)
                                 g_result_dic['result_correct'].append(tmp_dic)
 
-                        print('{0}: dump shot_pctg: {1}, handness_pctg: {2}, handness_shots_pctg: {3}'.format(uts_now()-uts_start, round(shots_pctg, 1), round(handness_pctg, 1), round(handness_shots_pctg, 1)))
+                        print('{0}: dump shots_pctg: {1}, handness_pctg: {2}, handness_shots_pctg: {3}'.format(uts_now()-uts_start, round(shots_pctg, 1), round(handness_pctg, 1), round(handness_shots_pctg, 1)))
                         # dump here
                         g_result_dic = dump_it(g_result_dic, RESULT_FILE)
                         json_store(PARAMETER_FILE, quantifier_dic)
