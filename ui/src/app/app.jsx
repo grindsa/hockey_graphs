@@ -4,7 +4,7 @@ import { LanguageSelector } from '../components/languageselector';
 import { SeasonSelector } from '../components/seasonselector';
 import { StatSelector } from '../components/statselector';
 import { Routes } from '../components/routes'
-import { useRoutes } from "hookrouter";
+import { useRoutes, navigate } from "hookrouter";
 // import { Canvas } from '../components/canvas';
 import { asyncGET, CookieSet, isEmpty } from '../components/sharedfunctions.js';
 import { config } from '../components/constants.js';
@@ -31,6 +31,13 @@ export const App = () => {
     setSelectedSeason(newSeason)
     // update cookie
     CookieSet(app_name, {'selectedStat': selectedStat, 'endpoints': endpoints, 'language': language, 'selectedSeason': newSeason})
+
+    // navigate to new season
+    if (selectedStat == 1){
+      navigate('/teamcomparison/' + newSeason);
+    }else{
+      navigate('/matchstatistics/' + newSeason)
+    }
   }
 
   const changeStat = (newStat) => {
@@ -91,7 +98,7 @@ export const App = () => {
     CookieSet(app_name, {'selectedStat': selectedStat, 'endpoints': endpoints, 'language': language, 'selectedSeason': selectedSeason})
     },[endpoints])
 
-  const routes = Routes(endpoints, language, selectedSeason, selectedStat, setSelectedSeason)
+  const routes = Routes(endpoints, language, selectedSeason, setSelectedSeason, selectedStat, changeStat)
 
   const routeResult = useRoutes(routes);
   return (

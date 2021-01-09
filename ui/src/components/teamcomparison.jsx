@@ -33,7 +33,6 @@ export const TeamComparison = (props) => {
     }
   }, [props.teamcomparison, props.season, props.language])
 
-
   useEffect(() => {
       if (props.stat){
         setSelectedstat(props.stat-1)

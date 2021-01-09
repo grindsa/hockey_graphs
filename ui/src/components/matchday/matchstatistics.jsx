@@ -30,7 +30,8 @@ export const MatchStatistics = (props) => {
     const newValue = event.target.value
     if (selectedstat !== newValue){
       setSelectedstat(newValue)
-      navigate('/matchstatistics/' + props.season + '/' + props.match['match_id'] + '/' + newValue);
+      const linkValue = parseInt(newValue) + 1
+      navigate('/matchstatistics/' + props.season + '/' + props.match['match_id'] + '/' + linkValue);
     }
   }
 
@@ -46,8 +47,8 @@ export const MatchStatistics = (props) => {
     }
   }, [props.matchstatistics, props.language])
 
-  if (props.stat && props.stat != selectedstat){
-      setSelectedstat(props.stat)
+  if (props.stat && props.stat != selectedstat + 1){
+      setSelectedstat(props.stat - 1)
   }
 
   const MatchStatistic = matchstatistics[selectedstat]

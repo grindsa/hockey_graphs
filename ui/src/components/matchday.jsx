@@ -43,7 +43,6 @@ export const MatchDayList = (props) => {
 
   const handleMatchSelect = (selectedMatch, stat) => {
     /* handler triggerd by clickcing on a single match */
-    console.log('handleMatchSelect()')
     setSelectedMatch(selectedMatch)
     if (stat){
       navigate('/matchstatistics/' + props.season + '/' + selectedMatch['match_id'] + '/' + stat);
