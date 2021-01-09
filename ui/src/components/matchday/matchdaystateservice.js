@@ -30,7 +30,7 @@ export const checkMatchdayUpdate = function(matchdays, prevmatchdays, season, pr
 
 export const getMatch = function(matchdaydic, matchid){
   // lookup match for daydic based on matchid
-  console.log('firein')
+  console.log('getMatch() firein')
   let selectedMatch
   let matchDay
   for (var matchday in matchdaydic){

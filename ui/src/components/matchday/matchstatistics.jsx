@@ -11,6 +11,7 @@ import Heatmap from 'highcharts/modules/heatmap.js';
 import { createTableHeader, createTableBody, createSelectOptions, overviewClassnames } from './matchstatisticservice.js'
 import { asyncGET, isEmpty } from '../sharedfunctions.js';
 import { createnoChartMessage } from '../localization.js';
+import { navigate } from "hookrouter";
 
 // Load Highcharts modules
 HighchartsExporting(Highcharts);
@@ -29,6 +30,7 @@ export const MatchStatistics = (props) => {
     const newValue = event.target.value
     if (selectedstat !== newValue){
       setSelectedstat(newValue)
+      navigate('/matchstatistics/' + props.season + '/' + props.match['match_id'] + '/' + newValue);
     }
   }
 
@@ -44,6 +46,10 @@ export const MatchStatistics = (props) => {
     }
   }, [props.matchstatistics, props.language])
 
+  if (props.stat && props.stat != selectedstat){
+      setSelectedstat(props.stat)
+  }
+
   const MatchStatistic = matchstatistics[selectedstat]
   if (!isEmpty(MatchStatistic)){
     return (
@@ -55,7 +61,6 @@ export const MatchStatistics = (props) => {
     );
   }else{
     // const nostatmessage = createnostatMessage(props.language)
-    // <div className="w3-padding-16 w3-center">{nostatmessage}</div>
     return (
       <React.Fragment>
         <MatchHeader match={props.match} reset={props.reset} />

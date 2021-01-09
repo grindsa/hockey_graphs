@@ -41,10 +41,15 @@ export const MatchDayList = (props) => {
     setCurrentKeyName(newDay)
   }
 
-  const handleMatchSelect = (selectedMatch) => {
+  const handleMatchSelect = (selectedMatch, stat) => {
     /* handler triggerd by clickcing on a single match */
+    console.log('handleMatchSelect()')
     setSelectedMatch(selectedMatch)
-    navigate('/matchstatistics/' + props.season + '/' + selectedMatch['match_id'])
+    if (stat){
+      navigate('/matchstatistics/' + props.season + '/' + selectedMatch['match_id'] + '/' + stat);
+    }else{
+      navigate('/matchstatistics/' + props.season + '/' + selectedMatch['match_id'] )
+    }
   }
 
   const handleDayClick = (day) => {
@@ -78,7 +83,7 @@ export const MatchDayList = (props) => {
   if(props.matchid && !isEmpty(matchdaydic)) {
     const [matchday, selMatch] = getMatch(matchdaydic, props.matchid)
     if (selMatch != selectedMatch){
-      handleMatchSelect(selMatch)
+      handleMatchSelect(selMatch, props.stat)
     }
     if (matchday != currentKeyName){
       handleMatchDayChange(matchday)
@@ -114,7 +119,7 @@ export const MatchDayList = (props) => {
     )
   }else{
     return(
-      <MatchStatistics match={selectedMatch} matchstatistics={props.matchstatistics} reset={resetMatchSelect} language={props.language}/>
+      <MatchStatistics season={props.season} match={selectedMatch} matchstatistics={props.matchstatistics} reset={resetMatchSelect} language={props.language} stat={props.stat}/>
     )
   }
 }

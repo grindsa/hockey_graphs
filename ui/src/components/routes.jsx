@@ -13,20 +13,23 @@ function tc_route(endpoint, language, selectedSeason, season, setSelectedSeason,
   )
 }
 
-function mdl_route(ep_matchdays, ep_matchstatistics, language, selectedSeason, season, setSelectedSeason, matchid){
+function mdl_route(ep_matchdays, ep_matchstatistics, language, selectedSeason, season, setSelectedSeason, matchid, stat){
   // update season and return MatchDayList route
   season = parseInt(season)
   if (matchid){
-    // convert matchid to int for later comparison
+    // convert matchid to int for comparison in matchday.jsx
     matchid = parseInt(matchid)
+  }
+  if(stat){
+    // covert stat to integer for comparison in matchstatistics.jsx
+    stat = parseInt(stat)
   }
   if (season && selectedSeason && season && season !== selectedSeason) {
     setSelectedSeason(season)
   }
   return(
-    <MatchDayList matchdays={ep_matchdays} matchstatistics={ep_matchstatistics} language={language} season={season} matchid={matchid} />
+    <MatchDayList matchdays={ep_matchdays} matchstatistics={ep_matchstatistics} language={language} season={season} matchid={matchid} stat={stat}/>
   )
-
 }
 
 export const Routes = (endpoints, language, selectedSeason, selectedStat, setSelectedSeason) => {
@@ -35,9 +38,12 @@ export const Routes = (endpoints, language, selectedSeason, selectedStat, setSel
       // just the path
       '/matchstatistics': () => <MatchDayList matchdays={endpoints.matchdays} matchstatistics={endpoints.matchstatistics} language={language} season={selectedSeason} />,
       // just the season
-      '/matchstatistics/:season': ({season}) => mdl_route(endpoints.matchdays, endpoints.matchstatistics, language, selectedSeason, season, setSelectedSeason, null),
+      '/matchstatistics/:season': ({season}) => mdl_route(endpoints.matchdays, endpoints.matchstatistics, language, selectedSeason, season, setSelectedSeason, null, null),
       // season and match
-      '/matchstatistics/:season/:matchid': ({season, matchid}) => mdl_route(endpoints.matchdays, endpoints.matchstatistics, language, selectedSeason, season, setSelectedSeason, matchid),
+      '/matchstatistics/:season/:matchid': ({season, matchid}) => mdl_route(endpoints.matchdays, endpoints.matchstatistics, language, selectedSeason, season, setSelectedSeason, matchid, null),
+      // season, match and stat
+      '/matchstatistics/:season/:matchid/:stat': ({season, matchid, stat}) => mdl_route(endpoints.matchdays, endpoints.matchstatistics, language, selectedSeason, season, setSelectedSeason, matchid, stat),
+
 
       // just the path
       '/teamcomparison': () => <TeamComparison  teamcomparison={ endpoints.teamcomparison } language={ language } season={ selectedSeason } stat={ selectedStat } />,
