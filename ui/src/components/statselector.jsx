@@ -25,7 +25,7 @@ const StatList = ({statlist, onchangeStat}) => {
   let mlist
   if (statlist){
     mlist = statlist.map((stat, index) =>{
-      return(<div key={index} className = "w3-bar-item w3-button" onClick={() => onchangeStat(stat.id)}><A href={stat.route}>{stat.name}</A></div>)
+      return(<div key={index} className = "w3-bar-item w3-button" onClick={() => onchangeStat(stat.id)}><A href={stat.route} className="nopadding">{stat.name}</A></div>)
     });
   }
   return(
