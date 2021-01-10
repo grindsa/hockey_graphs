@@ -12,7 +12,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "hockey_graphs.settings")
 django.setup()
 # pylint: disable=E0401, C0413
 # import project settings
-from rest.functions.helper import logger_setup, uts_now
+from rest.functions.helper import logger_setup, uts_now, json_load
 from rest.functions.match import openmatch_list_get, pastmatch_list_get, sincematch_list_get
 from rest.functions.season import season_latest_get
 from rest.functions.teamstat import teamstat_get
@@ -23,6 +23,8 @@ def arg_parse():
     parser = argparse.ArgumentParser(description='teampstat_load.py - update teamstats in database')
     parser.add_argument('-d', '--debug', help='debug mode', action="store_true", default=False)
     parser.add_argument('--shifts', help='debug mode', action="store_true", default=False)
+    parser.add_argument('--xgdata', help='file containing the xg model data', default=[])
+    parser.add_argument('--xgweights', help='file containing the xg weights', default=[])
     mlist = parser.add_mutually_exclusive_group()
     mlist.add_argument('-s', '--season', help='season id', default=None)
     mlist.add_argument('--matchlist', help='list of del matchids', default=[])
@@ -39,6 +41,8 @@ def arg_parse():
     debug = args.debug
     addshifts = args.shifts
     allmatches = args.allmatches
+    xg_data = args.xgdata
+    xg_weights = args.xgweights
     openmatches = args.openmatches
     pastmatches = args.pastmatches
     season = args.season
@@ -58,12 +62,12 @@ def arg_parse():
         print('either -a -i -o -p or --matchlist parameter must be specified')
         sys.exit(0)
 
-    return(debug, season, match_list, addshifts, openmatches, pastmatches, interval, allmatches)
+    return(debug, season, match_list, addshifts, openmatches, pastmatches, interval, allmatches, xg_data, xg_weights)
 
 if __name__ == '__main__':
 
     # get variables
-    (DEBUG, SEASON_ID, MATCH_LIST, ADDSHIFTS, OPENMATCHES, PASTMATCHES, INTERVAL, ALLMATCHES) = arg_parse()
+    (DEBUG, SEASON_ID, MATCH_LIST, ADDSHIFTS, OPENMATCHES, PASTMATCHES, INTERVAL, ALLMATCHES,  XG_DATA, XG_WEIGHTS) = arg_parse()
 
     # initialize logger
     LOGGER = logger_setup(DEBUG)
@@ -94,6 +98,12 @@ if __name__ == '__main__':
         # update all statistics
         stat_list = teamstat_get(LOGGER)
 
+    XG_DATA_DIC = {}
+    XG_WEIGHTS_DIC = {}
+    if XG_DATA and XG_WEIGHTS:
+        XG_DATA_DIC = json_load(XG_DATA)
+        XG_WEIGHTS_DIC  = json_load(XG_WEIGHTS)
+
     for stat in stat_list:
         # get matchid and add data add function
-        teammatchstat_add(LOGGER, stat)
+        teammatchstat_add(LOGGER, stat, XG_DATA_DIC, XG_WEIGHTS_DIC)
