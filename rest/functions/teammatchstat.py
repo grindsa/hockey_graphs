@@ -13,17 +13,30 @@ from rest.functions.match import match_info_get
 from rest.functions.corsi import gameshots5v5_get
 from rest.functions.helper import pctg_float_get
 from rest.functions.shot import shot_list_get, rebound_breaks_get
+from rest.functions.xg import shotlist_process, xgf_calculate, xgscore_get
 
-def teammatchstat_add(logger, match_dic):
+def teammatchstat_add(logger, match_dic, xg_data_dic, xg_weights_dic):
     """ add team to database """
     logger.debug('teammatchstat_add()')
+
+    rebound_interval = 3
+    break_interval = 7
 
     match_id = match_dic['match_id']
 
     match_info_dic = match_info_get(logger, match_id, None)
-    shot_list = shot_list_get(logger, 'match_id', match_id, ['real_date', 'shot_id', 'match_id', 'timestamp', 'match_shot_resutl_id', 'team_id', 'player__first_name', 'player__last_name', 'zone', 'coordinate_x', 'coordinate_y', 'player__jersey'])
+    shot_list = shot_list_get(logger, 'match_id', match_id, ['real_date', 'shot_id', 'match_id', 'timestamp', 'match_shot_resutl_id', 'match__home_team_id', 'team_id', 'player__first_name', 'player_id', 'player__last_name', 'player__stick', 'zone', 'coordinate_x', 'coordinate_y', 'player__jersey'])
     # rebounds and breaks
     rb_dic = rebound_breaks_get(logger, shot_list, match_info_dic)
+
+    # xgf xga calculation
+    xgf_dic = {}
+    if xg_data_dic and xg_weights_dic:
+        # we also need the XGMODEL_DIC to check if we have the shotcoordinates in our structure
+        (shotstat_dic, goal_dic) = shotlist_process(logger, shot_list, xg_data_dic, rebound_interval, break_interval)
+        # lets apply the magic algorithm to estimate xGF
+        playerxgf_dic = xgf_calculate(logger, shotstat_dic, xg_weights_dic)
+        xgf_dic = xgscore_get(logger, playerxgf_dic)
 
     result_list = []
     for team in ['home', 'visitor']:
@@ -39,7 +52,6 @@ def teammatchstat_add(logger, match_dic):
         (shots_for_5v5, shots_against_5v5, shots_ongoal_for_5v5, shots_ongoal_against_5v5) = gameshots5v5_get(logger, match_id, match_info_dic, team, shot_list)
 
         game_header = gameheader_get(logger, 'match_id', match_id, ['gameheader'])
-
         points = points_get(logger, team, game_header)
 
         if 'lastEventTime' in game_header:
@@ -88,6 +100,10 @@ def teammatchstat_add(logger, match_dic):
             'shefficiency': match_dic[team]['shEfficiency'],
             'points': points,
         }
+
+        if xgf_dic:
+            data_dic['xgoals_for'] = xgf_dic[team]
+            data_dic['xgoals_against'] = xgf_dic[o_team]
 
         try:
             # add teammatchstat

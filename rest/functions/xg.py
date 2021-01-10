@@ -332,6 +332,7 @@ def shotlist_process(logger, shot_list, model_tree, rebound_interval, break_inte
 
         if str(shot['coordinate_y']) in model_tree['handness'][team]:
             # add left/right hand percentage for this specific y-coordinate
+            # if scrips breaks here playerhandness is missing!!!
             tmp_dic['handness_pctg'] = model_tree['handness'][team][str(shot['coordinate_y'])][shot['player__stick']]['shots_pctg']
 
         if str(shot['coordinate_x']) not in model_tree['shots'][team] or str(shot['coordinate_y']) not in model_tree['shots'][team][str(shot['coordinate_x'])]:
@@ -386,35 +387,35 @@ def xgf_calculate(logger, shot_stat_dic, quantifier_dic):
 
                 if shot['shots_pctg'] > 0:
                     # add shot
-                    shot_sum = shot['shots_pctg'] * quantifier_dic['shots_pctg']
+                    shot_sum = shot['shots_pctg'] * quantifier_dic[team]['shots_pctg']
                     shot_divisor = 1
 
                     # consider hadness (if greater than 0)
                     if shot['handness_pctg'] > 0:
-                        shot_sum = shot_sum + shot['handness_pctg'] * quantifier_dic['handness_pctg']
+                        shot_sum = shot_sum + shot['handness_pctg'] * quantifier_dic[team]['handness_pctg']
                         shot_divisor += 1
 
                     # consider shot specific handness (if greater than 0)
                     if shot['handness_shots_pctg'] > 0:
-                        shot_sum = shot_sum + shot['handness_shots_pctg'] * quantifier_dic['handness_shots_pctg']
+                        shot_sum = shot_sum + shot['handness_shots_pctg'] * quantifier_dic[team]['handness_shots_pctg']
                         shot_divisor += 1
 
                     # consider rebounds (if avaialble)
                     if 'rb_pctg' in shot:
-                        shot_sum = shot_sum + shot['rb_pctg'] * quantifier_dic['rb_pctg']
+                        shot_sum = shot_sum + shot['rb_pctg'] * quantifier_dic[team]['rb_pctg']
                         shot_divisor += 1
                         # consider rebounds per coordinate if greater than 0
                         if shot['rb_shots_pctg'] > 0:
-                            shot_sum = shot_sum + shot['rb_shots_pctg'] * quantifier_dic['rb_shots_pctg']
+                            shot_sum = shot_sum + shot['rb_shots_pctg'] * quantifier_dic[team]['rb_shots_pctg']
                             shot_divisor += 1
 
                     # consider breaks (if avaialble)
                     if 'br_pctg' in shot:
-                        shot_sum = shot_sum + shot['br_pctg'] * quantifier_dic['br_pctg']
+                        shot_sum = shot_sum + shot['br_pctg'] * quantifier_dic[team]['br_pctg']
                         shot_divisor += 1
                         # consider brigger per coordinate if greater than 0
                         if shot['br_shots_pctg'] > 0:
-                            shot_sum = shot_sum + shot['br_shots_pctg'] * quantifier_dic['br_shots_pctg']
+                            shot_sum = shot_sum + shot['br_shots_pctg'] * quantifier_dic[team]['br_shots_pctg']
                             shot_divisor += 1
 
                     # calculate shot likelyhood
