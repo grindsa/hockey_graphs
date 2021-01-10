@@ -125,6 +125,8 @@ class Teammatchstat(models.Model):
     goals_pp_against = models.IntegerField(default=0)
     goals_sh = models.IntegerField(default=0)
     goals_against = models.IntegerField(default=0)
+    xgoals_for = models.IntegerField(default=0)
+    xgoals_against = models.IntegerField(default=0)     
     matchduration = models.IntegerField(default=0)
     shots_for = models.IntegerField(default=0)
     shots_for_5v5 = models.IntegerField(default=0)
