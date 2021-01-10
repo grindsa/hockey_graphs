@@ -133,7 +133,7 @@ dmypy.json
 settings.py
 wip
 xg_weighting
-
+conf
 data
 model_data.json
 migrations
