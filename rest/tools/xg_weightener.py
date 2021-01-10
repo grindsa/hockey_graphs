@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
-""" calculate xg values """
+""" calculate estimate xg values for a range if weightening parameters and dumps the best estimates into json files """
 import os
 import sys
 import numpy as np
@@ -80,7 +80,7 @@ def _inputparameters_get(logger, parameter_file, start_val, max_val, step):
     return input_parameters_
 
 def shotstats_get(logger, match_list):
-    """" load config from file """
+    """" gets shots per match """
     logger.debug('stats_get()')
 
     g_shotstat_dict = {}
@@ -122,8 +122,8 @@ if __name__ == "__main__":
     MATCH_LIST = match_list_get(LOGGER, 'season_id', 1, ['match_id'])
     # MATCH_LIST = [1820]
 
-    START_VAL = 0.5
-    MAX_VAL = 3.0
+    START_VAL = 1.0
+    MAX_VAL = 4.0
     STEP = 0.5
 
     # START_VAL = 1.0
@@ -245,7 +245,7 @@ if __name__ == "__main__":
                         print('{0}: dump shots_pctg: {1}, handness_pctg: {2}, handness_shots_pctg: {3}'.format(uts_now()-uts_start, round(shots_pctg, 1), round(handness_pctg, 1), round(handness_shots_pctg, 1)))
                         # dump here
                         g_result_dic = dump_it(g_result_dic, RESULT_FILE)
-                        json_store(PARAMETER_FILE, quantifier_dic)
+                        # json_store(PARAMETER_FILE, quantifier_dic)
 
                 # print status
                 print('g_cnt', G_CNT, 'match_cnt', MATCH_CNT, 'home_correct', HOME_CORRECT, 'visitor_correct', VISITOR_CORRECT, 'winloss_correct', WINLOSS_CORRECT, 'result_correct', RESULT_CORRECT)
