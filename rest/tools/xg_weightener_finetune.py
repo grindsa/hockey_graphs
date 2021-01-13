@@ -180,8 +180,8 @@ if __name__ == "__main__":
     # DEBUG mode on/off
     DEBUG = False
 
-    MODEL_FILE = 'model_data.json'
-    WEIGHT_FILE = 'xg_weighting/result-max3.0-step0.5.json'
+    MODEL_FILE = 'rest/tools/conf/xg_model_data.json'
+    WEIGHT_FILE = 'result.json'
     RESULT_FILE = 'result_finetune.json'
     TOP_NUM = 3
 
