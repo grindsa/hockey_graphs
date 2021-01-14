@@ -219,3 +219,53 @@ def teamcomparison_updates_get(logger, _title, ismobile, data_dic):
         }
 
     return updates_dic
+
+def gameheatmapdata_get(logger, shot_list, matchinfo_dic):
+    """ heatmap data """
+    logger.debug('gameheatmapdata_get()')
+
+    shot_dic = {'home_team': {}, 'visitor_team': {}}
+
+    # cluster size
+    clul = 10
+
+    for shot in shot_list:
+        # we need to differenciate between home and visitor team
+        if shot['team_id'] == matchinfo_dic['home_team_id']:
+            team = 'home_team'
+            calc_x = float(shot['coordinate_y'])
+            calc_y = float(shot['coordinate_x'])
+        else:
+            team = 'visitor_team'
+            calc_x = float(shot['coordinate_y'])
+            calc_y = float(shot['coordinate_x'] * -1)
+
+
+        # x = -100, 100
+        # y = 0, 105
+        # calculate coordicates
+        calc_x = round((calc_x + 100) * 295/100)
+        calc_y = round((105 - calc_y) * 595/105)
+
+        # round to clul
+        calc_x = round((calc_x/clul)) * clul
+        calc_y = round((calc_y/clul)) * clul
+
+        mapping = '{0}; {1}'.format(calc_x, calc_y)
+        if mapping in shot_dic:
+            shot_dic[team][mapping] += 1
+        else:
+            shot_dic[team][mapping] = 1
+
+
+    # create structure for highcharts
+    heatmapdata_dic = {}
+    for team in shot_dic:
+        heatmapdata_dic[team] = {'data': [], 'max': 2 }
+        for mapping in shot_dic[team]:
+            (myx, myy) = mapping.split(';')
+            if shot_dic[team][mapping] > heatmapdata_dic[team]['max']:
+                heatmapdata_dic[team]['max'] = shot_dic[team][mapping]
+            heatmapdata_dic[team]['data'].append({'x': myx, 'y': myy, 'value': shot_dic[team][mapping]})
+
+    return heatmapdata_dic
