@@ -76,3 +76,9 @@ select.selectbg {
 .nopadding {padding:0px!important;}
 .my-padding-4{padding-top:4px!important;padding-bottom:4px!important}
 .my-padding-8{padding-top:8px!important;padding-bottom:8px!important}
+
+.jsheatmap {
+  background-image: url('https://hockeygraphs.dynamop.de/static/img/shotmap.svg');
+  width: 590px;
+  height: 595px;
+}

@@ -8,6 +8,7 @@ import HighchartsExporting from 'highcharts/modules/exporting';
 import HighchartsOfflineExporting from "highcharts/modules/offline-exporting";
 import Timeline from 'highcharts/modules/timeline.js';
 import Heatmap from 'highcharts/modules/heatmap.js';
+import { HeatmapJs } from './heatmapjs'
 import { createTableHeader, createTableBody, createSelectOptions, overviewClassnames } from './matchstatisticservice.js'
 import { asyncGET, isEmpty } from '../sharedfunctions.js';
 import { createnoChartMessage } from '../localization.js';
@@ -162,6 +163,10 @@ const Chart = (props) => {
     return(
       <MatchOverview options={props.options} />
     )
+  /* }else if (props.options.data){
+    return(
+      <HeatmapJs data={props.options} />
+    ) */
   }else{
     const nochartdata = createnoChartMessage(props.language)
     return (

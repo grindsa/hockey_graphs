@@ -34,6 +34,7 @@
     "@babel/plugin-proposal-class-properties": "^7.12.1",
     "axios": "^0.21.1",
     "css-loader": "^5.0.1",
+    "heatmap.js": "^2.0.5",
     "highcharts": "^8.2.2",
     "highcharts-react-official": "^3.0.0",
     "hookrouter": "^1.2.5",

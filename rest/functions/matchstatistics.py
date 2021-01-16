@@ -15,6 +15,7 @@ from rest.functions.shot import shot_list_get, shotspermin_count, shotspermin_ag
 from rest.functions.shotcharts import shotsumchart_create, gameflowchart_create, shotstatussumchart_create, shotmapchart_create, gamecorsichart_create, gamecorsippctgchart_create, puckpossessionchart_create, shotzonechart_create
 from rest.functions.toicharts import gametoichart_create
 from rest.functions.heatmapcharts import gamematchupchart_create
+from rest.functions.heatmap import gameheatmapdata_get
 from rest.functions.shottables import shotsperiodtable_get, shotstatussumtable_get, shotzonetable_get, gamecorsi_table
 from rest.functions.toitables import gametoi_table
 from rest.functions.match import match_info_get, matchstats_get
@@ -78,6 +79,10 @@ def matchstatistics_get(logger, request, fkey=None, fvalue=None):
         # create shotzone chart
         # pylint: disable=E0602
         result.append(_gamezoneshots_get(logger, _('Shots per Zone'), subtitle, ismobile, request, matchinfo_dic, shot_list))
+
+        # shotmap
+        # pylint: disable=E0602
+        # result.append(_gameheatmap_get(logger, _('Game Heatmap'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list))
 
         # shotmap
         # pylint: disable=E0602
@@ -241,6 +246,32 @@ def _gamezoneshots_get(logger, title, subtitle, ismobile, request, matchinfo_dic
         stat_entry = {}
 
     return stat_entry
+
+def _gameheatmap_get(logger, title, subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list):
+    """ get gameshotmap """
+    logger.debug('_gameshotmap_get({0}:{1})'.format(fkey, fvalue))
+
+    shot_table = [None, None]
+    shot_chart = []
+
+    if shot_list:
+        # get shots and goals per min
+        shotmap_dic = gameheatmapdata_get(logger, shot_list, matchinfo_dic)
+
+        shot_chart = [
+            shotmap_dic['home_team'],
+            shotmap_dic['visitor_team'],
+        ]
+
+    stat_entry = {
+        'title': title,
+        'chart': shot_chart,
+        'table': shot_table,
+        'tabs': True
+    }
+
+    return stat_entry
+
 
 def _gameshotmap_get(logger, title, subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list):
     """ get gameshotmap """
