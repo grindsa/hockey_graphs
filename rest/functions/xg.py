@@ -2,7 +2,9 @@
 """ list of functions for shots """
 # pylint: disable=E0401, R0914
 import numpy as np
-from rest.functions.helper import pctg_float_get
+from rest.functions.chartparameters import chart_color6, plotlines_color, title, font_size, corner_annotations
+from rest.functions.corsi import pace_chartseries_get
+from rest.functions.helper import pctg_float_get, list_sumup
 from rest.functions.periodevent import periodevent_get
 from rest.functions.shot import shotside_get
 from rest.functions.timeline import skatersonice_get, penalties_include
@@ -114,6 +116,35 @@ def _coordinates_pctg_get(_logger, model_tree, x_point, y_point):
     rh_shots_pctg = model_tree[x_point][y_point]['rh_shots_pctg']
 
     return (shot_pctg, lh_shots_pctg, rh_shots_pctg, rb_shots_pctg, br_shots_pctg)
+
+def _xgfa_sumup(logger, teamstat_dic):
+    """ sum up faceoff statistics """
+    logger.debug('_xgfa_sumup()')
+
+    update_amount = 0
+    teamstat_sum_dic = {}
+
+    for team_id in teamstat_dic:
+
+        # sumup data per team
+        teamstat_sum_dic[team_id] = list_sumup(logger, teamstat_dic[team_id], ['match_id', 'goals_for', 'goals_for_5v5', 'xgoals_for', 'goals_against', 'goals_against_5v5', 'xgoals_against', 'matchduration'])
+        # check how many items we have to create in update_dic
+        if update_amount < len(teamstat_sum_dic[team_id]):
+            update_amount = len(teamstat_sum_dic[team_id])
+
+        # for ele in teamstat_sum_dic[team_id]:
+        for idx, ele in enumerate(teamstat_sum_dic[team_id], 1):
+            # add amount of games
+            ele['games'] = idx
+            sum_xgoals_for = ele['sum_xgoals_for']
+            sum_xgoals_against = ele['sum_xgoals_against']
+            sum_matchduration = ele['sum_matchduration']
+
+            # calculate 60
+            ele['avg_xgoals_for_60'] = round(sum_xgoals_for * 3600 / sum_matchduration, 1)
+            ele['avg_xgoals_against_60'] = round(sum_xgoals_against * 3600 / sum_matchduration, 1)
+
+    return (teamstat_sum_dic, update_amount)
 
 def xgmodel_add(logger, fkey, fvalue, data_dic):
     """ add team to database """
@@ -383,7 +414,6 @@ def shotlist_process(logger, shot_list, model_tree, rebound_interval, break_inte
 
     return (shotsum_dic, goal_dic)
 
-
 def xgf_calculate(logger, shot_stat_dic, quantifier_dic):
     """ calculate xgf per player """
     logger.debug('xgf_calculate()')
@@ -456,3 +486,94 @@ def xgscore_get(logger, playerxgf_dic):
             xgf_dic[team] += xgf
 
     return xgf_dic
+
+def xgfa_data_get(logger, ismobile, teamstat_dic, teams_dic):
+    """  data for xg charts  """
+    logger.debug('xgfa_data_get()')
+
+    if ismobile:
+        image_width = 25
+    else:
+        image_width = 40
+    image_height = image_width
+
+    # get summary
+    (xgfasum_dic, update_amount) = _xgfa_sumup(logger, teamstat_dic)
+
+    # set empty lakes
+    xgfa_lake = {}
+
+    for ele in range(1, update_amount+1):
+        xgfa_lake[ele] = []
+
+    for team_id in xgfasum_dic:
+        # harmonize lengh by adding list elements at the beginning
+        if len(xgfasum_dic[team_id]) < update_amount:
+            for ele in range(0, update_amount - len(xgfasum_dic[team_id])):
+                xgfasum_dic[team_id].insert(0, xgfasum_dic[team_id][0])
+
+        for idx, ele in enumerate(xgfasum_dic[team_id], 1):
+            xgfa_lake[idx].append({
+                'team_name': teams_dic[team_id]['team_name'],
+                'shortcut':  teams_dic[team_id]['shortcut'],
+                'marker': {'width': image_width, 'height': image_height, 'symbol': 'url({0})'.format(teams_dic[team_id]['team_logo'])},
+                'avg_xgoals_for_60': ele['avg_xgoals_for_60'],
+                'avg_xgoals_against_60': ele['avg_xgoals_against_60'],
+                'x': ele['avg_xgoals_for_60'],
+                'y': ele['avg_xgoals_against_60']
+            })
+
+
+    # build final dictionary
+    xgfa_chartseries_dic = pace_chartseries_get(logger, xgfa_lake)
+
+    return xgfa_chartseries_dic
+
+def xgfa_updates_get(logger, data_dic, string_1=None, string_2=None, string_3=None, string_4=None, ismobile=False):
+    # pylint: disable=E0602
+    """ build structure for xgfa chart """
+    logger.debug('discipline_updates_get()')
+
+    updates_dic = {}
+    for ele in data_dic:
+        minmax_dic = {
+            'x_min': data_dic[ele]['x_min'] - 0.2,
+            'y_min': data_dic[ele]['y_min'] - 0.2,
+            'x_max': data_dic[ele]['x_max'] + 0.2,
+            'y_max': data_dic[ele]['y_max'] + 0.2
+        }
+        updates_dic[ele] = {
+            'text': ele,
+            'chartoptions':  {
+                'series': [{
+                    'name': _('Standard Deviation'),
+                    'color': plotlines_color,
+                    'marker': {'symbol': 'square'},
+                    'data': data_dic[ele]['data']
+                }],
+                'xAxis': {
+                    'title': title(_('Expected Goals "For" per 60min (xGF60)'), font_size),
+                    'min': minmax_dic['x_min'],
+                    'max': minmax_dic['x_max'],
+                    'tickInterval': 0.5,
+                    'gridLineWidth': 1,
+                    'plotBands': [{'from':  data_dic[ele]['x_avg'] -  data_dic[ele]['x_deviation']/2, 'to':  data_dic[ele]['x_avg'] +  data_dic[ele]['x_deviation']/2, 'color': chart_color6}],
+                    'plotLines': [{'zIndex': 3, 'color': plotlines_color, 'width': 2, 'value':  data_dic[ele]['x_avg']}],
+                },
+                'yAxis': {
+                    'title': title(_('Expected Goals "Against" per 60min (xGA60)'), font_size),
+                    'min': minmax_dic['y_min'],
+                    'max': minmax_dic['y_max'],
+                    'tickInterval': 0.5,
+                    'gridLineWidth': 1,
+                    'reversed': 1,
+                    # we use x_deviation on purpose to make data better comparable
+                    'plotBands': [{'from':  data_dic[ele]['y_avg'] -  data_dic[ele]['x_deviation']/2, 'to':  data_dic[ele]['y_avg'] +  data_dic[ele]['x_deviation']/2, 'color': chart_color6}],
+                    'plotLines': [{'zIndex': 3, 'color': plotlines_color, 'width': 3, 'value':  data_dic[ele]['y_avg']}],
+                },
+            }
+        }
+        if string_1 and string_2 and string_3 and string_4:
+            updates_dic[ele]['chartoptions']['annotations'] = corner_annotations(ismobile, minmax_dic, string_1, string_2, string_3, string_4, 1)
+
+    return updates_dic
