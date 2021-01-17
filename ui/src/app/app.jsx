@@ -44,7 +44,7 @@ export const App = () => {
     // change stat
     setSelectedStat(newStat)
     // update cookie
-    CookieSet(app_name, {'selectedStat': newStat, 'endpoints': endpoints, 'language': language, 'selectedSeason': selectedSeason})
+    // CookieSet(app_name, {'selectedStat': newStat, 'endpoints': endpoints, 'language': language, 'selectedSeason': selectedSeason})
   }
 
   const toggleLanguage = () => {
