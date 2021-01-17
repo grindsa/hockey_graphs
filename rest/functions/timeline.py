@@ -51,6 +51,8 @@ def penalties_include(logger, soi_dic, period_events):
     logger.debug('penalties_include()')
 
     for period in period_events:
+
+        #print(period)
         for event in period_events[period]:
             if event['type'] == 'penalty':
                 if event['data']['team'] == 'home':
@@ -61,6 +63,8 @@ def penalties_include(logger, soi_dic, period_events):
                 # ignoriere match strafen größer als 5min
                 if event['data']['duration'] < 301:
                     for second_ in range(event['data']['time']['from']['scoreboardTime']+1, event['data']['time']['to']['scoreboardTime']+1):
+                        if second_ not in soi_dic[team]:
+                            soi_dic[team][second_] = {}
                         if 'penalty' in soi_dic[team][second_]:
                             try:
                                 soi_dic[team][second_]['penalty'] = '{0}, {1}'.format(soi_dic[team][second_]['penalty'], event['data']['disciplinedPlayer']['surname'])

@@ -9,6 +9,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir, os.path.pardir)))
 
 # pylint: disable=E0401, C0413
+from rest.functions.corsi import gameshots5v5_get, goals5v5_get
 from rest.functions.helper import config_load, logger_setup, json_load
 from rest.functions.shot import shot_list_get
 from rest.functions.match import match_info_get, match_list_get
@@ -96,21 +97,27 @@ if __name__ == "__main__":
     # MATCH_LIST = [1767]
 
     # define value list for match specific shot_dictionary
-    VLIST = ['shot_id', 'match_id', 'match_shot_resutl_id', 'player_id', 'player__first_name', 'player__last_name', 'player__jersey', 'player__stick', 'team_id', 'coordinate_x', 'coordinate_y', 'match__home_team_id', 'match__visitor_team_id', 'timestamp']
+    VLIST = ['shot_id', 'match_id', 'match_shot_resutl_id', 'real_date', 'player_id', 'player__first_name', 'player__last_name', 'player__jersey', 'player__stick', 'team_id', 'coordinate_x', 'coordinate_y', 'match__home_team_id', 'match__visitor_team_id', 'timestamp']
 
     # empty output listg
     OUTPUT_LIST = []
 
     for match_id in MATCH_LIST:
 
-        match_dic = match_info_get(LOGGER, match_id, None, ['date', 'home_team__shortcut', 'visitor_team__shortcut', 'result'])
+        match_dic = match_info_get(LOGGER, match_id, None, ['date', 'home_team_id', 'home_team__shortcut', 'visitor_team_id', 'visitor_team__shortcut', 'result'])
 
         # get list of shots
         shot_list = shot_list_get(LOGGER, 'match_id', match_id, VLIST)
 
+        # get corsi statistics
+        (shots_for_5v5, shots_against_5v5, shots_ongoal_for_5v5, shots_ongoal_against_5v5, shot_list_5v5) = gameshots5v5_get(LOGGER, match_id, match_dic, 'foo', shot_list)
+
+        # 5v5 goals from periodevents
+        goals5v5_dic = goals5v5_get(LOGGER, match_id, match_dic)
+
         # convert shots and goals into structure we can process later on
         # we also need the XGMODEL_DIC to check if we have the shotcoordinates in our structure
-        (shotstat_dic, goal_dic) = shotlist_process(LOGGER, shot_list, XGMODEL_DIC, REBOUND_INTERVAL, BREAK_INTERVAL)
+        (shotstat_dic, goal_dic) = shotlist_process(LOGGER, shot_list_5v5, XGMODEL_DIC, REBOUND_INTERVAL, BREAK_INTERVAL)
 
         # lets apply the magic algorithm to estimate xGF
         playerxgf_dic = xgf_calculate(LOGGER, shotstat_dic, QUANTIFIER_DIC)
@@ -119,7 +126,7 @@ if __name__ == "__main__":
 
         MATCH_INFO = '{0}: {1} vs {2} ({3})'.format(match_dic['date'], match_dic['home_team__shortcut'], match_dic['visitor_team__shortcut'], match_dic['result'])
         result = match_dic['result']
-        SCORE = '{0}:{1}'.format(len(goal_dic['home']), len(goal_dic['visitor']))
+        SCORE = '{0}:{1}'.format(goals5v5_dic['home'], goals5v5_dic['visitor'])
         XG_SCORE = '{0}:{1}'.format(xgf_dic['home'], xgf_dic['visitor'])
 
         if OUTPUT_FILE:

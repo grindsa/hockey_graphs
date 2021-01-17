@@ -3,7 +3,9 @@
 # pylint: disable=E0401, R0914
 import numpy as np
 from rest.functions.helper import pctg_float_get
+from rest.functions.periodevent import periodevent_get
 from rest.functions.shot import shotside_get
+from rest.functions.timeline import skatersonice_get, penalties_include
 from rest.models import Xg
 
 def _surrondingpoints_get(_logger, x_point, y_point):
@@ -214,6 +216,7 @@ def xgmodel_build(logger, shot_list, player_dic, rebound_interval=5, break_inter
     prev_team = None
     prev_time = 0
 
+    soi_dic = {}
     for shot in shot_list:
 
         # reset counters in case of match changes
@@ -223,11 +226,22 @@ def xgmodel_build(logger, shot_list, player_dic, rebound_interval=5, break_inter
             prev_match_id = shot['match_id']
             prev_team = None
             prev_time = 0
+            periodevent_list = periodevent_get(logger, 'match_id', shot['match_id'], ['period_event'])
+            # add penalties to filter 5v5
+            soi_dic = penalties_include(logger, {'home_team': {}, 'visitor_team': {}}, periodevent_list)
+
+        # check if we have a penalty situation
+        home_penalty = False
+        if shot['timestamp'] in soi_dic['home_team'] and 'penalty' in soi_dic['home_team'][shot['timestamp']]:
+            home_penalty = True
+        visitor_penalty = False
+        if shot['timestamp'] in soi_dic['visitor_team'] and 'penalty' in soi_dic['visitor_team'][shot['timestamp']]:
+            visitor_penalty = True
 
         # we need the shot_side and the team for later processing
         (team, side) = shotside_get(shot, shot['match__home_team_id'], shot['match__visitor_team_id'])
 
-        if team and side:
+        if team and side and home_penalty == visitor_penalty:
             # handness of shooter
             handness = _handness_get(shot, player_dic)
 
@@ -382,18 +396,19 @@ def xgf_calculate(logger, shot_stat_dic, quantifier_dic):
         for player_id_ in shot_stat_dic[team]:
 
             player_xgf_dic[team][player_id_] = {'jersey': shot_stat_dic[team][player_id_]['jersey'], 'name': shot_stat_dic[team][player_id_]['name'], 'shot_weight_sum': 0, 'shot_weight_sum_list': []}
+
             # interate shots
             for shot in shot_stat_dic[team][player_id_]['shots']:
-
                 if shot['shots_pctg'] > 0:
                     # add shot
                     shot_sum = shot['shots_pctg'] * quantifier_dic[team]['shots_pctg']
                     shot_divisor = 1
 
                     # consider hadness (if greater than 0)
-                    if shot['handness_pctg'] > 0:
-                        shot_sum = shot_sum + shot['handness_pctg'] * quantifier_dic[team]['handness_pctg']
-                        shot_divisor += 1
+                    if 'handness_pctg' in shot:
+                        if shot['handness_pctg'] > 0:
+                            shot_sum = shot_sum + shot['handness_pctg'] * quantifier_dic[team]['handness_pctg']
+                            shot_divisor += 1
 
                     # consider shot specific handness (if greater than 0)
                     if shot['handness_shots_pctg'] > 0:
@@ -419,7 +434,7 @@ def xgf_calculate(logger, shot_stat_dic, quantifier_dic):
                             shot_divisor += 1
 
                     # calculate shot likelyhood
-                    shot_weight = round(shot_sum/shot_divisor, 1)
+                    shot_weight = round(shot_sum/shot_divisor, 2)
 
                     player_xgf_dic[team][player_id_]['shot_weight_sum_list'].append(shot_weight)
 
@@ -435,9 +450,9 @@ def xgscore_get(logger, playerxgf_dic):
     xgf_dic = {'home': 0, 'visitor': 0}
     for team in playerxgf_dic:
         for player_id in playerxgf_dic[team]:
-            xgf = round(playerxgf_dic[team][player_id]['shot_weight_sum']/100, 0)
-            if xgf >= 1:
-                # print(player_id, playerxgf_dic[team][player_id]['jersey'], playerxgf_dic[team][player_id]['name'], round(playerxgf_dic[team][player_id]['shot_weight_sum']/100, 0), playerxgf_dic[team][player_id]['shot_weight_sum'])
-                xgf_dic[team] += int(xgf)
+            xgf = round(playerxgf_dic[team][player_id]['shot_weight_sum']/100, 1)
+            # if xgf >= 1:
+            #    # print(player_id, playerxgf_dic[team][player_id]['jersey'], playerxgf_dic[team][player_id]['name'], round(playerxgf_dic[team][player_id]['shot_weight_sum']/100, 0), playerxgf_dic[team][player_id]['shot_weight_sum'])
+            xgf_dic[team] += xgf
 
     return xgf_dic

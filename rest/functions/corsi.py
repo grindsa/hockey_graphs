@@ -133,6 +133,7 @@ def gameshots5v5_get(logger, match_id, match_info_dic, team, shot_list):
     shots_against_5v5 = 0
     shots_ongoal_for_5v5 = 0
     shots_ongoal_against_5v5 = 0
+    shot_list_5v5 = []
 
     # hack to sync data with Leaffan.net we aer skipping late corrections form next day
     ltime = 0
@@ -149,15 +150,16 @@ def gameshots5v5_get(logger, match_id, match_info_dic, team, shot_list):
             if 'penalty' in soi_dic['visitor_team'][shot['timestamp']]:
                 visitor_penalty = True
 
-            shout_count = False
+            count_shot = False
             if home_penalty == visitor_penalty:
-                shout_count = True
+                count_shot = True
 
             home_count = soi_dic['visitor_team'][shot['timestamp']]['count']
             _visitor_count = soi_dic['visitor_team'][shot['timestamp']]['count']
 
             # count only shots at 5v5
-            if shout_count:
+            if count_shot:
+                shot_list_5v5.append(shot)
             # if home_count == 5 and visitor_count == 5:
                 if team == 'home':
                     # we count from perspectiv of the come team
@@ -185,7 +187,7 @@ def gameshots5v5_get(logger, match_id, match_info_dic, team, shot_list):
                         if home_count == 5:
                             shots_ongoal_for_5v5 += 1
 
-    return (shots_for_5v5, shots_against_5v5, shots_ongoal_for_5v5, shots_ongoal_against_5v5)
+    return (shots_for_5v5, shots_against_5v5, shots_ongoal_for_5v5, shots_ongoal_against_5v5, shot_list_5v5)
 
 def pace_data_get(logger, ismobile, teamstat_dic, teams_dic):
     # pylint: disable=R0914
@@ -381,3 +383,19 @@ def shotrates_updates_get(logger, data_dic):
         }
 
     return updates_dic
+
+def goals5v5_get(logger, match_id, match_info_dic):
+    logger.debug('goals5v5_get({0})'.format(match_id))
+
+    # create empty dictionary
+    goals5v5_dic = {'home': 0, 'visitor': 0}
+
+    # get period events
+    periodevent_list = periodevent_get(logger, 'match_id', match_id, ['period_event'])
+    for period in periodevent_list:
+        for event in periodevent_list[period]:
+            # filter goals on even strength
+            if event['type'] == "goal" and event['data']['balance'] == "EQ":
+                goals5v5_dic[event['data']['team']] += 1
+
+    return goals5v5_dic
