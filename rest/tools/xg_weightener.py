@@ -237,9 +237,9 @@ if __name__ == "__main__":
 
                                 for match_id in g_shotstat_dic:
                                     MATCH_CNT += 1
+
                                     playerxgf_dic = xgf_calculate(LOGGER, g_shotstat_dic[match_id], quantifier_dic)
                                     xgf_dic = xgscore_get(LOGGER, playerxgf_dic)
-
                                     # convert xg to make them comparable with 5v5 goals
                                     xgf_dic['home'] = int(round(xgf_dic['home'], 0))
                                     xgf_dic['visitor'] = int(round(xgf_dic['visitor'], 0))

@@ -6,9 +6,10 @@ import sys
 import numpy as np
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir, os.path.pardir)))
+from rest.functions.corsi import goals5v5_get, gameshots5v5_get
 from rest.functions.helper import config_load, logger_setup, json_load, json_store, uts_now
 from rest.functions.shot import shot_list_get
-from rest.functions.match import match_list_get
+from rest.functions.match import match_info_get, match_list_get
 from rest.functions.xg import xgmodel_get, shotlist_process, xgf_calculate, xgscore_get
 
 from pprint import pprint
@@ -60,15 +61,27 @@ def _shotstats_get(logger, match_list):
     g_goal_dic_ = {}
     for match_id_ in match_list:
 
+        # get match information
+        match_dic = match_info_get(LOGGER, match_id_, None, ['date', 'home_team_id', 'home_team__shortcut', 'visitor_team_id', 'visitor_team__shortcut', 'result'])
+
         # get list of shots
-        vlist = ['shot_id', 'match_id', 'match_shot_resutl_id', 'player_id', 'player__first_name', 'player__last_name', 'player__jersey', 'player__stick', 'team_id', 'coordinate_x', 'coordinate_y', 'match__home_team_id', 'match__visitor_team_id', 'timestamp']
+        vlist = ['shot_id', 'match_id', 'match_shot_resutl_id', 'player_id', 'player__first_name', 'player__last_name', 'player__jersey', 'player__stick', 'team_id', 'coordinate_x', 'coordinate_y', 'match__home_team_id', 'match__visitor_team_id', 'timestamp', 'real_date']
         shot_list = shot_list_get(LOGGER, 'match_id', match_id_, vlist)
+
+        # get corsi statistics
+        (shots_for_5v5, shots_against_5v5, shots_ongoal_for_5v5, shots_ongoal_against_5v5, shot_list_5v5) = gameshots5v5_get(logger, match_id_, match_dic, 'home', shot_list)
+
+        # 5v5 goals from periodevents
+        goals5v5_dic = goals5v5_get(logger, match_id_, match_dic)
 
         # convert shots and goals into structure we can process later on
         # we also need the XGMODEL_DIC to check if we have the shotcoordinates in our structure
-        (shotstat_dic, goal_dic) = shotlist_process(LOGGER, shot_list, XGMODEL_DIC, REBOUND_INTERVAL, BREAK_INTERVAL)
+        (shotstat_dic, goal_dic) = shotlist_process(LOGGER, shot_list_5v5, XGMODEL_DIC, REBOUND_INTERVAL, BREAK_INTERVAL)
         g_shotstat_dict[match_id_] = shotstat_dic
-        g_goal_dic_[match_id_] = {'home': len(goal_dic['home']), 'visitor': len(goal_dic['visitor'])}
+
+        # g_goal_dic_[match_id_] = {'home': len(goal_dic['home']), 'visitor': len(goal_dic['visitor'])}
+        # we need to compare against 5v5 goals
+        g_goal_dic_[match_id_] = {'home': goals5v5_dic['home'], 'visitor': goals5v5_dic['visitor']}
 
     return(g_shotstat_dict, g_goal_dic_)
 
@@ -78,13 +91,13 @@ def _loopranges_get(logger, quantifier_dic, deviation, step_size):
 
     # quantifier dictionary
     input_parameters_ = {
-        'shots_pctg': {'start': quantifier_dic['shots_pctg'] - deviation, 'max': quantifier_dic['shots_pctg'] + deviation, 'step': step_size},
-        'handness_pctg': {'start': quantifier_dic['handness_pctg'] - deviation, 'max': quantifier_dic['handness_pctg'] + deviation, 'step': step_size},
-        'handness_shots_pctg': {'start': quantifier_dic['handness_shots_pctg'] - deviation, 'max': quantifier_dic['handness_shots_pctg'] + deviation, 'step': step_size},
-        'rb_pctg': {'start': quantifier_dic['rb_pctg'] - deviation, 'max': quantifier_dic['rb_pctg'] + deviation, 'step': step_size},
-        'rb_shots_pctg': {'start': quantifier_dic['rb_shots_pctg'] - deviation, 'max': quantifier_dic['rb_shots_pctg'] + deviation, 'step': step_size},
-        'br_pctg': {'start': quantifier_dic['br_pctg'] - deviation, 'max': quantifier_dic['br_pctg'] + deviation, 'step': step_size},
-        'br_shots_pctg': {'start': quantifier_dic['br_shots_pctg'] - deviation, 'max': quantifier_dic['br_shots_pctg'] + deviation, 'step': step_size}
+        'shots_pctg': {'start': quantifier_dic['home']['shots_pctg'] - deviation, 'max': quantifier_dic['home']['shots_pctg'] + deviation, 'step': step_size},
+        'handness_pctg': {'start': quantifier_dic['home']['handness_pctg'] - deviation, 'max': quantifier_dic['home']['handness_pctg'] + deviation, 'step': step_size},
+        'handness_shots_pctg': {'start': quantifier_dic['home']['handness_shots_pctg'] - deviation, 'max': quantifier_dic['home']['handness_shots_pctg'] + deviation, 'step': step_size},
+        'rb_pctg': {'start': quantifier_dic['home']['rb_pctg'] - deviation, 'max': quantifier_dic['home']['rb_pctg'] + deviation, 'step': step_size},
+        'rb_shots_pctg': {'start': quantifier_dic['home']['rb_shots_pctg'] - deviation, 'max': quantifier_dic['home']['rb_shots_pctg'] + deviation, 'step': step_size},
+        'br_pctg': {'start': quantifier_dic['home']['br_pctg'] - deviation, 'max': quantifier_dic['home']['br_pctg'] + deviation, 'step': step_size},
+        'br_shots_pctg': {'start': quantifier_dic['home']['br_shots_pctg'] - deviation, 'max': quantifier_dic['home']['br_shots_pctg'] + deviation, 'step': step_size}
     }
     return input_parameters_
 
@@ -101,13 +114,24 @@ def weights_finetune(logger, uts_start, result_file, g_result_dic, g_shotstat_di
                                 g_cnt += 1
                                 # print(round(shots_pctg, 1), round(handness_pctg, 1), round(handness_shots_pctg, 1), round(rb_pctg, 1), round(rb_shots_pctg, 1), round(br_pctg, 1), round(br_shots_pctg, 1))
                                 quantifier_dic = {
-                                    'shots_pctg': round(shots_pctg, 1),
-                                    'handness_pctg': round(handness_pctg, 1),
-                                    'handness_shots_pctg': round(handness_shots_pctg, 1),
-                                    'rb_pctg': round(rb_pctg, 1),
-                                    'rb_shots_pctg': round(rb_shots_pctg, 1),
-                                    'br_pctg': round(br_pctg, 1),
-                                    'br_shots_pctg': round(br_shots_pctg, 1),
+                                    'home': {
+                                        'shots_pctg': round(shots_pctg, 1),
+                                        'handness_pctg': round(handness_pctg, 1),
+                                        'handness_shots_pctg': round(handness_shots_pctg, 1),
+                                        'rb_pctg': round(rb_pctg, 1),
+                                        'rb_shots_pctg': round(rb_shots_pctg, 1),
+                                        'br_pctg': round(br_pctg, 1),
+                                        'br_shots_pctg': round(br_shots_pctg, 1),
+                                    },
+                                    'visitor': {
+                                        'shots_pctg': round(shots_pctg, 1),
+                                        'handness_pctg': round(handness_pctg, 1),
+                                        'handness_shots_pctg': round(handness_shots_pctg, 1),
+                                        'rb_pctg': round(rb_pctg, 1),
+                                        'rb_shots_pctg': round(rb_shots_pctg, 1),
+                                        'br_pctg': round(br_pctg, 1),
+                                        'br_shots_pctg': round(br_shots_pctg, 1),
+                                    }
                                 }
 
                                 match_cnt = 0
@@ -118,8 +142,12 @@ def weights_finetune(logger, uts_start, result_file, g_result_dic, g_shotstat_di
 
                                 for match_id in g_shotstat_dic:
                                     match_cnt += 1
+
                                     playerxgf_dic = xgf_calculate(logger, g_shotstat_dic[match_id], quantifier_dic)
                                     xgf_dic = xgscore_get(logger, playerxgf_dic)
+                                    # convert xg to make them comparable with 5v5 goals
+                                    xgf_dic['home'] = int(round(xgf_dic['home'], 0))
+                                    xgf_dic['visitor'] = int(round(xgf_dic['visitor'], 0))
                                     # print(xgf_dic['home'], xgf_dic['visitor'], g_goal_dic[match_id]['home'], g_goal_dic[match_id]['visitor'])
 
                                     # check homescore
