@@ -7,7 +7,7 @@ from rest.functions.corsi import pace_chartseries_get
 from rest.functions.helper import pctg_float_get, list_sumup
 from rest.functions.periodevent import periodevent_get
 from rest.functions.shot import shotside_get
-from rest.functions.timeline import skatersonice_get, penalties_include
+from rest.functions.timeline import penalties_include
 from rest.models import Xg
 
 def _surrondingpoints_get(_logger, x_point, y_point):
