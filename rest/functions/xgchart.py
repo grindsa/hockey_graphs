@@ -27,8 +27,6 @@ def xgfa_chart_get(logger, ctitle, csubtitle, ismobile, xgfa_data):
         'y_max': xgfa_data['y_max'] + 0.2
     }
 
-    print(minmax_dic)
-
     chart_options = {
 
         'chart': {
@@ -55,7 +53,7 @@ def xgfa_chart_get(logger, ctitle, csubtitle, ismobile, xgfa_data):
             'labels': {'style': {'fontSize': font_size},},
             'min': minmax_dic['x_min'],
             'max': minmax_dic['x_max'],
-            'tickInterval': 0.5,
+            'tickInterval': 0.25,
             'showFirstLabel': 1,
             'showLastLabel': 1,
             'gridLineWidth': 1,
@@ -68,7 +66,7 @@ def xgfa_chart_get(logger, ctitle, csubtitle, ismobile, xgfa_data):
             'maxPadding': 0.1,
             'min': minmax_dic['y_min'],
             'max': minmax_dic['y_max'],
-            'tickInterval': 0.5,
+            'tickInterval': 0.25,
             'reversed': 1,
             'labels': {'style': {'fontSize': font_size},},
             'gridLineWidth': 1,
