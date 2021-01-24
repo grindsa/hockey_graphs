@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-01-01 14:43+0100\n"
-"PO-Revision-Date: 2021-01-01 14:45+0100\n"
+"PO-Revision-Date: 2021-01-24 07:52+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -412,7 +412,7 @@ msgstr "Neutrale Zone"
 
 #: .\rest\functions\shottables.py:111
 msgid "Line"
-msgstr "Riehe"
+msgstr "Reihe"
 
 #: .\rest\functions\shottables.py:113
 msgid "Plus/Minus of Shot attempts and Shot attempts \"against\""
