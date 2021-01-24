@@ -27,7 +27,7 @@ def xgfa_chart_get(logger, ctitle, csubtitle, ismobile, xgfa_data):
 
         'chart': {
             'type': 'scatter',
-            'height': '110%',
+            'height': '100%',
             'style': chartstyle()
         },
 
@@ -35,7 +35,7 @@ def xgfa_chart_get(logger, ctitle, csubtitle, ismobile, xgfa_data):
         'title': title(ctitle, variable_dic['title_size'], decoration=True),
         'subtitle': subtitle(csubtitle, variable_dic['subtitle_size']),
         'credits': credit(),
-        'legend': {'enabled': 1},
+        'legend': {'enabled': 0},
         'responsive': responsive_y1(),
 
         'tooltip': {
