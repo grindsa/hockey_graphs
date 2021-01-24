@@ -2,7 +2,7 @@
 """ list of functions for shots """
 # pylint: disable=E0401, R0914
 import numpy as np
-from rest.functions.chartparameters import chart_color6, plotlines_color, title, font_size, corner_annotations
+from rest.functions.chartparameters import chart_color6, plotlines_color, title, font_size, corner_annotations, hm_color_list
 from rest.functions.corsi import pace_chartseries_get
 from rest.functions.helper import pctg_float_get, list_sumup
 from rest.functions.periodevent import periodevent_get
@@ -146,7 +146,7 @@ def _xgfa_sumup(logger, teamstat_dic):
             # calculate gf% xgf%
             ele['xgf_5v5_pctg'] = round(sum_xgoals_for*100/(sum_xgoals_for + sum_xgoals_against), 2)
             ele['gf_5v5_pctg'] = round(ele['sum_goals_for_5v5']*100/(ele['sum_goals_for_5v5'] + ele['sum_goals_against_5v5']), 2)
-            ele['dgf_5v5_pctg'] = ele['gf_5v5_pctg'] - ele['xgf_5v5_pctg']
+            ele['dgf_5v5'] = ele['gf_5v5_pctg'] - ele['xgf_5v5_pctg']
 
     return (teamstat_sum_dic, update_amount)
 
@@ -497,9 +497,13 @@ def xgfa_data_get(logger, ismobile, teamstat_dic, teams_dic):
 
     if ismobile:
         image_width = 25
+        overview_width = 20
     else:
         image_width = 40
+        overview_width = 30
+
     image_height = image_width
+    overview_height = overview_width
 
     # get summary
     (xgfasum_dic, update_amount) = _xgfa_sumup(logger, teamstat_dic)
@@ -507,11 +511,16 @@ def xgfa_data_get(logger, ismobile, teamstat_dic, teams_dic):
     # set empty lakes
     xgfa_lake = {}
     gfxgf_lake = {}
+    dgf_lake = {}
     for ele in range(1, update_amount+1):
         xgfa_lake[ele] = []
         gfxgf_lake[ele] = []
+        dgf_lake[ele] = []
 
     for team_id in xgfasum_dic:
+
+        logo_url = '<span><img src="{0}" alt="{1}" width="{2}" height="{3}"></span>'.format(teams_dic[team_id]['team_logo'], teams_dic[team_id]['shortcut'], overview_width, overview_height)
+
         # harmonize lengh by adding list elements at the beginning
         if len(xgfasum_dic[team_id]) < update_amount:
             for ele in range(0, update_amount - len(xgfasum_dic[team_id])):
@@ -537,11 +546,43 @@ def xgfa_data_get(logger, ismobile, teamstat_dic, teams_dic):
                 'y': ele['xgf_5v5_pctg']
             })
 
+            dgf_lake[idx].append({
+                'shortcut': teams_dic[team_id]['shortcut'],
+                'logo_url': logo_url,
+                'dgf_5v5': round(ele['dgf_5v5'], 2),
+                'gf_5v5_pctg': ele['gf_5v5_pctg'],
+            })
+
+
     # build final dictionary
     xgfa_chartseries_dic = pace_chartseries_get(logger, xgfa_lake)
     gfxgf_chartseries_dic = pace_chartseries_get(logger, gfxgf_lake)
 
-    return (xgfa_chartseries_dic, gfxgf_chartseries_dic)
+    # build dictionary for dgf chart
+    dgf_chartseries_dic = dgf_chartseries_get(logger, dgf_lake)
+
+    return (xgfa_chartseries_dic, gfxgf_chartseries_dic, dgf_chartseries_dic)
+
+def dgf_chartseries_get(logger, data_dic):
+    """ build dictionary for dgf_chart """
+    logger.debug('dgf_chartseries_get()')
+    chartseries_dic = {}
+
+    for mday in data_dic:
+        chartseries_dic[mday] = {'data': {'team_list': [], 'dgf_list': [], 'gf_list': []}, 'gf_5v5_pctg_min': 0}
+
+        for idx, datapoint in enumerate(sorted(data_dic[mday], key=lambda i: i['gf_5v5_pctg'])):
+            datapoint['color'] = hm_color_list[idx]
+
+        for datapoint in sorted(data_dic[mday], key=lambda i: i['dgf_5v5']):
+            chartseries_dic[mday]['data']['team_list'].append(datapoint['logo_url'])
+            chartseries_dic[mday]['data']['gf_list'].append(datapoint['gf_5v5_pctg'])
+            chartseries_dic[mday]['data']['dgf_list'].append({'y': datapoint['dgf_5v5'], 'color': datapoint['color'], 'gf_pctg': datapoint['gf_5v5_pctg'], 'shortcut': datapoint['shortcut']})
+            # get min value
+            if chartseries_dic[mday]['gf_5v5_pctg_min'] <= datapoint['gf_5v5_pctg']:
+                chartseries_dic[mday]['gf_5v5_pctg_min'] = datapoint['gf_5v5_pctg']
+
+    return chartseries_dic
 
 def xgfa_updates_get(logger, data_dic, string_1=None, string_2=None, string_3=None, string_4=None, ismobile=False):
     # pylint: disable=E0602
@@ -591,6 +632,27 @@ def xgfa_updates_get(logger, data_dic, string_1=None, string_2=None, string_3=No
             updates_dic[ele]['chartoptions']['annotations'] = corner_annotations(ismobile, minmax_dic, string_1, string_2, string_3, string_4, 1)
 
     return updates_dic
+
+def dgf_updates_get(logger, data_dic):
+    # pylint: disable=E0602
+    """ build structure for xgfa chart """
+    logger.debug('dgf_updates_get()')
+
+    updates_dic = {}
+
+    for ele in data_dic:
+        updates_dic[ele] = {
+            'chartoptions':  {
+                'xAxis': {'categories': data_dic[ele]['data']['team_list'], "labels": {"useHTML": 1, "align": "center"}},
+                'series': [
+                    # pylint: disable=E0602
+                    {'name': _('dGF%'), 'marker': {'symbol': 'square'}, 'data': data_dic[ele]['data']['dgf_list']},
+                ]
+            }
+        }
+
+    return updates_dic
+
 
 def gfxgf_updates_get(logger, data_dic, string_1=None, string_2=None, string_3=None, string_4=None, ismobile=False):
     # pylint: disable=E0602

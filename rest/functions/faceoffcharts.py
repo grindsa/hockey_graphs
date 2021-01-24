@@ -15,13 +15,13 @@ def faceoff_overview_chart(logger, ctitle, ismobile, data_dic):
         'chart': {
             'type': 'scatter',
             'height': '80%',
-            'style': chartstyle()            
+            'style': chartstyle()
         },
 
         'exporting': exporting(filename=ctitle),
         'title': title(ctitle, variable_dic['title_size'], decoration=True),
         'credits': credit(),
-        'legend': legend(),
+        'legend': legend(enabled=1),
         'responsive': responsive_y1(),
 
         'tooltip': {

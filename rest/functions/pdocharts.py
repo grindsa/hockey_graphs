@@ -80,7 +80,7 @@ def pdo_breakdown_chart(logger, ctitle, csubtitle, ismobile, pdo_list):
 
         'chart': {
             'type': 'scatter',
-            'height': '120%',
+            'height': '110%',
             'style': chartstyle()
         },
 

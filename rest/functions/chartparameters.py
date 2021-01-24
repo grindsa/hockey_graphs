@@ -40,6 +40,9 @@ line3_color = chart_color4
 line4_color = chart_color2
 line5_color = chart_color5
 
+# hm_color_list = ['#a90c38', '#c11b39', '#e54444', '#ec4f4a', '#e06f5b', '#f98973', '#fa8e78', '#fc9783', '#eac7bf', '#b2cfe2', '#a4cbe5', '#8bb8db', '#70a2c9', '#43719f', '#416f9d', '#2e5b87']
+hm_color_list = ['#a90c38', '#c11b39', '#e54444', '#ec4f4a', '#e06f5b', '#f98973', '#fa8e78', '#b2cfe2', '#a4cbe5', '#8bb8db', '#70a2c9', '#43719f', '#416f9d', '#2e5b87']
+
 twitter_color = '#1DA1F2'
 
 def credit(text='©2020 GrindSa (https://hockeygraphs.dynamop.de)', href='https://hockeygraphs.dynamop.de'):
@@ -246,10 +249,10 @@ def corner_annotations(_ismobile, minmax_dic, upper_left_text, lower_left_text, 
 
     return result
 
-def color_axis(color_list=None, showinlegend=1):
+def color_axis(color_list=None, showinlegend=1, minimum=0):
     """ create color scheme for heatmap """
     if not color_list:
-        color_list = ['#a90c38', '#c11b39', '#e54444', '#ec4f4a', '#e06f5b', '#f98973', '#fa8e78', '#fc9783', '#eac7bf', '#b2cfe2', '#a4cbe5', '#8bb8db', '#70a2c9', '#43719f', '#416f9d', '#2e5b87']
+        color_list = hm_color_list
 
     stop_list = []
     quotient = round(100/ (len(color_list)-1), 0)
@@ -266,7 +269,7 @@ def color_axis(color_list=None, showinlegend=1):
 
 
     result = {
-        'min': 0,
+        'min': minimum,
         'stops': stop_list,
         'showInLegend': showinlegend,
     }

@@ -1085,7 +1085,7 @@ def shotshare_chart_get(logger, ctitle, csubtitle, ismobile, shotshare_dic):
         'title': title(ctitle, variable_dic['title_size'], decoration=True),
         'subtitle': subtitle(csubtitle, variable_dic['subtitle_size']),
         'credits': credit(),
-        'legend': legend(),
+        'legend': legend(enabled=1),
         'responsive': responsive_y1(),
 
         'tooltip': {

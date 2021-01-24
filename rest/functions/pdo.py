@@ -101,7 +101,6 @@ def ppg_updates_get(logger, data_dic, ctitle):
 
     return updates_dic
 
-
 def pdo_breakdown_data_get(logger, ismobile, teamstat_dic, teams_dic):
     """ get data for breakdown chart """
     logger.debug('pdo_breakdown_data_get()')

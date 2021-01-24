@@ -25,8 +25,8 @@ from rest.functions.teammatchstat import teammatchstats_get
 from rest.functions.teamstat import teamstat_dic_get
 from rest.functions.heatmap import teamcomparison_hmdata_get, teamcomparison_updates_get
 from rest.functions.heatmapcharts import teamcomparison_chart_get
-from rest.functions.xg import xgfa_data_get, xgfa_updates_get, gfxgf_updates_get
-from rest.functions.xgchart import xgfa_chart_get, gfxgf_chart_get
+from rest.functions.xg import xgfa_data_get, xgfa_updates_get, gfxgf_updates_get, dgf_updates_get
+from rest.functions.xgchart import xgfa_chart_get, gfxgf_chart_get, dgf_chart_get
 
 def teamcomparison_get(logger, request, fkey=None, fvalue=None):
     """ matchstatistics grouped by days """
@@ -46,39 +46,39 @@ def teamcomparison_get(logger, request, fkey=None, fvalue=None):
 
     result = []
 
-    #stat_entry = {}
-    #stat_entry = _teamcomparison_heatmap_get(logger, ismobile, language, teamstat_dic, teams_dic)
-    #if stat_entry:
-    #    result.append(stat_entry)
+    stat_entry = {}
+    stat_entry = _teamcomparison_heatmap_get(logger, ismobile, language, teamstat_dic, teams_dic)
+    if stat_entry:
+        result.append(stat_entry)
 
     # create PDO breakdown chart
-    #result.extend(_pdo_breakdown_get(logger, ismobile, teamstat_dic, teams_dic))
+    result.extend(_pdo_breakdown_get(logger, ismobile, teamstat_dic, teams_dic))
 
     # 5on5 shotcharts
-    #result.extend(_5v5_pace_get(logger, ismobile, teamstat_dic, teams_dic))
+    result.extend(_5v5_pace_get(logger, ismobile, teamstat_dic, teams_dic))
 
     # faceoff wins
-    #stat_entry = _faceoff_pctg_get(logger, ismobile, teamstat_dic, teams_dic)
-    #if stat_entry:
-    #    result.append(stat_entry)
+    stat_entry = _faceoff_pctg_get(logger, ismobile, teamstat_dic, teams_dic)
+    if stat_entry:
+        result.append(stat_entry)
 
     # rebound efficentcy
-    #stat_entry = _rebound_pctg_get(logger, ismobile, teamstat_dic, teams_dic)
-    #if stat_entry:
-    #    result.append(stat_entry)
+    stat_entry = _rebound_pctg_get(logger, ismobile, teamstat_dic, teams_dic)
+    if stat_entry:
+        result.append(stat_entry)
 
     # rebound efficentcy
-    #stat_entry = _break_pctg_get(logger, ismobile, teamstat_dic, teams_dic)
-    #if stat_entry:
-    #    result.append(stat_entry)
+    stat_entry = _break_pctg_get(logger, ismobile, teamstat_dic, teams_dic)
+    if stat_entry:
+        result.append(stat_entry)
 
     # Special teams performance
-    #result.extend(_pppk_pctg_get(logger, ismobile, teamstat_dic, teams_dic))
+    result.extend(_pppk_pctg_get(logger, ismobile, teamstat_dic, teams_dic))
 
     # points per game vs. shotefficiency
-    #stat_entry = _ppg_get(logger, ismobile, teamstat_dic, teams_dic)
-    #if stat_entry:
-    #    result.append(stat_entry)
+    stat_entry = _ppg_get(logger, ismobile, teamstat_dic, teams_dic)
+    if stat_entry:
+        result.append(stat_entry)
 
     result.extend(_xgfa_get(logger, ismobile, teamstat_dic, teams_dic))
 
@@ -111,7 +111,7 @@ def _xgfa_get(logger, ismobile, teamstat_dic, teams_dic):
     # create empty list returning data
     stat_entry_list = []
 
-    (xgfa_data, gfxgf_data) = xgfa_data_get(logger, ismobile, teamstat_dic, teams_dic)
+    (xgfa_data, gfxgf_data, dgf_data) = xgfa_data_get(logger, ismobile, teamstat_dic, teams_dic)
 
     if xgfa_data:
         # xgfa chart
@@ -126,11 +126,24 @@ def _xgfa_get(logger, ismobile, teamstat_dic, teams_dic):
         }
         stat_entry_list.append(stat_entry)
 
+    if dgf_data:
+        # xgfa chart
+        # pylint: disable=E0602
+        title = _('Performance vs. Expectations (dGF%)')
+        subtitle = _('Team GF% vs xGF% on 5v5')
+
+        stat_entry = {
+            'title': title,
+            'chart':  dgf_chart_get(logger, title, subtitle, ismobile, dgf_data[len(dgf_data.keys())]),
+            'updates': dgf_updates_get(logger, dgf_data)
+        }
+        stat_entry_list.append(stat_entry)
+
     if gfxgf_data:
         # xgfa chart
         # pylint: disable=E0602
-        title = _('Performance vs. Expectations')
-        subtitle = _('Team GF% vs xGF% on 5v5')
+        title = _('GF% vs xGF% on 5v5')
+        subtitle = _('Who is performing as we would expect')
 
         stat_entry = {
             'title': title,
@@ -142,7 +155,7 @@ def _xgfa_get(logger, ismobile, teamstat_dic, teams_dic):
     return stat_entry_list
 
 def _pppk_pctg_get(logger, ismobile, teamstat_dic, teams_dic):
-    """ build structure for pace chart """
+    """ build structure for pppk chart """
     logger.debug('_pppk_pctg_get()')
 
     # create empty list returning data
