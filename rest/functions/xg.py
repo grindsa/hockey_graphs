@@ -141,8 +141,12 @@ def _xgfa_sumup(logger, teamstat_dic):
             sum_matchduration = ele['sum_matchduration']
 
             # calculate 60
-            ele['avg_xgoals_for_60'] = round(sum_xgoals_for * 3600 / sum_matchduration, 1)
-            ele['avg_xgoals_against_60'] = round(sum_xgoals_against * 3600 / sum_matchduration, 1)
+            ele['avg_xgoals_for_60'] = round(sum_xgoals_for * 3600 / sum_matchduration, 2)
+            ele['avg_xgoals_against_60'] = round(sum_xgoals_against * 3600 / sum_matchduration, 2)
+            # calculate gf% xgf%
+            ele['xgf_5v5_pctg'] = round(sum_xgoals_for*100/(sum_xgoals_for + sum_xgoals_against), 2)
+            ele['gf_5v5_pctg'] = round(ele['sum_goals_for_5v5']*100/(ele['sum_goals_for_5v5'] + ele['sum_goals_against_5v5']), 2)
+            ele['dgf_5v5_pctg'] = ele['gf_5v5_pctg'] - ele['xgf_5v5_pctg']
 
     return (teamstat_sum_dic, update_amount)
 
@@ -502,9 +506,10 @@ def xgfa_data_get(logger, ismobile, teamstat_dic, teams_dic):
 
     # set empty lakes
     xgfa_lake = {}
-
+    gfxgf_lake = {}
     for ele in range(1, update_amount+1):
         xgfa_lake[ele] = []
+        gfxgf_lake[ele] = []
 
     for team_id in xgfasum_dic:
         # harmonize lengh by adding list elements at the beginning
@@ -522,12 +527,21 @@ def xgfa_data_get(logger, ismobile, teamstat_dic, teams_dic):
                 'x': ele['avg_xgoals_for_60'],
                 'y': ele['avg_xgoals_against_60']
             })
-
+            gfxgf_lake[idx].append({
+                'team_name': teams_dic[team_id]['team_name'],
+                'shortcut':  teams_dic[team_id]['shortcut'],
+                'marker': {'width': image_width, 'height': image_height, 'symbol': 'url({0})'.format(teams_dic[team_id]['team_logo'])},
+                'xgf_5v5_pctg': ele['xgf_5v5_pctg'],
+                'gf_5v5_pctg': ele['gf_5v5_pctg'],
+                'x': ele['gf_5v5_pctg'],
+                'y': ele['xgf_5v5_pctg']
+            })
 
     # build final dictionary
     xgfa_chartseries_dic = pace_chartseries_get(logger, xgfa_lake)
+    gfxgf_chartseries_dic = pace_chartseries_get(logger, gfxgf_lake)
 
-    return xgfa_chartseries_dic
+    return (xgfa_chartseries_dic, gfxgf_chartseries_dic)
 
 def xgfa_updates_get(logger, data_dic, string_1=None, string_2=None, string_3=None, string_4=None, ismobile=False):
     # pylint: disable=E0602
@@ -555,7 +569,7 @@ def xgfa_updates_get(logger, data_dic, string_1=None, string_2=None, string_3=No
                     'title': title(_('Expected Goals "For" per 60min (xGF60)'), font_size),
                     'min': minmax_dic['x_min'],
                     'max': minmax_dic['x_max'],
-                    'tickInterval': 0.5,
+                    'tickInterval': 0.25,
                     'gridLineWidth': 1,
                     'plotBands': [{'from':  data_dic[ele]['x_avg'] -  data_dic[ele]['x_deviation']/2, 'to':  data_dic[ele]['x_avg'] +  data_dic[ele]['x_deviation']/2, 'color': chart_color6}],
                     'plotLines': [{'zIndex': 3, 'color': plotlines_color, 'width': 2, 'value':  data_dic[ele]['x_avg']}],
@@ -564,7 +578,54 @@ def xgfa_updates_get(logger, data_dic, string_1=None, string_2=None, string_3=No
                     'title': title(_('Expected Goals "Against" per 60min (xGA60)'), font_size),
                     'min': minmax_dic['y_min'],
                     'max': minmax_dic['y_max'],
-                    'tickInterval': 0.5,
+                    'tickInterval': 0.25,
+                    'gridLineWidth': 1,
+                    'reversed': 1,
+                    # we use x_deviation on purpose to make data better comparable
+                    'plotBands': [{'from':  data_dic[ele]['y_avg'] -  data_dic[ele]['x_deviation']/2, 'to':  data_dic[ele]['y_avg'] +  data_dic[ele]['x_deviation']/2, 'color': chart_color6}],
+                    'plotLines': [{'zIndex': 3, 'color': plotlines_color, 'width': 3, 'value':  data_dic[ele]['y_avg']}],
+                },
+            }
+        }
+        if string_1 and string_2 and string_3 and string_4:
+            updates_dic[ele]['chartoptions']['annotations'] = corner_annotations(ismobile, minmax_dic, string_1, string_2, string_3, string_4, 1)
+
+    return updates_dic
+
+def gfxgf_updates_get(logger, data_dic, string_1=None, string_2=None, string_3=None, string_4=None, ismobile=False):
+    # pylint: disable=E0602
+    """ build structure for xgfa chart """
+    logger.debug('discipline_updates_get()')
+
+    updates_dic = {}
+    for ele in data_dic:
+        minmax_dic = {
+            'x_min': data_dic[ele]['x_min'] - 5,
+            'y_min': data_dic[ele]['y_min'] - 2.5,
+            'x_max': data_dic[ele]['x_max'] + 5,
+            'y_max': data_dic[ele]['y_max'] + 5
+        }
+        updates_dic[ele] = {
+            'text': ele,
+            'chartoptions':  {
+                'series': [{
+                    'name': _('Standard Deviation'),
+                    'color': plotlines_color,
+                    'marker': {'symbol': 'square'},
+                    'data': data_dic[ele]['data']
+                }],
+                'xAxis': {
+                    'title': title(_('Expected Goals "For" per 60min (xGF60)'), font_size),
+                    'min': minmax_dic['x_min'],
+                    'max': minmax_dic['x_max'],
+                    'gridLineWidth': 1,
+                    'plotBands': [{'from':  data_dic[ele]['x_avg'] -  data_dic[ele]['x_deviation']/2, 'to':  data_dic[ele]['x_avg'] +  data_dic[ele]['x_deviation']/2, 'color': chart_color6}],
+                    'plotLines': [{'zIndex': 3, 'color': plotlines_color, 'width': 2, 'value':  data_dic[ele]['x_avg']}],
+                },
+                'yAxis': {
+                    'title': title(_('Expected Goals "Against" per 60min (xGA60)'), font_size),
+                    'min': minmax_dic['y_min'],
+                    'max': minmax_dic['y_max'],
                     'gridLineWidth': 1,
                     'reversed': 1,
                     # we use x_deviation on purpose to make data better comparable
