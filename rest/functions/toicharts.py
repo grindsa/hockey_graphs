@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """ time on ice charts """
 # pylint: disable=E0401
-from rest.functions.chartparameters import chartstyle, credit, exporting, responsive_y1, title, subtitle, legend, font_size, variables_get
+from rest.functions.chartparameters import chartstyle, credit, exporting, responsive_y1, title, subtitle, legend, font_size, variables_get, responsive_y1_nolabel
 from rest.functions.chartparameters import chart_color1, chart_color2, chart_color3, chart_color4
 
 def gametoichart_create(logger, ctitle, csubtitle, ismobile, toi_dic):
@@ -82,7 +82,7 @@ def gametoichart_create(logger, ctitle, csubtitle, ismobile, toi_dic):
     }
     return chart_options
 
-def gametoipppkchart_create(logger, ctitle, csubtitle, ismobile, toi_dic):
+def gametoipppkchart_create(logger, ctitle, csubtitle, ismobile, toi_dic, color_primary, color_secondary):
     # pylint: disable=E0602
     """ create time-on-ice chart """
     logger.debug('gametoichart_create()')
@@ -106,7 +106,7 @@ def gametoipppkchart_create(logger, ctitle, csubtitle, ismobile, toi_dic):
         if player_name in toi_dic:
             # y_dic[period].append('{0:02d}:{1:02d}'.format(*divmod(shifts_dic['ebb'][period][player_name], 60)))
             pp_list.append({'y': round(toi_dic[player_name]['pp']/60, 3), 'label': '{0:02d}:{1:02d}'.format(*divmod(toi_dic[player_name]['pp'], 60))})
-            pk_list.append({'y': round(toi_dic[player_name]['pk']/60, 3), 'label': '{0:02d}:{1:02d}'.format(*divmod(toi_dic[player_name]['pk'], 60))})
+            pk_list.append({'y': round(toi_dic[player_name]['pk']/60, 3) * -1, 'label': '{0:02d}:{1:02d}'.format(*divmod(toi_dic[player_name]['pk'], 60))})
         else:
             pp_list.append(0)
             pk_list.append(0)
@@ -124,8 +124,20 @@ def gametoipppkchart_create(logger, ctitle, csubtitle, ismobile, toi_dic):
         'title': title(ctitle, variable_dic['title_size'], decoration=True),
         'subtitle': subtitle(csubtitle, variable_dic['subtitle_size']),
         'credits': credit(),
-        'legend': legend(),
-        'responsive': responsive_y1(),
+        'legend': legend(additional_parameters={'reversed': 1}),
+        'responsive': responsive_y1_nolabel(),
+
+        'plotOptions': {
+            'series': {
+                'stacking': 'normal',
+                'dataLabels': {
+                    'enabled': 0,
+                    'useHTML': 0,
+                    'style': {'fontSize': font_size, 'textOutline': 0, 'color': '#ffffff', 'fontWeight': 0},
+                    'format': '{point.label}'
+                }
+            }
+        },
 
         'tooltip': {
             'shared': 1,
@@ -144,16 +156,19 @@ def gametoipppkchart_create(logger, ctitle, csubtitle, ismobile, toi_dic):
         },
 
         'yAxis': {
-            'title': title(_('Time on Ice'), font_size),
+            'title': title(ctitle, font_size),
             'reversedStacks': 0,
             'tickInterval': 1,
             'maxPadding': 0.1,
-            'labels': {'style': {'fontSize': font_size},},
+            'labels': {
+                'enabled': 1,
+                'style': {'fontSize': font_size},
+            },
         },
 
         'series': [
-            {'name': _('Time in Powerplay'), 'data': pp_list, 'color': chart_color3},
-            {'name': _('Time in Penalty killing'), 'data': pk_list, 'color': chart_color2},
+            {'name': _('Time in Powerplay'), 'data': pp_list, 'color': color_primary},
+            {'name': _('Time in Penalty killing'), 'data': pk_list, 'color': color_secondary},
         ]
     }
     return chart_options

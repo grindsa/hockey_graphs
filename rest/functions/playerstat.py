@@ -109,6 +109,38 @@ def toifromplayerstats_get(logger, _matchinfo_dic, playerstat_dic):
                         tmp_toi_sum_dic[team_name][player['name']] = player['statistics']['timeOnIce']
     return toi_dic
 
+def toipppk_get(logger, _matchinfo_dic, playerstat_dic):
+    """ get timeonice for powerplay and penalty killing"""
+    logger.debug('toipppk_get()')
+
+    # inititialize dictionaries to store the data
+    # toi_dic = {'home_team': {1: {}, 2: {}, 3: {}, 4: {}}, 'visitor_team': {1: {}, 2: {}, 3: {}, 4: {}}}
+    toi_sum_dic = {'home_team': {}, 'visitor_team': {}}
+
+    # filter only allowed periods
+    periods_allowed = {'1': 1, '2': 2, '3': 3, 'P': 4}
+    for team in playerstat_dic:
+        if team == 'home':
+            team_name = 'home_team'
+        else:
+            team_name = 'visitor_team'
+
+        # build dictionary based on playerstats (this is live - hopefully)
+        for period in periods_allowed:
+            if period in playerstat_dic[team]:
+                for player in playerstat_dic[team][period]:
+                    # store values in a temporary dic as playerstats contains aggregated values only
+                    if player['statistics']['timeOnIcePP'] > 0:
+                        if player['name'] not in toi_sum_dic[team_name]:
+                            toi_sum_dic[team_name][player['name']] = {'pp': 0, 'pk': 0}
+                        toi_sum_dic[team_name][player['name']]['pp'] = player['statistics']['timeOnIcePP']
+                    if player['statistics']['timeOnIceSH'] > 0:
+                        if player['name'] not in toi_sum_dic[team_name]:
+                            toi_sum_dic[team_name][player['name']] = {'pp': 0, 'pk': 0}
+                        toi_sum_dic[team_name][player['name']]['pk'] = player['statistics']['timeOnIceSH']
+
+    return toi_sum_dic
+
 def matchupmatrix_get(logger, matchinfo_dic, shot_list, shift_list, roster_list, periodevent_list, five_filter=True):
     """ get player matchup - time players spend on ice together """
     logger.debug('matchupmatrix_get()')

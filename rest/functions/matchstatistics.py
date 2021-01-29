@@ -13,7 +13,7 @@ from rest.functions.socialnetworkeventcharts import chatterchart_create
 from rest.functions.socialnetworkevent import socialnetworkevent_get, eventspermin_combine
 from rest.functions.shot import shot_list_get, shotspermin_count, shotspermin_aggregate, shotstatus_count, shotstatus_aggregate, shotsperzone_count, shotsperzone_aggregate, shotcoordinates_get, gameflow_get
 from rest.functions.shotcharts import shotsumchart_create, gameflowchart_create, shotstatussumchart_create, shotmapchart_create, gamecorsichart_create, gamecorsippctgchart_create, puckpossessionchart_create, shotzonechart_create
-from rest.functions.toicharts import gametoichart_create
+from rest.functions.toicharts import gametoichart_create, gametoipppkchart_create
 from rest.functions.heatmapcharts import gamematchupchart_create
 from rest.functions.heatmap import gameheatmapdata_get
 from rest.functions.shottables import shotsperiodtable_get, shotstatussumtable_get, shotzonetable_get, gamecorsi_table
@@ -22,7 +22,7 @@ from rest.functions.match import match_info_get, matchstats_get
 from rest.functions.shift import shift_get, toifromshifts_get
 from rest.functions.roster import roster_get
 from rest.functions.periodevent import periodevent_get, penaltyplotlines_get, goalsfromevents_get, goalplotlines_get
-from rest.functions.playerstat import playerstat_get, toifromplayerstats_get, matchupmatrix_get
+from rest.functions.playerstat import playerstat_get, toifromplayerstats_get, matchupmatrix_get, toipppk_get
 from rest.functions.chartparameters import chart_colors_get
 from rest.functions.helper import url_build, mobile_check
 
@@ -98,7 +98,7 @@ def matchstatistics_get(logger, request, fkey=None, fvalue=None):
 
         # time on ice per player
         # pylint: disable=E0602
-        result.append(_gametoi_get(logger, _('Time on Ice per Player'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shift_list))
+        result.extend(_gametoi_get(logger, _('Time on Ice per Player'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shift_list))
 
         # pylint: disable=E0602
         result.append(_gamematchup_get(logger, _('5v5 Matchup'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list, shift_list, roster_list, periodevent_list))
@@ -364,17 +364,21 @@ def _gametoi_get(logger, title, subtitle, ismobile, request, fkey, fvalue, match
     """ get corsi """
     logger.debug('_gametoi_get({0}:{1})'.format(fkey, fvalue))
 
+    stat_entry_list = []
+
+    playerstat_dic = playerstat_get(logger, fkey, fvalue, ['home', 'visitor'])
+    # get time_on_ice stats for powerplay and penalty killing
+    toipppk_dic = toipppk_get(logger, matchinfo_dic, playerstat_dic)
+
+    # toi chart and table
     toi_table = [None, None]
     toi_chart = []
-    toi_dic = {}
 
     if shift_list:
         # get time-on-ice based on shifts
         toi_dic = toifromshifts_get(logger, matchinfo_dic, shift_list)
-
-    if not toi_dic:
+    else:
         # get time-on-ice based on playerstats - THIS IS UNTESTED
-        playerstat_dic = playerstat_get(logger, fkey, fvalue, ['home', 'visitor'])
         toi_dic = toifromplayerstats_get(logger, matchinfo_dic, playerstat_dic)
 
     if toi_dic:
@@ -383,20 +387,38 @@ def _gametoi_get(logger, title, subtitle, ismobile, request, fkey, fvalue, match
             gametoichart_create(logger, '{1} - {0}'.format(title, matchinfo_dic['home_team__shortcut']), subtitle, ismobile, toi_dic['home_team']),
             gametoichart_create(logger, '{1} - {0}'.format(title, matchinfo_dic['home_team__shortcut']), subtitle, ismobile, toi_dic['visitor_team']),
         ]
-
         toi_table = [
             gametoi_table(logger, toi_dic['home_team']),
             gametoi_table(logger, toi_dic['visitor_team']),
         ]
+        stat_entry = {
+            'title': title,
+            'chart': toi_chart,
+            'table': toi_table,
+            'tabs': True
+        }
+        stat_entry_list.append(stat_entry)
 
-    stat_entry = {
-        'title': title,
-        'chart': toi_chart,
-        'table': toi_table,
-        'tabs': True
-    }
+    if toipppk_dic:
 
-    return stat_entry
+        title = _('Time on Ice during PP and PK')
+        toippk_chart = [
+            gametoipppkchart_create(logger, '{1} - {0}'.format(title, matchinfo_dic['home_team__shortcut']), subtitle, ismobile, toipppk_dic['home_team'], matchinfo_dic['home_team__color_primary'], matchinfo_dic['home_team__color_secondary']),
+            gametoipppkchart_create(logger, '{1} - {0}'.format(title, matchinfo_dic['home_team__shortcut']), subtitle, ismobile, toipppk_dic['visitor_team'], matchinfo_dic['visitor_team__color_primary'], matchinfo_dic['visitor_team__color_secondary']),
+        ]
+        #toippk_table = [
+        #    gametoi_table(logger, toi_dic['home_team']),
+        #    gametoi_table(logger, toi_dic['visitor_team']),
+        #]
+        stat_entry = {
+            'title': title,
+            'chart': toippk_chart,
+            'table': [],
+            'tabs': True
+        }
+        stat_entry_list.append(stat_entry)
+
+    return stat_entry_list
 
 def _gamematchup_get(logger, title, subtitle, ismobile, request, _fkey, _fvalue, matchinfo_dic, shot_list, shift_list, roster_list, periodevent_list):
     """ game matchup """
