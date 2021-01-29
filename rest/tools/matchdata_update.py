@@ -23,14 +23,17 @@ from rest.functions.shot import shot_add, shot_delete, zone_name_get
 from rest.functions.teamstat import teamstat_add
 from delapphelper import DelAppHelper
 
-def _playerstats_process(logger, match_id_, _period, home_dic_, visitor_dic_):
+def _playerstats_process(logger, match_id_, period, home_dic_, visitor_dic_):
     """ update match with result and finish flag """
     playerstat_list = playerstat_get(logger, 'match_id', match_id_)
+
+    if period == 'K' and not playerstat_list:
+        logger.debug('covering cornercase and set period to "3"')
+        period = '3'
 
     # filter only allowed periods
     periods_allowed = ['1', '2', '3', 'P']
     if period in periods_allowed:
-
         if 'home' in playerstat_list:
             homestat_dic = playerstat_list['home']
         else:
@@ -39,8 +42,10 @@ def _playerstats_process(logger, match_id_, _period, home_dic_, visitor_dic_):
             visitorstat_dic = playerstat_list['visitor']
         else:
             visitorstat_dic = {}
+
         homestat_dic[period] = home_dic_
         visitorstat_dic[period] = visitor_dic_
+
         playerstat_add(LOGGER, 'match_id', match_id_, {'match_id': match_id_, 'home': homestat_dic, 'visitor': visitorstat_dic})
 
 def _match_update(logger, match_id_, header_dic):
