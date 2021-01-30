@@ -161,6 +161,12 @@ class Teammatchstat(models.Model):
     ppefficiency = models.FloatField(default=0)
     shefficiency = models.FloatField(default=0)
     points = models.FloatField(default=0)
+    goalie_own_pull = models.FloatField(default=0)
+    goalie_own_pulltime = models.FloatField(default=0)    
+    goalie_other_pull = models.FloatField(default=0)
+    goals_en_for = models.IntegerField(default=0)
+    goals_en_against = models.IntegerField(default=0)
+    goals_wogoalie_for = models.IntegerField(default=0)
 
 class Xg(models.Model):
     """ table to store Xg model """
