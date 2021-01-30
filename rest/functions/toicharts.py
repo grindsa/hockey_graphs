@@ -83,7 +83,7 @@ def gametoichart_create(logger, ctitle, csubtitle, ismobile, toi_dic):
     return chart_options
 
 def gametoipppkchart_create(logger, ctitle, csubtitle, ismobile, toi_dic, color_primary, color_secondary):
-    # pylint: disable=E0602
+    # pylint: disable=E0602, R0914
     """ create time-on-ice chart """
     logger.debug('gametoichart_create()')
 
@@ -94,19 +94,26 @@ def gametoipppkchart_create(logger, ctitle, csubtitle, ismobile, toi_dic, color_
     pp_list = []
     pk_list = []
 
-    # we need two iterations of the dictionary
-    # first one is to create the list of playernames
-
+    # this one is to create the list of playernames
     for player_name in toi_dic:
         if player_name not in x_list:
             x_list.append(player_name)
 
-    # 2nd one to add toi per player
+    # add toi per player
+    pp_max = 0
+    pk_min = 0
     for player_name in sorted(x_list):
         if player_name in toi_dic:
             # y_dic[period].append('{0:02d}:{1:02d}'.format(*divmod(shifts_dic['ebb'][period][player_name], 60)))
-            pp_list.append({'y': round(toi_dic[player_name]['pp']/60, 3), 'label': '{0:02d}:{1:02d}'.format(*divmod(toi_dic[player_name]['pp'], 60))})
-            pk_list.append({'y': round(toi_dic[player_name]['pk']/60, 3) * -1, 'label': '{0:02d}:{1:02d}'.format(*divmod(toi_dic[player_name]['pk'], 60))})
+            pp_value = round(toi_dic[player_name]['pp']/60, 3)
+            pk_value = round(toi_dic[player_name]['pk']/60, 3) * -1
+            # check min max values to adjust chart
+            if pp_max <= pp_value:
+                pp_max = pp_value
+            if pk_value <= pk_min:
+                pk_min = pk_value
+            pp_list.append({'y': pp_value, 'label': '{0:02d}:{1:02d}'.format(*divmod(toi_dic[player_name]['pp'], 60))})
+            pk_list.append({'y': pk_value, 'label': '{0:02d}:{1:02d}'.format(*divmod(toi_dic[player_name]['pk'], 60))})
         else:
             pp_list.append(0)
             pk_list.append(0)
@@ -131,9 +138,9 @@ def gametoipppkchart_create(logger, ctitle, csubtitle, ismobile, toi_dic, color_
             'series': {
                 'stacking': 'normal',
                 'dataLabels': {
-                    'enabled': 0,
-                    'useHTML': 0,
-                    'style': {'fontSize': font_size, 'textOutline': 0, 'color': '#ffffff', 'fontWeight': 0},
+                    'enabled': 1,
+                    'inside': 0,
+                    'style': {'fontSize': font_size, 'textOutline': 0, 'color': '#000000', 'fontWeight': 0},
                     'format': '{point.label}'
                 }
             }
@@ -156,12 +163,15 @@ def gametoipppkchart_create(logger, ctitle, csubtitle, ismobile, toi_dic, color_
         },
 
         'yAxis': {
-            'title': title(ctitle, font_size),
+            'title': title(_('Time on Ice in min'), font_size),
             'reversedStacks': 0,
             'tickInterval': 1,
             'maxPadding': 0.1,
+            'min': pk_min - 1,
+            'max': pp_max + 1,
+
             'labels': {
-                'enabled': 1,
+                'enabled': 0,
                 'style': {'fontSize': font_size},
             },
         },
