@@ -126,8 +126,6 @@ def goaliepull_get(logger, team, periodevent_list):
     """ get goaliepull information """
     logger.debug('goaliepull_get()')
 
-    goaliepull = False
-
     goaliepull_dic = {
         'goalieown_pull': 0,
         'goalieother_pull': 0,
@@ -137,12 +135,14 @@ def goaliepull_get(logger, team, periodevent_list):
         'goals_wogoalie_for': 0,
     }
 
+    goaliepull = False
     for period in periodevent_list:
         for event in periodevent_list[period]:
             # filter goalkeeperchanges
             if 'data' in event and 'type' in event and event['type'] == 'goalkeeperChange':
                 # detect goalie pull
                 if not goaliepull and 'outgoingGoalkeeper' in event['data'] and event['data']['outgoingGoalkeeper'] and 'player' in event['data'] and not bool(event['data']['player']):
+                    # print('goalie-out', event['time'])
                     goaliepull = True
                     if event['data']['team'] == team:
                         # own goaliepull
@@ -151,6 +151,9 @@ def goaliepull_get(logger, team, periodevent_list):
                         # other goaliepull
                         goaliepull_dic['goalieother_pull'] = 1
                     goaliepull_dic['goaliepull_time'] = 3600 - event['time']
+                elif goaliepull and 'player' in event['data'] and bool(event['data']['player']) and 'outgoingGoalkeeper' in event['data'] and not bool(event['data']['outgoingGoalkeeper']):
+                    # print('goalie-in', event['time'])
+                    goaliepull = False
 
             # detect emptynet
             # pylint: disable=R0916
@@ -160,8 +163,8 @@ def goaliepull_get(logger, team, periodevent_list):
                 else:
                     goaliepull_dic['goals_en_against'] += 1
             elif goaliepull and 'data' in event and 'type' in event and event['type'] == 'goal':
+                # print('goal-for pulling out', event['time'])
                 # this is a goal after goalie pull but no emptynet
-                goaliepull = False
                 if event['data']['team'] == team and goaliepull_dic['goalieown_pull'] == 1:
                     # the team which did pull the goalie scored
                     goaliepull_dic['goals_wogoalie_for'] += 1

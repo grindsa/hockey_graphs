@@ -28,6 +28,7 @@ def pdo_overview_chart(logger, ctitle, csubtitle, ismobile, pdo_dic):
 
         'plotOptions': {
             'series': {
+                'states': {'inactive': {'opacity': 1}},
                 'stacking': 'normal',
                 'dataLabels': {
                     'enabled': 1,

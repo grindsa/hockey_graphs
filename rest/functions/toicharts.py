@@ -85,7 +85,7 @@ def gametoichart_create(logger, ctitle, csubtitle, ismobile, toi_dic):
 def gametoipppkchart_create(logger, ctitle, csubtitle, ismobile, toi_dic, color_primary, color_secondary):
     # pylint: disable=E0602, R0914
     """ create time-on-ice chart """
-    logger.debug('gametoichart_create()')
+    logger.debug('gametoipppkchart_create()')
 
     variable_dic = variables_get(ismobile)
 

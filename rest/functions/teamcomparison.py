@@ -16,8 +16,8 @@ from rest.functions.pdo import pdo_breakdown_data_get, pdo_overview_data_get, br
 from rest.functions.pdocharts import pdo_breakdown_chart, pdo_overview_chart, ppg_chart_get
 from rest.functions.season import seasonid_get
 from rest.functions.shotcharts import pace_chart_get, shotrates_chart_get, shotshare_chart_get, rebound_overview_chart, break_overview_chart
-from rest.functions.pppk import pppk_data_get, discipline_updates_get
-from rest.functions.pppkchart import pppk_chart_get, discipline_chart_get
+from rest.functions.pppk import pppk_data_get, discipline_updates_get, goaliepull_data, goaliepullendata_get
+from rest.functions.pppkchart import pppk_chart_get, discipline_chart_get, goaliepullchart_get
 # from rest.functions.bananachart import banana_chart1_create, banana_chart2_create
 from rest.functions.shot import rebound_overview_get, break_overview_get, rebound_updates_get
 from rest.functions.team import team_dic_get
@@ -82,8 +82,38 @@ def teamcomparison_get(logger, request, fkey=None, fvalue=None):
 
     result.extend(_xgfa_get(logger, ismobile, teamstat_dic, teams_dic))
 
+    stat_entry = _goaliepull_get(logger, ismobile, teamstat_dic, teams_dic)
+    if stat_entry:
+        result.append(stat_entry)
 
     return result
+
+
+def _goaliepull_get(logger, ismobile, teamstat_dic, teams_dic):
+    """ build structure for goaliepull chart """
+    logger.debug('_goaliepull_get()')
+
+    goaliep_data = goaliepull_data(logger, ismobile, teamstat_dic, teams_dic)
+
+    if goaliep_data:
+        pull_en_data = goaliepullendata_get(logger, goaliep_data)
+        if pull_en_data:
+            # pylint: disable=E0602
+            title = _('The Effects of Goalie Pulling')
+            subtitle = _('Own goals vs. emptynet goals')
+
+            stat_entry = {
+                'title': title,
+                'chart':  goaliepullchart_get(logger, title, subtitle, ismobile, pull_en_data[len(pull_en_data.keys())]),
+                'updates': []
+            }
+        else:
+            stat_entry = {}
+    else:
+        stat_entry = {}
+
+    return stat_entry
+
 
 def _ppg_get(logger, ismobile, teamstat_dic, teams_dic):
     """ build structure for pace chart """

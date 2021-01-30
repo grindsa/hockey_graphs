@@ -19,7 +19,7 @@ from rest.functions.xg import shotlist_process, xgf_calculate, xgscore_get
 
 def teammatchstat_add(logger, match_dic, xg_data_dic, xg_weights_dic):
     """ add team to database """
-    # pylint: disable=R0914   
+    # pylint: disable=R0914
     logger.debug('teammatchstat_add()')
 
     rebound_interval = 3
