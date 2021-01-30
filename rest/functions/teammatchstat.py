@@ -12,11 +12,14 @@ from rest.functions.gameheader import gameheader_get, points_get
 from rest.functions.match import match_info_get
 from rest.functions.corsi import gameshots5v5_get, goals5v5_get
 from rest.functions.helper import pctg_float_get
+from rest.functions.periodevent import periodevent_get, goaliepull_get
+from rest.functions.shift import shift_get
 from rest.functions.shot import shot_list_get, rebound_breaks_get
 from rest.functions.xg import shotlist_process, xgf_calculate, xgscore_get
 
 def teammatchstat_add(logger, match_dic, xg_data_dic, xg_weights_dic):
     """ add team to database """
+    # pylint: disable=R0914   
     logger.debug('teammatchstat_add()')
 
     rebound_interval = 3
@@ -26,6 +29,8 @@ def teammatchstat_add(logger, match_dic, xg_data_dic, xg_weights_dic):
 
     match_info_dic = match_info_get(logger, match_id, None)
     shot_list = shot_list_get(logger, 'match_id', match_id, ['real_date', 'shot_id', 'match_id', 'timestamp', 'match_shot_resutl_id', 'match__home_team_id', 'team_id', 'player__first_name', 'player_id', 'player__last_name', 'player__stick', 'zone', 'coordinate_x', 'coordinate_y', 'player__jersey'])
+    shift_list = shift_get(logger, 'match_id', match_id, ['shift'])
+    periodevent_list = periodevent_get(logger, 'match_id', match_id, ['period_event'])
 
     # rebounds and breaks
     rb_dic = rebound_breaks_get(logger, shot_list, match_info_dic)
@@ -41,16 +46,19 @@ def teammatchstat_add(logger, match_dic, xg_data_dic, xg_weights_dic):
             team_id = match_info_dic['visitor_team_id']
 
         # get corsi statistics
-        (shots_for_5v5, shots_against_5v5, shots_ongoal_for_5v5, shots_ongoal_against_5v5, shot_list_5v5) = gameshots5v5_get(logger, match_id, match_info_dic, team, shot_list)
+        (shots_for_5v5, shots_against_5v5, shots_ongoal_for_5v5, shots_ongoal_against_5v5, shot_list_5v5) = gameshots5v5_get(logger, match_info_dic, team, shot_list, shift_list, periodevent_list)
 
         # 5v5 goals from periodevents
         goals5v5_dic = goals5v5_get(logger, match_id, match_info_dic)
+
+        # get goalipull events and goals
+        goaliepull_dic = goaliepull_get(logger, team, periodevent_list)
 
         # xgf xga calculation
         xgf_dic = {}
         if xg_data_dic and xg_weights_dic and shot_list_5v5:
             # we also need the XGMODEL_DIC to check if we have the shotcoordinates in our structure
-            (shotstat_dic, goal_dic) = shotlist_process(logger, shot_list_5v5, xg_data_dic, rebound_interval, break_interval)
+            (shotstat_dic, _goal_dic) = shotlist_process(logger, shot_list_5v5, xg_data_dic, rebound_interval, break_interval)
             # lets apply the magic algorithm to estimate xGF
             playerxgf_dic = xgf_calculate(logger, shotstat_dic, xg_weights_dic)
             xgf_dic = xgscore_get(logger, playerxgf_dic)
@@ -105,6 +113,12 @@ def teammatchstat_add(logger, match_dic, xg_data_dic, xg_weights_dic):
             'ppefficiency': match_dic[team]['ppEfficiency'],
             'shefficiency': match_dic[team]['shEfficiency'],
             'points': points,
+            'goalie_own_pull': goaliepull_dic['goalieown_pull'],
+            'goalie_other_pull': goaliepull_dic['goalieother_pull'],
+            'goalie_own_pulltime': goaliepull_dic['goaliepull_time'],
+            'goals_en_for': goaliepull_dic['goals_en_for'],
+            'goals_en_against': goaliepull_dic['goals_en_against'],
+            'goals_wogoalie_for': goaliepull_dic['goals_wogoalie_for']
         }
 
         if xgf_dic:

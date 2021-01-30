@@ -117,7 +117,53 @@ def goalplotlines_get(logger, events_dic, goal_dic, home_team_name, home_team_co
             color = home_team_color
             team_name = home_team_name
         for goal in goal_dic[team]:
-             plotline_list.append({'color': color, 'from': goal['uts']-50, 'to': goal['uts']+50})
-             events_dic[goal['uts']] = {'created_at': goal['data']['realTime'], 'created_uts': goal['uts'], 'color': color, 'name_alternate': 'TOR {0}: {1}'.format(team_name, goal['data']['currentScore']), 'source': 'grindsa'}
+            plotline_list.append({'color': color, 'from': goal['uts']-50, 'to': goal['uts']+50})
+            events_dic[goal['uts']] = {'created_at': goal['data']['realTime'], 'created_uts': goal['uts'], 'color': color, 'name_alternate': 'TOR {0}: {1}'.format(team_name, goal['data']['currentScore']), 'source': 'grindsa'}
 
     return (plotline_list, events_dic)
+
+def goaliepull_get(logger, team, periodevent_list):
+    """ get goaliepull information """
+    logger.debug('goaliepull_get()')
+
+    goaliepull = False
+
+    goaliepull_dic = {
+        'goalieown_pull': 0,
+        'goalieother_pull': 0,
+        'goaliepull_time': 0,
+        'goals_en_for': 0,
+        'goals_en_against': 0,
+        'goals_wogoalie_for': 0,
+    }
+
+    for period in periodevent_list:
+        for event in periodevent_list[period]:
+            # filter goalkeeperchanges
+            if 'data' in event and 'type' in event and event['type'] == 'goalkeeperChange':
+                # detect goalie pull
+                if not goaliepull and 'outgoingGoalkeeper' in event['data'] and event['data']['outgoingGoalkeeper'] and 'player' in event['data'] and not bool(event['data']['player']):
+                    goaliepull = True
+                    if event['data']['team'] == team:
+                        # own goaliepull
+                        goaliepull_dic['goalieown_pull'] = 1
+                    else:
+                        # other goaliepull
+                        goaliepull_dic['goalieother_pull'] = 1
+                    goaliepull_dic['goaliepull_time'] = 3600 - event['time']
+
+            # detect emptynet
+            # pylint: disable=R0916
+            if goaliepull and 'data' in event and 'type' in event and event['type'] == 'goal' and 'en' in event['data'] and bool(event['data']['en']):
+                if event['data']['team'] == team:
+                    goaliepull_dic['goals_en_for'] += 1
+                else:
+                    goaliepull_dic['goals_en_against'] += 1
+            elif goaliepull and 'data' in event and 'type' in event and event['type'] == 'goal':
+                # this is a goal after goalie pull but no emptynet
+                goaliepull = False
+                if event['data']['team'] == team and goaliepull_dic['goalieown_pull'] == 1:
+                    # the team which did pull the goalie scored
+                    goaliepull_dic['goals_wogoalie_for'] += 1
+
+    return goaliepull_dic

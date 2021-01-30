@@ -11,8 +11,10 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.
 # pylint: disable=E0401, C0413
 from rest.functions.corsi import gameshots5v5_get, goals5v5_get
 from rest.functions.helper import config_load, logger_setup, json_load
-from rest.functions.shot import shot_list_get
 from rest.functions.match import match_info_get, match_list_get
+from rest.functions.periodevent import periodevent_get
+from rest.functions.shift import shift_get
+from rest.functions.shot import shot_list_get
 from rest.functions.xg import xgmodel_get, shotlist_process, xgf_calculate, xgscore_get
 
 def arg_parse():
@@ -108,9 +110,11 @@ if __name__ == "__main__":
 
         # get list of shots
         shot_list = shot_list_get(LOGGER, 'match_id', match_id, VLIST)
+        shift_list = shift_get(logger, 'match_id', match_id, ['shift'])
+        periodevent_list = periodevent_get(logger, 'match_id', match_id, ['period_event'])
 
         # get corsi statistics
-        (shots_for_5v5, shots_against_5v5, shots_ongoal_for_5v5, shots_ongoal_against_5v5, shot_list_5v5) = gameshots5v5_get(LOGGER, match_id, match_dic, 'foo', shot_list)
+        (shots_for_5v5, shots_against_5v5, shots_ongoal_for_5v5, shots_ongoal_against_5v5, shot_list_5v5) = gameshots5v5_get(LOGGER, match_id, match_dic, 'foo', shot_list, shift_list, periodevent_list)
 
         # 5v5 goals from periodevents
         goals5v5_dic = goals5v5_get(LOGGER, match_id, match_dic)

@@ -3,7 +3,6 @@
 # pylint: disable=E0401, C0413, C0116
 from rest.functions.timeline import skatersonice_get, penalties_include
 from rest.functions.periodevent import scorersfromevents_get
-from rest.functions.shift import shift_get
 from rest.functions.helper import shot_leaffan_sync, list_sumup, deviation_avg_get, minmax_get
 from rest.functions.periodevent import periodevent_get
 from rest.functions.chartparameters import chart_color6, plotlines_color, title, font_size, corner_annotations
@@ -114,14 +113,12 @@ def gamecorsi_get(logger, shot_list, shift_list, periodevent_list, matchinfo_dic
 
     return player_corsi_dic
 
-def gameshots5v5_get(logger, match_id, match_info_dic, team, shot_list):
+def gameshots5v5_get(logger, match_info_dic, team, shot_list, shift_list, periodevent_list):
     # pylint: disable=R0914
     logger.debug('gameshots5v5_get()')
 
     # get shifts and shots
     # shot_list = shot_list_get(logger, 'match_id', match_id, ['real_date', 'shot_id', 'match_id', 'timestamp', 'match_shot_resutl_id', 'team_id', 'player__first_name', 'player__last_name', 'zone', 'coordinate_x', 'coordinate_y', 'player__jersey'])
-    shift_list = shift_get(logger, 'match_id', match_id, ['shift'])
-    periodevent_list = periodevent_get(logger, 'match_id', match_id, ['period_event'])
 
     # soi = seconds on ice
     (soi_dic, _toi_dic) = skatersonice_get(logger, shift_list, match_info_dic)
@@ -384,7 +381,7 @@ def shotrates_updates_get(logger, data_dic):
 
     return updates_dic
 
-def goals5v5_get(logger, match_id, match_info_dic):
+def goals5v5_get(logger, match_id, _match_info_dic):
     logger.debug('goals5v5_get({0})'.format(match_id))
 
     # create empty dictionary

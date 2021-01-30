@@ -67,9 +67,11 @@ def _shotstats_get(logger, match_list):
         # get list of shots
         vlist = ['shot_id', 'match_id', 'match_shot_resutl_id', 'player_id', 'player__first_name', 'player__last_name', 'player__jersey', 'player__stick', 'team_id', 'coordinate_x', 'coordinate_y', 'match__home_team_id', 'match__visitor_team_id', 'timestamp', 'real_date']
         shot_list = shot_list_get(LOGGER, 'match_id', match_id_, vlist)
+        shift_list = shift_get(logger, 'match_id', match_id, ['shift'])
+        periodevent_list = periodevent_get(logger, 'match_id', match_id, ['period_event'])
 
         # get corsi statistics
-        (shots_for_5v5, shots_against_5v5, shots_ongoal_for_5v5, shots_ongoal_against_5v5, shot_list_5v5) = gameshots5v5_get(logger, match_id_, match_dic, 'home', shot_list)
+        (shots_for_5v5, shots_against_5v5, shots_ongoal_for_5v5, shots_ongoal_against_5v5, shot_list_5v5) = gameshots5v5_get(logger, match_id_, match_dic, 'home', shot_list, shift_list, periodevent_list)
 
         # 5v5 goals from periodevents
         goals5v5_dic = goals5v5_get(logger, match_id_, match_dic)
