@@ -78,7 +78,10 @@ select.selectbg {
 .my-padding-8{padding-top:8px!important;padding-bottom:8px!important}
 
 .jsheatmap {
-  background-image: url('https://hockeygraphs.dynamop.de/static/img/shotmap.svg');
-  width: 590px;
-  height: 595px;
+  /* background-image: url('https://hockeygraphs.dynamop.de/static/img/shotmap.svg'); */
+  background-image: url('https://hockeygraphs.dynamop.de/static/img/hockeyrink.png');
+  height: 498px;
+  background-position: center center; /* Center the image */
+  background-repeat: no-repeat; /* Do not repeat the image */
+  background-size: 100%; /* Resize the background image to cover the entire container */
 }
