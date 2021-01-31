@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-01 14:43+0100\n"
-"PO-Revision-Date: 2021-01-24 07:52+0100\n"
+"POT-Creation-Date: 2021-01-31 13:02+0100\n"
+"PO-Revision-Date: 2021-01-31 13:22+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -18,45 +18,49 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 2.4.2\n"
 
-#: .\rest\functions\corsi.py:316 .\rest\functions\corsi.py:353
+#: .\rest\functions\corsi.py:315 .\rest\functions\corsi.py:352
 #: .\rest\functions\faceoff.py:76 .\rest\functions\faceoffcharts.py:52
-#: .\rest\functions\pdo.py:85 .\rest\functions\pdo.py:214
-#: .\rest\functions\pdocharts.py:125 .\rest\functions\pdocharts.py:182
-#: .\rest\functions\pppk.py:104 .\rest\functions\pppkchart.py:76
+#: .\rest\functions\pdo.py:85 .\rest\functions\pdo.py:213
+#: .\rest\functions\pdocharts.py:126 .\rest\functions\pdocharts.py:183
+#: .\rest\functions\pppk.py:128 .\rest\functions\pppkchart.py:76
 #: .\rest\functions\pppkchart.py:151 .\rest\functions\shotcharts.py:991
 #: .\rest\functions\shotcharts.py:1063 .\rest\functions\shotcharts.py:1116
+#: .\rest\functions\xg.py:604 .\rest\functions\xg.py:674
+#: .\rest\functions\xgchart.py:73 .\rest\functions\xgchart.py:148
 msgid "Standard Deviation"
 msgstr "Standardabweichung"
 
-#: .\rest\functions\corsi.py:360 .\rest\functions\shotcharts.py:1030
+#: .\rest\functions\corsi.py:359 .\rest\functions\shotcharts.py:1030
 #: .\rest\functions\shotcharts.py:1034
 msgid "Corsi For per 60 minutes at 5v5 (Cf/60)"
 msgstr "Eigene Schüsse  bei 5-gegen-5 pro 60min (Cf/60)"
 
-#: .\rest\functions\corsi.py:370 .\rest\functions\shotcharts.py:1030
+#: .\rest\functions\corsi.py:369 .\rest\functions\shotcharts.py:1030
 #: .\rest\functions\shotcharts.py:1047
 msgid "Corsi Against per 60 minutes at 5v5 (Ca/60)"
 msgstr "Schüsse des Gegners bei 5-gegen-5 pro 60min (Ca/60)"
 
-#: .\rest\functions\corsi.py:379 .\rest\functions\shotcharts.py:690
-#: .\rest\functions\shotcharts.py:1061
+#: .\rest\functions\corsi.py:378 .\rest\functions\shotcharts.py:690
+#: .\rest\functions\shotcharts.py:1061 .\rest\functions\teamcomparison.py:190
+#: .\rest\functions\xgchart.py:149
 msgid "Bad"
 msgstr "Schlecht"
 
-#: .\rest\functions\corsi.py:379 .\rest\functions\pdocharts.py:126
+#: .\rest\functions\corsi.py:378 .\rest\functions\pdocharts.py:127
 #: .\rest\functions\shotcharts.py:690 .\rest\functions\shotcharts.py:1061
-#: .\rest\functions\teamcomparison.py:243
+#: .\rest\functions\teamcomparison.py:335
 msgid "Dull"
 msgstr "Langeweile"
 
-#: .\rest\functions\corsi.py:379 .\rest\functions\pdocharts.py:126
+#: .\rest\functions\corsi.py:378 .\rest\functions\pdocharts.py:127
 #: .\rest\functions\shotcharts.py:690 .\rest\functions\shotcharts.py:1061
-#: .\rest\functions\teamcomparison.py:243
+#: .\rest\functions\teamcomparison.py:335
 msgid "Fun"
 msgstr "Spass"
 
-#: .\rest\functions\corsi.py:379 .\rest\functions\shotcharts.py:690
-#: .\rest\functions\shotcharts.py:1061
+#: .\rest\functions\corsi.py:378 .\rest\functions\shotcharts.py:690
+#: .\rest\functions\shotcharts.py:1061 .\rest\functions\teamcomparison.py:190
+#: .\rest\functions\xgchart.py:149
 msgid "Good"
 msgstr "Gut"
 
@@ -113,7 +117,7 @@ msgstr "Gewonnene Bullys"
 msgid "Puck Possession"
 msgstr "Puckbesitz"
 
-#: .\rest\functions\match.py:88
+#: .\rest\functions\match.py:88 .\rest\functions\toicharts.py:180
 msgid "Time in Powerplay"
 msgstr "Zeit im Powerplay"
 
@@ -121,107 +125,130 @@ msgstr "Zeit im Powerplay"
 msgid "Overview"
 msgstr "Übersicht"
 
-#: .\rest\functions\matchstatistics.py:46
+#: .\rest\functions\matchstatistics.py:47
 msgid "vs."
 msgstr "gg."
 
-#: .\rest\functions\matchstatistics.py:68 .\rest\functions\shotcharts.py:89
+#: .\rest\functions\matchstatistics.py:69 .\rest\functions\shotcharts.py:89
 msgid "Shots per minute"
 msgstr "Schüsse pro Minute"
 
-#: .\rest\functions\matchstatistics.py:72
+#: .\rest\functions\matchstatistics.py:73
 msgid "Gameflow"
 msgstr "Spielfluss"
 
-#: .\rest\functions\matchstatistics.py:76
+#: .\rest\functions\matchstatistics.py:77
 msgid "Shots by Result"
 msgstr "Schusstatistik"
 
-#: .\rest\functions\matchstatistics.py:80
+#: .\rest\functions\matchstatistics.py:81
 msgid "Shots per Zone"
 msgstr "Schüsse pro Zone"
 
-#: .\rest\functions\matchstatistics.py:84
+#: .\rest\functions\matchstatistics.py:89
 msgid "Game Shotmap"
 msgstr "Shotmap des Spiels"
 
-#: .\rest\functions\matchstatistics.py:92
+#: .\rest\functions\matchstatistics.py:97
 msgid "Puck possession"
 msgstr "Puckbesitz"
 
-#: .\rest\functions\matchstatistics.py:96
+#: .\rest\functions\matchstatistics.py:101
 msgid "Time on Ice per Player"
 msgstr "Eiszeit pro Spieler"
 
-#: .\rest\functions\matchstatistics.py:99
+#: .\rest\functions\matchstatistics.py:104
 msgid "5v5 Matchup"
 msgstr "Spielergegenüberstellung bei 5v5"
 
-#: .\rest\functions\matchstatistics.py:102
+#: .\rest\functions\matchstatistics.py:107
 msgid "Real-Time Fan Reactions"
 msgstr "Das Spiel aus Fan-Sicht"
 
-#: .\rest\functions\matchstatistics.py:153
-#: .\rest\functions\matchstatistics.py:217
+#: .\rest\functions\matchstatistics.py:158
+#: .\rest\functions\matchstatistics.py:222
 msgid "Shots per period"
 msgstr "Schüsse pro Minute"
 
-#: .\rest\functions\matchstatistics.py:282
-#: .\rest\functions\matchstatistics.py:307
+#: .\rest\functions\matchstatistics.py:308
+#: .\rest\functions\matchstatistics.py:333
 msgid "Shot attempts at even strength (CF, CA)"
 msgstr "Schüsse bei gleicher Anzahl von Spielern auf dem Eis (CF, CA)"
 
-#: .\rest\functions\matchstatistics.py:283
+#: .\rest\functions\matchstatistics.py:309
 msgid "Shot attempts at even strength"
 msgstr "Schüsse bei gleicher Anzahl von Spielern auf dem Eis "
 
-#: .\rest\functions\pdo.py:189 .\rest\functions\pdo.py:229
-#: .\rest\functions\pdocharts.py:58 .\rest\functions\pdocharts.py:97
-#: .\rest\functions\pdocharts.py:114 .\rest\functions\pppkchart.py:48
+#: .\rest\functions\matchstatistics.py:399
+msgid "Time on Ice during PP and PK"
+msgstr "Eiszeit pro Spieler in Über- oder Unterzahl"
+
+#: .\rest\functions\pdo.py:188 .\rest\functions\pdo.py:228
+#: .\rest\functions\pdocharts.py:59 .\rest\functions\pdocharts.py:98
+#: .\rest\functions\pdocharts.py:115 .\rest\functions\pppkchart.py:48
 msgid "Save percentage (Sv%)"
 msgstr "Fangquote (%)"
 
-#: .\rest\functions\pdo.py:190 .\rest\functions\pdo.py:220
-#: .\rest\functions\pdocharts.py:59 .\rest\functions\pdocharts.py:97
-#: .\rest\functions\pdocharts.py:101 .\rest\functions\pppkchart.py:48
+#: .\rest\functions\pdo.py:189 .\rest\functions\pdo.py:219
+#: .\rest\functions\pdocharts.py:60 .\rest\functions\pdocharts.py:98
+#: .\rest\functions\pdocharts.py:102 .\rest\functions\pppkchart.py:48
 msgid "Shooting percentage (Sh%)"
 msgstr "Schussquote(Sh%)"
 
-#: .\rest\functions\pdocharts.py:49
+#: .\rest\functions\pdocharts.py:50
 msgid "PDO"
 msgstr "PDO"
 
-#: .\rest\functions\pdocharts.py:126 .\rest\functions\teamcomparison.py:243
+#: .\rest\functions\pdocharts.py:127 .\rest\functions\teamcomparison.py:335
 msgid "Unlucky"
 msgstr "Pech"
 
-#: .\rest\functions\pdocharts.py:126 .\rest\functions\teamcomparison.py:243
+#: .\rest\functions\pdocharts.py:127 .\rest\functions\teamcomparison.py:335
 msgid "Lucky"
 msgstr "Glück"
 
-#: .\rest\functions\pdocharts.py:161 .\rest\functions\teamcomparison.py:90
+#: .\rest\functions\pdocharts.py:162 .\rest\functions\teamcomparison.py:134
 msgid "Points per Game"
 msgstr "Punkte pro Spiel"
 
-#: .\rest\functions\pdocharts.py:161
+#: .\rest\functions\pdocharts.py:162
 msgid "Matches"
 msgstr "Spiele"
 
-#: .\rest\functions\pdocharts.py:161
+#: .\rest\functions\pdocharts.py:162
 msgid "Points"
 msgstr "Punkte"
 
-#: .\rest\functions\pdocharts.py:172
+#: .\rest\functions\pdocharts.py:173
 msgid "Point per Game (Ppg)"
 msgstr "Punkte pro Spiel (Ppg)"
 
-#: .\rest\functions\pppk.py:110 .\rest\functions\pppkchart.py:127
+#: .\rest\functions\pppk.py:134 .\rest\functions\pppkchart.py:127
 msgid "Penaltyminutes drawn (avg per game)"
 msgstr "Ø gegnerische Strafminuten pro Spiel"
 
-#: .\rest\functions\pppk.py:119 .\rest\functions\pppkchart.py:140
+#: .\rest\functions\pppk.py:143 .\rest\functions\pppkchart.py:140
 msgid "Penaltyminutes taken (avg per game)"
 msgstr "Ø Anzahl Strafminuten pro Spiel"
+
+#: .\rest\functions\pppk.py:239 .\rest\functions\pppkchart.py:181
+#: .\rest\functions\pppkchart.py:215
+msgid "Goals after pulling goalie"
+msgstr "Tore nachdem der Torwart gezogen wurde"
+
+#: .\rest\functions\pppk.py:240 .\rest\functions\pppkchart.py:216
+msgid "Emptynet goals taken"
+msgstr "kassierte Empty Net Tore"
+
+#: .\rest\functions\pppk.py:276 .\rest\functions\pppkchart.py:247
+#: .\rest\functions\pppkchart.py:279
+msgid "Empty net changes"
+msgstr "Empty Net Situationen"
+
+#: .\rest\functions\pppk.py:277 .\rest\functions\pppkchart.py:247
+#: .\rest\functions\pppkchart.py:280
+msgid "Empty net goals"
+msgstr "Empty Net Tore"
 
 #: .\rest\functions\pppkchart.py:52
 msgid "Powerplay percentage (Pp%)"
@@ -231,19 +258,19 @@ msgstr "Überzahlquote (%)"
 msgid "Penalty Kill percentage (Pk%)"
 msgstr "Unterzahlquote (%)"
 
-#: .\rest\functions\pppkchart.py:77 .\rest\functions\teamcomparison.py:135
+#: .\rest\functions\pppkchart.py:77 .\rest\functions\teamcomparison.py:227
 msgid "Defensive"
 msgstr "Defensiv"
 
-#: .\rest\functions\pppkchart.py:77 .\rest\functions\teamcomparison.py:135
+#: .\rest\functions\pppkchart.py:77 .\rest\functions\teamcomparison.py:227
 msgid "Overstrained"
 msgstr "Überfordert"
 
-#: .\rest\functions\pppkchart.py:77 .\rest\functions\teamcomparison.py:135
+#: .\rest\functions\pppkchart.py:77 .\rest\functions\teamcomparison.py:227
 msgid "Agressive"
 msgstr "Aggressiv"
 
-#: .\rest\functions\pppkchart.py:77 .\rest\functions\teamcomparison.py:135
+#: .\rest\functions\pppkchart.py:77 .\rest\functions\teamcomparison.py:227
 msgid "Offensive"
 msgstr "Offensiv"
 
@@ -255,21 +282,33 @@ msgstr "Gegnerische Strafminuten"
 msgid "Penaltyminutes taken"
 msgstr "Eigene Strafminuten"
 
-#: .\rest\functions\pppkchart.py:152 .\rest\functions\teamcomparison.py:123
+#: .\rest\functions\pppkchart.py:152 .\rest\functions\teamcomparison.py:215
 msgid "Undisciplined"
 msgstr "Undiszipliert"
 
-#: .\rest\functions\pppkchart.py:152 .\rest\functions\teamcomparison.py:123
+#: .\rest\functions\pppkchart.py:152 .\rest\functions\teamcomparison.py:215
 msgid "Friendly"
 msgstr "Fair"
 
-#: .\rest\functions\pppkchart.py:152 .\rest\functions\teamcomparison.py:123
+#: .\rest\functions\pppkchart.py:152 .\rest\functions\teamcomparison.py:215
 msgid "Chippy"
 msgstr "Aggressiv"
 
-#: .\rest\functions\pppkchart.py:152 .\rest\functions\teamcomparison.py:123
+#: .\rest\functions\pppkchart.py:152 .\rest\functions\teamcomparison.py:215
 msgid "Disciplined"
 msgstr "Diszipliniert"
+
+#: .\rest\functions\pppkchart.py:181
+msgid "Goalie pulls"
+msgstr ""
+
+#: .\rest\functions\pppkchart.py:181
+msgid "Empty net goals taken"
+msgstr "kassierte Empty Net Tore"
+
+#: .\rest\functions\pppkchart.py:247
+msgid "Scoring percentage"
+msgstr "Torquote"
 
 #: .\rest\functions\shot.py:711 .\rest\functions\shotcharts.py:1169
 #: .\rest\functions\shotcharts.py:1222
@@ -283,7 +322,7 @@ msgstr "führen zu einem Gegentor"
 
 #: .\rest\functions\shotcharts.py:64 .\rest\functions\shotcharts.py:185
 #: .\rest\functions\shotcharts.py:287 .\rest\functions\shotcharts.py:414
-#: .\rest\functions\toicharts.py:56
+#: .\rest\functions\toicharts.py:56 .\rest\functions\toicharts.py:153
 msgid "min"
 msgstr "Minute"
 
@@ -422,91 +461,155 @@ msgstr "Plus-/Minus-Bilanz aller Schussversuche"
 msgid "Percentage Shot attempts/Shot attempts \"against\""
 msgstr "Prozentuale Plus-/Minus-Bilanz aller Schussversuche"
 
-#: .\rest\functions\teamcomparison.py:91
+#: .\rest\functions\teamcomparison.py:103
+msgid "The Effects of Goalie Pulling"
+msgstr "Lohnt es sich den Torwart zu ziehen"
+
+#: .\rest\functions\teamcomparison.py:104
+msgid "Own goals vs. empty net goals"
+msgstr "Tore ohne Torwart / kassierte Empty Net Tore"
+
+#: .\rest\functions\teamcomparison.py:115
+msgid "Ability to leverage emptynet situations"
+msgstr "Ausnutzung von Empty Net Situationen"
+
+#: .\rest\functions\teamcomparison.py:116
+msgid "Empty net situations vs. empty net goals"
+msgstr "Empty Net Situationen / Empty Net Tore"
+
+#: .\rest\functions\teamcomparison.py:135
 msgid "Ranking considering match postponements or cancellation"
 msgstr "Platzierung unter Berücksichtigung von Spielverschiebungen oder Spielabsagen"
 
-#: .\rest\functions\teamcomparison.py:117
+#: .\rest\functions\teamcomparison.py:158
+msgid "Expected Goals For/Against for 5v5"
+msgstr "xGF imd xGA bei 5gegen5"
+
+#: .\rest\functions\teamcomparison.py:159
+msgid "Ability to use and prevent scoring chances"
+msgstr "Erfolgreiche Powerplays / Penalty Killings"
+
+#: .\rest\functions\teamcomparison.py:164 .\rest\functions\xgchart.py:74
+msgid "Headless"
+msgstr "Kopflos"
+
+#: .\rest\functions\teamcomparison.py:164 .\rest\functions\xgchart.py:74
+msgid "Boring"
+msgstr "Langweilig"
+
+#: .\rest\functions\teamcomparison.py:164 .\rest\functions\xgchart.py:74
+msgid "Exciting"
+msgstr "Spannend"
+
+#: .\rest\functions\teamcomparison.py:164 .\rest\functions\xgchart.py:74
+msgid "Coolly"
+msgstr "Kaltblütig"
+
+#: .\rest\functions\teamcomparison.py:171
+msgid "Performance vs. Expectations (dGF%)"
+msgstr "Leistung versus Erwartung (dGF%)"
+
+#: .\rest\functions\teamcomparison.py:172
+msgid "Team GF% vs xGF% on 5v5"
+msgstr "Gegenüberstellung von GF% und xGF% bei 5gegen5"
+
+#: .\rest\functions\teamcomparison.py:184
+msgid "GF% vs xGF% on 5v5"
+msgstr "GF% und xGF% bei 5gegen5"
+
+#: .\rest\functions\teamcomparison.py:185
+msgid "Who is performing as we would expect"
+msgstr "überdurchschnittlich"
+
+#: .\rest\functions\teamcomparison.py:190 .\rest\functions\xgchart.py:149
+msgid "Underperforming"
+msgstr "Überdurchschnittlich"
+
+#: .\rest\functions\teamcomparison.py:190 .\rest\functions\xgchart.py:149
+msgid "Overperforming"
+msgstr "Unterdurchschnittlich"
+
+#: .\rest\functions\teamcomparison.py:209
 msgid "Penalty Minutes (For/Against)"
 msgstr "Anzahl Strafminuten (Eigen und  Fremd)"
 
-#: .\rest\functions\teamcomparison.py:118
+#: .\rest\functions\teamcomparison.py:210
 msgid "Average number of Penalty Minutes per game"
 msgstr "Durchschnittliche Anzahl von Strafminuten pro Spiel"
 
-#: .\rest\functions\teamcomparison.py:129
+#: .\rest\functions\teamcomparison.py:221
 msgid "Special team performance"
 msgstr "Effizienz in Über- und Unterzahl"
 
-#: .\rest\functions\teamcomparison.py:130
+#: .\rest\functions\teamcomparison.py:222
 msgid "Ability to score / prevent goals"
 msgstr "erfolgreiche Powerplays / Penalty Killings"
 
-#: .\rest\functions\teamcomparison.py:149
+#: .\rest\functions\teamcomparison.py:241
 msgid "Team heatmaps"
 msgstr "Team heatmap"
 
-#: .\rest\functions\teamcomparison.py:150
+#: .\rest\functions\teamcomparison.py:242
 msgid "A league-wide, at-a-glance look on Team performance. Red is bad, blue is good"
 msgstr "Ein kurzer Überblick über die Teams der Liga. Rot is schlecht, blau ist gut"
 
-#: .\rest\functions\teamcomparison.py:177
+#: .\rest\functions\teamcomparison.py:269
 msgid "5v5 \"Pace\" (Cf/60 + Ca/60)"
 msgstr "Spieltempo bei 5-gegen-5 (Cf/60 + Ca/60)"
 
-#: .\rest\functions\teamcomparison.py:178
+#: .\rest\functions\teamcomparison.py:270
 msgid "Combined shots on own and other goal during 5-on-5 play (on 60min adjusted)"
 msgstr "Summe aus eigenen und fremden Schüssen bei 5-gegen-5"
 
-#: .\rest\functions\teamcomparison.py:189
+#: .\rest\functions\teamcomparison.py:281
 msgid "5v5 Shot rates Cf/60 vs Ca/60"
 msgstr "5-gegen-5 Schussraten (Cf/60 vs Ca/60)"
 
-#: .\rest\functions\teamcomparison.py:190
+#: .\rest\functions\teamcomparison.py:282
 msgid "Shots generated during 5-on-5 play (on 60min adjusted)"
 msgstr "Schüsse bei 5-gegen-5 (auf 60 Minuten normiert)"
 
-#: .\rest\functions\teamcomparison.py:200
+#: .\rest\functions\teamcomparison.py:292
 msgid "5v5 Shot share C/60"
 msgstr "Schußanteil bei 5-gegen-5 (C/60)"
 
-#: .\rest\functions\teamcomparison.py:201
+#: .\rest\functions\teamcomparison.py:293
 msgid "Each team’s share of shots taken in their games"
 msgstr "Anteil der eigenen Schüsse eines Teams"
 
-#: .\rest\functions\teamcomparison.py:224
+#: .\rest\functions\teamcomparison.py:316
 msgid "PDO overview"
 msgstr "PDO Übersicht"
 
-#: .\rest\functions\teamcomparison.py:225
+#: .\rest\functions\teamcomparison.py:317
 msgid "5v5 shooting percentage and save percentage"
 msgstr "Schuß- und Fangquote bei 5 gegen 5"
 
-#: .\rest\functions\teamcomparison.py:238
+#: .\rest\functions\teamcomparison.py:330
 msgid "PDO breakdown"
 msgstr "PDO pro Team"
 
-#: .\rest\functions\teamcomparison.py:239
+#: .\rest\functions\teamcomparison.py:331
 msgid "luck and fun across the league"
 msgstr "Glück, Pech, Spaß und Langeweile"
 
-#: .\rest\functions\teamcomparison.py:257
+#: .\rest\functions\teamcomparison.py:349
 msgid "Faceoff win rate"
 msgstr "Gewonnene Bullys (%)"
 
-#: .\rest\functions\teamcomparison.py:275
+#: .\rest\functions\teamcomparison.py:367
 msgid "Rebound success rate"
 msgstr "Erfolgreiche Rebounds"
 
-#: .\rest\functions\teamcomparison.py:276
+#: .\rest\functions\teamcomparison.py:368
 msgid "Percentage of rebounds leading to a goal"
 msgstr "Rebounds die zu einem Tor führen (%)"
 
-#: .\rest\functions\teamcomparison.py:295
+#: .\rest\functions\teamcomparison.py:387
 msgid "Break success rate"
 msgstr "Erfolgreiche Breaks"
 
-#: .\rest\functions\teamcomparison.py:296
+#: .\rest\functions\teamcomparison.py:388
 msgid "Percentage of breaks leading to a goal"
 msgstr "Breaks die zu einem Tor führen (%)"
 
@@ -525,6 +628,57 @@ msgstr "3. Drittel"
 #: .\rest\functions\toicharts.py:80 .\rest\functions\toitables.py:9
 msgid "OT"
 msgstr "OT"
+
+#: .\rest\functions\toicharts.py:166
+msgid "Time on Ice in min"
+msgstr "Eiszeit (min)"
+
+#: .\rest\functions\toicharts.py:181
+msgid "Time in Penalty killing"
+msgstr "Zeit in Unterzahl"
+
+#: .\rest\functions\xg.py:610 .\rest\functions\xg.py:680
+#: .\rest\functions\xgchart.py:48
+msgid "Expected Goals \"For\" per 60min (xGF60)"
+msgstr "Erwartete Tore per 60min (xGF60)"
+
+#: .\rest\functions\xg.py:619 .\rest\functions\xg.py:688
+#: .\rest\functions\xgchart.py:61
+msgid "Expected Goals \"Against\" per 60min (xGA60)"
+msgstr "Erwartete Gegentore per 60min (xGA60)"
+
+#: .\rest\functions\xg.py:649 .\rest\functions\xgchart.py:185
+#: .\rest\functions\xgchart.py:215
+msgid "dGF%"
+msgstr "dGF%"
+
+#: .\rest\functions\xgchart.py:44
+msgid "xGF60"
+msgstr "xGF60"
+
+#: .\rest\functions\xgchart.py:44
+msgid "xGA60"
+msgstr "xGA60%"
+
+#: .\rest\functions\xgchart.py:120 .\rest\functions\xgchart.py:185
+msgid "GF%"
+msgstr "GF%"
+
+#: .\rest\functions\xgchart.py:120
+msgid "xGF%"
+msgstr "xGF%"
+
+#: .\rest\functions\xgchart.py:124
+msgid "Goals percentage on 5v5 (Gf%)"
+msgstr "Schussquote bei 5gegen5 (Gf%)"
+
+#: .\rest\functions\xgchart.py:137
+msgid "expected Goals percentage on 5v5 (xGf%)"
+msgstr "Erwartete Tore prozentual (Gf%)"
+
+#: .\rest\functions\xgchart.py:208
+msgid "Difference of GF% and xGF% (dGF%)"
+msgstr "Differenz aus GF% und xGF% (dGF%)"
 
 #~ msgid "bad"
 #~ msgstr "schlecht"
