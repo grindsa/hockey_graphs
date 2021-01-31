@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-31 13:02+0100\n"
-"PO-Revision-Date: 2021-01-31 13:22+0100\n"
+"POT-Creation-Date: 2021-01-31 13:34+0100\n"
+"PO-Revision-Date: 2021-01-31 13:40+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -467,7 +467,7 @@ msgstr "Lohnt es sich den Torwart zu ziehen"
 
 #: .\rest\functions\teamcomparison.py:104
 msgid "Own goals vs. empty net goals"
-msgstr "Tore ohne Torwart / kassierte Empty Net Tore"
+msgstr "geschossene Tore ohne Torwart auf dem Eis / kassierte Empty Net Tore"
 
 #: .\rest\functions\teamcomparison.py:115
 msgid "Ability to leverage emptynet situations"
@@ -483,7 +483,7 @@ msgstr "Platzierung unter Berücksichtigung von Spielverschiebungen oder Spielab
 
 #: .\rest\functions\teamcomparison.py:158
 msgid "Expected Goals For/Against for 5v5"
-msgstr "xGF imd xGA bei 5gegen5"
+msgstr "Erwartete Tore und Gegentore bei 5gegen5"
 
 #: .\rest\functions\teamcomparison.py:159
 msgid "Ability to use and prevent scoring chances"
@@ -507,7 +507,7 @@ msgstr "Kaltblütig"
 
 #: .\rest\functions\teamcomparison.py:171
 msgid "Performance vs. Expectations (dGF%)"
-msgstr "Leistung versus Erwartung (dGF%)"
+msgstr "Leistung versus Erwartungshaltung (dGF%)"
 
 #: .\rest\functions\teamcomparison.py:172
 msgid "Team GF% vs xGF% on 5v5"
