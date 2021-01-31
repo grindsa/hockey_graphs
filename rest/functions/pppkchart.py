@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """ time on ice charts """
 # pylint: disable=E0401
-from rest.functions.chartparameters import chartstyle, credit, exporting, legend, responsive_y1, title, subtitle, font_size, responsive_y1_nolabel, plotlines_color, corner_annotations, variables_get, chart_color6, chart_color1, chart_color3
+from rest.functions.chartparameters import chartstyle, credit, exporting, legend, responsive_y1, title, subtitle, font_size, responsive_y1_nolabel, plotlines_color, corner_annotations, variables_get, chart_color6, chart_color1, chart_color2, chart_color3
 
 def pppk_chart_get(logger, ctitle, csubtitle, ismobile, pppk_data):
     # pylint: disable=E0602
@@ -214,6 +214,70 @@ def goaliepullchart_get(logger, ctitle, csubtitle, ismobile, data_dic):
             # pylint: disable=E0602
             {'name': _('Goals after pulling goalie'), 'marker': {'symbol': 'square'}, 'data': data_dic['goals_wogoalie_for_list'], 'color': chart_color3},
             {'name': _('Emptynet goals taken'), 'marker': {'symbol': 'square'}, 'data': data_dic['goals_en_against_list'], 'color': chart_color1},
+        ]
+    }
+
+    return chart_options
+
+def scoreenchart_get(logger, ctitle, csubtitle, ismobile, data_dic):
+    # pylint: disable=E0602, R0914
+    """ create time-on-ice chart """
+    logger.debug('gametoichart_create()')
+
+    variable_dic = variables_get(ismobile)
+
+    chart_options = {
+        'chart': {
+            'type': 'column',
+            'height': '80%',
+            'alignTicks': 0,
+            'style': chartstyle()
+        },
+
+        'exporting': exporting(filename=ctitle),
+        'title': title(ctitle, variable_dic['title_size'], decoration=True),
+        'subtitle': subtitle(csubtitle, variable_dic['subtitle_size']),
+        'credits': credit(),
+        'legend': legend(),
+        'responsive': responsive_y1(),
+        'tooltip': {
+            'sharted': 1,
+            'useHTML': 1,
+            'headerFormat': '',
+            'pointFormat': '<span> <b>{point.team_name}</b></span></br><span style="font-size: %s">%s: {point.goalie_other_pull}</span><br><span style="font-size: %s">%s: {point.goals_en_for}</span><br/><span style="font-size: %s">%s: {point.goals_en_for_pctg}%s </span><br/>' % (font_size, _('Empty net changes'), font_size, _('Empty net goals'), font_size, _('Scoring percentage'), '%')
+
+        },
+
+        'plotOptions': {
+            'series': {
+                'states': {'inactive': {'opacity': 1}},
+                'dataLabels': {
+                    'enabled': 1,
+                    'style': {'fontSize': font_size, 'textOutline': 0, 'color': '#000000', 'fontWeight': 0},
+                }
+            }
+        },
+
+        'xAxis': {
+            'categories': data_dic['team_list'],
+            'title': title('', font_size),
+            'labels': {'useHTML': 1, 'align': 'center'},
+            # 'labels': {'style': {'fontSize': font_size}},
+        },
+
+        'yAxis': [{
+            # pylint: disable=E0602
+            'title': title('', font_size),
+            'reversedStacks': 0,
+            'labels': {'enabled': 1, 'style': {'fontSize': font_size}},
+            'min': 0,
+            'plotLines': [{'color': plotlines_color, 'width': 2, 'value': 100}],
+            }],
+
+        'series': [
+            # pylint: disable=E0602
+            {'name': _('Empty net changes'), 'data': data_dic['goalie_other_pull_list'], 'color': chart_color2},
+            {'name': _('Empty net goals'), 'data': data_dic['goals_en_list'], 'color': chart_color3},
         ]
     }
 

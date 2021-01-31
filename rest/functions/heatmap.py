@@ -146,7 +146,6 @@ def _datapoint_reformat(datapoint):
 
     return datapoint
 
-
 def teamcomparison_hmdata_get(logger, ismobile, teamstat_dic, teams_dic):
     """ get data for team heatmap """
     logger.debug('teamcomparison_hmdata_get()')
@@ -220,32 +219,35 @@ def teamcomparison_updates_get(logger, _title, ismobile, data_dic):
 
     return updates_dic
 
-def gameheatmapdata_get(logger, shot_list, matchinfo_dic):
+def gameheatmapdata_get(logger, shot_list, _matchinfo_dic):
     """ heatmap data """
     logger.debug('gameheatmapdata_get()')
 
-    shot_dic = {'home_team': {}, 'visitor_team': {}}
+    shot_dic = {}
 
     # cluster size
     clul = 10
 
     for shot in shot_list:
         # we need to differenciate between home and visitor team
-        if shot['team_id'] == matchinfo_dic['home_team_id']:
-            team = 'home_team'
-            calc_x = float(shot['coordinate_y'])
-            calc_y = float(shot['coordinate_x'])
-        else:
-            team = 'visitor_team'
-            calc_x = float(shot['coordinate_y'])
-            calc_y = float(shot['coordinate_x'] * -1)
+        #if shot['team_id'] == matchinfo_dic['home_team_id']:
+        #    team = 'home_team'
+        #    calc_x = float(shot['coordinate_y'])
+        #    calc_y = float(shot['coordinate_x'])
+        #else:
+        #    team = 'visitor_team'
+        #    calc_x = float(shot['coordinate_y'])
+        #    calc_y = float(shot['coordinate_x'] * -1)
 
+        calc_x = float(shot['coordinate_y'])
+        calc_y = float(shot['coordinate_x'])
 
         # x = -100, 100
         # y = 0, 105
         # calculate coordicates
-        calc_x = round((calc_x + 100) * 295/100)
-        calc_y = round((105 - calc_y) * 595/105)
+        calc_x = calc_x + 500
+        # calc_x = round((calc_x + 100) * 295/100)
+        # calc_y = round((105 - calc_y) * 489/105)
 
         # round to clul
         calc_x = round((calc_x/clul)) * clul
@@ -253,19 +255,17 @@ def gameheatmapdata_get(logger, shot_list, matchinfo_dic):
 
         mapping = '{0}; {1}'.format(calc_x, calc_y)
         if mapping in shot_dic:
-            shot_dic[team][mapping] += 1
+            shot_dic[mapping] += 1
         else:
-            shot_dic[team][mapping] = 1
+            shot_dic[mapping] = 1
 
 
     # create structure for highcharts
-    heatmapdata_dic = {}
-    for team in shot_dic:
-        heatmapdata_dic[team] = {'data': [], 'max': 2 }
-        for mapping in shot_dic[team]:
-            (myx, myy) = mapping.split(';')
-            if shot_dic[team][mapping] > heatmapdata_dic[team]['max']:
-                heatmapdata_dic[team]['max'] = shot_dic[team][mapping]
-            heatmapdata_dic[team]['data'].append({'x': myx, 'y': myy, 'value': shot_dic[team][mapping]})
+    heatmapdata_dic = {'data': [], 'max': 2}
+    for mapping in shot_dic:
+        (myx, myy) = mapping.split(';')
+        if shot_dic[mapping] > heatmapdata_dic['max']:
+            heatmapdata_dic['max'] = shot_dic[mapping]
+        heatmapdata_dic['data'].append({'x': myx, 'y': myy, 'value': shot_dic[mapping]})
 
     return heatmapdata_dic

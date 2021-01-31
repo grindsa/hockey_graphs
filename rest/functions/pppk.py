@@ -3,7 +3,7 @@
 # pylint: disable=E0401, C0413
 from functions.helper import list_sumup, pctg_float_get
 from functions.corsi import pace_chartseries_get
-from rest.functions.chartparameters import chart_color6, plotlines_color, title, font_size, corner_annotations
+from rest.functions.chartparameters import chart_color1, chart_color2, chart_color3, chart_color6, plotlines_color, title, font_size, corner_annotations
 
 def _goaliepull_sumup(logger, teamstat_dic):
     """ sum up faceoff statistics """
@@ -186,7 +186,8 @@ def goaliepull_data(logger, ismobile, teamstat_dic, teams_dic):
                 goaliepullsum_dic[team_id].insert(0, goaliepullsum_dic[team_id][0])
 
         for idx, ele in enumerate(goaliepullsum_dic[team_id], 1):
-            goaliepull_lake[idx].append({
+
+            tmp_dic = {
                 'team_name': teams_dic[team_id]['team_name'],
                 'shortcut':  teams_dic[team_id]['shortcut'],
                 'marker': {'width': image_width, 'height': image_height, 'symbol': 'url({0})'.format(teams_dic[team_id]['team_logo'])},
@@ -197,7 +198,14 @@ def goaliepull_data(logger, ismobile, teamstat_dic, teams_dic):
                 'sum_goals_wogoalie_for': ele['sum_goals_wogoalie_for'],
                 'logo_url': logo_url,
                 'goalie_own_pulltime_avg': round(ele['sum_goalie_own_pulltime'] / ele['games'], 0),
-            })
+            }
+            # calculate emptynet scoring efficiency
+            if ele['sum_goalie_other_pull'] > 0:
+                tmp_dic['goals_en_for_pctg'] = round(ele['sum_goals_en_for']/ele['sum_goalie_other_pull'] * 100, 0)
+            else:
+                tmp_dic['goals_en_for_pctg'] = 0
+
+            goaliepull_lake[idx].append(tmp_dic)
 
     return goaliepull_lake
 
@@ -206,7 +214,6 @@ def goaliepullendata_get(logger, data_dic):
     logger.debug('pdo_overview_data_get()')
 
     output_dic = {}
-
     for mday in data_dic:
         output_dic[mday] = {'team_list': [], 'goals_en_against_list': [], 'goals_wogoalie_for_list': []}
         for datapoint in sorted(data_dic[mday], key=lambda i: i['team_name']):
@@ -214,4 +221,62 @@ def goaliepullendata_get(logger, data_dic):
             output_dic[mday]['team_list'].append(datapoint['logo_url'])
             output_dic[mday]['goals_en_against_list'].append({'y': datapoint['sum_goals_en_against'] * -1, 'team_name': datapoint['team_name'], 'goalie_own_pull': datapoint['sum_goalie_own_pull'], 'goals_en_against': datapoint['sum_goals_en_against'], 'goals_wogoalie_for': datapoint['sum_goals_wogoalie_for'], 'label': datapoint['sum_goals_en_against']})
             output_dic[mday]['goals_wogoalie_for_list'].append({'y': datapoint['sum_goals_wogoalie_for'], 'team_name': datapoint['team_name'], 'goalie_own_pull': datapoint['sum_goalie_own_pull'], 'goals_en_against': datapoint['sum_goals_en_against'], 'goals_wogoalie_for': datapoint['sum_goals_wogoalie_for'], 'label': datapoint['sum_goals_wogoalie_for']})
+
     return output_dic
+
+
+def goaliepullen_updates_get(logger, data_dic):
+    """ build structure for goaliepull updates """
+    logger.debug('scgoaliepullen_updates_getoregoaliepullen_updates_geten_updates_get()')
+
+    updates_dic = {}
+    for ele in data_dic:
+        updates_dic[ele] = {
+            'chartoptions':  {
+                'xAxis': {'categories': data_dic[ele]['team_list'], 'labels': {'useHTML': 1, 'align': 'center'}, 'title': title('', font_size)},
+                'series': [
+                    # pylint: disable=E0602
+                    {'name': _('Goals after pulling goalie'), 'data': data_dic[ele]['goals_wogoalie_for_list'], 'color': chart_color3},
+                    {'name': _('Emptynet goals taken'), 'data': data_dic[ele]['goals_en_against_list'], 'color': chart_color1},
+                ]
+            }
+        }
+
+    return updates_dic
+
+
+def scoreendata_get(logger, data_dic):
+    """ collect data for empty net chart """
+    logger.debug('pdo_overview_data_get()')
+
+    output_dic = {}
+
+    for mday in data_dic:
+        output_dic[mday] = {'team_list': [], 'goals_en_list': [], 'goalie_other_pull_list': []}
+        for datapoint in sorted(data_dic[mday], key=lambda i: i['sum_goalie_other_pull'], reverse=True):
+            # create series for bar
+            output_dic[mday]['team_list'].append(datapoint['logo_url'])
+            output_dic[mday]['goalie_other_pull_list'].append({'y': datapoint['sum_goalie_other_pull'], 'team_name': datapoint['team_name'], 'goalie_other_pull': datapoint['sum_goalie_other_pull'], 'goals_en_for': datapoint['sum_goals_en_for'], 'goals_en_for_pctg': datapoint['goals_en_for_pctg']})
+            output_dic[mday]['goals_en_list'].append({'y': datapoint['sum_goals_en_for'], 'team_name': datapoint['team_name'], 'goalie_other_pull': datapoint['sum_goalie_other_pull'], 'goals_en_for': datapoint['sum_goals_en_for'], 'goals_en_for_pctg': datapoint['goals_en_for_pctg']})
+
+    return output_dic
+
+
+def scoreen_updates_get(logger, data_dic):
+    """ build structure for empty net_chart updates """
+    logger.debug('scoreen_updates_get()')
+
+    updates_dic = {}
+    for ele in data_dic:
+        updates_dic[ele] = {
+            'chartoptions':  {
+                'xAxis': {'categories': data_dic[ele]['team_list'], 'labels': {'useHTML': 1, 'align': 'center'}, 'title': title('', font_size)},
+                'series': [
+                    # pylint: disable=E0602
+                    {'name': _('Empty net changes'), 'data': data_dic[ele]['goalie_other_pull_list'], 'color': chart_color2},
+                    {'name': _('Empty net goals'), 'data': data_dic[ele]['goals_en_list'], 'color': chart_color3},
+                ]
+            }
+        }
+
+    return updates_dic

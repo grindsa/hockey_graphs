@@ -247,27 +247,22 @@ def _gamezoneshots_get(logger, title, subtitle, ismobile, request, matchinfo_dic
 
     return stat_entry
 
-def _gameheatmap_get(logger, title, subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list):
+def _gameheatmap_get(logger, title, _subtitle, _ismobile, request, fkey, fvalue, matchinfo_dic, shot_list):
     """ get gameshotmap """
     logger.debug('_gameshotmap_get({0}:{1})'.format(fkey, fvalue))
 
-    shot_table = [None, None]
-    shot_chart = []
+    shot_table = None
+    shotmap_dic = {}
 
     if shot_list:
         # get shots and goals per min
         shotmap_dic = gameheatmapdata_get(logger, shot_list, matchinfo_dic)
 
-        shot_chart = [
-            shotmap_dic['home_team'],
-            shotmap_dic['visitor_team'],
-        ]
-
     stat_entry = {
         'title': title,
-        'chart': shot_chart,
+        'chart': shotmap_dic,
         'table': shot_table,
-        'tabs': True
+        'tabs': False
     }
 
     return stat_entry
@@ -400,7 +395,7 @@ def _gametoi_get(logger, title, subtitle, ismobile, request, fkey, fvalue, match
         stat_entry_list.append(stat_entry)
 
     if toipppk_dic:
-
+        # pylint: disable=E0602
         title = _('Time on Ice during PP and PK')
         toippk_chart = [
             gametoipppkchart_create(logger, '{1} - {0}'.format(title, matchinfo_dic['home_team__shortcut']), subtitle, ismobile, toipppk_dic['home_team'], matchinfo_dic['home_team__color_primary'], matchinfo_dic['home_team__color_secondary']),

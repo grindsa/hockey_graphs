@@ -182,7 +182,7 @@ def overview_updates_get(logger, data_dic):
     for ele in data_dic:
         updates_dic[ele] = {
             'chartoptions':  {
-                'xAxis': {'categories': data_dic[ele]['team_list']},
+                'xAxis': {'categories': data_dic[ele]['team_list'], 'labels': {'useHTML': 1, 'align': 'center'}, 'title': title('', font_size)},
                 'series': [
                     # pylint: disable=E0602
                     {'name': _('Save percentage (Sv%)'), 'marker': {'symbol': 'square'}, 'data': data_dic[ele]['sv_list'], 'color': chart_color3},
