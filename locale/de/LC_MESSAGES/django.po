@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-01-31 13:34+0100\n"
-"PO-Revision-Date: 2021-01-31 13:40+0100\n"
+"PO-Revision-Date: 2021-01-31 18:21+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -234,11 +234,11 @@ msgstr "Ø Anzahl Strafminuten pro Spiel"
 #: .\rest\functions\pppk.py:239 .\rest\functions\pppkchart.py:181
 #: .\rest\functions\pppkchart.py:215
 msgid "Goals after pulling goalie"
-msgstr "Tore nachdem der Torwart gezogen wurde"
+msgstr "Erzielte Tore  ohne Torward auf dem Eis"
 
 #: .\rest\functions\pppk.py:240 .\rest\functions\pppkchart.py:216
 msgid "Emptynet goals taken"
-msgstr "kassierte Empty Net Tore"
+msgstr "Empty Net Tore des Gegners"
 
 #: .\rest\functions\pppk.py:276 .\rest\functions\pppkchart.py:247
 #: .\rest\functions\pppkchart.py:279
@@ -304,7 +304,7 @@ msgstr ""
 
 #: .\rest\functions\pppkchart.py:181
 msgid "Empty net goals taken"
-msgstr "kassierte Empty Net Tore"
+msgstr "Empty Net Tore des Gegners"
 
 #: .\rest\functions\pppkchart.py:247
 msgid "Scoring percentage"
@@ -467,11 +467,11 @@ msgstr "Lohnt es sich den Torwart zu ziehen"
 
 #: .\rest\functions\teamcomparison.py:104
 msgid "Own goals vs. empty net goals"
-msgstr "geschossene Tore ohne Torwart auf dem Eis / kassierte Empty Net Tore"
+msgstr "Erzielte Tore ohne Torwart auf dem Eis / Empty Net Tore des Gegners"
 
 #: .\rest\functions\teamcomparison.py:115
 msgid "Ability to leverage emptynet situations"
-msgstr "Ausnutzung von Empty Net Situationen"
+msgstr "Empty Net Tore"
 
 #: .\rest\functions\teamcomparison.py:116
 msgid "Empty net situations vs. empty net goals"
@@ -674,7 +674,7 @@ msgstr "Schussquote bei 5gegen5 (Gf%)"
 
 #: .\rest\functions\xgchart.py:137
 msgid "expected Goals percentage on 5v5 (xGf%)"
-msgstr "Erwartete Tore prozentual (Gf%)"
+msgstr "Erwartete Tore prozentual (xGf%)"
 
 #: .\rest\functions\xgchart.py:208
 msgid "Difference of GF% and xGF% (dGF%)"
