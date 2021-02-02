@@ -20,7 +20,7 @@ class Team(models.Model):
     color_primary = models.CharField(max_length=7, blank=True)
     color_secondary = models.CharField(max_length=7, blank=True)
     color_tertiary = models.CharField(max_length=7, blank=True, default='#b0b3b5')
-    color_quaternary = models.CharField(max_length=7, blank=True, default='#68717a')    
+    color_quaternary = models.CharField(max_length=7, blank=True, default='#68717a')
     color_penalty_primary = models.CharField(max_length=7, blank=True)
     color_penalty_secondary = models.CharField(max_length=7, blank=True)
     twitter_name = models.CharField(max_length=15, blank=True)
@@ -37,6 +37,7 @@ class Match(models.Model):
     visitor_team = models.ForeignKey(Team, related_name='visitor_team', on_delete=models.CASCADE)
     result = models.CharField(max_length=5, blank=True, null=True)
     finish = models.BooleanField(default=False)
+    tweet = models.BooleanField(default=False)    
     disable = models.BooleanField(default=False)
     def __str__(self):
         return '{0} ({1}-{2})'.format(self.match_id, self.home_team, self.visitor_team)
