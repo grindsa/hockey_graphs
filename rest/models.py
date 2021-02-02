@@ -19,6 +19,8 @@ class Team(models.Model):
     logo = models.CharField(max_length=35, blank=True)
     color_primary = models.CharField(max_length=7, blank=True)
     color_secondary = models.CharField(max_length=7, blank=True)
+    color_tertiary = models.CharField(max_length=7, blank=True, default='#b0b3b5')
+    color_quaternary = models.CharField(max_length=7, blank=True, default='#68717a')    
     color_penalty_primary = models.CharField(max_length=7, blank=True)
     color_penalty_secondary = models.CharField(max_length=7, blank=True)
     twitter_name = models.CharField(max_length=15, blank=True)
