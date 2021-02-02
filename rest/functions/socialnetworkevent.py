@@ -66,7 +66,7 @@ def tags_build(logger, home_team, visitor_team):
     result = ['#{0}vs{1}'.format(home_team.lower(), visitor_team.lower()), '#{0}{1}'.format(home_team.lower(), visitor_team.lower())]
     return result
 
-def twitter_login(logger, consumer_key, consumer_secret, oauth_token, oauth_token_secret):
+def twitter_login(logger, consumer_key, consumer_secret, oauth_token, oauth_token_secret, domain=None):
     """ oauth login """
     logger.debug('_oauth_login()')
     # Creating the authentification
@@ -74,9 +74,29 @@ def twitter_login(logger, consumer_key, consumer_secret, oauth_token, oauth_toke
                                oauth_token_secret,
                                consumer_key,
                                consumer_secret)
-    # Twitter instance
-    twitter_api = twitter.Twitter(auth=auth)
+    # create twitter instance
+    if domain:
+        twitter_api = twitter.Twitter(domain=domain, auth=auth)
+    else:
+        twitter_api = twitter.Twitter(auth=auth)
+
     return twitter_api
+
+def twitter_image_upload(logger, twitter_api, img_list):
+    """ upload image to twitter """
+    logger.debug('twitter_image_upload()')
+
+    id_list = []
+    for img in img_list:
+        logger.debug('upload_img({0})\n'.format(img))
+        try:
+            with open(img, 'rb') as imagefile:
+                imagedata = imagefile.read()
+                id_list.append(twitter_api.media.upload(media=imagedata)['media_id_string'])
+        except BaseException as err_:
+            print(err_)
+
+    return id_list
 
 def tweets_get(logger, twitter_api, hashtag_list):
     """" get tweets """

@@ -39,8 +39,6 @@ def matchstatistics_get(logger, request, fkey=None, fvalue=None):
     if fkey:
         # we need some match_information
         matchinfo_dic = match_info_get(logger, fvalue, request.META)
-        from pprint import pprint
-        pprint(matchinfo_dic)
 
         # get colors to be used
         color_dic = chart_colors_get(logger, matchinfo_dic)

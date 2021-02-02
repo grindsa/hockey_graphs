@@ -12,7 +12,7 @@ from rest.models import Match
 from rest.functions.helper import url_build, pctg_get, min2sec
 from rest.functions.teamstat import teamstat_get
 
-def match_info_get(logger, match_id, request, vlist=('date', 'result', 'home_team_id', 'home_team__team_name', 'home_team__shortcut', 'home_team__logo', 'home_team__color_primary', 'home_team__color_secondary', 'home_team__color_tertiary', 'home_team__color_quaternary', 'home_team__color_penalty_primary', 'home_team__color_penalty_secondary', 'visitor_team_id', 'visitor_team__team_name', 'visitor_team__shortcut', 'visitor_team__logo', 'visitor_team__color_primary', 'visitor_team__color_secondary',  'visitor_team__color_tertiary', 'visitor_team__color_quaternary', 'visitor_team__color_penalty_primary', 'visitor_team__color_penalty_secondary', 'home_team__twitter_name', 'visitor_team__twitter_name')):
+def match_info_get(logger, match_id, request, vlist=('date', 'date_uts', 'result', 'home_team_id', 'home_team__team_name', 'home_team__shortcut', 'home_team__logo', 'home_team__color_primary', 'home_team__color_secondary', 'home_team__color_tertiary', 'home_team__color_quaternary', 'home_team__color_penalty_primary', 'home_team__color_penalty_secondary', 'visitor_team_id', 'visitor_team__team_name', 'visitor_team__shortcut', 'visitor_team__logo', 'visitor_team__color_primary', 'visitor_team__color_secondary',  'visitor_team__color_tertiary', 'visitor_team__color_quaternary', 'visitor_team__color_penalty_primary', 'visitor_team__color_penalty_secondary', 'home_team__twitter_name', 'visitor_team__twitter_name')):
     """ get info for a specifc match_id """
     logger.debug('match_info_get()')
     try:
@@ -136,7 +136,7 @@ def matchstats_get(logger, match_id):
     return stat_entry
 
 def last_match_get(logger, season_id, uts):
-    """ get information of upcoming match """
+    """ get information of past match """
     logger.debug('next_match_get({0}:{1})'.format(season_id, uts))
     match_list = match_list_get(logger, 'season_id', season_id, ('match_id', 'date_uts', 'date', 'result', 'home_team_id', 'home_team__team_name', 'home_team__shortcut', 'home_team__logo', 'visitor_team_id', 'visitor_team__team_name', 'visitor_team__shortcut', 'visitor_team__logo'))
     match_info_dic = {}
@@ -198,6 +198,20 @@ def sincematch_list_get(logger, season_id, uts=0, treshold=0, vlist=('match_id',
     try:
         if len(vlist) == 1:
             match_list = Match.objects.filter(season_id=season_id, date_uts__lt=uts, date_uts__gt=uts-treshold).order_by('match_id').exclude(disable=True).values_list(vlist[0], flat=True)
+        else:
+            match_list = Match.objects.filter(season_id=season_id, date_uts__lt=uts, date_uts__gt=uts-treshold).order_by('match_id').exclude(disable=True).values(*vlist)
+    except BaseException as err_:
+        logger.critical('error in sincematch_list_get(): {0}'.format(err_))
+        match_list = []
+    logger.debug('sincematch_list_get() ended with {0}'.format(bool(match_list)))
+    return list(match_list)
+
+def untweetedmatch_list_get(logger, season_id, uts=0, treshold=0, vlist=('match_id', 'season', 'date', 'date_uts', 'home_team', 'visitor_team')):
+    """ get a list of non finished matches from past """
+    logger.debug('untweetedmatch_list_get({0}:{1})'.format(season_id, uts))
+    try:
+        if len(vlist) == 1:
+            match_list = Match.objects.filter(season_id=season_id, date_uts__lt=uts, date_uts__gt=uts-treshold, finish=True, tweet=False).order_by('match_id').exclude(disable=True).values_list(vlist[0], flat=True)
         else:
             match_list = Match.objects.filter(season_id=season_id, date_uts__lt=uts, date_uts__gt=uts-treshold).order_by('match_id').exclude(disable=True).values(*vlist)
     except BaseException as err_:
