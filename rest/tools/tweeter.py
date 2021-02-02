@@ -163,7 +163,7 @@ def twitter_it(logger, matchinfo_dic_, img_list_, season_id, match_id_):
     chart_list = ['Charts', 'bunte Bildchen', 'Grafiken', 'Chartz']
     match_date = uts_to_date_utc(matchinfo_dic_['date_uts'], '%d.%m.%Y')
     text_initial = 'Hier ein paar {2} zum Spiel {0} gg. {1}. vom {5}\nMehr unter https://hockeygraphs.dynamop.de/matchstatistics/{3}/{4} ...'.format(matchinfo_dic_['home_team__shortcut'].upper(), matchinfo_dic['visitor_team__shortcut'].upper(), random.choice(chart_list), season_id, match_id_, match_date)
-    text_reply = 'Und noch die Eiszeiten...'
+    text_reply = 'Und noch die Eiszeiten... {0}'.format(tag)
 
     # LogIn
     twitter_uploader = twitter_login(logger, consumer_key, consumer_secret, oauth_token, oauth_token_secret, 'upload.twitter.com')
