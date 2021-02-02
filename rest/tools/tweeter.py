@@ -171,7 +171,7 @@ def twitter_it(logger, matchinfo_dic_, img_list_, season_id, match_id_):
     id_list = twitter_image_upload(logger, twitter_uploader, img_list_)
 
     id_string = '{0},{1},{2}'.format(id_list[0], id_list[1], id_list[2])
-    id_string_reply = '{0},{1}'.format(id_list[3], id_list[4])
+    id_string_reply = '{0},{1}'.format(id_list[3], id_list[4], id_list[5], id_list[6])
 
     twitter_api = twitter_login(logger, consumer_key, consumer_secret, oauth_token, oauth_token_secret)
     tweet_text = '{0} {1}'.format(text_initial, tags)
@@ -206,7 +206,7 @@ if __name__ == '__main__':
         if INTERVAL:
             MATCH_ID_LIST = untweetedmatch_list_get(LOGGER, SEASON_ID, UTS, INTERVAL*3600, ['match_id'], )
 
-    IMGSIZE_DIC = {1: 49000, 2: 48500, 4: 55000, 9: 30000}
+    IMGSIZE_DIC = {1: 49000, 2: 48500, 4: 55000, 9: 30000, 10: 30000}
     for match_id in MATCH_ID_LIST:
 
         # we need some match_information
