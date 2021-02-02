@@ -39,6 +39,8 @@ def matchstatistics_get(logger, request, fkey=None, fvalue=None):
     if fkey:
         # we need some match_information
         matchinfo_dic = match_info_get(logger, fvalue, request.META)
+        from pprint import pprint
+        pprint(matchinfo_dic)
 
         # get colors to be used
         color_dic = chart_colors_get(logger, matchinfo_dic)
@@ -379,8 +381,8 @@ def _gametoi_get(logger, title, subtitle, ismobile, request, fkey, fvalue, match
     if toi_dic:
         # create chart and table
         toi_chart = [
-            gametoichart_create(logger, '{1} - {0}'.format(title, matchinfo_dic['home_team__shortcut']), subtitle, ismobile, toi_dic['home_team']),
-            gametoichart_create(logger, '{1} - {0}'.format(title, matchinfo_dic['home_team__shortcut']), subtitle, ismobile, toi_dic['visitor_team']),
+            gametoichart_create(logger, '{1} - {0}'.format(title, matchinfo_dic['home_team__shortcut']), subtitle, ismobile, toi_dic['home_team'], matchinfo_dic['home_team__color_primary'], matchinfo_dic['home_team__color_secondary'], matchinfo_dic['home_team__color_tertiary'], matchinfo_dic['home_team__color_quaternary']),
+            gametoichart_create(logger, '{1} - {0}'.format(title, matchinfo_dic['visitor_team__shortcut']), subtitle, ismobile, toi_dic['visitor_team'], matchinfo_dic['visitor_team__color_primary'], matchinfo_dic['visitor_team__color_secondary'], matchinfo_dic['visitor_team__color_tertiary'], matchinfo_dic['visitor_team__color_quaternary']),
         ]
         toi_table = [
             gametoi_table(logger, toi_dic['home_team']),
@@ -399,7 +401,7 @@ def _gametoi_get(logger, title, subtitle, ismobile, request, fkey, fvalue, match
         title = _('Time on Ice during PP and PK')
         toippk_chart = [
             gametoipppkchart_create(logger, '{1} - {0}'.format(title, matchinfo_dic['home_team__shortcut']), subtitle, ismobile, toipppk_dic['home_team'], matchinfo_dic['home_team__color_primary'], matchinfo_dic['home_team__color_secondary']),
-            gametoipppkchart_create(logger, '{1} - {0}'.format(title, matchinfo_dic['home_team__shortcut']), subtitle, ismobile, toipppk_dic['visitor_team'], matchinfo_dic['visitor_team__color_primary'], matchinfo_dic['visitor_team__color_secondary']),
+            gametoipppkchart_create(logger, '{1} - {0}'.format(title, matchinfo_dic['visitor_team__shortcut']), subtitle, ismobile, toipppk_dic['visitor_team'], matchinfo_dic['visitor_team__color_primary'], matchinfo_dic['visitor_team__color_secondary']),
         ]
         #toippk_table = [
         #    gametoi_table(logger, toi_dic['home_team']),
