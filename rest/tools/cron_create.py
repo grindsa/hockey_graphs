@@ -79,6 +79,11 @@ def create_cron_entries(logger, tzone):
                 lstats.hour.during(int(fhour), int(lhour)+3).every(1)
                 lstats.minute.every(2)
 
+                # create cron-entry for tweeter.py
+                lstats = cron.new(command=path + '/tweeter.py -i 24', comment='tweet statistics', user='root')
+                lstats.hour.during(int(fhour), int(lhour)+3).every(1)
+                lstats.minute.every(5)
+
                 # create cron-entry to get live statistics
                 ltag = cron.new(command=path + '/tag_fetcher.py -i 24 -b 4', comment='update twitter tags', user='root')
                 ltag.hour.during(int(fhour)-1, int(lhour)+3).every(1)
