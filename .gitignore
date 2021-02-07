@@ -143,3 +143,4 @@ static/drf-yasg
 static/admin
 rest/tools/hockeygraphs.cfg
 hockey_graphs/urls.py
+chromedriver.exe
