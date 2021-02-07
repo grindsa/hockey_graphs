@@ -61,6 +61,18 @@ def create_cron_entries(logger, tzone):
     self.hour.on(1)
     self.minute.on(5)
 
+    # create cron-entry to update player data
+    pupd = cron.new(command=path + '/players_update.py', comment='update player information', user='root')
+    pupd.dow.on('MON', 'WED', 'FRI')
+    pupd.hour.on(1)
+    pupd.minute.on(15)
+
+    # create cron-entry to update match data
+    mupd = cron.new(command=path + '/match_import.py -s 3', comment='update match_information', user='root')
+    mupd.dow.on('MON', 'WED', 'FRI')
+    mupd.hour.on(1)
+    mupd.minute.on(20)
+
     ltime = time.strftime("%d.%m.%Y")
 
     # we have matches today and need to create the cron_entries for polling
@@ -78,6 +90,16 @@ def create_cron_entries(logger, tzone):
                 lstats = cron.new(command=path + '/matchdata_update.py -o', comment='update match statistics', user='root')
                 lstats.hour.during(int(fhour), int(lhour)+3).every(1)
                 lstats.minute.every(2)
+
+                # start export server
+                svc_st = cron.new(command='service highcharts start', comment='start export server', user='root')
+                svc_st.hour.on(int(fhour)-1)
+                svc_st.minute.on(0)
+
+                # stop messenger
+                svc_end = cron.new(command='service highcharts stop', comment='stop export server', user='root')
+                svc_end.hour.on(23)
+                svc_end.minute.on(45)
 
                 # create cron-entry for tweeter.py
                 lstats = cron.new(command=path + '/tweeter.py -i 24', comment='tweet statistics', user='root')
@@ -103,6 +125,9 @@ def create_cron_entries(logger, tzone):
                 teamstats = cron.new(command=path+'/teamstat_load.py -i 24 --xgdata /var/www/hockey_graphs/rest/tools/conf/xg_model_data.json --xgweights /var/www/hockey_graphs/rest/tools/conf/xg_weights.json', comment='teamstats', user='root')
                 teamstats.hour.on(23)
                 teamstats.minute.on(5)
+
+
+
 
                 message = '{0}{1}'.format(message, today)
 
