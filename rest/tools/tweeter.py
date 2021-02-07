@@ -251,7 +251,7 @@ def twitter_it(logger, matchinfo_dic_, img_list_, season_id, match_id_):
     # add shotmap if existing
     if id_list[3]:
         id_string = '{0},{1},{2},{3}'.format(id_list[0], id_list[1], id_list[2], id_list[3])
-        id_string_reply = '{0},{1},{2},{3}'.format(id_list[4], id_list[5], id_list[6], id_list[7])        
+        id_string_reply = '{0},{1},{2},{3}'.format(id_list[4], id_list[5], id_list[6], id_list[7])
     else:
         id_string = '{0},{1},{2}'.format(id_list[0], id_list[1], id_list[2])
         id_string_reply = '{0},{1},{2},{3}'.format(id_list[3], id_list[4], id_list[5], id_list[6])
@@ -321,7 +321,6 @@ if __name__ == '__main__':
                         img_list.append(chart_plot(LOGGER, match_id, DATA[img_id]['chart'], img_id, 1, EXPORTER_HOST, EXPORTER_PORT, file_size))
 
         if img_list:
-            print(img_list)
             if not FAKE:
                 # twitterle
                 twitter_it(LOGGER, matchinfo_dic, img_list, SEASON_ID, match_id)
