@@ -8,7 +8,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "hockey_graphs.settings")
 import django
 django.setup()
 from django.conf import settings
-from rest.functions.corsi import gamecorsi_get
+from rest.functions.corsi import gamecorsi_get, gameshots5v5_get
 from rest.functions.socialnetworkeventcharts import chatterchart_create
 from rest.functions.socialnetworkevent import socialnetworkevent_get, eventspermin_combine
 from rest.functions.shot import shot_list_get, shotspermin_count, shotspermin_aggregate, shotstatus_count, shotstatus_aggregate, shotsperzone_count, shotsperzone_aggregate, shotcoordinates_get, gameflow_get
@@ -59,6 +59,8 @@ def matchstatistics_get(logger, request, fkey=None, fvalue=None):
         # get rosters
         roster_list = roster_get(logger, fkey, fvalue, ['roster'])
 
+        (_sf_5v5, _sa_5v5, _sogf_5v5, _soga_5v5, shot_list_5v5) = gameshots5v5_get(logger, matchinfo_dic, 'foo', shot_list, shift_list, periodevent_list)
+
         result = []
 
         # get matchstatistics
@@ -74,7 +76,7 @@ def matchstatistics_get(logger, request, fkey=None, fvalue=None):
 
         # create chart for shotstatus
         # pylint: disable=E0602
-        result.append(_gameshootstatus_get(logger, _('Shots by Result'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list))
+        # result.append(_gameshootstatus_get(logger, _('Shots by Result'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list))
 
         # create shotzone chart
         # pylint: disable=E0602
@@ -82,7 +84,7 @@ def matchstatistics_get(logger, request, fkey=None, fvalue=None):
 
         # shotmap
         # pylint: disable=E0602
-        # result.append(_gameheatmap_get(logger, _('Game Heatmap'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list))
+        result.append(_gameheatmap_get(logger, _('Shot attempts 5v5'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list_5v5))
 
         # shotmap
         # pylint: disable=E0602
@@ -247,7 +249,7 @@ def _gamezoneshots_get(logger, title, subtitle, ismobile, request, matchinfo_dic
 
     return stat_entry
 
-def _gameheatmap_get(logger, title, _subtitle, _ismobile, request, fkey, fvalue, matchinfo_dic, shot_list):
+def _gameheatmap_get(logger, title, subtitle, _ismobile, request, fkey, fvalue, matchinfo_dic, shot_list):
     """ get gameshotmap """
     logger.debug('_gameshotmap_get({0}:{1})'.format(fkey, fvalue))
 
@@ -256,7 +258,7 @@ def _gameheatmap_get(logger, title, _subtitle, _ismobile, request, fkey, fvalue,
 
     if shot_list:
         # get shots and goals per min
-        shotmap_dic = gameheatmapdata_get(logger, shot_list, matchinfo_dic)
+        shotmap_dic = gameheatmapdata_get(logger, title, subtitle, _ismobile, matchinfo_dic, shot_list)
 
     stat_entry = {
         'title': title,
@@ -266,7 +268,6 @@ def _gameheatmap_get(logger, title, _subtitle, _ismobile, request, fkey, fvalue,
     }
 
     return stat_entry
-
 
 def _gameshotmap_get(logger, title, subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list):
     """ get gameshotmap """

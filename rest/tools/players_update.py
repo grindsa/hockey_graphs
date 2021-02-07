@@ -13,7 +13,7 @@ from delapphelper import DelAppHelper
 
 if __name__ == '__main__':
 
-    DEBUG = True
+    DEBUG = False
 
     # initialize logger
     LOGGER = logger_setup(DEBUG)

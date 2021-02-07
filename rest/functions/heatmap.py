@@ -219,46 +219,54 @@ def teamcomparison_updates_get(logger, _title, ismobile, data_dic):
 
     return updates_dic
 
-def gameheatmapdata_get(logger, shot_list, _matchinfo_dic):
+def gameheatmapdata_get(logger, title, subtitle, ismobile, matchinfo_dic, shot_list):
     """ heatmap data """
+    # pylint: disable=R0914
     logger.debug('gameheatmapdata_get()')
 
     shot_dic = {}
 
     # cluster size
-    clul = 10
+    if ismobile:
+        clul = 6
+    else:
+        clul = 10
+
+    # pylint: disable=E0602
+    if ismobile:
+        x_multiplier = 340
+        y_multiplier = 170
+        label_text = _('Shots')
+    else:
+        x_multiplier = 770
+        y_multiplier = 385
+        label_text = _('Shots attempts')
 
     for shot in shot_list:
-        # we need to differenciate between home and visitor team
-        #if shot['team_id'] == matchinfo_dic['home_team_id']:
-        #    team = 'home_team'
-        #    calc_x = float(shot['coordinate_y'])
-        #    calc_y = float(shot['coordinate_x'])
-        #else:
-        #    team = 'visitor_team'
-        #    calc_x = float(shot['coordinate_y'])
-        #    calc_y = float(shot['coordinate_x'] * -1)
 
-        calc_x = float(shot['coordinate_y'])
-        calc_y = float(shot['coordinate_x'])
+        calc_x = float(shot['coordinate_x'])
+        calc_y = float(shot['coordinate_y'])
 
         # x = -100, 100
         # y = 0, 105
         # calculate coordicates
-        calc_x = calc_x + 500
-        # calc_x = round((calc_x + 100) * 295/100)
-        # calc_y = round((105 - calc_y) * 489/105)
+        calc_x = round((calc_x + 100) * x_multiplier/200)
+        calc_y = round((105 - calc_y) * y_multiplier/210)
 
         # round to clul
         calc_x = round((calc_x/clul)) * clul
         calc_y = round((calc_y/clul)) * clul
+
+
+        # round to clul
+        # calc_x = round((calc_x/clul)) * clul
+        # calc_y = round((calc_y/clul)) * clul
 
         mapping = '{0}; {1}'.format(calc_x, calc_y)
         if mapping in shot_dic:
             shot_dic[mapping] += 1
         else:
             shot_dic[mapping] = 1
-
 
     # create structure for highcharts
     heatmapdata_dic = {'data': [], 'max': 2}
@@ -267,5 +275,12 @@ def gameheatmapdata_get(logger, shot_list, _matchinfo_dic):
         if shot_dic[mapping] > heatmapdata_dic['max']:
             heatmapdata_dic['max'] = shot_dic[mapping]
         heatmapdata_dic['data'].append({'x': myx, 'y': myy, 'value': shot_dic[mapping]})
+
+    heatmapdata_dic['title'] = title
+    heatmapdata_dic['subtitle'] = subtitle
+    heatmapdata_dic['leftlabel'] = '{0} {1}'.format(label_text, matchinfo_dic['visitor_team__shortcut'])
+    heatmapdata_dic['rightlabel'] = '{0} {1}'.format(label_text, matchinfo_dic['home_team__shortcut'])
+    heatmapdata_dic['home_team_logo'] = matchinfo_dic['home_team_logo']
+    heatmapdata_dic['visitor_team_logo'] = matchinfo_dic['visitor_team_logo']
 
     return heatmapdata_dic
