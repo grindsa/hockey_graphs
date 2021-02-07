@@ -88,14 +88,14 @@ def twitter_image_upload(logger, twitter_api, img_list):
 
     id_list = []
     for img in img_list:
-        logger.debug('upload_img({0})\n'.format(img))
-        try:
-            with open(img, 'rb') as imagefile:
-                imagedata = imagefile.read()
-                id_list.append(twitter_api.media.upload(media=imagedata)['media_id_string'])
-        except BaseException as err_:
-            print(err_)
-
+        if img:
+            logger.debug('upload_img({0})\n'.format(img))
+            try:
+                with open(img, 'rb') as imagefile:
+                    imagedata = imagefile.read()
+                    id_list.append(twitter_api.media.upload(media=imagedata)['media_id_string'])
+            except BaseException as err_:
+                print(err_)
     return id_list
 
 def tweets_get(logger, twitter_api, hashtag_list):

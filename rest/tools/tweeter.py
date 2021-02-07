@@ -9,6 +9,13 @@ import time
 import random
 import requests
 from wa_hack_cli import simple_send
+from PIL import Image
+from selenium import webdriver
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
+from selenium.webdriver.firefox.options import Options as FirefoxOptions
+from selenium.webdriver.chrome.options import Options as ChromeOptions
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir, os.path.pardir)))
 # import project settings
@@ -150,6 +157,77 @@ def arg_parse():
 
     return(debug, fake, season, match_list, interval)
 
+def page_get_via_selenium(logger, url, file_):
+    logger.debug('get_page_via_selenium()')
+
+    headless = True
+    browser = 'Chrome'
+    timeout = 10
+
+    if browser == 'Firefox':
+        logger.debug('using firefox')
+        options = FirefoxOptions()
+    else:
+        logger.debug('using chrome')
+        options = ChromeOptions()
+        options.add_argument('--no-sandbox')
+
+    if headless:
+        logger.debug('activating headless mode')
+        options.add_argument('-headless')
+
+    if browser == 'Firefox':
+        driver = webdriver.Firefox(firefox_options=options)
+    else:
+        driver = webdriver.Chrome(chrome_options=options)
+
+    driver.set_window_size(1024, 960)
+    # open page
+    try:
+        driver.get(url)
+    except TimeoutException:
+        logger.debug('error connecting to {0}'.format(url))
+        sys.exit(0)
+
+    # time.sleep(3)
+    element_present = EC.element_to_be_clickable((By.CLASS_NAME, 'heatmap-canvas'))
+    WebDriverWait(driver, timeout).until(element_present)
+    driver.save_screenshot(file_)
+
+    # closing
+    driver.quit()
+
+def heatmap_image(logger, url, season_id, match_id, tmp_dir, imgid, file_size):
+    logger.debug('heatmap_image()')
+
+    # build some variables
+    stat_url = '{0}/matchstatistics/{1}/{2}/{3}'.format(url, season_id, match_id, imgid + 1)
+    img_file = '{0}/tmp_{1}.png'.format(tmp_dir, match_id)
+    dst = '{0}/{1}-sel-{2}-0.png'.format(tmp_dir, match_id, imgid)
+
+    # get sceenshot of heatmap
+    page_get_via_selenium(logger, stat_url, img_file)
+
+    # crop image if it exists and has a vlaid sisize
+    if os.path.exists(img_file) and os.path.getsize(img_file) >= file_size:
+        logger.debug('{0} found. Cropping ....'.format(img_file))
+        image_crop(logger, img_file, dst)
+    else:
+        dst = None
+    return dst
+
+def image_crop(logger, src, dst):
+    logger.debug('image_crop()')
+
+    img = Image.open(src)
+    # Setting the points for cropped image
+    left = 100
+    top = 160
+    right = 910
+    bottom = 650
+    cimg = img.crop((left, top, right, bottom))
+    cimg = cimg.save(dst)
+
 def twitter_it(logger, matchinfo_dic_, img_list_, season_id, match_id_):
     """ get expected filesize for corsi-chart """
     # pylint: disable=R0914
@@ -170,8 +248,13 @@ def twitter_it(logger, matchinfo_dic_, img_list_, season_id, match_id_):
     # upload images
     id_list = twitter_image_upload(logger, twitter_uploader, img_list_)
 
-    id_string = '{0},{1},{2}'.format(id_list[0], id_list[1], id_list[2])
-    id_string_reply = '{0},{1},{2},{3}'.format(id_list[3], id_list[4], id_list[5], id_list[6])
+    # add shotmap if existing
+    if id_list[3]:
+        id_string = '{0},{1},{2},{3}'.format(id_list[0], id_list[1], id_list[2], id_list[3])
+        id_string_reply = '{0},{1},{2},{3}'.format(id_list[4], id_list[5], id_list[6], id_list[7])        
+    else:
+        id_string = '{0},{1},{2}'.format(id_list[0], id_list[1], id_list[2])
+        id_string_reply = '{0},{1},{2},{3}'.format(id_list[3], id_list[4], id_list[5], id_list[6])
 
     twitter_api = twitter_login(logger, consumer_key, consumer_secret, oauth_token, oauth_token_secret)
     tweet_text = '{0} {1}'.format(text_initial, tags)
@@ -206,9 +289,10 @@ if __name__ == '__main__':
         if INTERVAL:
             MATCH_ID_LIST = untweetedmatch_list_get(LOGGER, SEASON_ID, UTS, INTERVAL*3600, ['match_id'], )
 
-    IMGSIZE_DIC = {1: 49000, 2: 48500, 4: 55000, 9: 30000, 10: 30000}
-    for match_id in MATCH_ID_LIST:
+    IMGSIZE_DIC = {1: 49000, 2: 48500, 4: 55000, 5: 150000, 10: 30000, 11: 30000}
+    # IMGSIZE_DIC = {5: 150000}
 
+    for match_id in MATCH_ID_LIST:
         # we need some match_information
         matchinfo_dic = match_info_get(LOGGER, match_id, None)
         # request URL and fetch it
@@ -230,10 +314,14 @@ if __name__ == '__main__':
                         (home_goals, visitor_goals, file_size) = corsichart_size_get(LOGGER, DATA[0])
                     else:
                         file_size = IMGSIZE_DIC[img_id]
-
-                    img_list.append(chart_plot(LOGGER, match_id, DATA[img_id]['chart'], img_id, 1, EXPORTER_HOST, EXPORTER_PORT, file_size))
+                    if img_id == 5:
+                        # special handling for heatmap
+                        img_list.append(heatmap_image(LOGGER, URL, SEASON_ID, match_id, TMP_DIR, img_id, file_size))
+                    else:
+                        img_list.append(chart_plot(LOGGER, match_id, DATA[img_id]['chart'], img_id, 1, EXPORTER_HOST, EXPORTER_PORT, file_size))
 
         if img_list:
+            print(img_list)
             if not FAKE:
                 # twitterle
                 twitter_it(LOGGER, matchinfo_dic, img_list, SEASON_ID, match_id)

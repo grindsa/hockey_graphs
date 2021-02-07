@@ -76,7 +76,7 @@ def matchstatistics_get(logger, request, fkey=None, fvalue=None):
 
         # create chart for shotstatus
         # pylint: disable=E0602
-        # result.append(_gameshootstatus_get(logger, _('Shots by Result'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list))
+        result.append(_gameshootstatus_get(logger, _('Shots by Result'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list))
 
         # create shotzone chart
         # pylint: disable=E0602
