@@ -163,10 +163,11 @@ const Chart = (props) => {
     return(
       <MatchOverview options={props.options} />
     )
-  /* }else if (props.options.data){
+  }else if (props.options.data){
+    // console.log(props.options)
     return(
       <HeatmapJs data={props.options} />
-    ) */
+    )
   }else{
     const nochartdata = createnoChartMessage(props.language)
     return (

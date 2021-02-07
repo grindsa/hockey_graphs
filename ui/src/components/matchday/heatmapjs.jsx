@@ -1,72 +1,55 @@
 import ReactDOM, { render } from 'react-dom';
 import React, {useState, useEffect} from 'react';
 import { isEmpty } from '../sharedfunctions.js';
-// import React, {Component, PropTypes} from 'react';
+import { isMobileOnly } from 'react-device-detect';
 import h337 from 'heatmap.js'
 
-/* export class HeatmapJs extends Component {
+export const HeatmapJs = ({data, title}) => {
 
-  constructor(props, context) {
-    super(props, context);
-    this.state = { cfg: null };
+  if (isMobileOnly){
+    var headline_classes = 'jsheadmap_headline_mobile w3-margin-top'
+    var subheadline_classes = 'jsheadmap_subheadline_mobile'
+    var canvas_classes = 'w3-margin-top w3-margin-right jsheatmap_mobile w3-display-container'
+    var tag_name = '.jsheatmap_mobile'
+    var img_size = 19
+    var radius = 19
+    var home_logo_classes = 'w3-display-left jsheatmap_homelogo_mobile'
+    var visitor_logo_classes = 'w3-display-right jsheatmap_visitorlogo_mobile'
+    var left_text_classes = 'w3-left jsheatmap_lefttext_mobile'
+    var right_text_classes = 'w3-right jsheatmap_rightext_mobile'
+
+  }else{
+    var headline_classes = 'jsheadmap_headline w3-margin-top'
+    var subheadline_classes = 'jsheadmap_subheadline'
+    var canvas_classes = 'w3-margin-top w3-margin-right jsheatmap w3-display-container'
+    var tag_name = '.jsheatmap'
+    var img_size = 35
+    var radius = 40
+    var home_logo_classes = 'w3-display-left jsheatmap_homelogo'
+    var visitor_logo_classes = 'w3-display-right jsheatmap_visitorlogo'
+    var left_text_classes = 'w3-left jsheatmap_lefttext'
+    var right_text_classes = 'w3-right jsheatmap_rightext'
   }
 
-  componentDidMount(){
-    const { style, data, config } = this.props;
-    let c = config || {};
-    let _container = ReactDOM.findDOMNode(this);
-    console.log(_container)
-    let defaultCfg = {
-      // width: style.width.replace('px','') || _container.offsetWidth,
-      // height: style.height.replace('px','') || _container.offsetHeight,
-    };
-    // let _cfg = _.merge( defaultCfg, c );
-    let _cfg = {}
-    _cfg.container = document.querySelector('.jsheatmap');
-    console.log(_cfg)
-    this.heatmapInstance = h337.create(_cfg);
-    this.setState({ cfg: _cfg });
-    this.heatmapInstance.setData( data );
-  }
-
-  componentWillReceiveProps(nextProps){
-    return nextProps != this.props;
-  }
-
-  shouldComponentUpdate(nextProps){
-    return nextProps != this.props;
-  }
-
-  render(){
-
-    return (
-      <div className="jsheatmap"></div>
-    );
-
-  }
-
-} */
-
-export const HeatmapJs = ({ style, data, config }) => {
-
-  let _cfg = {gradient: { 0.55: "rgb(77,123,187)", 0.7: "rgb(239,218,226)", 0.8: "rgb(224,184,200)", 0.9: "rgb(210,148,172)", 0.95: "rgb(194,112,145)", 1.0: "rgb(180,77,117)"}}
+  // let _cfg = {'radius': radius, gradient: { 0.55: "rgb(77,123,187)", 0.7: "rgb(239,218,226)", 0.8: "rgb(224,184,200)", 0.9: "rgb(210,148,172)", 0.95: "rgb(194,112,145)", 1.0: "rgb(180,77,117)"}}
+  let _cfg = {'radius': radius}
 
   useEffect(() => {
-    console.log('useeffect - initial')
-    // _cfg.container = document.querySelector('.jsheatmap');
-
-  }, [])
-
-  useEffect(() => {
-    console.log('useeffect - data')
-    _cfg.container = document.querySelector('.jsheatmap');
+    _cfg.container = document.querySelector(tag_name);
     var heatmapInstance = h337.create(_cfg)
-    // heatmapInstance = null
-    // var heatmapInstance = h337.create(_cfg)
     heatmapInstance.setData( data );
-
   }, [data])
 
-
-  return (<div className="w3-margin jsheatmap"></div>)
+  return (
+    <div className="w3-container w3-center w3-border">
+      <div className={headline_classes}>{data.title}</div>
+      <div className={subheadline_classes}>{data.subtitle}</div>
+      <div className={canvas_classes}>
+          <div className={home_logo_classes}><img src={data.home_team_logo} width={img_size} height={img_size}></img></div>
+          <div className={visitor_logo_classes}><img src={data.visitor_team_logo}  width={img_size} height={img_size}></img></div>
+      </div>
+      <div className={left_text_classes}>{data.leftlabel}</div>
+      <div className={right_text_classes}>{data.rightlabel}</div>
+    </div>
+  )
 }

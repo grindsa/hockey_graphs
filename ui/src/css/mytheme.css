@@ -80,8 +80,81 @@ select.selectbg {
 .jsheatmap {
   /* background-image: url('https://hockeygraphs.dynamop.de/static/img/shotmap.svg'); */
   background-image: url('https://hockeygraphs.dynamop.de/static/img/hockeyrink.png');
-  height: 498px;
+  height: 385px;
+  width: 770px;
   background-position: center center; /* Center the image */
   background-repeat: no-repeat; /* Do not repeat the image */
   background-size: 100%; /* Resize the background image to cover the entire container */
+  box-sizing: content-box;
+}
+
+.jsheatmap_mobile {
+  /* background-image: url('https://hockeygraphs.dynamop.de/static/img/shotmap.svg'); */
+  background-image: url('https://hockeygraphs.dynamop.de/static/img/hockeyrink.png');
+  height: 170px;
+  width: 340px;
+  background-position: center center; /* Center the image */
+  background-repeat: no-repeat; /* Do not repeat the image */
+  background-size: 100%; /* Resize the background image to cover the entire container */
+}
+
+.jsheadmap_headline {
+  font-weight: bold;
+  font-size:18px;
+  color: #404040;
+  vertical-align: middle;
+  text-decoration: underline;
+}
+
+.jsheadmap_headline_mobile {
+  font-weight: bold;
+  font-size:14px;
+  color: #404040;
+  vertical-align: middle;
+  text-decoration: underline;
+}
+
+.jsheadmap_subheadline {
+  font-size:14px;
+  color: #404040;
+  vertical-align: middle;
+}
+
+.jsheadmap_subheadline_mobile {
+  font-size:12px;
+  color: #404040;
+  vertical-align: middle;
+}
+
+.jsheatmap_homelogo {
+  margin-left: 30px;
+}
+
+.jsheatmap_homelogo_mobile {
+  margin-left: 10px;
+}
+
+.jsheatmap_lefttext {
+  margin-left: 100px;
+}
+
+.jsheatmap_lefttext_mobile {
+  margin-left: 40px;
+}
+
+.jsheatmap_rightext {
+  margin-right: 100px;
+}
+
+.jsheatmap_rightext_mobile {
+  margin-right: 40px;
+}
+
+
+.jsheatmap_visitorlogo {
+  margin-right: 30px;
+}
+
+.jsheatmap_visitorlogo_mobile {
+  margin-right: 10px;
 }
