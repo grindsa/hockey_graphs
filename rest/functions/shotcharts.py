@@ -261,21 +261,19 @@ def shotstatussumchart_create(logger, ctitle, csubtitle, ismobile, shotsum_dic, 
 
     goal_list = []
 
-    # data_dic[team][period].append({'x': min_, 'y': value, 'marker': {'fillColor': chart_color8, 'enabled': 1, 'radius': 5, 'symbol': 'circle'}, 'dataLabels': {'borderWidth': 1, 'backgroundColor': '#ffffff', 'borderColor': chart_color8, 'enabled': 1, 'useHTML': 1, 'color': chart_color8, 'format': '{0}'.format(goal_dic[team][min_])}})
-
     for min_, value in shotsum_dic[team][4].items():
         # set marker on graph if there was a goal in this min
         if min_ in goal_dic['home_team'].keys():
-            goal_list.append({'y' : value, 'marker' : {'enabled': 1, 'width': 25, 'height': 25, 'symbol': 'url({0})'.format(matchinfo_dic['home_team_logo'])}, 'dataLabels': {'enabled': 1, 'y': -10, 'useHTML': 1, 'color': '#ffffff', 'format': '{0}'.format(goal_dic['home_team'][min_])}})
+            goal_list.append({'y' : value, 'marker' : {'enabled': 1, 'width': 25, 'height': 25, 'symbol': 'url({0})'.format(matchinfo_dic['home_team_logo'])}, 'dataLabels': {'y': -15, 'style': {'fontSize': variable_dic['label_size']}, 'borderWidth': 1, 'backgroundColor': '#ffffff', 'borderColor': chart_color8, 'enabled': 1, 'useHTML': 1, 'color': chart_color8, 'format': '{0}'.format(goal_dic['home_team'][min_])}})
         elif min_ in goal_dic['visitor_team'].keys():
-            goal_list.append({'y' : value, 'marker' : {'enabled': 1, 'width': 25, 'height': 25, 'symbol': 'url({0})'.format(matchinfo_dic['visitor_team_logo'])}, 'dataLabels': {'enabled': 1, 'y': -10, 'useHTML': 1, 'color': '#ffffff', 'format': '{0}'.format(goal_dic['visitor_team'][min_])}})
+            goal_list.append({'y' : value, 'marker' : {'enabled': 1, 'width': 25, 'height': 25, 'symbol': 'url({0})'.format(matchinfo_dic['visitor_team_logo'])}, 'dataLabels': {'y': -15, 'style': {'fontSize': variable_dic['label_size']}, 'borderWidth': 1, 'backgroundColor': '#ffffff', 'borderColor': chart_color8, 'enabled': 1, 'useHTML': 1, 'color': chart_color8, 'format': '{0}'.format(goal_dic['visitor_team'][min_])}})
         else:
             goal_list.append(value)
 
     chart_options = {
 
         'chart': {
-            'type': 'area',
+            'type': 'areaspline',
             'height': '80%',
             'style': chartstyle()
         },
@@ -289,7 +287,7 @@ def shotstatussumchart_create(logger, ctitle, csubtitle, ismobile, shotsum_dic, 
         'responsive': responsive_y1(),
 
         'plotOptions': {
-            'area': {
+            'areaspline': {
                 'marker': {
                     'enabled': 0,
                 },
@@ -871,9 +869,9 @@ def puckpossessionchart_create(logger, ctitle, csubtitle, ismobile, shotsum_dic,
 
         # set marker on graph if there was a goal in this min
         if min_ in goal_dic['home_team']:
-            y1_list.append({'y' : value, 'marker' : {'enabled': 1, 'width': 25, 'height': 25, 'symbol': 'url({0})'.format(matchinfo_dic['home_team_logo'])}, 'dataLabels': {'y': -10, 'borderWidth': 1, 'backgroundColor': '#ffffff', 'borderColor': chart_color8, 'useHTML': 1, 'enabled': 1, 'color': chart_color8, 'format': '{0}'.format(goal_dic['home_team'][min_])}})
+            y1_list.append({'y' : value, 'marker' : {'enabled': 1, 'width': 25, 'height': 25, 'symbol': 'url({0})'.format(matchinfo_dic['home_team_logo'])}, 'dataLabels': {'y': -15, 'style': {'fontSize': variable_dic['label_size']}, 'borderWidth': 1, 'backgroundColor': '#ffffff', 'borderColor': chart_color8, 'useHTML': 1, 'enabled': 1, 'color': chart_color8, 'format': '{0}'.format(goal_dic['home_team'][min_])}})
         elif min_ in goal_dic['visitor_team']:
-            y1_list.append({'y' : value, 'marker' : {'enabled': 1, 'width': 25, 'height': 25, 'symbol': 'url({0})'.format(matchinfo_dic['visitor_team_logo'])}, 'dataLabels': {'y': -10, 'borderWidth': 1, 'backgroundColor': '#ffffff', 'borderColor': chart_color8, 'useHTML': 1, 'enabled': 1, 'color': chart_color8, 'format': '{0}'.format(goal_dic['visitor_team'][min_])}})
+            y1_list.append({'y' : value, 'marker' : {'enabled': 1, 'width': 25, 'height': 25, 'symbol': 'url({0})'.format(matchinfo_dic['visitor_team_logo'])}, 'dataLabels': {'y': -15, 'style': {'fontSize': variable_dic['label_size']}, 'borderWidth': 1, 'backgroundColor': '#ffffff', 'borderColor': chart_color8, 'useHTML': 1, 'enabled': 1, 'color': chart_color8, 'format': '{0}'.format(goal_dic['visitor_team'][min_])}})
         else:
             y1_list.append(value)
 
