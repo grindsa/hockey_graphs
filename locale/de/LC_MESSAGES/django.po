@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-02-07 11:57+0100\n"
-"PO-Revision-Date: 2021-02-07 17:38+0100\n"
+"POT-Creation-Date: 2021-02-08 17:19+0100\n"
+"PO-Revision-Date: 2021-02-08 17:21+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -23,43 +23,43 @@ msgstr ""
 #: .\rest\functions\pdo.py:85 .\rest\functions\pdo.py:213
 #: .\rest\functions\pdocharts.py:126 .\rest\functions\pdocharts.py:183
 #: .\rest\functions\pppk.py:128 .\rest\functions\pppkchart.py:76
-#: .\rest\functions\pppkchart.py:151 .\rest\functions\shotcharts.py:991
-#: .\rest\functions\shotcharts.py:1063 .\rest\functions\shotcharts.py:1116
+#: .\rest\functions\pppkchart.py:151 .\rest\functions\shotcharts.py:989
+#: .\rest\functions\shotcharts.py:1061 .\rest\functions\shotcharts.py:1114
 #: .\rest\functions\xg.py:604 .\rest\functions\xg.py:674
 #: .\rest\functions\xgchart.py:73 .\rest\functions\xgchart.py:148
 msgid "Standard Deviation"
 msgstr "Standardabweichung"
 
-#: .\rest\functions\corsi.py:359 .\rest\functions\shotcharts.py:1030
-#: .\rest\functions\shotcharts.py:1034
+#: .\rest\functions\corsi.py:359 .\rest\functions\shotcharts.py:1028
+#: .\rest\functions\shotcharts.py:1032
 msgid "Corsi For per 60 minutes at 5v5 (Cf/60)"
 msgstr "Eigene Schüsse  bei 5-gegen-5 pro 60min (Cf/60)"
 
-#: .\rest\functions\corsi.py:369 .\rest\functions\shotcharts.py:1030
-#: .\rest\functions\shotcharts.py:1047
+#: .\rest\functions\corsi.py:369 .\rest\functions\shotcharts.py:1028
+#: .\rest\functions\shotcharts.py:1045
 msgid "Corsi Against per 60 minutes at 5v5 (Ca/60)"
 msgstr "Schüsse des Gegners bei 5-gegen-5 pro 60min (Ca/60)"
 
-#: .\rest\functions\corsi.py:378 .\rest\functions\shotcharts.py:690
-#: .\rest\functions\shotcharts.py:1061 .\rest\functions\teamcomparison.py:190
+#: .\rest\functions\corsi.py:378 .\rest\functions\shotcharts.py:688
+#: .\rest\functions\shotcharts.py:1059 .\rest\functions\teamcomparison.py:190
 #: .\rest\functions\xgchart.py:149
 msgid "Bad"
 msgstr "Schlecht"
 
 #: .\rest\functions\corsi.py:378 .\rest\functions\pdocharts.py:127
-#: .\rest\functions\shotcharts.py:690 .\rest\functions\shotcharts.py:1061
+#: .\rest\functions\shotcharts.py:688 .\rest\functions\shotcharts.py:1059
 #: .\rest\functions\teamcomparison.py:335
 msgid "Dull"
 msgstr "Langeweile"
 
 #: .\rest\functions\corsi.py:378 .\rest\functions\pdocharts.py:127
-#: .\rest\functions\shotcharts.py:690 .\rest\functions\shotcharts.py:1061
+#: .\rest\functions\shotcharts.py:688 .\rest\functions\shotcharts.py:1059
 #: .\rest\functions\teamcomparison.py:335
 msgid "Fun"
 msgstr "Spass"
 
-#: .\rest\functions\corsi.py:378 .\rest\functions\shotcharts.py:690
-#: .\rest\functions\shotcharts.py:1061 .\rest\functions\teamcomparison.py:190
+#: .\rest\functions\corsi.py:378 .\rest\functions\shotcharts.py:688
+#: .\rest\functions\shotcharts.py:1059 .\rest\functions\teamcomparison.py:190
 #: .\rest\functions\xgchart.py:149
 msgid "Good"
 msgstr "Gut"
@@ -89,14 +89,14 @@ msgid "Shots while players on Ice"
 msgstr "Schüsse bei Spielern auf dem Eis"
 
 #: .\rest\functions\heatmapcharts.py:100 .\rest\functions\heatmapcharts.py:115
-#: .\rest\functions\heatmapcharts.py:130 .\rest\functions\shotcharts.py:698
+#: .\rest\functions\heatmapcharts.py:130 .\rest\functions\shotcharts.py:696
 #: .\rest\functions\shottables.py:108 .\rest\functions\shottables.py:113
 #: .\rest\functions\toicharts.py:69
 msgid "Time on Ice"
 msgstr "Eiszeit"
 
-#: .\rest\functions\match.py:81 .\rest\functions\shotcharts.py:347
-#: .\rest\functions\shotcharts.py:457 .\rest\functions\shotcharts.py:469
+#: .\rest\functions\match.py:81 .\rest\functions\shotcharts.py:345
+#: .\rest\functions\shotcharts.py:455 .\rest\functions\shotcharts.py:467
 #: .\rest\functions\shottables.py:39
 msgid "Shots on Goal"
 msgstr "Torschüsse"
@@ -144,6 +144,10 @@ msgstr "Schüsse pro Minute"
 #: .\rest\functions\matchstatistics.py:75
 msgid "Gameflow"
 msgstr "Spielfluss"
+
+#: .\rest\functions\matchstatistics.py:79
+msgid "Shots by Result"
+msgstr "Schüsse nach Schussergebnis"
 
 #: .\rest\functions\matchstatistics.py:83
 msgid "Shots per Zone"
@@ -318,28 +322,28 @@ msgstr "Empty Net Tore des Gegners"
 msgid "Scoring percentage"
 msgstr "Torquote"
 
-#: .\rest\functions\shot.py:711 .\rest\functions\shotcharts.py:1169
-#: .\rest\functions\shotcharts.py:1222
+#: .\rest\functions\shot.py:711 .\rest\functions\shotcharts.py:1167
+#: .\rest\functions\shotcharts.py:1220
 msgid "leading to own goal"
 msgstr "führen zu einem Tor"
 
-#: .\rest\functions\shot.py:712 .\rest\functions\shotcharts.py:1170
-#: .\rest\functions\shotcharts.py:1223
+#: .\rest\functions\shot.py:712 .\rest\functions\shotcharts.py:1168
+#: .\rest\functions\shotcharts.py:1221
 msgid "leading to goal against"
 msgstr "führen zu einem Gegentor"
 
 #: .\rest\functions\shotcharts.py:64 .\rest\functions\shotcharts.py:185
-#: .\rest\functions\shotcharts.py:287 .\rest\functions\shotcharts.py:414
+#: .\rest\functions\shotcharts.py:285 .\rest\functions\shotcharts.py:412
 #: .\rest\functions\toicharts.py:56 .\rest\functions\toicharts.py:153
 msgid "min"
 msgstr "Minute"
 
 #: .\rest\functions\shotcharts.py:72 .\rest\functions\shotcharts.py:198
-#: .\rest\functions\shotcharts.py:303 .\rest\functions\shotcharts.py:915
+#: .\rest\functions\shotcharts.py:301 .\rest\functions\shotcharts.py:913
 msgid "Game Time"
 msgstr "Spielminute"
 
-#: .\rest\functions\shotcharts.py:95 .\rest\functions\shotcharts.py:325
+#: .\rest\functions\shotcharts.py:95 .\rest\functions\shotcharts.py:323
 msgid "Cumulated shots"
 msgstr "Schüsse gesamt"
 
@@ -355,73 +359,73 @@ msgstr "Nach einer Idee von @DanielT_W"
 msgid "Shot attempts per 60min (SH60)"
 msgstr "Schüsse pro 60min (SH60)"
 
-#: .\rest\functions\shotcharts.py:330 .\rest\functions\shotcharts.py:456
-#: .\rest\functions\shotcharts.py:468 .\rest\functions\shottables.py:39
+#: .\rest\functions\shotcharts.py:328 .\rest\functions\shotcharts.py:454
+#: .\rest\functions\shotcharts.py:466 .\rest\functions\shottables.py:39
 msgid "missed"
 msgstr "Vorbei"
 
-#: .\rest\functions\shotcharts.py:334 .\rest\functions\shotcharts.py:459
-#: .\rest\functions\shotcharts.py:471 .\rest\functions\shottables.py:39
+#: .\rest\functions\shotcharts.py:332 .\rest\functions\shotcharts.py:457
+#: .\rest\functions\shotcharts.py:469 .\rest\functions\shottables.py:39
 msgid "Post hit"
 msgstr "Pfosten"
 
-#: .\rest\functions\shotcharts.py:338 .\rest\functions\shotcharts.py:458
-#: .\rest\functions\shotcharts.py:470 .\rest\functions\shottables.py:39
+#: .\rest\functions\shotcharts.py:336 .\rest\functions\shotcharts.py:456
+#: .\rest\functions\shotcharts.py:468 .\rest\functions\shottables.py:39
 msgid "blocked"
 msgstr "Geblockt"
 
-#: .\rest\functions\shotcharts.py:342 .\rest\functions\shotcharts.py:460
-#: .\rest\functions\shotcharts.py:472 .\rest\functions\shottables.py:39
+#: .\rest\functions\shotcharts.py:340 .\rest\functions\shotcharts.py:458
+#: .\rest\functions\shotcharts.py:470 .\rest\functions\shottables.py:39
 msgid "Goals"
 msgstr "Tore"
 
-#: .\rest\functions\shotcharts.py:696 .\rest\functions\shotcharts.py:721
-#: .\rest\functions\shotcharts.py:827 .\rest\functions\shottables.py:113
+#: .\rest\functions\shotcharts.py:694 .\rest\functions\shotcharts.py:719
+#: .\rest\functions\shotcharts.py:825 .\rest\functions\shottables.py:113
 msgid "Shot attempts \"for\" at 5v5"
 msgstr "Torschüsse bei 5v5 (CF)"
 
-#: .\rest\functions\shotcharts.py:697 .\rest\functions\shotcharts.py:731
-#: .\rest\functions\shotcharts.py:831 .\rest\functions\shottables.py:113
+#: .\rest\functions\shotcharts.py:695 .\rest\functions\shotcharts.py:729
+#: .\rest\functions\shotcharts.py:829 .\rest\functions\shottables.py:113
 msgid "Shot attempts \"against\" at 5v5"
 msgstr "Torschüsse des Gegners bei 5v5 (CA)"
 
-#: .\rest\functions\shotcharts.py:745
+#: .\rest\functions\shotcharts.py:743
 msgid "1st line"
 msgstr "1. Reihe"
 
-#: .\rest\functions\shotcharts.py:745
+#: .\rest\functions\shotcharts.py:743
 msgid "2nd line"
 msgstr "2. Reihe"
 
-#: .\rest\functions\shotcharts.py:745
+#: .\rest\functions\shotcharts.py:743
 msgid "3rd line"
 msgstr "3. Reihe"
 
-#: .\rest\functions\shotcharts.py:745
+#: .\rest\functions\shotcharts.py:743
 msgid "4th line"
 msgstr "4. Reihe"
 
-#: .\rest\functions\shotcharts.py:745
+#: .\rest\functions\shotcharts.py:743
 msgid "5th line"
 msgstr "5. Reihe"
 
-#: .\rest\functions\shotcharts.py:750
+#: .\rest\functions\shotcharts.py:748
 msgid "Player"
 msgstr "Spieler"
 
-#: .\rest\functions\shotcharts.py:818
+#: .\rest\functions\shotcharts.py:816
 msgid "Shot attempts (Percentage)"
 msgstr "Schussversuche (%)"
 
-#: .\rest\functions\shotcharts.py:929
+#: .\rest\functions\shotcharts.py:927
 msgid "Puck Posession (%)"
 msgstr "Puckbesitz / Prozentualer Spielanteil"
 
-#: .\rest\functions\shotcharts.py:1162
+#: .\rest\functions\shotcharts.py:1160
 msgid "Rebound percentage"
 msgstr "Erfolgreiche Rebounds (%)"
 
-#: .\rest\functions\shotcharts.py:1215
+#: .\rest\functions\shotcharts.py:1213
 msgid "break percentage"
 msgstr "Erfolgreiche Breaks (%)"
 
@@ -687,9 +691,6 @@ msgstr "Erwartete Tore prozentual (xGf%)"
 #: .\rest\functions\xgchart.py:208
 msgid "Difference of GF% and xGF% (dGF%)"
 msgstr "Differenz aus GF% und xGF% (dGF%)"
-
-#~ msgid "Shots by Result"
-#~ msgstr "Schusstatistik"
 
 #~ msgid "bad"
 #~ msgstr "schlecht"
