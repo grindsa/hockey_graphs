@@ -177,9 +177,9 @@ def page_get_via_selenium(logger, url, file_):
         options.add_argument('-headless')
 
     if browser == 'Firefox':
-        driver = webdriver.Firefox(firefox_options=options)
+        driver = webdriver.Firefox(firefox_options=options, executable_path='/usr/local/bin/geckodriver')
     else:
-        driver = webdriver.Chrome(chrome_options=options)
+        driver = webdriver.Chrome(chrome_options=options, executable_path='/usr/local/bin/chromedriver')
 
     driver.set_window_size(1024, 960)
     # open page
