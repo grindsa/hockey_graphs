@@ -6,7 +6,7 @@ import { StatSelector } from '../components/statselector';
 import { Routes } from '../components/routes'
 import { navigate, useRoutes, useRedirect } from "hookrouter";
 // import { Canvas } from '../components/canvas';
-import { asyncGET, CookieSet, isEmpty } from '../components/sharedfunctions.js';
+import { asyncGET, CookieSet, isEmpty, getParams } from '../components/sharedfunctions.js';
 import { config } from '../components/constants.js';
 import { creatstatList } from '../components/localization.js'
 
@@ -70,6 +70,14 @@ export const App = () => {
       const selectedseasonValue = cookie.get(app_name).selectedSeason
       setSelectedSeason(selectedseasonValue)
     }
+
+    // filter url parameters part of the get request
+    const params = getParams(window.location);
+    // detect language
+    if (params.lang && params.lang.toUpperCase()  === 'EN'){
+      setLanguage('EN')
+    }
+
   }, [])
 
   useEffect(() => {
