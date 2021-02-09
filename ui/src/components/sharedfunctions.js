@@ -28,3 +28,10 @@ export function CookieSet(app_name, options){
     const cookies = new Cookies();
     cookies.set(app_name, {language: options.language, selectedSeason: options.selectedSeason, selectedStat: options.selectedStat, foo: 'WannaSeeUrFaceOnceUreadThis'}, { path: '/', maxAge: 2419200 });
 }
+
+export function getParams(location) {
+  const searchParams = new URLSearchParams(location.search);
+  return {
+    lang: searchParams.get('lang') || '',
+  };
+}
