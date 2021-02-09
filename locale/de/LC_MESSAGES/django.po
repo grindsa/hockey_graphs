@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-02-08 17:19+0100\n"
-"PO-Revision-Date: 2021-02-08 17:21+0100\n"
+"PO-Revision-Date: 2021-02-09 11:56+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -78,11 +78,11 @@ msgstr "Gewonnene Anspiele (%)"
 
 #: .\rest\functions\heatmap.py:239
 msgid "Shots"
-msgstr ""
+msgstr "Schüsse"
 
 #: .\rest\functions\heatmap.py:243
 msgid "Shots attempts"
-msgstr ""
+msgstr "Schussversuche"
 
 #: .\rest\functions\heatmapcharts.py:81
 msgid "Shots while players on Ice"
@@ -155,7 +155,7 @@ msgstr "Schüsse pro Zone"
 
 #: .\rest\functions\matchstatistics.py:87
 msgid "Shot attempts 5v5"
-msgstr ""
+msgstr "Schussversuche bei 5v5"
 
 #: .\rest\functions\matchstatistics.py:91
 msgid "Game Shotmap"
