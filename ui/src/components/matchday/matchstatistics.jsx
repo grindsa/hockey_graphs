@@ -117,16 +117,18 @@ const MatchHeader = (props) => {
     visitor_team = props.match.visitor_team_shortcut
   }
   return (
-      <div className="w3-container w3-row middle scolor pseudohead w3-padding">
-        <div className="w3-col" style={{width:'45%'}}>
-          <span className="w3-padding-small w3-right"><span className="w3-padding-small">{home_team}</span><img src={props.match.home_team_logo} className="middle" alt={props.match.home_team_shortcut} width="40px"/></span>
-        </div>
-        <div className="w3-col w3-center my-padding-8" style={{width:'10%'}}><span className="w3-tag pcolor w3-border w3-round my-padding-4">{props.match.result}</span></div>
-        <div className="w3-col" style={{width:'45%'}}>
-          <span className="w3-padding-small w3-left"><img src={props.match.visitor_team_logo} className="middle" alt={props.match.visitor_team_logo} width="40px"/><span className="w3-padding-small">{visitor_team}</span></span>
-          <i className="w3-padding-top w3-margin-right w3-xlarge fa fa-arrow-alt-circle-left w3-right" onClick={() => props.reset()} />
-        </div>
+    <div className="w3-container w3-row middle scolor pseudohead matchheader">
+      <div className="w3-col" style={{width:'40%'}}>
+        <img src={props.match.home_team_logo} className="middle w3-right" alt={props.match.home_team_shortcut} width="40px"/>
+        <span className="my-padding-8 w3-margin-right w3-right">{home_team}</span>
       </div>
+      <div className="w3-col w3-center" style={{width:'20%'}}><span className="w3-tag pcolor w3-border w3-round my-padding-4">{props.match.result}</span></div>
+      <div className="w3-col" style={{width:'40%'}}>
+        <img src={props.match.visitor_team_logo} className="middle w3-left" alt={props.match.visitor_team_logo} width="40px"/>
+        <span className="my-padding-8 w3-margin-left w3-left">{visitor_team}</span>
+        <i className="my-padding-8 w3-margin-right w3-large fa fa-arrow-alt-circle-left w3-right" onClick={() => props.reset()} />
+      </div>
+    </div>
   );
 }
 

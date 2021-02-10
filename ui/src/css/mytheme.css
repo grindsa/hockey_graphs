@@ -1,6 +1,4 @@
 /* my css file for dynamop */
-
-
 html {overflow-y:scroll;}
 
 body,p,h1,h2,h3,h4,table,td,th,ul,ol,textarea,input {
@@ -70,12 +68,26 @@ select.selectbg {
 .line5 {background-color: #e6e6fe;}
 .nodata {background-color: #f1f2f3;}
 
-
 .mytooltip {position:absolute; left:0; bottom:18px; z-index:1;}
-
 .nopadding {padding:0px!important;}
 .my-padding-4{padding-top:4px!important;padding-bottom:4px!important}
 .my-padding-8{padding-top:8px!important;padding-bottom:8px!important}
+
+
+.matchheader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 70px;
+}
+
+.vertical-center {
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
 
 .jsheatmap {
   /* background-image: url('https://hockeygraphs.dynamop.de/static/img/shotmap.svg'); */
