@@ -40,7 +40,7 @@ def page_get_via_selenium(logger, url, file_):
     if browser == 'Firefox':
         driver = webdriver.Firefox(firefox_options=options)
     else:
-        driver = webdriver.Chrome(chrome_options=options)
+        driver = webdriver.Chrome(chrome_options=options, executable_path='/usr/local/bin/chromedriver')
 
     driver.set_window_size(1024, 960)
     # open page
@@ -67,7 +67,7 @@ def heatmap_image(logger, url, season_id, match_id, tmp_dir, imgid, file_size):
     dst = '{0}/{1}-sel-{2}-0.png'.format(tmp_dir, match_id, imgid)
 
     # get sceenshot of heatmap
-    # page_get_via_selenium(logger, stat_url, img_file)
+    page_get_via_selenium(logger, stat_url, img_file)
 
     # crop image if it exists and has a vlaid sisize
     if os.path.exists(img_file) and os.path.getsize(img_file) >= file_size:
@@ -83,12 +83,11 @@ def image_crop(logger, src, dst):
     img = Image.open(src)
     # Setting the points for cropped image
     left = 100
-    top = 155
+    top = 165
     right = 910
-    bottom = 650
+    bottom = 665
     cimg = img.crop((left, top, right, bottom))
     cimg = cimg.save(dst)
-
 
 if __name__ == '__main__':
 

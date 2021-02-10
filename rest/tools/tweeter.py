@@ -222,9 +222,9 @@ def image_crop(logger, src, dst):
     img = Image.open(src)
     # Setting the points for cropped image
     left = 100
-    top = 160
+    top = 165
     right = 910
-    bottom = 650
+    bottom = 665
     cimg = img.crop((left, top, right, bottom))
     cimg = cimg.save(dst)
 
