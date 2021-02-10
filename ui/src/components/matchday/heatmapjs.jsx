@@ -48,8 +48,11 @@ export const HeatmapJs = ({data, title}) => {
           <div className={home_logo_classes}><img src={data.home_team_logo} width={img_size} height={img_size}></img></div>
           <div className={visitor_logo_classes}><img src={data.visitor_team_logo}  width={img_size} height={img_size}></img></div>
       </div>
-      <div className={left_text_classes}>{data.leftlabel}</div>
-      <div className={right_text_classes}>{data.rightlabel}</div>
+      <div>
+        <div className={left_text_classes}>{data.leftlabel}</div>
+        <div className={right_text_classes}>{data.rightlabel}</div>
+      </div>
+      <div className="cpr">@2020 GrindSa <a href="https://hockeygraphs.dynamop.de">(https://hockeygraphs.dynamop.de)</a></div>
     </div>
   )
 }

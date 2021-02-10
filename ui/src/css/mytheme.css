@@ -32,6 +32,14 @@ td.middle {
 
 .pseudohead{font-size:14px; font-weight: bold;}
 
+.cpr {
+  font-size: 9px;
+  color: #999999;
+  text-align: right;
+  white-space: nowrap;
+  clear: both;
+}
+
 .result{
   color : #000034;
   font-weight: bold;
