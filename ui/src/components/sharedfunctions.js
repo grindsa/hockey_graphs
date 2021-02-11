@@ -33,5 +33,6 @@ export function getParams(location) {
   const searchParams = new URLSearchParams(location.search);
   return {
     lang: searchParams.get('lang') || '',
+    disableperiod: Boolean(searchParams.get('disableperiod')) || false,    
   };
 }

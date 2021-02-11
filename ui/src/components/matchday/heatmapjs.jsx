@@ -1,6 +1,6 @@
 import ReactDOM, { render } from 'react-dom';
 import React, {useState, useEffect} from 'react';
-import { isEmpty } from '../sharedfunctions.js';
+import { isEmpty, getParams } from '../sharedfunctions.js';
 import { isMobileOnly } from 'react-device-detect';
 import h337 from 'heatmap.js'
 
@@ -40,10 +40,16 @@ export const HeatmapJs = ({data, title}) => {
     heatmapInstance.setData( data );
   }, [data])
 
+  const handlePeriodChange = (event) => {
+    // change period
+    console.log(event.target.value)
+  }
+
   return (
     <div className="w3-container w3-center w3-border">
       <div className={headline_classes}>{data.title}</div>
       <div className={subheadline_classes}>{data.subtitle}</div>
+      <PeriodSelector onChange={handlePeriodChange} />
       <div className={canvas_classes}>
           <div className={home_logo_classes}><img src={data.home_team_logo} width={img_size} height={img_size}></img></div>
           <div className={visitor_logo_classes}><img src={data.visitor_team_logo}  width={img_size} height={img_size}></img></div>
@@ -55,4 +61,31 @@ export const HeatmapJs = ({data, title}) => {
       <div className="cpr">@2020 GrindSa <a href="https://hockeygraphs.dynamop.de">(https://hockeygraphs.dynamop.de)</a></div>
     </div>
   )
+}
+
+const PeriodSelector = ({onChange}) => {
+
+  if (isMobileOnly){
+    var label_classes = 'mobile'
+  } else {
+    var label_classes = ''
+  }
+
+  // filter url parameters to check if we have skip the period header
+  const params = getParams(window.location);
+  if (params.disableperiod){
+    // return nothing
+    return(null)
+  } else {
+    // return period header
+    return (
+      <div className="w3-margin-top">
+        <input className="w3-margin-left middle" type="radio" name="period" value="1" onChange={onChange} defaultChecked={false} /><label className={label_classes}> 1st Period</label>
+        <input className="w3-margin-left middle" type="radio" name="period" value="2" onChange={onChange} defaultChecked={false} /><label className={label_classes}> 2nd Period</label>
+        <input className="w3-margin-left middle" type="radio" name="period" value="3" onChange={onChange} defaultChecked={false} /><label className={label_classes}> 3rd Period</label>
+        <input className="w3-margin-left middle" type="radio" name="period" value="4" onChange={onChange} defaultChecked={false} /><label className={label_classes}> OT</label>
+        <input className="w3-margin-left middle" type="radio" name="period" value="0" onChange={onChange} defaultChecked={true} /><label className={label_classes}> Full game</label>
+      </div>
+    )
+  }
 }

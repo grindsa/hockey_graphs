@@ -40,6 +40,10 @@ td.middle {
   clear: both;
 }
 
+.mobile {
+  font-size: 8px;  
+}
+
 .result{
   color : #000034;
   font-weight: bold;
