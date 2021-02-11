@@ -12,7 +12,7 @@ from rest.models import Match
 from rest.functions.helper import url_build, pctg_get, min2sec
 from rest.functions.teamstat import teamstat_get
 
-def match_info_get(logger, match_id, request, vlist=('date', 'date_uts', 'result', 'home_team_id', 'home_team__team_name', 'home_team__shortcut', 'home_team__logo', 'home_team__color_primary', 'home_team__color_secondary', 'home_team__color_tertiary', 'home_team__color_quaternary', 'home_team__color_penalty_primary', 'home_team__color_penalty_secondary', 'visitor_team_id', 'visitor_team__team_name', 'visitor_team__shortcut', 'visitor_team__logo', 'visitor_team__color_primary', 'visitor_team__color_secondary',  'visitor_team__color_tertiary', 'visitor_team__color_quaternary', 'visitor_team__color_penalty_primary', 'visitor_team__color_penalty_secondary', 'home_team__twitter_name', 'visitor_team__twitter_name')):
+def match_info_get(logger, match_id, request, vlist=('date', 'date_uts', 'result', 'result_suffix', 'home_team_id', 'home_team__team_name', 'home_team__shortcut', 'home_team__logo', 'home_team__color_primary', 'home_team__color_secondary', 'home_team__color_tertiary', 'home_team__color_quaternary', 'home_team__color_penalty_primary', 'home_team__color_penalty_secondary', 'visitor_team_id', 'visitor_team__team_name', 'visitor_team__shortcut', 'visitor_team__logo', 'visitor_team__color_primary', 'visitor_team__color_secondary',  'visitor_team__color_tertiary', 'visitor_team__color_quaternary', 'visitor_team__color_penalty_primary', 'visitor_team__color_penalty_secondary', 'home_team__twitter_name', 'visitor_team__twitter_name')):
     """ get info for a specifc match_id """
     logger.debug('match_info_get()')
     try:

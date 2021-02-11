@@ -60,6 +60,10 @@ def _match_update(logger, match_id_, header_dic):
     if 'actualTimeName' in header_dic and header_dic['actualTimeName'].lower() in ["ende", "ende n. verlängerung", "ende n. penaltyschießen"]:
         logger.debug('set finish flag for match: {0}'.format(match_id_))
         data_dic['finish'] = True
+        if 'verlängerung' in header_dic['actualTimeName'].lower():
+            data_dic['result_suffix'] = 'n.V.'
+        elif 'penaltys' in header_dic['actualTimeName'].lower():
+            data_dic['result_suffix'] = 'n.P.'
 
     match_add(logger, 'match_id', match_id_, data_dic)
 
