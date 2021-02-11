@@ -240,7 +240,7 @@ def twitter_it(logger, matchinfo_dic_, img_list_, season_id, match_id_):
 
     chart_list = ['Charts', 'bunte Bildchen', 'Grafiken', 'Chartz']
     match_date = uts_to_date_utc(matchinfo_dic_['date_uts'], '%d.%m.%Y')
-    text_initial = 'Hier ein paar {2} zum Spiel {0} gg. {1}. vom {5}\nMehr unter https://hockeygraphs.dynamop.de/matchstatistics/{3}/{4} ...'.format(matchinfo_dic_['home_team__shortcut'].upper(), matchinfo_dic['visitor_team__shortcut'].upper(), random.choice(chart_list), season_id, match_id_, match_date)
+    text_initial = 'Hier ein paar {2} zum Spiel {0} gg. {1}. vom {5} (Endstand: {6}).\nMehr unter https://hockeygraphs.dynamop.de/matchstatistics/{3}/{4} ...'.format(matchinfo_dic_['home_team__shortcut'].upper(), matchinfo_dic['visitor_team__shortcut'].upper(), random.choice(chart_list), season_id, match_id_, match_date, matchinfo_dic_['result_full'])
     text_reply = 'Und noch die Eiszeiten pro Spieler pro Drittel und in Über- und Unterzahl... {0}'.format(tags)
 
     # LogIn
@@ -295,6 +295,12 @@ if __name__ == '__main__':
     for match_id in MATCH_ID_LIST:
         # we need some match_information
         matchinfo_dic = match_info_get(LOGGER, match_id, None)
+        # hack to have a better result
+        if 'result_suffix' in matchinfo_dic and matchinfo_dic['result_suffix']:
+            matchinfo_dic['result_full'] = '{0} {1}'.format(matchinfo_dic['result'], matchinfo_dic['result_suffix'])
+        else:
+            matchinfo_dic['result_full'] = matchinfo_dic['result']
+
         # request URL and fetch it
         RURL = '{0}{1}{2}/?language=EN&mobile=false'.format(URL, MATCHSTAT, match_id)
         response = requests.get(RURL)
