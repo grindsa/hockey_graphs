@@ -165,8 +165,7 @@ const Chart = (props) => {
     return(
       <MatchOverview options={props.options} />
     )
-  }else if (props.options.data){
-    // console.log(props.options)
+  }else if (props.options.leftlabel){
     return(
       <HeatmapJs data={props.options} />
     )
