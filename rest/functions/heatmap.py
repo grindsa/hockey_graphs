@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """ list of functions for shots """
 # pylint: disable=E0401, C0413
+import math
 from functions.helper import list_sumup, pctg_float_get
 
 def  _teampcomparison_data_sumup(logger, teamstat_dic):
@@ -224,7 +225,7 @@ def gameheatmapdata_get(logger, title, subtitle, ismobile, matchinfo_dic, shot_l
     # pylint: disable=R0914
     logger.debug('gameheatmapdata_get()')
 
-    shot_dic = {}
+    shot_dic = {5: {}}
 
     # cluster size
     if ismobile:
@@ -244,6 +245,9 @@ def gameheatmapdata_get(logger, title, subtitle, ismobile, matchinfo_dic, shot_l
 
     for shot in shot_list:
 
+        # get period from timestamp
+        period = math.ceil(shot['timestamp']/1200)
+
         calc_x = float(shot['coordinate_x'])
         calc_y = float(shot['coordinate_y'])
 
@@ -257,24 +261,43 @@ def gameheatmapdata_get(logger, title, subtitle, ismobile, matchinfo_dic, shot_l
         calc_x = round((calc_x/clul)) * clul
         calc_y = round((calc_y/clul)) * clul
 
-
         # round to clul
         # calc_x = round((calc_x/clul)) * clul
         # calc_y = round((calc_y/clul)) * clul
 
+        if period not in shot_dic:
+            shot_dic[period] = {}
+
         mapping = '{0}; {1}'.format(calc_x, calc_y)
-        if mapping in shot_dic:
-            shot_dic[mapping] += 1
+        # add mapping to period specific dictionary
+        if mapping in shot_dic[period]:
+            shot_dic[period][mapping] += 1
         else:
-            shot_dic[mapping] = 1
+            shot_dic[period][mapping] = 1
+
+        # add mapping to dictionary for whole match
+        if mapping in shot_dic[5]:
+            shot_dic[5][mapping] += 1
+        else:
+            shot_dic[5][mapping] = 1
+
+    period_names = {5: _('Full match'), 1: _('1st period'), 2: _('2nd period'), 3: _('3rd period'), 4: _('OT')}
 
     # create structure for highcharts
-    heatmapdata_dic = {'data': [], 'max': 2}
-    for mapping in shot_dic:
-        (myx, myy) = mapping.split(';')
-        if shot_dic[mapping] > heatmapdata_dic['max']:
-            heatmapdata_dic['max'] = shot_dic[mapping]
-        heatmapdata_dic['data'].append({'x': myx, 'y': myy, 'value': shot_dic[mapping]})
+    heatmapdata_dic = {'data': {}}
+    for period in shot_dic:
+        if period not in heatmapdata_dic:
+            if period == 5:
+                checked = True
+            else:
+                checked = False
+            heatmapdata_dic['data'][period] = {'checked': checked, 'data': [], 'max': 2, 'name': period_names[period]}
+
+            for mapping in shot_dic[period]:
+                (myx, myy) = mapping.split(';')
+                if shot_dic[period][mapping] > heatmapdata_dic['data'][period]['max']:
+                    heatmapdata_dic['data'][period]['max'] = shot_dic[period][mapping]
+                heatmapdata_dic['data'][period]['data'].append({'x': myx, 'y': myy, 'value': shot_dic[period][mapping]})
 
     heatmapdata_dic['title'] = title
     heatmapdata_dic['subtitle'] = subtitle
