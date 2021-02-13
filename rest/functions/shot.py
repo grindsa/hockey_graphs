@@ -342,7 +342,6 @@ def _p60_calculate(logger, shotperiod_dic, wsize=3):
     # this is the final flow dic
     shot_flow_dic = {}
 
-    # this is the smoothing part: we smooth across all values of a single period by using a Savitzky-Golay filter
     for team in ['home_team', 'visitor_team']:
         shot_flow_dic[team] = {}
         for period in shotperiod_dic[team]:
