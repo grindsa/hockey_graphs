@@ -201,7 +201,7 @@ def heatmap_image(logger, url, season_id, match_id, tmp_dir, imgid, file_size):
     logger.debug('heatmap_image()')
 
     # build some variables
-    stat_url = '{0}/matchstatistics/{1}/{2}/{3}?lang=en'.format(url, season_id, match_id, imgid + 1)
+    stat_url = '{0}/matchstatistics/{1}/{2}/{3}?lang=en&disableperiod=True'.format(url, season_id, match_id, imgid + 1)
     img_file = '{0}/tmp_{1}.png'.format(tmp_dir, match_id)
     dst = '{0}/{1}-sel-{2}-0.png'.format(tmp_dir, match_id, imgid)
 
