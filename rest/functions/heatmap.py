@@ -281,7 +281,7 @@ def gameheatmapdata_get(logger, title, subtitle, ismobile, matchinfo_dic, shot_l
         else:
             shot_dic[5][mapping] = 1
 
-    period_names = {5: _('Full match'), 1: _('1st period'), 2: _('2nd period'), 3: _('3rd period'), 4: _('OT')}
+    period_names = {5: _('Full match'), 1: _('1st Period'), 2: _('2nd Period'), 3: _('3rd Period'), 4: _('OT')}
 
     # create structure for highcharts
     heatmapdata_dic = {'data': {}}

@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-02-08 17:19+0100\n"
-"PO-Revision-Date: 2021-02-09 11:56+0100\n"
+"POT-Creation-Date: 2021-02-12 17:14+0100\n"
+"PO-Revision-Date: 2021-02-12 17:17+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -76,13 +76,40 @@ msgstr "Verlorene Anspiele"
 msgid "Faceoffs win percentage"
 msgstr "Gewonnene Anspiele (%)"
 
-#: .\rest\functions\heatmap.py:239
+#: .\rest\functions\heatmap.py:240
 msgid "Shots"
 msgstr "Schüsse"
 
-#: .\rest\functions\heatmap.py:243
+#: .\rest\functions\heatmap.py:244
 msgid "Shots attempts"
 msgstr "Schussversuche"
+
+#: .\rest\functions\heatmap.py:284
+msgid "Full match"
+msgstr "Gesamtes Spiel"
+
+#: .\rest\functions\heatmap.py:284
+#, fuzzy
+#| msgid "1st Period"
+msgid "1st period"
+msgstr "1. Drittel"
+
+#: .\rest\functions\heatmap.py:284
+#, fuzzy
+#| msgid "2nd Period"
+msgid "2nd period"
+msgstr "2 Drittel"
+
+#: .\rest\functions\heatmap.py:284
+#, fuzzy
+#| msgid "3rd Period"
+msgid "3rd period"
+msgstr "3. Drittel"
+
+#: .\rest\functions\heatmap.py:284 .\rest\functions\toicharts.py:80
+#: .\rest\functions\toitables.py:9
+msgid "OT"
+msgstr "OT"
 
 #: .\rest\functions\heatmapcharts.py:81
 msgid "Shots while players on Ice"
@@ -636,10 +663,6 @@ msgstr "2 Drittel"
 #: .\rest\functions\toicharts.py:79 .\rest\functions\toitables.py:9
 msgid "3rd Period"
 msgstr "3. Drittel"
-
-#: .\rest\functions\toicharts.py:80 .\rest\functions\toitables.py:9
-msgid "OT"
-msgstr "OT"
 
 #: .\rest\functions\toicharts.py:166
 msgid "Time on Ice in min"
