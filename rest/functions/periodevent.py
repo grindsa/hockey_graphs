@@ -82,6 +82,23 @@ def scorersfromevents_get(logger, period_events):
                         scorer_dic[team]['assist_list'].append(player['jersey'])
     return scorer_dic
 
+def penaltiesfromevents_get(logger, period_events):
+    """ create dictionry of penalties """
+    logger.debug('penaltiesfromevents_get()')
+    penalty_dic = {'home_team': [], 'visitor_team': []}
+    for period in period_events:
+        for event in period_events[period]:
+            if event['type'] == 'penalty':
+                team = '{0}_team'.format(event['data']['team'])
+                # store penalty seconds
+                penalty_dic[team].extend(range(event['data']['time']['from']['scoreboardTime'], event['data']['time']['to']['scoreboardTime'], 1))
+                penalty_dic[team].append(event['data']['time']['to']['scoreboardTime'])
+
+    penalty_dic['home_team'] = list(dict.fromkeys(penalty_dic['home_team']))
+    penalty_dic['visitor_team'] = list(dict.fromkeys(penalty_dic['visitor_team']))
+
+    return penalty_dic
+
 
 def goalsfromevents_get(logger, period_events):
     """ create dictionry containing scorers and assists """
