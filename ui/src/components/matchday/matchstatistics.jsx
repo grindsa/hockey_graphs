@@ -8,6 +8,7 @@ import HighchartsExporting from 'highcharts/modules/exporting';
 import HighchartsOfflineExporting from "highcharts/modules/offline-exporting";
 import Timeline from 'highcharts/modules/timeline.js';
 import Heatmap from 'highcharts/modules/heatmap.js';
+import highchartsGantt from "highcharts/modules/gantt";
 import { HeatmapJs } from './heatmapjs'
 import { createTableHeader, createTableBody, createSelectOptions, overviewClassnames } from './matchstatisticservice.js'
 import { asyncGET, isEmpty } from '../sharedfunctions.js';
@@ -17,6 +18,7 @@ import { navigate } from "hookrouter";
 // Load Highcharts modules
 HighchartsExporting(Highcharts);
 HighchartsOfflineExporting(Highcharts);
+highchartsGantt(Highcharts);
 HighchartsMore(Highcharts);
 Timeline(Highcharts);
 Heatmap(Highcharts);
@@ -88,6 +90,7 @@ const MatchData = (props) => {
       visitor_format = "w3-col tablink w3-bottombar tab-red w3-hover-light-grey w3-padding my-half"
       home_format = "w3-col tablink w3-bottombar w3-hover-light-grey w3-padding my-half"
     }
+
     return (
       <React.Fragment>
         <div className="w3-row">
@@ -155,7 +158,14 @@ const Selector = (props) => {
 
 const Chart = (props) => {
   /* block to render chart mobile detection is done via chartoptions */
-  if (props.options.chart){
+
+  if (props.options.ctype === 'gantt'){
+    return (
+      <div className="w3-border">
+        <HighchartsReact highcharts={Highcharts} constructorType={"ganttChart"} options={props.options} immutable={true} />
+      </div>
+    )
+  }else if (props.options.chart){
     return (
       <div className="w3-border">
         <HighchartsReact highcharts={Highcharts} options={props.options} immutable={true} />
