@@ -62,3 +62,71 @@ def toifromshifts_get(logger, matchinfo_dic, shift_list):
         shift_dic[team_name][period][player_name] += shift_duration
 
     return shift_dic
+
+def _shifttype_get(logger, team, start_time, end_time, penalty_dic):
+    """ get type thype of a shift (pp, pk, normal) """
+
+    # home penalty during this shift
+    if start_time in penalty_dic['home_team'] or end_time in penalty_dic['home_team']:
+        home_penalty = True
+    else:
+        home_penalty = False
+
+    # visitor penalty during this shift
+    if start_time in penalty_dic['visitor_team'] or end_time in penalty_dic['visitor_team']:
+        visitor_penalty = True
+    else:
+        visitor_penalty = False
+
+    # decide on PP/PK
+    if home_penalty != visitor_penalty:
+        if home_penalty:
+            if team == 'home_team':
+                shift_type = 'pk'
+            else:
+                shift_type = 'pp'
+        else:
+            if team == 'home_team':
+                shift_type = 'pp'
+            else:
+                shift_type = 'pk'
+    else:
+        shift_type = 'normal'
+
+    return shift_type
+
+def shiftsperplayer_get(logger, matchinfo_dic, shift_list, roster_list, penalty_dic):
+    """  shifts per player """
+    logger.debug('shiftsperplayer_get()')
+
+    shift_dic = {'home_team': {}, 'visitor_team': {}}
+    for shift in shift_list:
+
+        # we need to differenciate between home and visitor team
+        if shift['team']['id'] == matchinfo_dic['home_team_id']:
+            team = 'home_team'
+        else:
+            team = 'visitor_team'
+
+        # we need the type of the shift to set the right color in the chart
+        shift_type = _shifttype_get(logger, team, shift['startTime']['time'], shift['endTime']['time'], penalty_dic)
+
+        if shift['player']['id'] not in shift_dic[team]:
+            shift_dic[team][shift['player']['id']] = {'shifts': [], 'name': shift['player']['name']}
+
+        shift_dic[team][shift['player']['id']]['shifts'].append({'start': shift['startTime']['time'], 'end': shift['endTime']['time'], 'type': shift_type})
+
+    #  add roster information
+    for selector in roster_list:
+        team = '{0}_team'.format(selector)
+        for player in roster_list[selector]:
+            if roster_list[selector][player]['position'] != 'GK':
+                pid = roster_list[selector][player]['playerId']
+                if pid in shift_dic[team]:
+                    shift_dic[team][pid]['role'] = int(roster_list[selector][player]['roster'][0])
+                    shift_dic[team][pid]['line_number'] = int(roster_list[selector][player]['roster'][1])
+                    shift_dic[team][pid]['position'] = int(roster_list[selector][player]['roster'][2])
+                    shift_dic[team][pid]['surname'] = roster_list[selector][player]['surname']
+                    shift_dic[team][pid]['jersey'] = roster_list[selector][player]['jersey']
+
+    return shift_dic
