@@ -4,7 +4,7 @@
 import math
 import json
 from rest.functions.chartparameters import chartstyle, credit, exporting, responsive_y1, title, subtitle, legend, font_size, variables_get, responsive_y1_nolabel
-from rest.functions.chartparameters import chart_color1, chart_color2, chart_color3, chart_color4, plotlines_color
+from rest.functions.chartparameters import chart_color1, chart_color2, chart_color3, chart_color4, chart_color6, plotlines_color
 from rest.functions.helper import json_store
 
 def shiftsperplayerchart_create(logger, ctitle, csubtitle, ismobile, shift_dic, color1, color2, color3):
@@ -20,16 +20,23 @@ def shiftsperplayerchart_create(logger, ctitle, csubtitle, ismobile, shift_dic, 
     data_list_pk = []
 
     tst_end = 3600
+
+    line_number = 1
+    y_plotlines = []
+
     for idx, player_id in enumerate(sorted(shift_dic, key=lambda i: (shift_dic[i]['line_number'], -shift_dic[i]['role'], shift_dic[i]['position']))):
         # add playername to x_list
         playername_list.append(shift_dic[player_id]['name'])
+
+        # add plotline in case the line-number changes
+        if shift_dic[player_id]['line_number'] != line_number:
+            line_number = shift_dic[player_id]['line_number']
+            y_plotlines.append({'color': '#ff0000', 'width': 2, 'value': idx - 1})
+
         for shift in shift_dic[player_id]['shifts']:
 
             if shift['start'] > tst_end or shift['end'] > tst_end:
                 tst_end = 3900
-            # our x axis is datetime format thus convert to milli seconds
-            # shift['start'] = shift['start'] * 1000
-            # shift['end'] = shift['end'] * 1000
 
             # add index to shift
             shift['y'] = idx
@@ -47,8 +54,12 @@ def shiftsperplayerchart_create(logger, ctitle, csubtitle, ismobile, shift_dic, 
 
     x_list = []
     for second in range(0, tst_end + 1):
-        # x_list.append(math.ceil(second/60))
-        x_list.append(second)
+        x_list.append(math.ceil(second/60))
+        # x_list.append(second)
+
+    xtickposition_list = []
+    for second in range(0, tst_end +1, 300):
+        xtickposition_list.append(second)
 
     chart_options = {
         'ctype': 'gantt',
@@ -68,6 +79,8 @@ def shiftsperplayerchart_create(logger, ctitle, csubtitle, ismobile, shift_dic, 
             'showFirstLabel': 1,
             'showLastLabel': 1,
             'tickInterval': 300,
+            'tickPositions': xtickposition_list,
+            'tickWidth': 1,
             'grid': {'enabled': 0},
             'plotLines': [
                 {'color': plotlines_color, 'width': 2, 'value': 1200},
@@ -76,7 +89,12 @@ def shiftsperplayerchart_create(logger, ctitle, csubtitle, ismobile, shift_dic, 
                 ],
             }],
 
-        'yAxis': {'title': title('', font_size), 'categories': playername_list, 'grid': {'enabled': 0}},
+        'yAxis': {
+            'title': title('', font_size),
+            'categories': playername_list,
+            'grid': {'enabled': 0},
+            'plotLines': y_plotlines
+            },
 
         'series': [
             {'name': ('Even Strength'), 'data': data_list, 'color': color3, 'marker': {'symbol': 'square'}},
