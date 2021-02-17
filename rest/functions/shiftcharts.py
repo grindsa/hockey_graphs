@@ -12,6 +12,8 @@ def shiftsperplayerchart_create(logger, ctitle, csubtitle, ismobile, shift_dic, 
     """ create shift per player chart """
     logger.debug('shiftsperplayerchart_create()')
 
+    print(color1, color2, color3)
+
     variable_dic = variables_get(ismobile)
 
     playername_list = []
@@ -31,7 +33,7 @@ def shiftsperplayerchart_create(logger, ctitle, csubtitle, ismobile, shift_dic, 
         # add plotline in case the line-number changes
         if shift_dic[player_id]['line_number'] != line_number:
             line_number = shift_dic[player_id]['line_number']
-            y_plotlines.append({'color': '#ff0000', 'width': 2, 'value': idx - 1})
+            y_plotlines.append({'color': plotlines_color, 'width': 2, 'value': idx - 0.5})
 
         for shift in shift_dic[player_id]['shifts']:
 
@@ -103,5 +105,4 @@ def shiftsperplayerchart_create(logger, ctitle, csubtitle, ismobile, shift_dic, 
         ]
     }
 
-    json_store('foo.json', chart_options)
     return chart_options
