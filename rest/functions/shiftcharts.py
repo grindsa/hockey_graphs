@@ -4,15 +4,13 @@
 import math
 import json
 from rest.functions.chartparameters import chartstyle, credit, exporting, responsive_y1, title, subtitle, legend, font_size, variables_get, responsive_y1_nolabel
-from rest.functions.chartparameters import chart_color1, chart_color2, chart_color3, chart_color4, chart_color6, plotlines_color
+from rest.functions.chartparameters import chart_color1, chart_color2, chart_color3, chart_color4, chart_color6, chart_color8, plotlines_color
 from rest.functions.helper import json_store
 
-def shiftsperplayerchart_create(logger, ctitle, csubtitle, ismobile, shift_dic, color1, color2, color3):
+def shiftsperplayerchart_create(logger, ctitle, csubtitle, ismobile, shift_dic, goal_dic, color1, color2, color3):
     # pylint: disable=E0602
     """ create shift per player chart """
     logger.debug('shiftsperplayerchart_create()')
-
-    print(color1, color2, color3)
 
     variable_dic = variables_get(ismobile)
 
@@ -55,18 +53,27 @@ def shiftsperplayerchart_create(logger, ctitle, csubtitle, ismobile, shift_dic, 
                 data_list.append(shift)
 
     x_list = []
+    x_list2 = []
     for second in range(0, tst_end + 1):
         x_list.append(math.ceil(second/60))
-        # x_list.append(second)
+        x_list2.append(second)
 
     xtickposition_list = []
+    xtickposition_list2 = []
     for second in range(0, tst_end +1, 300):
         xtickposition_list.append(second)
+
+
+    for team in goal_dic:
+        for goal in goal_dic[team]:
+            # print(goal['time'], goal['data']['currentScore'])
+            x_list2[goal['time']] = goal['data']['currentScore']
+            xtickposition_list2.append(goal['time'])
 
     chart_options = {
         'ctype': 'gantt',
         'chart': {
-            'height': '100%',
+            'height': '80%',
             'alignTicks': 0,
             'style': chartstyle()
         },
@@ -74,7 +81,25 @@ def shiftsperplayerchart_create(logger, ctitle, csubtitle, ismobile, shift_dic, 
         'credits': credit(),
         'legend': legend(),
 
-        'xAxis': [{
+        'xAxis': [
+            {
+                'title': title('', font_size),
+                'labels': {'enabled': 1, 'align': 'center'},
+                'categories': x_list2,
+                'tickPositions': xtickposition_list2,
+                'grid': {'enabled': 0},
+                'labels': {
+                    'style': {'fontSize': variable_dic['label_size'], 'color': chart_color8, 'borderWidth': 1, 'borderColor': chart_color8, 'useHTML': 1,},
+                    'borderWidth': 1,
+                    'backgroundColor': '#ffffff',
+                    'borderColor': chart_color8,
+                    'enabled': 1,
+
+                    'color': chart_color8
+                },
+                'opposite': 1,
+                },
+        {
             'title': title('', font_size),
             'labels': {'enabled': 1, 'align': 'center'},
             'categories': x_list,
@@ -89,7 +114,8 @@ def shiftsperplayerchart_create(logger, ctitle, csubtitle, ismobile, shift_dic, 
                 {'color': plotlines_color, 'width': 2, 'value': 2400},
                 {'color': plotlines_color, 'width': 2, 'value': 3600}
                 ],
-            }],
+            },
+            ],
 
         'yAxis': {
             'title': title('', font_size),
