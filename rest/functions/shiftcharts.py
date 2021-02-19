@@ -88,7 +88,7 @@ def shiftsperplayerchart_create(logger, ctitle, csubtitle, ismobile, shift_dic, 
             'alignTicks': 0,
             'style': chartstyle()
         },
-        'title': title(ctitle, variable_dic['title_size'], decoration=True),
+        'title': title(ctitle, variable_dic['title_size'], decoration=True, margin=variable_dic['title_margin']),
         'subtitle': subtitle(csubtitle, variable_dic['subtitle_size']),
         'credits': credit(),
         'legend': legend(),
@@ -104,14 +104,16 @@ def shiftsperplayerchart_create(logger, ctitle, csubtitle, ismobile, shift_dic, 
         },
 
         'xAxis': [{
-            'title': title(_('Game Time'), variable_dic['font_size'], margin=15),
+            'title': title(_('Game Time'), variable_dic['font_size']),
             'labels': {'align': 'center', 'style': {'fontSize': variable_dic['font_size']}},
             'categories': x_list,
+            'type': 'datetime',
             'tickInterval': 300,
             'tickPositions': xtickposition_list,
             'tickWidth': 1,
             'grid': {'enabled': 0},
-            'plotLines': x_plotlines_list
+            'plotLines': x_plotlines_list,
+            'opposite': 0,
             }],
 
         'yAxis': {
@@ -126,6 +128,20 @@ def shiftsperplayerchart_create(logger, ctitle, csubtitle, ismobile, shift_dic, 
             'labels': annotationlabel_list,
             'labelOptions': {'y': -30, 'style': {'fontSize': variable_dic['label_size']}}
         }],
+
+        'rangeSelector': {
+            'enabled': 1,
+            'selected': 0,
+            'inputEnabled': 0,
+            'verticalAlign': 'bottom',
+            'buttons': [
+                {'type': 'minute', 'count': 20, 'text': '1st', 'title': '1st period'},
+                {'type': 'minute', 'count': 40, 'text': '2nd', 'title': '2nd period'},
+                {'type': 'minute', 'count': 60, 'text': '3rd', 'title': '3rd period'},
+                {'type': 'minute', 'count': 65, 'text': 'OT', 'title':  'Overtime'},
+                {'type': 'all', 'text': 'Game', 'title': 'Full Game'}
+            ],
+        },
 
         'series': [
             {'name': ('Even Strength'), 'data': data_list, 'color': color3, 'marker': {'symbol': 'square'}},
