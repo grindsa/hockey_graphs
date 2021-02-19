@@ -53,22 +53,21 @@ def shiftsperplayerchart_create(logger, ctitle, csubtitle, ismobile, shift_dic, 
                 data_list.append(shift)
 
     x_list = []
-    x_list2 = []
     for second in range(0, tst_end + 1):
         x_list.append(math.ceil(second/60))
-        x_list2.append(second)
 
     xtickposition_list = []
-    xtickposition_list2 = []
     for second in range(0, tst_end +1, 300):
         xtickposition_list.append(second)
 
-
+    annotationlabel_list = []
     for team in goal_dic:
         for goal in goal_dic[team]:
-            # print(goal['time'], goal['data']['currentScore'])
-            x_list2[goal['time']] = goal['data']['currentScore']
-            xtickposition_list2.append(goal['time'])
+                # print(goal['time'], goal['data']['currentScore'])
+    #        # x_list2[goal['time']] = goal['data']['currentScore']
+    #       xtickposition_list2.append(goal['time'])
+            annotationlabel_list.append({'point': {'x': goal['time'], 'y': 0, 'xAxis': 0}, 'text': goal['data']['currentScore']})
+
 
     chart_options = {
         'ctype': 'gantt',
@@ -83,23 +82,6 @@ def shiftsperplayerchart_create(logger, ctitle, csubtitle, ismobile, shift_dic, 
 
         'xAxis': [
             {
-                'title': title('', font_size),
-                'labels': {'enabled': 1, 'align': 'center'},
-                'categories': x_list2,
-                'tickPositions': xtickposition_list2,
-                'grid': {'enabled': 0},
-                'labels': {
-                    'style': {'fontSize': variable_dic['label_size'], 'color': chart_color8, 'borderWidth': 1, 'borderColor': chart_color8, 'useHTML': 1,},
-                    'borderWidth': 1,
-                    'backgroundColor': '#ffffff',
-                    'borderColor': chart_color8,
-                    'enabled': 1,
-
-                    'color': chart_color8
-                },
-                'opposite': 1,
-                },
-        {
             'title': title('', font_size),
             'labels': {'enabled': 1, 'align': 'center'},
             'categories': x_list,
@@ -123,6 +105,13 @@ def shiftsperplayerchart_create(logger, ctitle, csubtitle, ismobile, shift_dic, 
             'grid': {'enabled': 0},
             'plotLines': y_plotlines
             },
+
+        'annotations': [{
+                'labels': annotationlabel_list,
+                'labelOptions': {
+                    'y': -30,
+                },
+            }],
 
         'series': [
             {'name': ('Even Strength'), 'data': data_list, 'color': color3, 'marker': {'symbol': 'square'}},
