@@ -2,7 +2,7 @@
 """ time on ice charts """
 # pylint: disable=E0401
 import math
-from rest.functions.chartparameters import chartstyle, credit, exporting, title, subtitle, legend, font_size, variables_get, plotlines_color
+from rest.functions.chartparameters import chartstyle, credit, exporting, title, subtitle, legend, font_size, variables_get, plotlines_color, responsive_y1
 
 def shiftsperplayerchart_create(logger, ctitle, csubtitle, ismobile, shift_dic, goal_dic, color1, color2, color3):
     # pylint: disable=E0602, R0914
@@ -23,7 +23,12 @@ def shiftsperplayerchart_create(logger, ctitle, csubtitle, ismobile, shift_dic, 
 
     for idx, player_id in enumerate(sorted(shift_dic, key=lambda i: (shift_dic[i]['line_number'], -shift_dic[i]['role'], shift_dic[i]['position']))):
         # add playername to x_list
-        player_string = '{0} ({1})'.format(shift_dic[player_id]['name'], shift_dic[player_id]['jersey'])
+        tooltip_string = '{0} ({1})'.format(shift_dic[player_id]['name'], shift_dic[player_id]['jersey'])
+        if ismobile:
+            player_string = shift_dic[player_id]['surname']
+        else:
+            player_string = tooltip_string
+
         playername_list.append(player_string)
 
         # add plotline in case the line-number changes
@@ -33,13 +38,14 @@ def shiftsperplayerchart_create(logger, ctitle, csubtitle, ismobile, shift_dic, 
 
         for sh_idx, shift in enumerate(shift_dic[player_id]['shifts']):
 
+            # estimate shift length
             if shift['start'] > tst_end or shift['end'] > tst_end:
                 tst_end = 3900
 
             # add index, count and playername to shift
             shift['y'] = idx
             shift['cnt'] = sh_idx + 1
-            shift['playername'] = player_string
+            shift['playername'] = tooltip_string
             shift['start_human'] = '{0:02d}:{1:02d}'.format(*divmod(shift['start'], 60))
             shift['end_human'] = '{0:02d}:{1:02d}'.format(*divmod(shift['end'], 60))
 
@@ -51,6 +57,7 @@ def shiftsperplayerchart_create(logger, ctitle, csubtitle, ismobile, shift_dic, 
                 data_list_pk.append(shift)
             else:
                 shift['color'] = color3
+                # shift['color'] = '#404040'
                 # add shift
                 data_list.append(shift)
 
@@ -80,7 +87,7 @@ def shiftsperplayerchart_create(logger, ctitle, csubtitle, ismobile, shift_dic, 
         'credits': credit(),
         'legend': legend(),
         'exporting': exporting(filename=ctitle),
-
+        'responsive': responsive_y1(),
         'plotOptions': {'series': {'states': {'inactive': {'opacity': 1}}}},
 
         'tooltip': {
@@ -91,8 +98,8 @@ def shiftsperplayerchart_create(logger, ctitle, csubtitle, ismobile, shift_dic, 
         },
 
         'xAxis': [{
-            'title': title(_('Game Time'), font_size, margin=15),
-            'labels': {'enabled': 1, 'align': 'center'},
+            'title': title(_('Game Time'), variable_dic['font_size'], margin=15),
+            'labels': {'align': 'center', 'style': {'fontSize': variable_dic['font_size']}},
             'categories': x_list,
             'tickInterval': 300,
             'tickPositions': xtickposition_list,
@@ -108,6 +115,7 @@ def shiftsperplayerchart_create(logger, ctitle, csubtitle, ismobile, shift_dic, 
         'yAxis': {
             'title': title('', font_size),
             'categories': playername_list,
+            'labels': {'align': 'right', 'style': {'fontSize': variable_dic['font_size']}},
             'grid': {'enabled': 0},
             'plotLines': y_plotlines
             },
