@@ -2,7 +2,7 @@
 """ time on ice charts """
 # pylint: disable=E0401
 import math
-from rest.functions.chartparameters import chartstyle, credit, exporting, title, subtitle, legend, font_size, variables_get, plotlines_color, responsive_y1
+from rest.functions.chartparameters import chartstyle, credit, exporting, title, subtitle, chart_color4, legend, font_size, variables_get, text_color, plotlines_color, responsive_y1
 
 def shiftsperplayerchart_create(logger, ctitle, csubtitle, ismobile, shift_dic, goal_dic, color1, color2, color3):
     # pylint: disable=E0602, R0914
@@ -69,11 +69,17 @@ def shiftsperplayerchart_create(logger, ctitle, csubtitle, ismobile, shift_dic, 
     for second in range(0, tst_end +1, 300):
         xtickposition_list.append(second)
 
+    x_plotlines_list = []
+    x_plotlines_list.append({'color': plotlines_color, 'width': 2, 'value': 1200})
+    x_plotlines_list.append({'color': plotlines_color, 'width': 2, 'value': 2400})
+    x_plotlines_list.append({'color': plotlines_color, 'width': 2, 'value': 3600})
+
     # goals for annotations on y-bar
     annotationlabel_list = []
     for team in goal_dic:
         for goal in goal_dic[team]:
             annotationlabel_list.append({'point': {'x': goal['time'], 'y': 0, 'xAxis': 0}, 'text': goal['data']['currentScore']})
+            x_plotlines_list.append({'color': chart_color4, 'width': 1, 'value': goal['time'], 'dashStyle': 'longdashdot'})
 
     chart_options = {
         'ctype': 'gantt',
@@ -105,11 +111,7 @@ def shiftsperplayerchart_create(logger, ctitle, csubtitle, ismobile, shift_dic, 
             'tickPositions': xtickposition_list,
             'tickWidth': 1,
             'grid': {'enabled': 0},
-            'plotLines': [
-                {'color': plotlines_color, 'width': 2, 'value': 1200},
-                {'color': plotlines_color, 'width': 2, 'value': 2400},
-                {'color': plotlines_color, 'width': 2, 'value': 3600}
-                ],
+            'plotLines': x_plotlines_list
             }],
 
         'yAxis': {
