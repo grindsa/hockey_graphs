@@ -19,9 +19,10 @@ from rest.functions.heatmap import gameheatmapdata_get
 from rest.functions.shottables import shotsperiodtable_get, shotstatussumtable_get, shotzonetable_get, gamecorsi_table
 from rest.functions.toitables import gametoi_table
 from rest.functions.match import match_info_get, matchstats_get
-from rest.functions.shift import shift_get, toifromshifts_get
+from rest.functions.shift import shift_get, toifromshifts_get, shiftsperplayer_get
+from rest.functions.shiftcharts import shiftsperplayerchart_create
 from rest.functions.roster import roster_get
-from rest.functions.periodevent import periodevent_get, penaltyplotlines_get, goalsfromevents_get, goalplotlines_get
+from rest.functions.periodevent import periodevent_get, penaltyplotlines_get, goalsfromevents_get, goalplotlines_get, penaltiesfromevents_get
 from rest.functions.playerstat import playerstat_get, toifromplayerstats_get, matchupmatrix_get, toipppk_get
 from rest.functions.chartparameters import chart_colors_get
 from rest.functions.helper import url_build, mobile_check
@@ -101,6 +102,9 @@ def matchstatistics_get(logger, request, fkey=None, fvalue=None):
         # time on ice per player
         # pylint: disable=E0602
         result.extend(_gametoi_get(logger, _('Time on Ice per Player'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shift_list))
+
+        # pylint: disable=E0602
+        result.append(_shiftchart_get(logger, _('Shift Chart'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shift_list, roster_list, periodevent_list))
 
         # pylint: disable=E0602
         result.append(_gamematchup_get(logger, _('5v5 Matchup'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list, shift_list, roster_list, periodevent_list))
@@ -457,6 +461,34 @@ def _chatterchart_get(logger, title, subtitle, ismobile, request, fkey, fvalue, 
             'chart': chatterchart_create(logger, title, subtitle, ismobile, events_dic, plotline_list),
             'table': {},
             'tabs': False
+        }
+
+    return stat_entry
+
+def _shiftchart_get(logger, title, subtitle, ismobile, request, _fkey, _fvalue, matchinfo_dic, shift_list, roster_list, periodevent_list):
+    """ game matchup """
+    logger.debug('_shiftchart_get()')
+
+    # stat_entry = {'title': title, 'table': {}, 'tabs': False, 'chart': {}}
+    if shift_list:
+
+        # get list of penalties
+        penalty_dic = penaltiesfromevents_get(logger, periodevent_list)
+
+        # get matrix showing the different player relations
+        (shiftsperplayer_dic) = shiftsperplayer_get(logger, matchinfo_dic, shift_list, roster_list, penalty_dic)
+        goal_dic = goalsfromevents_get(logger, periodevent_list)
+
+        shift_chart = [
+            shiftsperplayerchart_create(logger, '{1} - {0}'.format(title, matchinfo_dic['home_team__shortcut']), subtitle, ismobile, shiftsperplayer_dic['home_team'], goal_dic, matchinfo_dic['home_team__color_primary'], matchinfo_dic['home_team__color_secondary'], matchinfo_dic['home_team__color_tertiary']),
+            shiftsperplayerchart_create(logger, '{1} - {0}'.format(title, matchinfo_dic['visitor_team__shortcut']), subtitle, ismobile, shiftsperplayer_dic['visitor_team'], goal_dic, matchinfo_dic['visitor_team__color_primary'], matchinfo_dic['visitor_team__color_secondary'], matchinfo_dic['visitor_team__color_tertiary']),
+        ]
+
+        stat_entry = {
+            'title': title,
+            'chart': shift_chart,
+            'table': {},
+            'tabs': True
         }
 
     return stat_entry

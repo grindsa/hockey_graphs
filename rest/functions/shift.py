@@ -65,8 +65,10 @@ def toifromshifts_get(logger, matchinfo_dic, shift_list):
 
 def _shifttype_get(logger, team, start_time, end_time, penalty_dic):
     """ get type thype of a shift (pp, pk, normal) """
+    logger.debug('_shifttype_get()')
 
     # home penalty during this shift
+    # pylint: disable=R1703
     if start_time in penalty_dic['home_team'] or end_time in penalty_dic['home_team']:
         home_penalty = True
     else:

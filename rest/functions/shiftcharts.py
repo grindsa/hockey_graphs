@@ -2,13 +2,10 @@
 """ time on ice charts """
 # pylint: disable=E0401
 import math
-import json
-from rest.functions.chartparameters import chartstyle, credit, exporting, tooltip, responsive_y1, title, subtitle, legend, font_size, variables_get, responsive_y1_nolabel
-from rest.functions.chartparameters import chart_color1, chart_color2, chart_color3, chart_color4, chart_color6, chart_color8, plotlines_color
-from rest.functions.helper import json_store
+from rest.functions.chartparameters import chartstyle, credit, exporting, title, subtitle, legend, font_size, variables_get, plotlines_color
 
 def shiftsperplayerchart_create(logger, ctitle, csubtitle, ismobile, shift_dic, goal_dic, color1, color2, color3):
-    # pylint: disable=E0602
+    # pylint: disable=E0602, R0914
     """ create shift per player chart """
     logger.debug('shiftsperplayerchart_create()')
 
@@ -71,18 +68,20 @@ def shiftsperplayerchart_create(logger, ctitle, csubtitle, ismobile, shift_dic, 
         for goal in goal_dic[team]:
             annotationlabel_list.append({'point': {'x': goal['time'], 'y': 0, 'xAxis': 0}, 'text': goal['data']['currentScore']})
 
-
     chart_options = {
         'ctype': 'gantt',
         'chart': {
-            'height': '100%',
+            'height': '90%',
             'alignTicks': 0,
-            # 'styledMode': 1,
             'style': chartstyle()
         },
         'title': title(ctitle, variable_dic['title_size'], decoration=True),
+        'subtitle': subtitle(csubtitle, variable_dic['subtitle_size']),
         'credits': credit(),
         'legend': legend(),
+        'exporting': exporting(filename=ctitle),
+
+        'plotOptions': {'series': {'states': {'inactive': {'opacity': 1}}}},
 
         'tooltip': {
             'useHTML': 0,
@@ -120,8 +119,10 @@ def shiftsperplayerchart_create(logger, ctitle, csubtitle, ismobile, shift_dic, 
 
         'series': [
             {'name': ('Even Strength'), 'data': data_list, 'color': color3, 'marker': {'symbol': 'square'}},
-            {'name': 'PP', 'data': data_list_pp, 'color': color1, 'marker': {'symbol': 'square'}},
-            {'name': 'PK', 'data': data_list_pk, 'color': color2, 'marker': {'symbol': 'square'}},
+            {'name': 'PP', 'data': data_list_pp, 'color': color1, 'marker': {'symbol': 'square'}, 'showInLegend': 0},
+            {'name': 'PK', 'data': data_list_pk, 'color': color2, 'marker': {'symbol': 'square'}, 'showInLegend': 0},
+            {'type': 'column', 'name': 'PP', 'color': color1, 'marker': {'symbol': 'square'}},
+            {'type': 'column', 'name': 'PK', 'color': color2, 'marker': {'symbol': 'square'}}
         ]
     }
 
