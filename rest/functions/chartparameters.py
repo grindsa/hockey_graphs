@@ -67,13 +67,16 @@ def plotoptions_marker_disable(ele):
     return {ele: {'marker': {'enabled': 0}}}
     # return {ele: {'marker': {'enabled': 0}, 'fillOpacity': 0.9}}
 
-def title(text, font_size_=title_font_size, decoration=False):
+def title(text, font_size_=title_font_size, decoration=False, margin=None):
     """ set title """
     result = {'text': text, 'style': {'color': text_color, 'font-size': font_size_}}
 
     if decoration:
         result['style']['fontWeight'] = 'bold'
         result['style']['textDecoration'] = 'underline'
+
+    if margin:
+        result['margin'] = margin
 
     return result
 
