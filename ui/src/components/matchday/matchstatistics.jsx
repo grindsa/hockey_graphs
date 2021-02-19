@@ -157,25 +157,25 @@ const Selector = (props) => {
 }
 
 const Chart = (props) => {
-  /* block to render chart mobile detection is done via chartoptions */
-
-  if (props.options.ctype === 'gantt'){
+  /* block to render chart moetection is done via chartoptions */
+  console.log(props.options)
+  if (!isEmpty(props.options) && props.options.ctype === 'gantt'){
     return (
       <div className="w3-border">
         <HighchartsReact highcharts={Highcharts} constructorType={"ganttChart"} options={props.options} immutable={true} />
       </div>
     )
-  }else if (props.options.chart){
+  }else if (!isEmpty(props.options) && props.options.chart){
     return (
       <div className="w3-border">
         <HighchartsReact highcharts={Highcharts} options={props.options} immutable={true} />
       </div>
     )
-  }else if (props.options.shotsOnGoal){
+  }else if (!isEmpty(props.options)  && props.options.shotsOnGoal){
     return(
       <MatchOverview options={props.options} />
     )
-  }else if (props.options.leftlabel){
+  }else if (!isEmpty(props.options) && props.options.leftlabel){
     return(
       <HeatmapJs data={props.options} />
     )

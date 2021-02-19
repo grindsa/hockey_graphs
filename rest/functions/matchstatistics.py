@@ -469,6 +469,8 @@ def _shiftchart_get(logger, title, subtitle, ismobile, request, _fkey, _fvalue, 
     """ game matchup """
     logger.debug('_shiftchart_get()')
 
+    shift_chart = {}
+
     # stat_entry = {'title': title, 'table': {}, 'tabs': False, 'chart': {}}
     if shift_list:
 
@@ -484,11 +486,11 @@ def _shiftchart_get(logger, title, subtitle, ismobile, request, _fkey, _fvalue, 
             shiftsperplayerchart_create(logger, '{1} - {0}'.format(title, matchinfo_dic['visitor_team__shortcut']), subtitle, ismobile, shiftsperplayer_dic['visitor_team'], goal_dic, matchinfo_dic['visitor_team__color_primary'], matchinfo_dic['visitor_team__color_secondary'], matchinfo_dic['visitor_team__color_tertiary']),
         ]
 
-        stat_entry = {
-            'title': title,
-            'chart': shift_chart,
-            'table': {},
-            'tabs': True
-        }
+    stat_entry = {
+        'title': title,
+        'chart': shift_chart,
+        'table': {},
+        'tabs': True
+    }
 
     return stat_entry
