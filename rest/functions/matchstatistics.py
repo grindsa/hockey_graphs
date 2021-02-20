@@ -104,7 +104,7 @@ def matchstatistics_get(logger, request, fkey=None, fvalue=None):
         result.extend(_gametoi_get(logger, _('Time on Ice per Player'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shift_list))
 
         # pylint: disable=E0602
-        result.append(_shiftchart_get(logger, _('Shift Chart'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shift_list, roster_list, periodevent_list))
+        result.append(_shiftchart_get(logger, _('Shift Chart'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shift_list, roster_list, periodevent_list, color_dic))
 
         # pylint: disable=E0602
         result.append(_gamematchup_get(logger, _('5v5 Matchup'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list, shift_list, roster_list, periodevent_list))
@@ -465,7 +465,7 @@ def _chatterchart_get(logger, title, subtitle, ismobile, request, fkey, fvalue, 
 
     return stat_entry
 
-def _shiftchart_get(logger, title, subtitle, ismobile, request, _fkey, _fvalue, matchinfo_dic, shift_list, roster_list, periodevent_list):
+def _shiftchart_get(logger, title, subtitle, ismobile, request, _fkey, _fvalue, matchinfo_dic, shift_list, roster_list, periodevent_list, color_dic):
     """ game matchup """
     logger.debug('_shiftchart_get()')
 
@@ -481,16 +481,13 @@ def _shiftchart_get(logger, title, subtitle, ismobile, request, _fkey, _fvalue, 
         (shiftsperplayer_dic) = shiftsperplayer_get(logger, matchinfo_dic, shift_list, roster_list, penalty_dic)
         goal_dic = goalsfromevents_get(logger, periodevent_list)
 
-        shift_chart = [
-            shiftsperplayerchart_create(logger, '{1} - {0}'.format(title, matchinfo_dic['home_team__shortcut']), subtitle, ismobile, shiftsperplayer_dic['home_team'], goal_dic, matchinfo_dic['home_team__color_primary'], matchinfo_dic['home_team__color_secondary'], matchinfo_dic['home_team__color_tertiary']),
-            shiftsperplayerchart_create(logger, '{1} - {0}'.format(title, matchinfo_dic['visitor_team__shortcut']), subtitle, ismobile, shiftsperplayer_dic['visitor_team'], goal_dic, matchinfo_dic['visitor_team__color_primary'], matchinfo_dic['visitor_team__color_secondary'], matchinfo_dic['visitor_team__color_tertiary']),
-        ]
+        shift_chart = shiftsperplayerchart_create(logger, title, subtitle, ismobile, shiftsperplayer_dic, goal_dic, matchinfo_dic, color_dic)
 
     stat_entry = {
         'title': title,
         'chart': shift_chart,
         'table': {},
-        'tabs': True
+        'tabs': False
     }
 
     return stat_entry

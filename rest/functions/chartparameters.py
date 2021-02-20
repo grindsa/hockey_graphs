@@ -67,7 +67,7 @@ def plotoptions_marker_disable(ele):
     return {ele: {'marker': {'enabled': 0}}}
     # return {ele: {'marker': {'enabled': 0}, 'fillOpacity': 0.9}}
 
-def title(text, font_size_=title_font_size, decoration=False, margin=None):
+def title(text, font_size_=title_font_size, decoration=False, margin=None, align=None, offset=None):
     """ set title """
     result = {'text': text, 'style': {'color': text_color, 'font-size': font_size_}}
 
@@ -77,6 +77,12 @@ def title(text, font_size_=title_font_size, decoration=False, margin=None):
 
     if margin:
         result['margin'] = margin
+
+    if align:
+        result['align'] = align
+
+    if offset:
+        result['offset'] = offset
 
     return result
 

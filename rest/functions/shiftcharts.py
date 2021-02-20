@@ -4,94 +4,131 @@
 import math
 from rest.functions.chartparameters import chartstyle, credit, exporting, title, subtitle, chart_color4, legend, font_size, variables_get, text_color, plotlines_color, responsive_y1
 
-def shiftsperplayerchart_create(logger, ctitle, csubtitle, ismobile, shift_dic, goal_dic, color1, color2, color3):
+def shiftsperplayerchart_create(logger, ctitle, csubtitle, ismobile, shift_dic, goal_dic, matchinfo_dic, color_dic):
     # pylint: disable=E0602, R0914
     """ create shift per player chart """
     logger.debug('shiftsperplayerchart_create()')
 
     variable_dic = variables_get(ismobile)
 
-    playername_list = []
-    data_list = []
-    data_list_pp = []
-    data_list_pk = []
+    if ismobile:
+        img_width = 15
+    else:
+        img_width = 23
 
+    # length of a match (will be used as range-end of x list)
     tst_end = 3600
 
+    # list to store playernames
+    playername_list = ['<span><img src="{0}" width="{1}" height="{1}" alt="{2}"></img></span>'.format(matchinfo_dic['home_team_logo'], img_width, matchinfo_dic['home_team__shortcut'])]
+    # list to store shifts
+    data_list = [{'start': 0, 'end': tst_end, 'y': 0, 'color': plotlines_color}]
+
+    # counter line-numbers and list storing number changes
     line_number = 1
     y_plotlines = []
 
-    for idx, player_id in enumerate(sorted(shift_dic, key=lambda i: (shift_dic[i]['line_number'], -shift_dic[i]['role'], shift_dic[i]['position']))):
-        # add playername to x_list
-        tooltip_string = '{0} ({1})'.format(shift_dic[player_id]['name'], shift_dic[player_id]['jersey'])
-        if ismobile:
-            player_string = shift_dic[player_id]['surname']
+    # counter for player in both teams
+    player_cnt = 1
+
+    # plotlines for period ends
+    x2_plotlines_list = [
+        {'color': plotlines_color, 'width': 2, 'value': 1200},
+        {'color': plotlines_color, 'width': 2, 'value': 2400},
+    ]
+
+    for team in shift_dic:
+        # set color for shifts
+        if team == 'home_team':
+            series_color = color_dic['home_team_color_primary']
         else:
-            player_string = tooltip_string
+            series_color = color_dic['visitor_team_color_secondary']
 
-        playername_list.append(player_string)
-
-        # add plotline in case the line-number changes
-        if shift_dic[player_id]['line_number'] != line_number:
-            line_number = shift_dic[player_id]['line_number']
-            y_plotlines.append({'color': plotlines_color, 'width': 2, 'value': idx - 0.5})
-
-        for sh_idx, shift in enumerate(shift_dic[player_id]['shifts']):
-
-            # estimate shift length
-            if shift['start'] > tst_end or shift['end'] > tst_end:
-                tst_end = 3900
-
-            # add index, count and playername to shift
-            shift['y'] = idx
-            shift['cnt'] = sh_idx + 1
-            shift['playername'] = tooltip_string
-            shift['start_human'] = '{0:02d}:{1:02d}'.format(*divmod(shift['start'], 60))
-            shift['end_human'] = '{0:02d}:{1:02d}'.format(*divmod(shift['end'], 60))
-
-            if shift['type'] == 'pp':
-                shift['color'] = color1
-                data_list_pp.append(shift)
-            elif shift['type'] == 'pk':
-                shift['color'] = color2
-                data_list_pk.append(shift)
+        for player_id in sorted(shift_dic[team], key=lambda i: (shift_dic[team][i]['line_number'], -shift_dic[team][i]['role'], shift_dic[team][i]['position'])):
+            # add playername to x_list
+            # tooltip_string = '{0} ({1})'.format(shift_dic[team][player_id]['name'], shift_dic[team][player_id]['jersey'])
+            tooltip_string = shift_dic[team][player_id]['name']
+            if ismobile:
+                player_string = shift_dic[team][player_id]['surname']
             else:
-                shift['color'] = color3
-                # shift['color'] = '#404040'
-                # add shift
+                player_string = tooltip_string
+
+            # add player-name to x_list
+            playername_list.append(player_string)
+
+            # add plotline in case the line-number changes
+            if shift_dic[team][player_id]['line_number'] != line_number:
+                line_number = shift_dic[team][player_id]['line_number']
+                y_plotlines.append({'color': plotlines_color, 'width': 2, 'value': player_cnt - 0.5})
+
+            for sh_idx, shift in enumerate(shift_dic[team][player_id]['shifts']):
+
+                # detect overtime shifts adjust timestamp and add plotline for end of 3rd period
+                if shift['start'] > tst_end or shift['end'] > tst_end:
+                    tst_end = 3900
+                    x2_plotlines_list.append({'color': plotlines_color, 'width': 2, 'value': 3600})
+                    # we need to manipulate the first dataframe (headline for hometeam)
+                    data_list[0]['end'] = tst_end
+
+                # add index, count and playername to shift
+                shift['y'] = player_cnt
+                shift['cnt'] = player_cnt + 1
+                shift['playername'] = tooltip_string
+                shift['start_human'] = '{0:02d}:{1:02d}'.format(*divmod(shift['start'], 60))
+                shift['end_human'] = '{0:02d}:{1:02d}'.format(*divmod(shift['end'], 60))
+
+                shift['color'] = series_color
                 data_list.append(shift)
 
+            player_cnt += 1
+
+        # add team separator
+        if player_cnt <= 25:
+            playername_list.append('<span><img src="{0}" width="{1}" height="{1}" alt="{2}"></img></span>'.format(matchinfo_dic['visitor_team_logo'], img_width, matchinfo_dic['visitor_team__shortcut']))
+            data_list.append({'start': 0, 'end': tst_end, 'y': player_cnt, 'color': plotlines_color})
+            player_cnt += 1
+
     x_list = []
+    x2_list = []
     for second in range(0, tst_end + 1):
         x_list.append(math.ceil(second/60))
+        x2_list.append(second)
 
+    # show game timestamps in 5min interval
     xtickposition_list = []
     for second in range(0, tst_end +1, 300):
         xtickposition_list.append(second)
 
-    x_plotlines_list = []
-    x_plotlines_list.append({'color': plotlines_color, 'width': 2, 'value': 1200})
-    x_plotlines_list.append({'color': plotlines_color, 'width': 2, 'value': 2400})
-    x_plotlines_list.append({'color': plotlines_color, 'width': 2, 'value': 3600})
+    # goals ticks on 2nd x-bar
+    x2_tickposition_list = []
 
-    # goals for annotations on y-bar
-    annotationlabel_list = []
     for team in goal_dic:
+        # color
+        if team == 'home_team':
+            team_plotlines_color = color_dic['home_team_color_primary']
+            logo = matchinfo_dic['home_team_logo']
+            alt =  matchinfo_dic['home_team__shortcut']
+        else:
+            team_plotlines_color = color_dic['visitor_team_color_secondary']
+            logo = matchinfo_dic['visitor_team_logo']
+            alt = matchinfo_dic['visitor_team__shortcut']
+
         for goal in goal_dic[team]:
-            annotationlabel_list.append({'point': {'x': goal['time'], 'y': 0, 'xAxis': 0}, 'text': goal['data']['currentScore']})
-            x_plotlines_list.append({'color': chart_color4, 'width': 1, 'value': goal['time'], 'dashStyle': 'longdashdot'})
+            x2_plotlines_list.append({'color': team_plotlines_color, 'width': 1, 'value': goal['time']})
+            x2_tickposition_list.append(goal['time'])
+            x2_list[goal['time']] = '<span><img src="{0}" width="{1}" height="{1}" alt="{2}"></img></span>'.format(logo, img_width, alt)
 
     chart_options = {
         'ctype': 'gantt',
         'chart': {
-            'height': '90%',
+            'height': '110%',
             'alignTicks': 0,
             'style': chartstyle()
         },
-        'title': title(ctitle, variable_dic['title_size'], decoration=True, margin=variable_dic['title_margin']),
+        'title': title(ctitle, variable_dic['title_size'], decoration=True),
         'subtitle': subtitle(csubtitle, variable_dic['subtitle_size']),
         'credits': credit(),
-        'legend': legend(),
+        'legend': {'enabled': 0},
         'exporting': exporting(filename=ctitle),
         'responsive': responsive_y1(),
         'plotOptions': {'series': {'states': {'inactive': {'opacity': 1}}}},
@@ -107,49 +144,31 @@ def shiftsperplayerchart_create(logger, ctitle, csubtitle, ismobile, shift_dic, 
             'title': title(_('Game Time'), variable_dic['font_size']),
             'labels': {'align': 'center', 'style': {'fontSize': variable_dic['font_size']}},
             'categories': x_list,
-            'type': 'datetime',
-            'tickInterval': 300,
             'tickPositions': xtickposition_list,
             'tickWidth': 1,
             'grid': {'enabled': 0},
-            'plotLines': x_plotlines_list,
             'opposite': 0,
+            },{
+            'title': title(_('Goals'), variable_dic['font_size'], offset=15),
+            'labels': {'useHTML': 1, 'align': 'center'},
+            'categories': x2_list,
+            'tickPositions': x2_tickposition_list,
+            'plotLines': x2_plotlines_list,
+            'tickWidth': 0,
+            'grid': {'enabled': 0},
+            'opposite': 1,
             }],
 
         'yAxis': {
             'title': title('', font_size),
             'categories': playername_list,
-            'labels': {'align': 'right', 'style': {'fontSize': variable_dic['font_size']}},
+            'labels': {'useHTML': 1, 'align': 'right', 'style': {'fontSize': variable_dic['font_size']}},
             'grid': {'enabled': 0},
             'plotLines': y_plotlines
             },
 
-        'annotations': [{
-            'labels': annotationlabel_list,
-            'labelOptions': {'y': -30, 'style': {'fontSize': variable_dic['label_size']}}
-        }],
-
-        'rangeSelector': {
-            'enabled': 1,
-            'selected': 0,
-            'inputEnabled': 0,
-            'verticalAlign': 'bottom',
-            'buttons': [
-                {'type': 'minute', 'count': 20, 'text': '1st', 'title': '1st period'},
-                {'type': 'minute', 'count': 40, 'text': '2nd', 'title': '2nd period'},
-                {'type': 'minute', 'count': 60, 'text': '3rd', 'title': '3rd period'},
-                {'type': 'minute', 'count': 65, 'text': 'OT', 'title':  'Overtime'},
-                {'type': 'all', 'text': 'Game', 'title': 'Full Game'}
-            ],
-        },
-
         'series': [
-            {'name': ('Even Strength'), 'data': data_list, 'color': color3, 'marker': {'symbol': 'square'}},
-            {'name': 'PP', 'data': data_list_pp, 'color': color1, 'marker': {'symbol': 'square'}, 'showInLegend': 0},
-            {'name': 'PK', 'data': data_list_pk, 'color': color2, 'marker': {'symbol': 'square'}, 'showInLegend': 0},
-            {'type': 'column', 'name': 'PP', 'color': color1, 'marker': {'symbol': 'square'}},
-            {'type': 'column', 'name': 'PK', 'color': color2, 'marker': {'symbol': 'square'}}
+            {'name': ('Even Strength'), 'data': data_list, 'color': '#404040', 'marker': {'symbol': 'square'}},
         ]
     }
-
     return chart_options
