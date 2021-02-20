@@ -158,7 +158,6 @@ const Selector = (props) => {
 
 const Chart = (props) => {
   /* block to render chart moetection is done via chartoptions */
-  console.log(props.options)
   if (!isEmpty(props.options) && props.options.ctype === 'gantt'){
     return (
       <div className="w3-border">
