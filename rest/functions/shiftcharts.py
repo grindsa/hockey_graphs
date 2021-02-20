@@ -136,7 +136,7 @@ def shiftsperplayerchart_create(logger, ctitle, csubtitle, ismobile, shift_dic, 
         'tooltip': {
             'useHTML': 0,
             'headerFormat': '',
-            'pointFormat': '<b>{point.playername}</b><br>#{point.cnt} - {series.name}: {point.start_human}m - {point.end_human}m',
+            'pointFormat': '<b>{point.playername}</b><br>#{point.cnt} - {point.type}: {point.start_human}m - {point.end_human}m',
             'followPointer': 1,
         },
 

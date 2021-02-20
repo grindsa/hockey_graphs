@@ -84,16 +84,16 @@ def _shifttype_get(logger, team, start_time, end_time, penalty_dic):
     if home_penalty != visitor_penalty:
         if home_penalty:
             if team == 'home_team':
-                shift_type = 'pk'
+                shift_type = _('PK')
             else:
-                shift_type = 'pp'
+                shift_type = _('PP')
         else:
             if team == 'home_team':
-                shift_type = 'pp'
+                shift_type = _('PP')
             else:
-                shift_type = 'pk'
+                shift_type = _('PK')
     else:
-        shift_type = 'normal'
+        shift_type = _('Even Strength')
 
     return shift_type
 
