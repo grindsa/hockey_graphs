@@ -18,8 +18,6 @@ export const PeriodSelector = ({data, onChange}) => {
     return(null)
   } else {
     // return period header
-    // const period = periodList(data, label_classes, onChange)
-    // console.log(period)
     return (
       <div className="w3-margin-top">
       {

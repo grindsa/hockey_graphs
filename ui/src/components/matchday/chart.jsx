@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import HighchartsMore from 'highcharts/highcharts-more';
@@ -9,6 +9,7 @@ import Heatmap from 'highcharts/modules/heatmap.js';
 import highchartsGantt from "highcharts/modules/gantt";
 import { HeatmapJs } from './heatmapjs';
 import { MatchOverview } from './matchoverview';
+import { PeriodSelector } from './periodselector';
 import { createnoChartMessage } from '../localization.js';
 import { isEmpty } from '../sharedfunctions.js';
 
@@ -25,7 +26,7 @@ export const Chart = (props) => {
   if (!isEmpty(props.options) && props.options.ctype === 'gantt'){
     return (
       <div className="w3-border">
-        <HighchartsReact highcharts={Highcharts} constructorType={"ganttChart"} options={props.options} immutable={true} />
+        <Gantt options={props.options} updates={props.updates}/>
       </div>
     )
   }else if (!isEmpty(props.options) && props.options.chart){
@@ -48,4 +49,24 @@ export const Chart = (props) => {
       <div className="w3-padding-16 nodata w3-center">{nochartdata}</div>
     )
   }
+}
+
+const Gantt = (props) => {
+  // gant chart
+  const [chart, setChart] = useState(props.options);
+  const handlePeriodChange = (event) => {
+    // change period
+    const newData = props.updates[event.target.value].data
+    const newChart = Object.assign({}, chart, newData);
+    setChart(newChart);
+  }
+
+  return (
+    <div className="w3-border">
+      <HighchartsReact highcharts={Highcharts} constructorType={"ganttChart"} options={chart} immutable={true} />
+      <div className="w3-margin-bottom w3-center">
+        <PeriodSelector data={props.updates} onChange={handlePeriodChange} />
+      </div>
+    </div>
+  )
 }

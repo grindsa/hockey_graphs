@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import PropTypes from "prop-types";
+import { overviewClassnames } from './matchstatisticservice.js';
 
 export const MatchOverview = ({options}) => {
   // matchoverview shoing shots, gols, toi and penalties
@@ -22,4 +23,26 @@ export const MatchOverview = ({options}) => {
 
 MatchOverview.propTypes = {
     options: PropTypes.object,
+};
+
+const TableRow = (props) => {
+  /* single row in matchstats we need to assing color classes based on values */
+  var [leftClassNames, rightClassNames] = overviewClassnames(props.leftvalue, props.rightvalue)
+  return (
+    <React.Fragment>
+      <tr><td colSpan="2" className="w3-small"><b>{props.statname}</b></td></tr>
+      <tr>
+          <td style={{width:'50%'}}><div className="w3-container w3-light-grey w3-tiny nopadding"><div className={leftClassNames} style={{width:props.leftwidth}}>{props.leftvalue}</div></div></td>
+          <td style={{width:'50%'}}><div className="w3-container w3-light-grey w3-tiny nopadding"><div className={rightClassNames} style={{width:props.rightwidth}}>{props.rightvalue}</div></div></td>
+      </tr>
+    </React.Fragment>
+  )
+}
+
+TableRow.propTypes = {
+    leftvalue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    leftwidth: PropTypes.string,
+    rightvalue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    rightwidth: PropTypes.string,
+    statname: PropTypes.string,
 };

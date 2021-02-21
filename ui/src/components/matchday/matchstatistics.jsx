@@ -43,7 +43,7 @@ export const MatchStatistics = (props) => {
       <React.Fragment>
         <MatchHeader match={props.match} reset={props.reset} />
         <Selector matches={matchstatistics}  onChange={handleStatChange} value={selectedstat}/>
-        <MatchData language={props.language} chart={MatchStatistic.chart} table={MatchStatistic.table} match={props.match} tabs={MatchStatistic.tabs}/>
+        <MatchData language={props.language} chart={MatchStatistic.chart} table={MatchStatistic.table} match={props.match} tabs={MatchStatistic.tabs} updates={MatchStatistic.updates}/>
       </React.Fragment>
     );
   }else{
@@ -80,14 +80,14 @@ const MatchData = (props) => {
           <div className ={home_format} onClick={() => switchTab(0)}>{props.match.home_team_name}</div>
           <div className ={visitor_format} onClick={() => switchTab(1)}>{props.match.visitor_team_name}</div>
         </div>
-        <Chart options={props.chart[activeTab]} language={props.language} />
+        <Chart options={props.chart[activeTab]} language={props.language} updates={props.updates} />
         <Table data={props.table[activeTab]} />
       </React.Fragment>
     )
   }else{
     return (
       <React.Fragment>
-        <Chart options={props.chart} language={props.language} />
+        <Chart options={props.chart} language={props.language} updates={props.updates} />
         <Table data={props.table} />
       </React.Fragment>
     );
@@ -138,28 +138,6 @@ const Selector = (props) => {
     )
   }
 }
-
-const TableRow = (props) => {
-  /* single row in matchstats we need to assing color classes based on values */
-  var [leftClassNames, rightClassNames] = overviewClassnames(props.leftvalue, props.rightvalue)
-  return (
-    <React.Fragment>
-      <tr><td colSpan="2" className="w3-small"><b>{props.statname}</b></td></tr>
-      <tr>
-          <td style={{width:'50%'}}><div className="w3-container w3-light-grey w3-tiny nopadding"><div className={leftClassNames} style={{width:props.leftwidth}}>{props.leftvalue}</div></div></td>
-          <td style={{width:'50%'}}><div className="w3-container w3-light-grey w3-tiny nopadding"><div className={rightClassNames} style={{width:props.rightwidth}}>{props.rightvalue}</div></div></td>
-      </tr>
-    </React.Fragment>
-  )
-}
-
-TableRow.propTypes = {
-    leftvalue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    leftwidth: PropTypes.string,
-    rightvalue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    rightwidth: PropTypes.string,
-    statname: PropTypes.string,
-};
 
 const Table = ({data}) => {
   /* render table with data */
