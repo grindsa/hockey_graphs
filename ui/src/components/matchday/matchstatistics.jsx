@@ -1,27 +1,10 @@
 import React, {useState, useEffect} from 'react';
 import PropTypes from "prop-types";
 import { isMobileOnly } from 'react-device-detect';
-import Highcharts from 'highcharts';
-import HighchartsReact from 'highcharts-react-official';
-import HighchartsMore from 'highcharts/highcharts-more';
-import HighchartsExporting from 'highcharts/modules/exporting';
-import HighchartsOfflineExporting from "highcharts/modules/offline-exporting";
-import Timeline from 'highcharts/modules/timeline.js';
-import Heatmap from 'highcharts/modules/heatmap.js';
-import highchartsGantt from "highcharts/modules/gantt";
-import { HeatmapJs } from './heatmapjs'
-import { createTableHeader, createTableBody, createSelectOptions, overviewClassnames } from './matchstatisticservice.js'
+import { Chart } from './chart';
+import { createTableHeader, createTableBody, createSelectOptions, overviewClassnames } from './matchstatisticservice.js';
 import { asyncGET, isEmpty } from '../sharedfunctions.js';
-import { createnoChartMessage } from '../localization.js';
 import { navigate } from "hookrouter";
-
-// Load Highcharts modules
-HighchartsExporting(Highcharts);
-HighchartsOfflineExporting(Highcharts);
-highchartsGantt(Highcharts);
-HighchartsMore(Highcharts);
-Timeline(Highcharts);
-Heatmap(Highcharts);
 
 export const MatchStatistics = (props) => {
   /* main component for matchstatistics */
@@ -155,59 +138,6 @@ const Selector = (props) => {
     )
   }
 }
-
-const Chart = (props) => {
-  /* block to render chart moetection is done via chartoptions */
-  if (!isEmpty(props.options) && props.options.ctype === 'gantt'){
-    return (
-      <div className="w3-border">
-        <HighchartsReact highcharts={Highcharts} constructorType={"ganttChart"} options={props.options} immutable={true} />
-      </div>
-    )
-  }else if (!isEmpty(props.options) && props.options.chart){
-    return (
-      <div className="w3-border">
-        <HighchartsReact highcharts={Highcharts} options={props.options} immutable={true} />
-      </div>
-    )
-  }else if (!isEmpty(props.options)  && props.options.shotsOnGoal){
-    return(
-      <MatchOverview options={props.options} />
-    )
-  }else if (!isEmpty(props.options) && props.options.leftlabel){
-    return(
-      <HeatmapJs data={props.options} />
-    )
-  }else{
-    const nochartdata = createnoChartMessage(props.language)
-    return (
-      <div className="w3-padding-16 nodata w3-center">{nochartdata}</div>
-    )
-  }
-}
-
-const MatchOverview = ({options}) => {
-  // matchoverview shoing shots, gols, toi and penalties
-  const stats = options
-  return(
-    <table className="w3-table w3-border w3-centered">
-      <tbody>
-        <TableRow statname={stats.shotsOnGoal} leftvalue = {stats.home_team.shotsOnGoal} rightvalue = {stats.visitor_team.shotsOnGoal} leftwidth = {stats.home_team.shotsOnGoal_pctg} rightwidth = {stats.visitor_team.shotsOnGoal_pctg} />
-        <TableRow statname={stats.saves} leftvalue = {stats.home_team.saves} rightvalue = {stats.visitor_team.saves} leftwidth = {stats.home_team.saves_pctg} rightwidth = {stats.visitor_team.saves_pctg} />
-        <TableRow statname={stats.puckpossession} leftvalue = {stats.home_team.puckpossession} rightvalue = {stats.visitor_team.puckpossession} leftwidth = {stats.home_team.puckpossession_pctg} rightwidth = {stats.visitor_team.puckpossession_pctg} />
-        <TableRow statname={stats.penaltyMinutes} leftvalue = {stats.home_team.penaltyMinutes} rightvalue = {stats.visitor_team.penaltyMinutes} leftwidth = {stats.home_team.penaltyMinutes_pctg} rightwidth = {stats.visitor_team.penaltyMinutes_pctg} />
-        <TableRow statname={stats.powerplaymin} leftvalue = {stats.home_team.powerplaymin} rightvalue = {stats.visitor_team.powerplaymin} leftwidth = {stats.home_team.powerplaymin_pctg} rightwidth = {stats.visitor_team.powerplaymin_pctg} />
-        <TableRow statname={stats.ppGoals} leftvalue = {stats.home_team.ppGoals} rightvalue = {stats.visitor_team.ppGoals} leftwidth = {stats.home_team.ppGoals_pctg} rightwidth = {stats.visitor_team.ppGoals_pctg} />
-        <TableRow statname={stats.shGoals} leftvalue = {stats.home_team.shGoals} rightvalue = {stats.visitor_team.shGoals} leftwidth = {stats.home_team.shGoals_pctg} rightwidth = {stats.visitor_team.shGoals_pctg} />
-        <TableRow statname={stats.faceOffsWon} leftvalue = {stats.home_team.faceOffsWon} rightvalue = {stats.visitor_team.faceOffsWon} leftwidth = {stats.home_team.faceOffsWon_pctg} rightwidth = {stats.visitor_team.faceOffsWon_pctg} />
-      </tbody>
-    </table>
-  )
-}
-
-MatchOverview.propTypes = {
-    options: PropTypes.object,
-};
 
 const TableRow = (props) => {
   /* single row in matchstats we need to assing color classes based on values */
