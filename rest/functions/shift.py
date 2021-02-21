@@ -9,6 +9,8 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "hockey_graphs.settings")
 import django
 django.setup()
 from rest.models import Shift
+from rest.functions.chartparameters import plotlines_color
+from rest.functions.helper import period_get, periodseconds_get
 
 def shift_add(logger, fkey, fvalue, data_dic):
     """ add team to database """
@@ -132,3 +134,173 @@ def shiftsperplayer_get(logger, matchinfo_dic, shift_list, roster_list, penalty_
                     shift_dic[team][pid]['jersey'] = roster_list[selector][player]['jersey']
 
     return shift_dic
+
+def _datastructure_create(logger, period, tst_end, matchinfo_dic, img_width):
+    """ create datastructure """
+    logger.debug('_datastructure_create({0})'.format(period))
+
+    result = {
+        # player list contaimg playernames - first entry is the hometeam name
+        'playername_list': ['<span><img src="{0}" width="{1}" height="{1}" alt="{2}"></img></span>'.format(matchinfo_dic['home_team_logo'], img_width, matchinfo_dic['home_team__shortcut'])],
+
+        # list containing the shifts
+        'shifts_list': [{'start': 0, 'end': tst_end, 'y': 0, 'color': plotlines_color}],
+
+        # plotlines for period ends
+        'x2_plotlines_list': [
+            {'color': plotlines_color, 'width': 2, 'value': 1200},
+            {'color': plotlines_color, 'width': 2, 'value': 2400},
+        ],
+
+        # plotlines for y axis
+        'y_plotlines_list': [],
+
+        # list of x-values
+        'x_list': [],
+        'x2_list': [],
+
+        # tick positions on xbars (5min interval and goals)
+        'xtickposition_list': [],
+        'x2_tickposition_list': []
+    }
+
+    return result
+
+
+def shiftchartdata_get(logger, ismobile, shift_dic, goal_dic, matchinfo_dic, color_dic):
+    """  aggregate shiftdate to create chart input """
+    logger.debug('shiftsperplayer_get()')
+
+    if ismobile:
+        img_width = 15
+    else:
+        img_width = 23
+
+
+    # length of a match (will be used as range-end of x list)
+    tst_end = 3600
+
+    # global data_dic
+    data_dic = {0: {}, 1: {}, 2: {}, 3: {}}
+
+    # create data_dic for output
+    for period in data_dic:
+        data_dic[period] = _datastructure_create(logger, period, tst_end, matchinfo_dic, img_width)
+
+    # counter line-numbers and list storing number changes
+    line_number = 1
+    # counter for player in both teams
+    player_cnt = 1
+
+    for team in shift_dic:
+        # set color for shifts
+        if team == 'home_team':
+            series_color = color_dic['home_team_color_primary']
+        else:
+            series_color = color_dic['visitor_team_color_secondary']
+
+        for player_id in sorted(shift_dic[team], key=lambda i: (shift_dic[team][i]['line_number'], -shift_dic[team][i]['role'], shift_dic[team][i]['position'])):
+            # add playername to x_list
+            # tooltip_string = '{0} ({1})'.format(shift_dic[team][player_id]['name'], shift_dic[team][player_id]['jersey'])
+            tooltip_string = shift_dic[team][player_id]['name']
+            if ismobile:
+                player_string = shift_dic[team][player_id]['surname']
+            else:
+                player_string = tooltip_string
+
+            # add player-name to x_list for 0 - subtree
+            data_dic[0]['playername_list'].append(player_string)
+
+            # add plotline in case the line-number changes
+            if shift_dic[team][player_id]['line_number'] != line_number:
+                line_number = shift_dic[team][player_id]['line_number']
+                data_dic[0]['y_plotlines_list'].append({'color': plotlines_color, 'width': 2, 'value': player_cnt - 0.5})
+
+            # enumerate shifts
+            for sh_idx, shift in enumerate(shift_dic[team][player_id]['shifts']):
+
+                # get period of the shift
+                shift_period = period_get(shift['end'], 'sec')
+
+                # detect overtime shifts adjust timestamp and add plotline for end of 3rd period
+                if shift['start'] > tst_end or shift['end'] > tst_end:
+                    tst_end = 3900
+                    data_dic[4] = _datastructure_create(logger, period, tst_end, matchinfo_dic, img_width)
+                    for period in data_dic:
+                        # add plotline after 3rd period
+                        data_dic[period]['x2_plotlines_list'].append({'color': plotlines_color, 'width': 2, 'value': 3600})
+                        # we need to manipulate the first dataframe (headline for hometeam)
+                        data_dic[period]['shifts_list'][0]['end'] = tst_end
+
+                # add index, count and playername to shift
+                shift['y'] = player_cnt
+                shift['cnt'] = player_cnt + 1
+                shift['playername'] = tooltip_string
+                shift['start_human'] = '{0:02d}:{1:02d}'.format(*divmod(shift['start'], 60))
+                shift['end_human'] = '{0:02d}:{1:02d}'.format(*divmod(shift['end'], 60))
+                shift['color'] = series_color
+
+                # add shifts to data_dic
+                data_dic[0]['shifts_list'].append(shift)
+                data_dic[period]['shifts_list'].append(shift)
+
+            # player change
+            player_cnt += 1
+
+        # add team separator
+        if player_cnt <= 25:
+            # empty line for visiting team
+            data_dic[0]['playername_list'].append('<span><img src="{0}" width="{1}" height="{1}" alt="{2}"></img></span>'.format(matchinfo_dic['visitor_team_logo'], img_width, matchinfo_dic['visitor_team__shortcut']))
+            # add pseudo shift for every period
+            for period in data_dic:
+                # calculate seconds belong to a period
+                (start_val, end_val) = periodseconds_get(logger, period, tst_end)
+                # add pseudoshift bcs of team change
+                data_dic[period]['shifts_list'].append({'start': start_val, 'end': end_val, 'y': player_cnt, 'color': plotlines_color})
+
+            player_cnt += 1
+
+        # fill x_lists
+        for period in data_dic:
+            # calculate seconds belong to a period
+            (start_val, end_val) = periodseconds_get(logger, period, tst_end)
+            for second in range(start_val, end_val + 1):
+                data_dic[period]['x_list'].append(math.ceil(second/60))
+                data_dic[period]['x2_list'].append(second)
+
+            # add 5min ticks to 1st xbar
+            for second in range(start_val, end_val +1, 300):
+                data_dic[period]['xtickposition_list'].append(second)
+
+    for team in goal_dic:
+        # color
+        if team == 'home_team':
+            team_plotlines_color = color_dic['home_team_color_primary']
+            logo = matchinfo_dic['home_team_logo']
+            alt =  matchinfo_dic['home_team__shortcut']
+        else:
+            team_plotlines_color = color_dic['visitor_team_color_secondary']
+            logo = matchinfo_dic['visitor_team_logo']
+            alt = matchinfo_dic['visitor_team__shortcut']
+
+        for goal in goal_dic[team]:
+            # get period of the shift
+            goal_period = period_get(goal['time'], 'sec')
+
+            for ele in (0, goal_period):
+                # add goal in overall tree an into period subtree
+                goal_position = _goalposition_get(ele, goal['time'])
+                data_dic[ele]['x2_plotlines_list'].append({'color': team_plotlines_color, 'width': 1, 'value': goal['time']})
+                data_dic[ele]['x2_tickposition_list'].append(goal['time'])
+                data_dic[ele]['x2_list'][goal_position] = '<span><img src="{0}" width="{1}" height="{1}" alt="{2}"></img></span>'.format(logo, img_width, alt)
+
+    return data_dic
+
+def _goalposition_get(period, timestamp):
+    """ get postion of goals in dictionary """
+    if period == 0:
+        position = timestamp
+    else:
+        position = timestamp - ((period-1) * 1200)
+
+    return position
