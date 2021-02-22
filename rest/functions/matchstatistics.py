@@ -19,13 +19,13 @@ from rest.functions.heatmap import gameheatmapdata_get
 from rest.functions.shottables import shotsperiodtable_get, shotstatussumtable_get, shotzonetable_get, gamecorsi_table
 from rest.functions.toitables import gametoi_table
 from rest.functions.match import match_info_get, matchstats_get
-from rest.functions.shift import shift_get, toifromshifts_get, shiftsperplayer_get
+from rest.functions.shift import shift_get, toifromshifts_get, shiftsperplayer_get, shiftchartdata_get, shiftsupdates_get
 from rest.functions.shiftcharts import shiftsperplayerchart_create
 from rest.functions.roster import roster_get
 from rest.functions.periodevent import periodevent_get, penaltyplotlines_get, goalsfromevents_get, goalplotlines_get, penaltiesfromevents_get
 from rest.functions.playerstat import playerstat_get, toifromplayerstats_get, matchupmatrix_get, toipppk_get
 from rest.functions.chartparameters import chart_colors_get
-from rest.functions.helper import url_build, mobile_check
+from rest.functions.helper import url_build, mobile_check, json_store
 
 def matchstatistics_get(logger, request, fkey=None, fvalue=None):
     """ matchstatistics grouped by days """
@@ -73,15 +73,15 @@ def matchstatistics_get(logger, request, fkey=None, fvalue=None):
 
         # create shotflowchart
         # pylint: disable=E0602
-        result.append(_gameflow_get(logger, _('Gameflow'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list, color_dic))
+        #result.append(_gameflow_get(logger, _('Gameflow'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list, color_dic))
 
         # create chart for shotstatus
         # pylint: disable=E0602
-        result.append(_gameshootstatus_get(logger, _('Shots by Result'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list))
+        #result.append(_gameshootstatus_get(logger, _('Shots by Result'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list))
 
         # create shotzone chart
         # pylint: disable=E0602
-        result.append(_gamezoneshots_get(logger, _('Shots per Zone'), subtitle, ismobile, request, matchinfo_dic, shot_list))
+        # result.append(_gamezoneshots_get(logger, _('Shots per Zone'), subtitle, ismobile, request, matchinfo_dic, shot_list))
 
         # shotmap
         # pylint: disable=E0602
@@ -89,28 +89,28 @@ def matchstatistics_get(logger, request, fkey=None, fvalue=None):
 
         # shotmap
         # pylint: disable=E0602
-        result.append(_gameshotmap_get(logger, _('Game Shotmap'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list))
+        #result.append(_gameshotmap_get(logger, _('Game Shotmap'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list))
 
         # player corsi
         # pylint: disable=E0602
-        result.extend(_gamecorsi_get(logger, subtitle, ismobile, request, matchinfo_dic, shot_list, shift_list, periodevent_list, roster_list))
+        #result.extend(_gamecorsi_get(logger, subtitle, ismobile, request, matchinfo_dic, shot_list, shift_list, periodevent_list, roster_list))
 
         # puck possession
         # pylint: disable=E0602
-        result.append(_gamepuckpossession_get(logger, _('Puck possession'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list, color_dic))
+        #result.append(_gamepuckpossession_get(logger, _('Puck possession'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list, color_dic))
 
         # time on ice per player
         # pylint: disable=E0602
-        result.extend(_gametoi_get(logger, _('Time on Ice per Player'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shift_list))
+        #result.extend(_gametoi_get(logger, _('Time on Ice per Player'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shift_list))
 
         # pylint: disable=E0602
         result.append(_shiftchart_get(logger, _('Shift Chart'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shift_list, roster_list, periodevent_list, color_dic))
 
         # pylint: disable=E0602
-        result.append(_gamematchup_get(logger, _('5v5 Matchup'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list, shift_list, roster_list, periodevent_list))
+        #result.append(_gamematchup_get(logger, _('5v5 Matchup'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list, shift_list, roster_list, periodevent_list))
 
         # pylint: disable=E0602
-        result.append(_chatterchart_get(logger, _('Real-Time Fan Reactions'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list, periodevent_list, color_dic))
+        # result.append(_chatterchart_get(logger, _('Real-Time Fan Reactions'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list, periodevent_list, color_dic))
 
     else:
         result = {'error': 'Please specify a matchid'}
@@ -481,11 +481,20 @@ def _shiftchart_get(logger, title, subtitle, ismobile, request, _fkey, _fvalue, 
         (shiftsperplayer_dic) = shiftsperplayer_get(logger, matchinfo_dic, shift_list, roster_list, penalty_dic)
         goal_dic = goalsfromevents_get(logger, periodevent_list)
 
-        shift_chart = shiftsperplayerchart_create(logger, title, subtitle, ismobile, shiftsperplayer_dic, goal_dic, matchinfo_dic, color_dic)
+        # get chartdata
+        chart_data = shiftchartdata_get(logger, ismobile, shiftsperplayer_dic, goal_dic, matchinfo_dic, color_dic)
+        # create updates
+        shift_updates = shiftsupdates_get(logger, title, subtitle, ismobile, chart_data, matchinfo_dic, color_dic)
+        json_store('foo.json', shift_updates)
+        
+        # create chart
+        shift_chart = shiftsperplayerchart_create(logger, title, subtitle, ismobile, chart_data[5], matchinfo_dic, color_dic)
 
     stat_entry = {
         'title': title,
         'chart': shift_chart,
+        'updates': shift_updates,
+
         'table': {},
         'tabs': False
     }

@@ -9,7 +9,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "hockey_graphs.settings")
 import django
 django.setup()
 from rest.models import Shift
-from rest.functions.chartparameters import plotlines_color
+from rest.functions.chartparameters import plotlines_color, variables_get, title
 from rest.functions.helper import period_get, periodseconds_get
 
 def shift_add(logger, fkey, fvalue, data_dic):
@@ -139,12 +139,15 @@ def _datastructure_create(logger, period, tst_end, matchinfo_dic, img_width):
     """ create datastructure """
     logger.debug('_datastructure_create({0})'.format(period))
 
+    # calculate seconds belong to a period
+    (start_val, end_val) = periodseconds_get(logger, period, tst_end)
+
     result = {
         # player list contaimg playernames - first entry is the hometeam name
         'playername_list': ['<span><img src="{0}" width="{1}" height="{1}" alt="{2}"></img></span>'.format(matchinfo_dic['home_team_logo'], img_width, matchinfo_dic['home_team__shortcut'])],
 
         # list containing the shifts
-        'shifts_list': [{'start': 0, 'end': tst_end, 'y': 0, 'color': plotlines_color}],
+        'shifts_list': [{'start': start_val, 'end': end_val, 'y': 0, 'color': plotlines_color}],
 
         # plotlines for period ends
         'x2_plotlines_list': [
@@ -166,7 +169,6 @@ def _datastructure_create(logger, period, tst_end, matchinfo_dic, img_width):
 
     return result
 
-
 def shiftchartdata_get(logger, ismobile, shift_dic, goal_dic, matchinfo_dic, color_dic):
     """  aggregate shiftdate to create chart input """
     logger.debug('shiftsperplayer_get()')
@@ -181,7 +183,7 @@ def shiftchartdata_get(logger, ismobile, shift_dic, goal_dic, matchinfo_dic, col
     tst_end = 3600
 
     # global data_dic
-    data_dic = {0: {}, 1: {}, 2: {}, 3: {}}
+    data_dic = {5: {}, 1: {}, 2: {}, 3: {}}
 
     # create data_dic for output
     for period in data_dic:
@@ -209,12 +211,12 @@ def shiftchartdata_get(logger, ismobile, shift_dic, goal_dic, matchinfo_dic, col
                 player_string = tooltip_string
 
             # add player-name to x_list for 0 - subtree
-            data_dic[0]['playername_list'].append(player_string)
+            data_dic[5]['playername_list'].append(player_string)
 
             # add plotline in case the line-number changes
             if shift_dic[team][player_id]['line_number'] != line_number:
                 line_number = shift_dic[team][player_id]['line_number']
-                data_dic[0]['y_plotlines_list'].append({'color': plotlines_color, 'width': 2, 'value': player_cnt - 0.5})
+                data_dic[5]['y_plotlines_list'].append({'color': plotlines_color, 'width': 2, 'value': player_cnt - 0.5})
 
             # enumerate shifts
             for sh_idx, shift in enumerate(shift_dic[team][player_id]['shifts']):
@@ -230,7 +232,7 @@ def shiftchartdata_get(logger, ismobile, shift_dic, goal_dic, matchinfo_dic, col
                         # add plotline after 3rd period
                         data_dic[period]['x2_plotlines_list'].append({'color': plotlines_color, 'width': 2, 'value': 3600})
                         # we need to manipulate the first dataframe (headline for hometeam)
-                        data_dic[period]['shifts_list'][0]['end'] = tst_end
+                        data_dic[period]['shifts_list'][5]['end'] = tst_end
 
                 # add index, count and playername to shift
                 shift['y'] = player_cnt
@@ -241,8 +243,8 @@ def shiftchartdata_get(logger, ismobile, shift_dic, goal_dic, matchinfo_dic, col
                 shift['color'] = series_color
 
                 # add shifts to data_dic
-                data_dic[0]['shifts_list'].append(shift)
-                data_dic[period]['shifts_list'].append(shift)
+                data_dic[5]['shifts_list'].append(shift)
+                data_dic[shift_period]['shifts_list'].append(shift)
 
             # player change
             player_cnt += 1
@@ -250,7 +252,7 @@ def shiftchartdata_get(logger, ismobile, shift_dic, goal_dic, matchinfo_dic, col
         # add team separator
         if player_cnt <= 25:
             # empty line for visiting team
-            data_dic[0]['playername_list'].append('<span><img src="{0}" width="{1}" height="{1}" alt="{2}"></img></span>'.format(matchinfo_dic['visitor_team_logo'], img_width, matchinfo_dic['visitor_team__shortcut']))
+            data_dic[5]['playername_list'].append('<span><img src="{0}" width="{1}" height="{1}" alt="{2}"></img></span>'.format(matchinfo_dic['visitor_team_logo'], img_width, matchinfo_dic['visitor_team__shortcut']))
             # add pseudo shift for every period
             for period in data_dic:
                 # calculate seconds belong to a period
@@ -260,17 +262,17 @@ def shiftchartdata_get(logger, ismobile, shift_dic, goal_dic, matchinfo_dic, col
 
             player_cnt += 1
 
-        # fill x_lists
-        for period in data_dic:
-            # calculate seconds belong to a period
-            (start_val, end_val) = periodseconds_get(logger, period, tst_end)
-            for second in range(start_val, end_val + 1):
-                data_dic[period]['x_list'].append(math.ceil(second/60))
-                data_dic[period]['x2_list'].append(second)
+    # fill x_lists
+    for period in data_dic:
+        # calculate seconds belong to a period
+        (start_val, end_val) = periodseconds_get(logger, period, tst_end)
+        for second in range(start_val, end_val + 1):
+            data_dic[period]['x_list'].append(math.ceil(second/60))
+            data_dic[period]['x2_list'].append(second)
 
-            # add 5min ticks to 1st xbar
-            for second in range(start_val, end_val +1, 300):
-                data_dic[period]['xtickposition_list'].append(second)
+        # add 5min ticks to 1st xbar
+        for second in range(start_val, end_val +1, 300):
+            data_dic[period]['xtickposition_list'].append(second)
 
     for team in goal_dic:
         # color
@@ -287,7 +289,7 @@ def shiftchartdata_get(logger, ismobile, shift_dic, goal_dic, matchinfo_dic, col
             # get period of the shift
             goal_period = period_get(goal['time'], 'sec')
 
-            for ele in (0, goal_period):
+            for ele in (5, goal_period):
                 # add goal in overall tree an into period subtree
                 goal_position = _goalposition_get(ele, goal['time'])
                 data_dic[ele]['x2_plotlines_list'].append({'color': team_plotlines_color, 'width': 1, 'value': goal['time']})
@@ -298,9 +300,52 @@ def shiftchartdata_get(logger, ismobile, shift_dic, goal_dic, matchinfo_dic, col
 
 def _goalposition_get(period, timestamp):
     """ get postion of goals in dictionary """
-    if period == 0:
+    if period == 5:
         position = timestamp
     else:
         position = timestamp - ((period-1) * 1200)
 
     return position
+
+
+def shiftsupdates_get(logger, ctitle, subtitle, ismobile, chart_data, matchinfo_dic, color_dic):
+    """ get updates for shiftchart """
+
+    variable_dic = variables_get(ismobile)
+
+    # this is a dictionary containing period names
+    periodname_dic = {1: '1st',  2: '2nd', 3: '3rd', 4: 'OT', 5: 'Full Game'}
+
+    updates_dic = {}
+    for period in chart_data:
+        # create structure to store the updates
+        updates_dic[period] = {'name': periodname_dic[period], 'data': {}}
+        # update chart-title
+        updates_dic[period]['data']['subtitle'] = {'text': '{0} - {1}'.format(subtitle, periodname_dic[period])}
+
+        # update series
+        updates_dic[period]['data']['series'] = [{'name': ('Even Strength'), 'data': chart_data[period]['shifts_list'], 'color': '#404040', 'marker': {'symbol': 'square'}}]
+
+        updates_dic[period]['data']['xAxis'] = [{
+            'title': title(_('Game Time'), variable_dic['font_size']),
+            'labels': {'align': 'center', 'style': {'fontSize': variable_dic['font_size']}},
+            'categories': chart_data[period]['x_list'],
+            'tickPositions': chart_data[period]['xtickposition_list'],
+            'tickWidth': 1,
+            'grid': {'enabled': 0},
+            'opposite': 0,
+        },{
+            'title': title(_('Goals'), variable_dic['font_size'], offset=15),
+            'labels': {'useHTML': 1, 'align': 'center'},
+            'categories': chart_data[period]['x2_list'],
+            'tickPositions': chart_data[period]['x2_tickposition_list'],
+            'plotLines': chart_data[period]['x2_plotlines_list'],
+            'tickWidth': 0,
+            'grid': {'enabled': 0},
+            'opposite': 1,
+        }]
+
+    return updates_dic
+
+
+    # 'series': [{'name': ('Even Strength'), 'data': data_dic['shifts_list'], 'color': '#404040', 'marker': {'symbol': 'square'}}]]
