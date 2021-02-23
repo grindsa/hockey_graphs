@@ -42,20 +42,13 @@ def shiftsperplayerchart_create(logger, ctitle, csubtitle, ismobile, data_dic, m
         'xAxis': [{
             'title': title(_('Game Time'), variable_dic['font_size']),
             'labels': {'align': 'center', 'style': {'fontSize': variable_dic['font_size']}},
-            'categories': data_dic['x_list'],
-            'tickPositions':  data_dic['xtickposition_list'],
+            # 'categories': data_dic['x_list'],
+            'tickInterval': 300000,
+            'type': 'datetime',
+            #'tickPositions':  data_dic['xtickposition_list'],
             'tickWidth': 1,
             'grid': {'enabled': 0},
             'opposite': 0,
-            },{
-            'title': title(_('Goals'), variable_dic['font_size'], offset=15),
-            'labels': {'useHTML': 1, 'align': 'center'},
-            'categories': data_dic['x2_list'],
-            'tickPositions': data_dic['x2_tickposition_list'],
-            'plotLines': data_dic['x2_plotlines_list'],
-            'tickWidth': 0,
-            'grid': {'enabled': 0},
-            'opposite': 1,
             }],
 
         'yAxis': {

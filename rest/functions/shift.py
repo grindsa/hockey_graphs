@@ -151,8 +151,8 @@ def _datastructure_create(logger, period, tst_end, matchinfo_dic, img_width):
 
         # plotlines for period ends
         'x2_plotlines_list': [
-            {'color': plotlines_color, 'width': 2, 'value': 1200},
-            {'color': plotlines_color, 'width': 2, 'value': 2400},
+            {'color': plotlines_color, 'width': 2, 'value': 1200000},
+            {'color': plotlines_color, 'width': 2, 'value': 2400000},
         ],
 
         # plotlines for y axis
@@ -180,7 +180,7 @@ def shiftchartdata_get(logger, ismobile, shift_dic, goal_dic, matchinfo_dic, col
 
 
     # length of a match (will be used as range-end of x list)
-    tst_end = 3600
+    tst_end = 3600000
 
     # global data_dic
     data_dic = {5: {}, 1: {}, 2: {}, 3: {}}
@@ -226,11 +226,11 @@ def shiftchartdata_get(logger, ismobile, shift_dic, goal_dic, matchinfo_dic, col
 
                 # detect overtime shifts adjust timestamp and add plotline for end of 3rd period
                 if shift['start'] > tst_end or shift['end'] > tst_end:
-                    tst_end = 3900
+                    tst_end = 3900000
                     data_dic[4] = _datastructure_create(logger, period, tst_end, matchinfo_dic, img_width)
                     for period in data_dic:
                         # add plotline after 3rd period
-                        data_dic[period]['x2_plotlines_list'].append({'color': plotlines_color, 'width': 2, 'value': 3600})
+                        data_dic[period]['x2_plotlines_list'].append({'color': plotlines_color, 'width': 2, 'value': 3600000})
                         # we need to manipulate the first dataframe (headline for hometeam)
                         data_dic[period]['shifts_list'][5]['end'] = tst_end
 
@@ -238,6 +238,8 @@ def shiftchartdata_get(logger, ismobile, shift_dic, goal_dic, matchinfo_dic, col
                 shift['y'] = player_cnt
                 shift['cnt'] = player_cnt + 1
                 shift['playername'] = tooltip_string
+                shift['start'] = shift['start'] * 1000
+                shift['end'] = shift['end'] * 1000
                 shift['start_human'] = '{0:02d}:{1:02d}'.format(*divmod(shift['start'], 60))
                 shift['end_human'] = '{0:02d}:{1:02d}'.format(*divmod(shift['end'], 60))
                 shift['color'] = series_color
@@ -267,7 +269,8 @@ def shiftchartdata_get(logger, ismobile, shift_dic, goal_dic, matchinfo_dic, col
         # calculate seconds belong to a period
         (start_val, end_val) = periodseconds_get(logger, period, tst_end)
         for second in range(start_val, end_val + 1):
-            data_dic[period]['x_list'].append(math.ceil(second/60))
+            # data_dic[period]['x_list'].append(math.ceil(second/60))
+            data_dic[period]['x_list'].append(second)
             data_dic[period]['x2_list'].append(second)
 
         # add 5min ticks to 1st xbar
@@ -329,20 +332,13 @@ def shiftsupdates_get(logger, ctitle, subtitle, ismobile, chart_data, matchinfo_
         updates_dic[period]['data']['xAxis'] = [{
             'title': title(_('Game Time'), variable_dic['font_size']),
             'labels': {'align': 'center', 'style': {'fontSize': variable_dic['font_size']}},
-            'categories': chart_data[period]['x_list'],
-            'tickPositions': chart_data[period]['xtickposition_list'],
+            #'categories': chart_data[period]['x_list'],
+            'type': 'datetime',
+            'tickInterval': 300000,
+            #'tickPositions': chart_data[period]['xtickposition_list'],
             'tickWidth': 1,
             'grid': {'enabled': 0},
             'opposite': 0,
-        },{
-            'title': title(_('Goals'), variable_dic['font_size'], offset=15),
-            'labels': {'useHTML': 1, 'align': 'center'},
-            'categories': chart_data[period]['x2_list'],
-            'tickPositions': chart_data[period]['x2_tickposition_list'],
-            'plotLines': chart_data[period]['x2_plotlines_list'],
-            'tickWidth': 0,
-            'grid': {'enabled': 0},
-            'opposite': 1,
         }]
 
     return updates_dic
