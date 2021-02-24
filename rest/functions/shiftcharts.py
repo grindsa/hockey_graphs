@@ -46,6 +46,7 @@ def shiftsperplayerchart_create(logger, ctitle, csubtitle, ismobile, data_dic, m
             'tickInterval': 300000,
             'type': 'datetime',
             #'tickPositions':  data_dic['xtickposition_list'],
+            'plotLines': data_dic['x2_plotlines_list'],
             'tickWidth': 1,
             'grid': {'enabled': 0},
             'opposite': 0,

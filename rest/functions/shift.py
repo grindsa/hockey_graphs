@@ -150,10 +150,7 @@ def _datastructure_create(logger, period, tst_end, matchinfo_dic, img_width):
         'shifts_list': [{'start': start_val, 'end': end_val, 'y': 0, 'color': plotlines_color}],
 
         # plotlines for period ends
-        'x2_plotlines_list': [
-            {'color': plotlines_color, 'width': 2, 'value': 1200000},
-            {'color': plotlines_color, 'width': 2, 'value': 2400000},
-        ],
+        'x2_plotlines_list': [],
 
         # plotlines for y axis
         'y_plotlines_list': [],
@@ -166,6 +163,13 @@ def _datastructure_create(logger, period, tst_end, matchinfo_dic, img_width):
         'xtickposition_list': [],
         'x2_tickposition_list': []
     }
+
+    if period == 5:
+        result['x2_plotlines_list'].append({'color': plotlines_color, 'width': 2, 'value': 1200000})
+        result['x2_plotlines_list'].append({'color': plotlines_color, 'width': 2, 'value': 2400000})
+
+        #if tst_end > 3600000:
+        #    result['x2_plotlines_list'].append({'color': plotlines_color, 'width': 2, 'value': 3600000})
 
     return result
 
@@ -225,14 +229,15 @@ def shiftchartdata_get(logger, ismobile, shift_dic, goal_dic, matchinfo_dic, col
                 shift_period = period_get(shift['end'], 'sec')
 
                 # detect overtime shifts adjust timestamp and add plotline for end of 3rd period
-                if shift['start'] > tst_end or shift['end'] > tst_end:
+                if shift['start'] * 1000 > tst_end or shift['end'] * 1000 > tst_end:
                     tst_end = 3900000
                     data_dic[4] = _datastructure_create(logger, period, tst_end, matchinfo_dic, img_width)
                     for period in data_dic:
                         # add plotline after 3rd period
-                        data_dic[period]['x2_plotlines_list'].append({'color': plotlines_color, 'width': 2, 'value': 3600000})
-                        # we need to manipulate the first dataframe (headline for hometeam)
-                        data_dic[period]['shifts_list'][5]['end'] = tst_end
+                        if period == 5:
+                            data_dic[period]['x2_plotlines_list'].append({'color': plotlines_color, 'width': 2, 'value': 3600000})
+                            # we need to manipulate the first dataframe (headline for hometeam)
+                            data_dic[period]['shifts_list'][0]['end'] = tst_end
 
                 # add index, count and playername to shift
                 shift['y'] = player_cnt
@@ -295,7 +300,7 @@ def shiftchartdata_get(logger, ismobile, shift_dic, goal_dic, matchinfo_dic, col
             for ele in (5, goal_period):
                 # add goal in overall tree an into period subtree
                 goal_position = _goalposition_get(ele, goal['time'])
-                data_dic[ele]['x2_plotlines_list'].append({'color': team_plotlines_color, 'width': 1, 'value': goal['time']})
+                # data_dic[ele]['x2_plotlines_list'].append({'color': team_plotlines_color, 'width': 1, 'value': goal['time']})
                 data_dic[ele]['x2_tickposition_list'].append(goal['time'])
                 data_dic[ele]['x2_list'][goal_position] = '<span><img src="{0}" width="{1}" height="{1}" alt="{2}"></img></span>'.format(logo, img_width, alt)
 
@@ -335,6 +340,7 @@ def shiftsupdates_get(logger, ctitle, subtitle, ismobile, chart_data, matchinfo_
             #'categories': chart_data[period]['x_list'],
             'type': 'datetime',
             'tickInterval': 300000,
+            'plotLines': chart_data[period]['x2_plotlines_list'],
             #'tickPositions': chart_data[period]['xtickposition_list'],
             'tickWidth': 1,
             'grid': {'enabled': 0},
