@@ -353,4 +353,7 @@ def shiftsupdates_get(logger, subtitle, ismobile, chart_data):
             'opposite': 1,
         }]
 
+    # default checked value in chart
+    updates_dic[5]['checked'] = True
+
     return updates_dic

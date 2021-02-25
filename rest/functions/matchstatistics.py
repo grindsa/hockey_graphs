@@ -25,7 +25,7 @@ from rest.functions.roster import roster_get
 from rest.functions.periodevent import periodevent_get, penaltyplotlines_get, goalsfromevents_get, goalplotlines_get, penaltiesfromevents_get
 from rest.functions.playerstat import playerstat_get, toifromplayerstats_get, matchupmatrix_get, toipppk_get
 from rest.functions.chartparameters import chart_colors_get
-from rest.functions.helper import url_build, mobile_check, json_store
+from rest.functions.helper import url_build, mobile_check
 
 def matchstatistics_get(logger, request, fkey=None, fvalue=None):
     """ matchstatistics grouped by days """
@@ -73,15 +73,15 @@ def matchstatistics_get(logger, request, fkey=None, fvalue=None):
 
         # create shotflowchart
         # pylint: disable=E0602
-        #result.append(_gameflow_get(logger, _('Gameflow'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list, color_dic))
+        result.append(_gameflow_get(logger, _('Gameflow'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list, color_dic))
 
         # create chart for shotstatus
         # pylint: disable=E0602
-        #result.append(_gameshootstatus_get(logger, _('Shots by Result'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list))
+        result.append(_gameshootstatus_get(logger, _('Shots by Result'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list))
 
         # create shotzone chart
         # pylint: disable=E0602
-        # result.append(_gamezoneshots_get(logger, _('Shots per Zone'), subtitle, ismobile, request, matchinfo_dic, shot_list))
+        result.append(_gamezoneshots_get(logger, _('Shots per Zone'), subtitle, ismobile, request, matchinfo_dic, shot_list))
 
         # shotmap
         # pylint: disable=E0602
@@ -89,28 +89,28 @@ def matchstatistics_get(logger, request, fkey=None, fvalue=None):
 
         # shotmap
         # pylint: disable=E0602
-        #result.append(_gameshotmap_get(logger, _('Game Shotmap'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list))
+        result.append(_gameshotmap_get(logger, _('Game Shotmap'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list))
 
         # player corsi
         # pylint: disable=E0602
-        #result.extend(_gamecorsi_get(logger, subtitle, ismobile, request, matchinfo_dic, shot_list, shift_list, periodevent_list, roster_list))
+        result.extend(_gamecorsi_get(logger, subtitle, ismobile, request, matchinfo_dic, shot_list, shift_list, periodevent_list, roster_list))
 
         # puck possession
         # pylint: disable=E0602
-        #result.append(_gamepuckpossession_get(logger, _('Puck possession'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list, color_dic))
+        result.append(_gamepuckpossession_get(logger, _('Puck possession'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list, color_dic))
 
         # time on ice per player
         # pylint: disable=E0602
-        #result.extend(_gametoi_get(logger, _('Time on Ice per Player'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shift_list))
+        result.extend(_gametoi_get(logger, _('Time on Ice per Player'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shift_list))
 
         # pylint: disable=E0602
         result.append(_shiftchart_get(logger, _('Shift Chart'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shift_list, roster_list, periodevent_list, color_dic))
 
         # pylint: disable=E0602
-        #result.append(_gamematchup_get(logger, _('5v5 Matchup'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list, shift_list, roster_list, periodevent_list))
+        result.append(_gamematchup_get(logger, _('5v5 Matchup'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list, shift_list, roster_list, periodevent_list))
 
         # pylint: disable=E0602
-        # result.append(_chatterchart_get(logger, _('Real-Time Fan Reactions'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list, periodevent_list, color_dic))
+        result.append(_chatterchart_get(logger, _('Real-Time Fan Reactions'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list, periodevent_list, color_dic))
 
     else:
         result = {'error': 'Please specify a matchid'}
@@ -465,30 +465,31 @@ def _chatterchart_get(logger, title, subtitle, ismobile, request, fkey, fvalue, 
 
     return stat_entry
 
-def _shiftchart_get(logger, title, subtitle, ismobile, request, _fkey, _fvalue, matchinfo_dic, shift_list, roster_list, periodevent_list, color_dic):
+def _shiftchart_get(logger, title, subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shift_list, roster_list, periodevent_list, color_dic):
     """ game matchup """
     logger.debug('_shiftchart_get()')
 
     shift_chart = {}
+    shift_updates = {}
 
     # stat_entry = {'title': title, 'table': {}, 'tabs': False, 'chart': {}}
     if shift_list:
 
         # get list of penalties
         penalty_dic = penaltiesfromevents_get(logger, periodevent_list)
+        plotlbands_list = penaltyplotlines_get(logger, fkey, fvalue, color_dic['home_team_color_penalty_primary'], color_dic['visitor_team_color_penalty_secondary'], scale='millisecond')
 
         # get matrix showing the different player relations
         (shiftsperplayer_dic) = shiftsperplayer_get(logger, matchinfo_dic, shift_list, roster_list, penalty_dic)
         goal_dic = goalsfromevents_get(logger, periodevent_list)
 
         # get chartdata
-        chart_data = shiftchartdata_get(logger, ismobile, shiftsperplayer_dic, goal_dic, matchinfo_dic, color_dic)
+        chart_data = shiftchartdata_get(logger, ismobile, shiftsperplayer_dic, goal_dic, matchinfo_dic, plotlbands_list, color_dic)
         # create updates
-        shift_updates = shiftsupdates_get(logger, title, subtitle, ismobile, chart_data, matchinfo_dic, color_dic)
-        json_store('foo.json', shift_updates)
-        
+        shift_updates = shiftsupdates_get(logger, subtitle, ismobile, chart_data)
+
         # create chart
-        shift_chart = shiftsperplayerchart_create(logger, title, subtitle, ismobile, chart_data[5], matchinfo_dic, color_dic)
+        shift_chart = shiftsperplayerchart_create(logger, title, subtitle, ismobile, chart_data[5])
 
     stat_entry = {
         'title': title,
