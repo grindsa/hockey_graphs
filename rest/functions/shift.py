@@ -67,7 +67,7 @@ def toifromshifts_get(logger, matchinfo_dic, shift_list):
 
 def _shifttype_get(logger, team, start_time, end_time, penalty_dic):
     """ get type thype of a shift (pp, pk, normal) """
-    logger.debug('_shifttype_get()')
+    # logger.debug('_shifttype_get()')
 
     # home penalty during this shift
     # pylint: disable=R1703
@@ -272,12 +272,9 @@ def shiftchartdata_get(logger, ismobile, shift_dic, goal_dic, matchinfo_dic, col
 
     # fill x_lists
     for period in data_dic:
+
         # calculate seconds belong to a period
         (start_val, end_val) = periodseconds_get(logger, period, tst_end)
-        for second in range(start_val, end_val + 1):
-            # data_dic[period]['x_list'].append(math.ceil(second/60))
-            data_dic[period]['x_list'].append(second)
-            data_dic[period]['x2_list'].append(second)
 
         # add 5min ticks to 1st xbar
         for second in range(start_val, end_val +1, 300):
@@ -301,10 +298,9 @@ def shiftchartdata_get(logger, ismobile, shift_dic, goal_dic, matchinfo_dic, col
             for ele in (5, goal_period):
                 # add goal in overall tree an into period subtree
                 goal_position = _goalposition_get(ele, goal['time'])
-                # data_dic[ele]['x2_plotlines_list'].append({'color': team_plotlines_color, 'width': 1, 'value': goal['time']})
-                data_dic[ele]['x2_tickposition_list'].append(goal['time'])
-                data_dic[ele]['x2_list'][goal_position] = '<span><img src="{0}" width="{1}" height="{1}" alt="{2}"></img></span>'.format(logo, img_width, alt)
-
+                data_dic[ele]['x2_plotlines_list'].append(
+                    {'color': team_plotlines_color, 'width': 1, 'value': goal['time'] * 1000,
+                    'label': {'text': '<span><img src="{0}" width="{1}" height="{1}" alt="{2}"></img></span>'.format(logo, img_width, alt), 'align': 'center', 'verticalAlign': 'top', 'textAlign': 'center', 'useHTML': 1, 'rotation': 360, 'y': -13}})
     return data_dic
 
 def _goalposition_get(period, timestamp):
@@ -341,11 +337,19 @@ def shiftsupdates_get(logger, ctitle, subtitle, ismobile, chart_data, matchinfo_
             #'categories': chart_data[period]['x_list'],
             'type': 'datetime',
             'tickInterval': 300000,
-            'plotLines': chart_data[period]['x2_plotlines_list'],
             #'tickPositions': chart_data[period]['xtickposition_list'],
             'tickWidth': 1,
             'grid': {'enabled': 0},
             'opposite': 0,
+        },{
+          'title': title(_('Goals'), variable_dic['font_size'], offset=15),
+          'labels': {'useHTML': 1, 'align': 'center'},
+          #'categories': chart_data[period]['x2_list'],
+          #'tickPositions': chart_data[period]['x2_tickposition_list'],
+          'plotLines': chart_data[period]['x2_plotlines_list'],
+          'tickWidth': 0,
+          'grid': {'enabled': 0},
+          'opposite': 1,
         }]
 
     return updates_dic
