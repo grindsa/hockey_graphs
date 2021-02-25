@@ -168,9 +168,6 @@ def _datastructure_create(logger, period, tst_end, matchinfo_dic, img_width):
         result['x2_plotlines_list'].append({'color': plotlines_color, 'width': 2, 'value': 1200000})
         result['x2_plotlines_list'].append({'color': plotlines_color, 'width': 2, 'value': 2400000})
 
-        #if tst_end > 3600000:
-        #    result['x2_plotlines_list'].append({'color': plotlines_color, 'width': 2, 'value': 3600000})
-
     return result
 
 def shiftchartdata_get(logger, ismobile, shift_dic, goal_dic, matchinfo_dic, color_dic):
@@ -238,6 +235,10 @@ def shiftchartdata_get(logger, ismobile, shift_dic, goal_dic, matchinfo_dic, col
                             data_dic[period]['x2_plotlines_list'].append({'color': plotlines_color, 'width': 2, 'value': 3600000})
                             # we need to manipulate the first dataframe (headline for hometeam)
                             data_dic[period]['shifts_list'][0]['end'] = tst_end
+                        if period == 4:
+                            # set x_scale for OT
+                            data_dic[period]['shifts_list'][0]['start'] = 3600000
+                            data_dic[period]['shifts_list'][0]['end'] = 3900000
 
                 # add index, count and playername to shift
                 shift['y'] = player_cnt

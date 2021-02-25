@@ -311,6 +311,9 @@ def period_get(value, vtype='min'):
             period = 3
         else:
             period = 4
+    elif vtype == 'sec':
+        period = math.ceil(value/1200)
+
     return period
 
 def sliding_window(logger, in_list, size=5):
@@ -330,5 +333,21 @@ def sliding_window(logger, in_list, size=5):
 
 def path_check_create(logger, path):
     """ check save path - create if does not exist """
-    logger.debug('_path_check({0})'.format(path))
+    logger.debug('path_check({0})'.format(path))
     pathlib.Path(path).mkdir(parents=True, exist_ok=True)
+
+def periodseconds_get(logger, period, tst_end):
+    """ get start/end value for a period """
+    logger.debug('periodseconds_get({0})'.format(period))
+
+    if period == 5:
+        start_val = 0
+        end_val = tst_end
+    elif period == 4:
+        start_val = 3600000
+        end_val = 3900000
+    else:
+        start_val = (period - 1) * 1200000
+        end_val = period * 1200000
+
+    return (start_val, end_val)
