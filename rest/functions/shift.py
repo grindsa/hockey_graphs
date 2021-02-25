@@ -65,8 +65,9 @@ def toifromshifts_get(logger, matchinfo_dic, shift_list):
 
     return shift_dic
 
-def _shifttype_get(logger, team, start_time, end_time, penalty_dic):
+def _shifttype_get(_logger, team, start_time, end_time, penalty_dic):
     """ get type thype of a shift (pp, pk, normal) """
+    # pylint: disable=E0602
     # logger.debug('_shifttype_get()')
 
     # home penalty during this shift
@@ -170,7 +171,7 @@ def _datastructure_create(logger, period, tst_end, matchinfo_dic, img_width):
 
     return result
 
-def shiftchartdata_get(logger, ismobile, shift_dic, goal_dic, matchinfo_dic, color_dic):
+def shiftchartdata_get(logger, ismobile, shift_dic, goal_dic, matchinfo_dic, plotbands_list, color_dic):
     """  aggregate shiftdate to create chart input """
     logger.debug('shiftsperplayer_get()')
 
@@ -220,7 +221,7 @@ def shiftchartdata_get(logger, ismobile, shift_dic, goal_dic, matchinfo_dic, col
                 data_dic[5]['y_plotlines_list'].append({'color': plotlines_color, 'width': 2, 'value': player_cnt - 0.5})
 
             # enumerate shifts
-            for sh_idx, shift in enumerate(shift_dic[team][player_id]['shifts']):
+            for _sh_idx, shift in enumerate(shift_dic[team][player_id]['shifts']):
 
                 # get period of the shift
                 shift_period = period_get(shift['end'], 'sec')
@@ -273,6 +274,9 @@ def shiftchartdata_get(logger, ismobile, shift_dic, goal_dic, matchinfo_dic, col
     # fill x_lists
     for period in data_dic:
 
+        # add plotband containing penalty
+        data_dic[period]['plotbands_list'] = plotbands_list
+
         # calculate seconds belong to a period
         (start_val, end_val) = periodseconds_get(logger, period, tst_end)
 
@@ -285,7 +289,7 @@ def shiftchartdata_get(logger, ismobile, shift_dic, goal_dic, matchinfo_dic, col
         if team == 'home_team':
             team_plotlines_color = color_dic['home_team_color_primary']
             logo = matchinfo_dic['home_team_logo']
-            alt =  matchinfo_dic['home_team__shortcut']
+            alt = matchinfo_dic['home_team__shortcut']
         else:
             team_plotlines_color = color_dic['visitor_team_color_secondary']
             logo = matchinfo_dic['visitor_team_logo']
@@ -297,10 +301,7 @@ def shiftchartdata_get(logger, ismobile, shift_dic, goal_dic, matchinfo_dic, col
 
             for ele in (5, goal_period):
                 # add goal in overall tree an into period subtree
-                goal_position = _goalposition_get(ele, goal['time'])
-                data_dic[ele]['x2_plotlines_list'].append(
-                    {'color': team_plotlines_color, 'width': 1, 'value': goal['time'] * 1000,
-                    'label': {'text': '<span><img src="{0}" width="{1}" height="{1}" alt="{2}"></img></span>'.format(logo, img_width, alt), 'align': 'center', 'verticalAlign': 'top', 'textAlign': 'center', 'useHTML': 1, 'rotation': 360, 'y': -13}})
+                data_dic[ele]['x2_plotlines_list'].append({'color': team_plotlines_color, 'width': 2, 'value': goal['time'] * 1000, 'zIndex': 5, 'dashStyle': 'Dash', 'label': {'text': '<span><img src="{0}" width="{1}" height="{1}" alt="{2}"></img></span>'.format(logo, img_width, alt), 'align': 'center', 'verticalAlign': 'top', 'textAlign': 'center', 'useHTML': 1, 'rotation': 360, 'x': -1, 'y': -13}})
     return data_dic
 
 def _goalposition_get(period, timestamp):
@@ -312,14 +313,14 @@ def _goalposition_get(period, timestamp):
 
     return position
 
-
-def shiftsupdates_get(logger, ctitle, subtitle, ismobile, chart_data, matchinfo_dic, color_dic):
+def shiftsupdates_get(logger, subtitle, ismobile, chart_data):
     """ get updates for shiftchart """
-
+    logger.debug('shiftsupdates_get()')
+    # pylint: disable=E0602
     variable_dic = variables_get(ismobile)
 
     # this is a dictionary containing period names
-    periodname_dic = {1: '1st',  2: '2nd', 3: '3rd', 4: 'OT', 5: 'Full Game'}
+    periodname_dic = {1: '1st', 2: '2nd', 3: '3rd', 4: 'OT', 5: 'Full Game'}
 
     updates_dic = {}
     for period in chart_data:
@@ -341,18 +342,15 @@ def shiftsupdates_get(logger, ctitle, subtitle, ismobile, chart_data, matchinfo_
             'tickWidth': 1,
             'grid': {'enabled': 0},
             'opposite': 0,
-        },{
-          'title': title(_('Goals'), variable_dic['font_size'], offset=15),
-          'labels': {'useHTML': 1, 'align': 'center'},
-          #'categories': chart_data[period]['x2_list'],
-          #'tickPositions': chart_data[period]['x2_tickposition_list'],
-          'plotLines': chart_data[period]['x2_plotlines_list'],
-          'tickWidth': 0,
-          'grid': {'enabled': 0},
-          'opposite': 1,
+        }, {
+            'title': title(_('Goals'), variable_dic['font_size'], offset=15),
+            'labels': {'useHTML': 1, 'align': 'center'},
+            'tickPositions': [],
+            'plotLines': chart_data[period]['x2_plotlines_list'],
+            'plotBands': chart_data[period]['plotbands_list'],
+            'tickWidth': 0,
+            'grid': {'enabled': 0},
+            'opposite': 1,
         }]
 
     return updates_dic
-
-
-    # 'series': [{'name': ('Even Strength'), 'data': data_dic['shifts_list'], 'color': '#404040', 'marker': {'symbol': 'square'}}]]

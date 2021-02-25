@@ -1,21 +1,14 @@
 # -*- coding: utf-8 -*-
 """ time on ice charts """
 # pylint: disable=E0401
-import math
-from rest.functions.chartparameters import chartstyle, credit, exporting, title, subtitle, chart_color4, legend, font_size, variables_get, text_color, plotlines_color, responsive_y1
+from rest.functions.chartparameters import chartstyle, credit, exporting, title, subtitle, font_size, variables_get, responsive_y1
 
-def shiftsperplayerchart_create(logger, ctitle, csubtitle, ismobile, data_dic, matchinfo_dic, color_dic):
+def shiftsperplayerchart_create(logger, ctitle, csubtitle, ismobile, data_dic):
     # pylint: disable=E0602, R0914
     """ create shift per player chart """
     logger.debug('shiftsperplayerchart_create()')
 
     variable_dic = variables_get(ismobile)
-
-    if ismobile:
-        img_width = 15
-    else:
-        img_width = 23
-
 
     chart_options = {
         'ctype': 'gantt',
@@ -42,24 +35,20 @@ def shiftsperplayerchart_create(logger, ctitle, csubtitle, ismobile, data_dic, m
         'xAxis': [{
             'title': title(_('Game Time'), variable_dic['font_size']),
             'labels': {'align': 'center', 'style': {'fontSize': variable_dic['font_size']}},
-            # 'categories': data_dic['x_list'],
             'tickInterval': 300000,
             'type': 'datetime',
-            #'tickPositions':  data_dic['xtickposition_list'],
             'tickWidth': 1,
             'grid': {'enabled': 0},
             'opposite': 0,
-        },{
+        }, {
             'title': title(_('Goals'), variable_dic['font_size'], offset=15),
-            #'labels': {'useHTML': 1, 'align': 'center'},
-            #'categories': data_dic['x2_list'],
-            'tickPositions': data_dic['x2_tickposition_list'],
-            # 'tickPositions': [],
+            'tickPositions': [],
             'plotLines': data_dic['x2_plotlines_list'],
+            'plotBands': data_dic['plotbands_list'],
             'tickWidth': 0,
             'grid': {'enabled': 0},
-            'opposite': 1,
-          }],
+            'opposite': 1
+        }],
 
         'yAxis': {
             'title': title('', font_size),

@@ -39,7 +39,7 @@ def periodevent_get(logger, fkey, fvalue, vlist=('match_id', 'period_event')):
         event_dic = {}
     return event_dic
 
-def penaltyplotlines_get(logger, fkey, matchid, home_color=chart_color5, visitor_color=chart_color6):
+def penaltyplotlines_get(logger, fkey, matchid, home_color=chart_color5, visitor_color=chart_color6, scale='min'):
     """ create plotlines for penalites """
     logger.debug('penalty_plotlines_get({0})'.format(matchid))
 
@@ -51,11 +51,18 @@ def penaltyplotlines_get(logger, fkey, matchid, home_color=chart_color5, visitor
         for event in event_dic[period]:
             # filter penalties
             if event['type'] == 'penalty':
-                # convert time to minute
-                min_from = math.ceil(event['data']['time']['from']['scoreboardTime']/60)
-                min_to = math.ceil(event['data']['time']['to']['scoreboardTime']/60)
+                if scale == 'second':
+                    tst_from = event['data']['time']['from']['scoreboardTime']
+                    tst_to = event['data']['time']['to']['scoreboardTime']
+                elif scale == 'millisecond':
+                    tst_from = event['data']['time']['from']['scoreboardTime'] * 1000
+                    tst_to = event['data']['time']['to']['scoreboardTime'] * 1000
+                else:
+                    # convert time to minute
+                    tst_from = math.ceil(event['data']['time']['from']['scoreboardTime']/60)
+                    tst_to = math.ceil(event['data']['time']['to']['scoreboardTime']/60)
                 # create dictionary
-                tmp_dic = {'from': min_from, 'to': min_to}
+                tmp_dic = {'from': tst_from, 'to': tst_to}
                 if event['data']['team'] == 'home':
                     tmp_dic['color'] = home_color
                 elif event['data']['team'] == 'visitor':
