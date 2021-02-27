@@ -2,6 +2,7 @@
 """ list of functions for shots """
 import math
 # pylint: disable=E0401, C0302
+from rest.functions.helper import highlowabs_get
 from rest.functions.chartparameters import chartstyle, credit, exporting, responsive_gameflow, responsive_y1, responsive_y1_label, responsive_y2, responsive_bubble, plotoptions_marker_disable, title, subtitle, legend, tooltip, labels, font_size, font_size_mobile, legend_valign_mobile, corner_annotations, variables_get, gameflow_annotations, shotzonelabel, puckpossession_annotations
 from rest.functions.chartparameters import text_color, plotlines_color, chart_color1, chart_color2, chart_color3, chart_color4, chart_color6, chart_color8, shot_posthit_color, shot_missed_color, shot_blocked_color, shot_goal_color, shot_sog_color, line_color, line1_color, line2_color, line3_color, line4_color, line5_color
 
@@ -588,7 +589,7 @@ def shotzonechart_create(logger, ctitle, csubtitle, ismobile, request, shotzonea
 
     return chart_options
 
-def gamecorsichart_create(logger, ctitle, csubtitle, ismobile, player_corsi_dic):
+def gameplayercorsichart_create(logger, ctitle, csubtitle, ismobile, player_corsi_dic):
     """ create corsi chart for a certain game """
     # pylint: disable=E0602, R0915
     logger.debug('gamecorsichart_create()')
@@ -1221,4 +1222,83 @@ def break_overview_chart(logger, ctitle, csubtitle, ismobile, data_dic):
             {'index': 1, 'name': _('leading to goal against'), 'data': data_dic['goals_break_against_pctg'], 'color': chart_color2},
         ]
     }
+    return chart_options
+
+# pylint: disable=R0914
+def gamecorsichart_create(logger, ctitle, csubtitle, ismobile, corsi_dic, plotbands_list, machinfo_dic, color_dic):
+    # pylint: disable=E0602
+    """ create shotsum chart """
+    logger.debug('shotsumchart_create()')
+
+    variable_dic = variables_get(ismobile)
+
+    minute_list = corsi_dic.keys()
+    value_list = corsi_dic.values()
+
+    abs_value = highlowabs_get(logger, value_list)
+    # abs_value = 20
+
+    chart_options = {
+
+        'chart': {
+            'type': 'line',
+            'height': '80%',
+            'alignTicks': 0,
+            'style': chartstyle()
+        },
+
+        'exporting': exporting(filename=ctitle),
+        'title': title(ctitle, variable_dic['title_size'], decoration=True),
+        'subtitle': subtitle(csubtitle, variable_dic['subtitle_size']),
+        'plotOptions': plotoptions_marker_disable('line'),
+        'legend': legend(),
+
+        'xAxis': {
+            'categories': minute_list,
+            'title': {
+                'text': _('Game Time'),
+                'style': {'color': text_color, 'font-size': font_size},
+            },
+            'labels': {'style': {'fontSize': font_size}},
+            'tickInterval': 5,
+            'showFirstLabel': 1,
+            'showLastLabel': 1,
+            'plotLines': [
+                {'color': plotlines_color, 'width': 2, 'value': 20},
+                {'color': plotlines_color, 'width': 2, 'value': 40},
+                {'color': plotlines_color, 'width': 2, 'value': 60}
+                ],
+            'plotBands': plotbands_list,
+
+        },
+
+        'yAxis':[
+            {
+                'title': title(_('Shots per minute'), font_size),
+                'max': abs_value + 1,
+                'min': (abs_value + 1) * -1,
+                # 'tickInterval': 1,
+                'maxPadding': 0.1,
+                'labels': labels(),
+                'plotLines': [{'color': plotlines_color, 'width': 2, 'value': 0}],
+            }],
+
+        'series': [{
+            'name': 'Corsi +/- (Even Strength)',
+            'data': value_list,
+            'step': 'right',
+            'color': '#000000'
+        },{
+            'name': '{0} {1}'.format(_('Goals'), machinfo_dic['home_team__shortcut']),
+            'color': color_dic['home_team_color_primary'],
+            'marker': {'symbol': 'circle'},
+            'type': 'scatter',
+        }, {
+            'name': '{0} {1}'.format(_('Goals'), machinfo_dic['visitor_team__shortcut']),
+            'color': color_dic['visitor_team_color_secondary'],
+            'marker': {'symbol': 'circle'},
+            'type': 'scatter',
+        }]
+    }
+
     return chart_options
