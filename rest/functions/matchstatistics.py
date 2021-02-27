@@ -8,11 +8,11 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "hockey_graphs.settings")
 import django
 django.setup()
 from django.conf import settings
-from rest.functions.corsi import gamecorsi_get, gameshots5v5_get
+from rest.functions.corsi import gamecorsi_get, gameplayercorsi_get, gameshots5v5_get
 from rest.functions.socialnetworkeventcharts import chatterchart_create
 from rest.functions.socialnetworkevent import socialnetworkevent_get, eventspermin_combine
 from rest.functions.shot import shot_list_get, shotspermin_count, shotspermin_aggregate, shotstatus_count, shotstatus_aggregate, shotsperzone_count, shotsperzone_aggregate, shotcoordinates_get, gameflow_get
-from rest.functions.shotcharts import shotsumchart_create, gameflowchart_create, shotstatussumchart_create, shotmapchart_create, gamecorsichart_create, gamecorsippctgchart_create, puckpossessionchart_create, shotzonechart_create
+from rest.functions.shotcharts import shotsumchart_create, gameflowchart_create, shotstatussumchart_create, shotmapchart_create, gamecorsichart_create, gameplayercorsichart_create, gamecorsippctgchart_create, puckpossessionchart_create, shotzonechart_create
 from rest.functions.toicharts import gametoichart_create, gametoipppkchart_create
 from rest.functions.heatmapcharts import gamematchupchart_create
 from rest.functions.heatmap import gameheatmapdata_get
@@ -60,6 +60,9 @@ def matchstatistics_get(logger, request, fkey=None, fvalue=None):
         # get rosters
         roster_list = roster_get(logger, fkey, fvalue, ['roster'])
 
+        # create plotlines to be addedd to chart
+        plotbands_list = penaltyplotlines_get(logger, fkey, fvalue, color_dic['home_team_color_penalty_primary'], color_dic['visitor_team_color_penalty_secondary'])
+
         (_sf_5v5, _sa_5v5, _sogf_5v5, _soga_5v5, shot_list_5v5) = gameshots5v5_get(logger, matchinfo_dic, 'foo', shot_list, shift_list, periodevent_list)
 
         result = []
@@ -93,7 +96,7 @@ def matchstatistics_get(logger, request, fkey=None, fvalue=None):
 
         # player corsi
         # pylint: disable=E0602
-        result.extend(_gamecorsi_get(logger, subtitle, ismobile, request, matchinfo_dic, shot_list, shift_list, periodevent_list, roster_list))
+        result.extend(_gamecorsi_get(logger, subtitle, ismobile, request, matchinfo_dic, shot_list, shot_list_5v5, shift_list, periodevent_list, roster_list, plotbands_list, color_dic))
 
         # puck possession
         # pylint: disable=E0602
@@ -298,30 +301,44 @@ def _gameshotmap_get(logger, title, subtitle, ismobile, request, fkey, fvalue, m
 
     return stat_entry
 
-def _gamecorsi_get(logger, subtitle, ismobile, request, matchinfo_dic, shot_list, shift_list, periodevent_list, roster_list):
+def _gamecorsi_get(logger, subtitle, ismobile, request, matchinfo_dic, shot_list, shot_list_5v5, shift_list, periodevent_list, roster_list, plotbands_list, color_dic):
     """ get corsi """
-    # pylint: disable=R0914
+    # pylint: disable=R0913, R0914
     logger.debug('_gamecorsi_get()')
 
     stat_entry_list = []
 
+    if shot_list_5v5:
+        game_corsi_dic = gamecorsi_get(logger, shot_list, shot_list_5v5, matchinfo_dic, color_dic)
+
+        # pylint: disable=E0602
+        title = _('Shot pressure (Corsi)')
+
+        stat_entry_list.append({
+            'title': title,
+            'chart': gamecorsichart_create(logger, title, subtitle, ismobile, game_corsi_dic, plotbands_list, matchinfo_dic, color_dic),
+            'table': [],
+            'tabs': False
+        })
+
     if shot_list:
 
         # get corsi values per player for a certain match
-        game_corsi_dic = gamecorsi_get(logger, shot_list, shift_list, periodevent_list, matchinfo_dic, roster_list)
+        game_playercorsi_dic = gameplayercorsi_get(logger, shot_list, shift_list, periodevent_list, matchinfo_dic, roster_list)
+
         # pylint: disable=E0602
         title = _('Shot attempts at even strength (CF, CA)')
         ctitle = _('Shot attempts at even strength')
 
-        if game_corsi_dic:
+        if game_playercorsi_dic:
             # corsi absolute chart and table
             corsi_chart_abs = [
-                gamecorsichart_create(logger, '{1} - {0}'.format(ctitle, matchinfo_dic['home_team__shortcut']), subtitle, ismobile, game_corsi_dic['home_team']),
-                gamecorsichart_create(logger, '{1} - {0}'.format(ctitle, matchinfo_dic['visitor_team__shortcut']), subtitle, ismobile, game_corsi_dic['visitor_team'])
+                gameplayercorsichart_create(logger, '{1} - {0}'.format(ctitle, matchinfo_dic['home_team__shortcut']), subtitle, ismobile, game_playercorsi_dic['home_team']),
+                gameplayercorsichart_create(logger, '{1} - {0}'.format(ctitle, matchinfo_dic['visitor_team__shortcut']), subtitle, ismobile, game_playercorsi_dic['visitor_team'])
             ]
             corsi_table_abs = [
-                gamecorsi_table(logger, ismobile, game_corsi_dic['home_team'], matchinfo_dic),
-                gamecorsi_table(logger, ismobile, game_corsi_dic['visitor_team'], matchinfo_dic)
+                gamecorsi_table(logger, ismobile, game_playercorsi_dic['home_team'], matchinfo_dic),
+                gamecorsi_table(logger, ismobile, game_playercorsi_dic['visitor_team'], matchinfo_dic)
             ]
         else:
             corsi_chart_abs = [{}, {}]
@@ -336,15 +353,15 @@ def _gamecorsi_get(logger, subtitle, ismobile, request, matchinfo_dic, shot_list
         })
 
         title = _('Shot attempts at even strength (CF, CA)')
-        if game_corsi_dic:
+        if game_playercorsi_dic:
             # corsi percentage chart and table
             corsi_chart_pctg = [
-                gamecorsippctgchart_create(logger, '{1} - {0}'.format(ctitle, matchinfo_dic['home_team__shortcut']), subtitle, ismobile, game_corsi_dic['home_team']),
-                gamecorsippctgchart_create(logger, '{1} - {0}'.format(ctitle, matchinfo_dic['visitor_team__shortcut']), subtitle, ismobile, game_corsi_dic['visitor_team'])
+                gamecorsippctgchart_create(logger, '{1} - {0}'.format(ctitle, matchinfo_dic['home_team__shortcut']), subtitle, ismobile, game_playercorsi_dic['home_team']),
+                gamecorsippctgchart_create(logger, '{1} - {0}'.format(ctitle, matchinfo_dic['visitor_team__shortcut']), subtitle, ismobile, game_playercorsi_dic['visitor_team'])
             ]
             corsi_table_pctg = [
-                gamecorsi_table(logger, ismobile, game_corsi_dic['home_team'], matchinfo_dic, 'cf_pctg'),
-                gamecorsi_table(logger, ismobile, game_corsi_dic['visitor_team'], matchinfo_dic, 'cf_pctg')
+                gamecorsi_table(logger, ismobile, game_playercorsi_dic['home_team'], matchinfo_dic, 'cf_pctg'),
+                gamecorsi_table(logger, ismobile, game_playercorsi_dic['visitor_team'], matchinfo_dic, 'cf_pctg')
             ]
         else:
             corsi_chart_pctg = [{}, {}]
@@ -406,10 +423,7 @@ def _gametoi_get(logger, title, subtitle, ismobile, request, fkey, fvalue, match
             gametoipppkchart_create(logger, '{1} - {0}'.format(title, matchinfo_dic['home_team__shortcut']), subtitle, ismobile, toipppk_dic['home_team'], matchinfo_dic['home_team__color_primary'], matchinfo_dic['home_team__color_secondary']),
             gametoipppkchart_create(logger, '{1} - {0}'.format(title, matchinfo_dic['visitor_team__shortcut']), subtitle, ismobile, toipppk_dic['visitor_team'], matchinfo_dic['visitor_team__color_primary'], matchinfo_dic['visitor_team__color_secondary']),
         ]
-        #toippk_table = [
-        #    gametoi_table(logger, toi_dic['home_team']),
-        #    gametoi_table(logger, toi_dic['visitor_team']),
-        #]
+
         stat_entry = {
             'title': title,
             'chart': toippk_chart,
@@ -467,6 +481,7 @@ def _chatterchart_get(logger, title, subtitle, ismobile, request, fkey, fvalue, 
 
 def _shiftchart_get(logger, title, subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shift_list, roster_list, periodevent_list, color_dic):
     """ game matchup """
+    # pylint: disable=R0913
     logger.debug('_shiftchart_get()')
 
     shift_chart = {}

@@ -1225,7 +1225,7 @@ def break_overview_chart(logger, ctitle, csubtitle, ismobile, data_dic):
     return chart_options
 
 # pylint: disable=R0914
-def gamecorsichart_create(logger, ctitle, csubtitle, ismobile, corsi_dic, plotbands_list, machinfo_dic, color_dic):
+def gamecorsichart_create(logger, ctitle, csubtitle, ismobile, corsi_dic, plotbands_list, matchinfo_dic, color_dic):
     # pylint: disable=E0602
     """ create shotsum chart """
     logger.debug('shotsumchart_create()')
@@ -1235,6 +1235,15 @@ def gamecorsichart_create(logger, ctitle, csubtitle, ismobile, corsi_dic, plotba
     minute_list = corsi_dic.keys()
     value_list = corsi_dic.values()
     abs_value = highlowabs_get(logger, value_list)
+
+    if ismobile:
+        img_width = 30
+        home_y = 10
+        visitor_y = 120
+    else:
+        img_width = 85
+        home_y = 30
+        visitor_y = 380
 
     chart_options = {
 
@@ -1250,6 +1259,13 @@ def gamecorsichart_create(logger, ctitle, csubtitle, ismobile, corsi_dic, plotba
         'subtitle': subtitle(csubtitle, variable_dic['subtitle_size']),
         'plotOptions': plotoptions_marker_disable('line'),
         'legend': legend(),
+        'responsive': responsive_y1(),
+        'tooltip': {
+            'useHTML': 0,
+            'headerFormat': '',
+            'pointFormat': '<b>{point.x} %s</b><br>{series.name}: {point.y}' % (_('min')),
+            'followPointer': 1,
+        },
 
         'xAxis': {
             'categories': minute_list,
@@ -1267,32 +1283,38 @@ def gamecorsichart_create(logger, ctitle, csubtitle, ismobile, corsi_dic, plotba
                 {'color': plotlines_color, 'width': 2, 'value': 60}
                 ],
             'plotBands': plotbands_list,
-
         },
+
+        'annotations': [{
+            'shapes': [
+                {'type': 'image', 'src': matchinfo_dic['home_team_logo'], 'width': img_width, 'height': img_width, 'point': {'x': 2, 'y': home_y, 'xAxis': 0}},
+                {'type': 'image', 'src': matchinfo_dic['visitor_team_logo'], 'width': img_width, 'height': img_width, 'point': {'x': 2, 'y': visitor_y, 'xAxis': 0}},
+            ],
+        }],
 
         'yAxis':[
             {
                 'title': title(_('Shots per minute'), font_size),
                 'max': abs_value + 1,
                 'min': (abs_value + 1) * -1,
-                # 'tickInterval': 1,
                 'maxPadding': 0.1,
                 'labels': labels(),
                 'plotLines': [{'color': plotlines_color, 'width': 2, 'value': 0}],
             }],
 
         'series': [{
-            'name': 'Corsi +/- (Even Strength)',
+            'name': 'Corsi {0}'.format(_('cumulated')),
             'data': value_list,
             'step': 'right',
-            'color': '#000000'
-        },{
-            'name': '{0} {1}'.format(_('Goals'), machinfo_dic['home_team__shortcut']),
+            'color': '#000000',
+            'lineWidth': variable_dic['linewidth']
+        }, {
+            'name': '{0} {1}'.format(_('Goals'), matchinfo_dic['home_team__shortcut']),
             'color': color_dic['home_team_color_primary'],
             'marker': {'symbol': 'circle'},
             'type': 'scatter',
         }, {
-            'name': '{0} {1}'.format(_('Goals'), machinfo_dic['visitor_team__shortcut']),
+            'name': '{0} {1}'.format(_('Goals'), matchinfo_dic['visitor_team__shortcut']),
             'color': color_dic['visitor_team_color_secondary'],
             'marker': {'symbol': 'circle'},
             'type': 'scatter',

@@ -5,7 +5,8 @@ from rest.functions.timeline import skatersonice_get, penalties_include
 from rest.functions.periodevent import scorersfromevents_get
 from rest.functions.helper import shot_leaffan_sync, list_sumup, deviation_avg_get, minmax_get
 from rest.functions.periodevent import periodevent_get
-from rest.functions.chartparameters import chart_color6, plotlines_color, title, font_size, corner_annotations
+from rest.functions.shot import shotspermin_count, shotspermin_aggregate
+from rest.functions.chartparameters import chart_color6, plotlines_color, title, font_size, corner_annotations, text_color
 
 def _rosterinformation_add(logger, player_corsi_dic, toi_dic, scorer_dic, roster_list):
     """ enrich corsi dictionary with roster information like time-on-ice or line-number """
@@ -48,7 +49,7 @@ def _rosterinformation_add(logger, player_corsi_dic, toi_dic, scorer_dic, roster
 
     return player_corsi_dic
 
-def gamecorsi_get(logger, shot_list, shift_list, periodevent_list, matchinfo_dic, roster_list, five_filter=True):
+def gameplayercorsi_get(logger, shot_list, shift_list, periodevent_list, matchinfo_dic, roster_list, five_filter=True):
     """ get corsi values per player for a certain match """
     # pylint: disable=R0914
     logger.debug('gamecorsi_get()')
@@ -75,8 +76,9 @@ def gamecorsi_get(logger, shot_list, shift_list, periodevent_list, matchinfo_dic
 
             # do we have to count the shot
             if five_filter:
-                # so far a bid uncliear we only count 5vs5
+                # so far a bid unclear we only count 5vs5
                 # 5v5 is ok we can count it
+                # pylint: disable=R1703
                 if soi_dic['home_team'][shot['timestamp']]['count'] == 5 and soi_dic['visitor_team'][shot['timestamp']]['count'] == 5:
                 # if soi_dict['EBB'][shot['time']]['count'] == soi_dict[oteam_name][shot['time']]['count']:
                     count_it = True
@@ -396,3 +398,30 @@ def goals5v5_get(logger, match_id, _match_info_dic):
                 goals5v5_dic[event['data']['team']] += 1
 
     return goals5v5_dic
+
+def gamecorsi_get(logger, shot_list, shot_list_5v5, matchinfo_dic, color_dic):
+    logger.debug('gamecorsi_get()')
+
+    # get shots and goals per min
+    (_shotmin_dic, goal_dic) = shotspermin_count(logger, shot_list, matchinfo_dic)
+    (shotmin_dic, _goal_dic) = shotspermin_count(logger, shot_list_5v5, matchinfo_dic)
+    # aggregate 5v5 shots per min
+    shotsum_dic = shotspermin_aggregate(logger, shotmin_dic)
+
+
+    corsi_dic = {}
+    for min_, _value in shotsum_dic['home_team'].items():
+        corsi = shotsum_dic['home_team'][min_] - shotsum_dic['visitor_team'][min_]
+        if min_ in goal_dic['home_team'].keys():
+            # corsi_dic[min_] = {'y': corsi, 'marker' : {'enabled': 1, 'width': 25, 'height': 25, 'symbol': 'url({0})'.format(matchinfo_dic['home_team_logo'])}, 'dataLabels': {'enabled': 1, 'color': chart_color4, 'format': '{0}'.format(goal_dic['home_team'][min_])}}
+            corsi_dic[min_] = {'y': corsi, 'marker' : {'enabled': 1, 'fillColor': color_dic['home_team_color_primary']}, 'dataLabels': {'enabled': 1, 'color': text_color, 'format': '{0}'.format(goal_dic['home_team'][min_])}}
+            # corsi_dic[min_] = {'y': corsi, 'marker' : {'enabled': 1, 'width': 25, 'height': 25, 'symbol': 'url({0})'.format(matchinfo_dic['home_team_logo'])}}
+
+        elif min_ in goal_dic['visitor_team'].keys():
+            # corsi_dic[min_] = {'y': corsi, 'marker' : {'enabled': 1, 'width': 25, 'height': 25, 'symbol': 'url({0})'.format(matchinfo_dic['visitor_team_logo'])}, 'dataLabels': {'enabled': 1, 'color': chart_color4, 'format': '{0}'.format(goal_dic['visitor_team'][min_])}}
+            corsi_dic[min_] = {'y': corsi, 'marker' : {'enabled': 1, 'fillColor': color_dic['visitor_team_color_secondary']}, 'dataLabels': {'enabled': 1, 'color': text_color, 'format': '{0}'.format(goal_dic['visitor_team'][min_])}}
+            # corsi_dic[min_] = {'y': corsi, 'marker' : {'enabled': 1, 'width': 25, 'height': 25, 'symbol': 'url({0})'.format(matchinfo_dic['visitor_team_logo'])}}
+        else:
+            corsi_dic[min_] = corsi
+
+    return corsi_dic
