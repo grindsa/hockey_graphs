@@ -270,6 +270,44 @@ def deviation_avg_get(logger, input_list, value_list=None):
 
     return deviation_dic
 
+def highlowabs_get(logger, input_list):
+    """ get highest and lowest value from list """
+
+    (min_, max_) = highlow_get(logger, input_list)
+    absval = 0
+    if abs(min_) <= abs(max_):
+        absval = abs(max_)
+    else:
+        absval = abs(min_)
+    return absval
+
+def highlow_get(logger, input_list):
+    """ get highest and lowest value from list """
+
+    try:
+        min_ = min(input_list)
+        max_ = max(input_list)
+    except BaseException:
+        # cornercase handling for list of dictionaires (eg. highchart series)
+        min_ = 0
+        max_ = 0
+        for ele in input_list:
+            # process integers
+            if isinstance(ele, int):
+                if ele < min_:
+                    min_ = ele
+                if ele > max_:
+                    max_ = ele
+            # process dictionaries (highchart series)
+            elif isinstance(ele, dict):
+                for parameter in ['x', 'y']:
+                    if parameter in ele:
+                        if ele[parameter] < min_:
+                            min_ = ele[parameter]
+                        if ele[parameter] > max_:
+                            max_ = ele[parameter]
+    return (min_, max_)
+
 def minmax_get(minval, maxval, average):
     """ define min/max based on avarage """
 
