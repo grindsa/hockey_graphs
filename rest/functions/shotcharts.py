@@ -1260,6 +1260,7 @@ def gamecorsichart_create(logger, ctitle, csubtitle, ismobile, corsi_dic, plotba
         'plotOptions': plotoptions_marker_disable('line'),
         'legend': legend(),
         'responsive': responsive_y1(),
+        'credits': credit(),        
         'tooltip': {
             'useHTML': 0,
             'headerFormat': '',
