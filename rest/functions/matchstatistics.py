@@ -312,7 +312,7 @@ def _gamecorsi_get(logger, subtitle, ismobile, request, matchinfo_dic, shot_list
         game_corsi_dic = gamecorsi_get(logger, shot_list, shot_list_5v5, matchinfo_dic, color_dic)
 
         # pylint: disable=E0602
-        title = _('Shot pressure (Corsi)')
+        title = _('Shot attempt differential (Corsi)')
 
         stat_entry_list.append({
             'title': title,
