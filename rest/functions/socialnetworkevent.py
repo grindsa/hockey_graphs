@@ -4,7 +4,9 @@
 import sys
 import os
 import re
+import json
 import twitter
+import requests
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "hockey_graphs.settings")
 import django
@@ -214,3 +216,42 @@ def time2date_map(logger, shot_list, shift_list, periodevent_list):
     sec_mapping_uts_dic = _mapping_uts_convert(logger, time_mapping_dic)
 
     return sec_mapping_uts_dic
+
+def facebook_post(logger, group_list, message, image_list, access_token):
+    """ post imgage to facebook """
+    logger.debug('facebook_post()')
+    # pylint: disable=R0914
+
+    # facebook API url
+    fb_url = 'https://graph.facebook.com'
+
+    for group in group_list:
+
+        # define URLs here to be independed from main section
+        feed_url = '{0}/{1}/feed'.format(fb_url, group)
+        photo_url = '{0}/{1}/photos'.format(fb_url, group)
+
+        id_list = []
+        # upload image to group specific media library
+        for img in image_list:
+            files = {'source': (img, open(img, 'rb'), 'image/png')}
+            # image upload without publishing
+            try:
+                req = requests.post(photo_url, data={'access_token': access_token, 'published': False}, files=files)
+                # in case of successful image upload add image-id to list
+                id_list.append(req.json()['id'])
+            except BaseException as err_:
+                print('err', err_)
+
+        # append images to post, add message and put into to FB
+        if id_list:
+            # create attached_media structure we need for upload
+            attached_media_list = []
+            for id_ in id_list:
+                attached_media_list.append({'media_fbid': id_})
+
+            # build data dic
+            feed_dic = {'access_token': access_token, 'message': message, 'attached_media': json.dumps(attached_media_list)}
+            # post message
+            req = requests.post(feed_url, data=feed_dic)
+            # print(req.json())

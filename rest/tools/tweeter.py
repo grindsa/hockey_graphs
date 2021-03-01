@@ -22,10 +22,11 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.
 # pylint: disable=C0413
 from django.conf import settings
 # pylint: disable=E0401, C0413
-from rest.functions.helper import logger_setup, uts_now, uts_to_date_utc, config_load
+from rest.functions.helper import logger_setup, uts_now, uts_to_date_utc, config_load, json_load
 from rest.functions.match import match_info_get, untweetedmatch_list_get, match_add
 from rest.functions.season import season_latest_get
-from rest.functions.socialnetworkevent import twitter_login, twitter_image_upload
+from rest.functions.socialnetworkevent import twitter_login, twitter_image_upload, facebook_post
+from rest.functions.email import send_mail
 
 def _config_load(logger, cfg_file=os.path.dirname(__file__)+'/'+'hockeygraphs.cfg'):
     """" load config from file """
@@ -35,6 +36,7 @@ def _config_load(logger, cfg_file=os.path.dirname(__file__)+'/'+'hockeygraphs.cf
     consumer_secret = None
     oauth_token = None
     oauth_token_secret = None
+    fb_token_file = None
 
     config_dic = config_load(cfg_file=cfg_file)
     if 'Twitter' in config_dic:
@@ -47,12 +49,20 @@ def _config_load(logger, cfg_file=os.path.dirname(__file__)+'/'+'hockeygraphs.cf
         if 'oauth_token_secret' in config_dic['Twitter']:
             oauth_token_secret = config_dic['Twitter']['oauth_token_secret']
 
+    if 'Facebook' in config_dic:
+        if 'token_file' in config_dic['Facebook']:
+            fb_token_file = config_dic['Facebook']['token_file']
+
     if not (consumer_key and consumer_secret and oauth_token and oauth_token_secret):
         logger.debug('_config_load(): twitter configuration incomplete')
         sys.exit(0)
 
+    if not fb_token_file:
+        logger.debug('_config_load(): facebook configuration incomplete')
+        sys.exit(0)
+
     logger.debug('_config_load() ended.')
-    return (consumer_key, consumer_secret, oauth_token, oauth_token_secret)
+    return (consumer_key, consumer_secret, oauth_token, oauth_token_secret, fb_token_file)
 
 def convert_graph(logger, url, data, file_name):
     """ send data to server """
@@ -158,6 +168,7 @@ def arg_parse():
     return(debug, fake, season, match_list, interval)
 
 def page_get_via_selenium(logger, url, file_):
+    """ get page via selenium """
     logger.debug('get_page_via_selenium()')
 
     headless = True
@@ -198,6 +209,7 @@ def page_get_via_selenium(logger, url, file_):
     driver.quit()
 
 def heatmap_image(logger, url, season_id, match_id, tmp_dir, imgid, file_size):
+    """ download heatmap image """
     logger.debug('heatmap_image()')
 
     # build some variables
@@ -217,6 +229,7 @@ def heatmap_image(logger, url, season_id, match_id, tmp_dir, imgid, file_size):
     return dst
 
 def image_crop(logger, src, dst):
+    """ crop image """
     logger.debug('image_crop()')
 
     img = Image.open(src)
@@ -229,14 +242,14 @@ def image_crop(logger, src, dst):
     cimg = cimg.save(dst)
 
 def twitter_it(logger, matchinfo_dic_, img_list_, season_id, match_id_):
-    """ get expected filesize for corsi-chart """
+    """ twitter post """
     # pylint: disable=R0914
     logger.debug('twitter_it()')
 
     tags = '#{0}vs{1} #{0}{1} #bot1337'.format(matchinfo_dic_['home_team__shortcut'].upper(), matchinfo_dic_['visitor_team__shortcut'].upper())
 
     # load rebound and break interval from config file
-    (consumer_key, consumer_secret, oauth_token, oauth_token_secret) = _config_load(LOGGER)
+    (consumer_key, consumer_secret, oauth_token, oauth_token_secret, _fb_token_file) = _config_load(LOGGER)
 
     chart_list = ['Charts', 'bunte Bildchen', 'Grafiken', 'Chartz']
     match_date = uts_to_date_utc(matchinfo_dic_['date_uts'], '%d.%m.%Y')
@@ -261,6 +274,31 @@ def twitter_it(logger, matchinfo_dic_, img_list_, season_id, match_id_):
     result = twitter_api.statuses.update(status=tweet_text, media_ids=id_string)
     id_str = result['id']
     result = twitter_api.statuses.update(status=text_reply, media_ids=id_string_reply, in_reply_to_status_id=id_str)
+
+def fbook_it(logger, matchinfo_dic_, img_list_, season_id, match_id_):
+    """ facebook post """
+    # pylint: disable=R0914
+    logger.debug('fbook_it()')
+
+    # load rebound and break interval from config file
+    (_consumer_key, _consumer_secret, _oauth_token, _oauth_token_secret, fb_token_file) = _config_load(LOGGER)
+
+    # get access token
+    token_dic = json_load(fb_token_file)
+    access_token = None
+    if 'access_token' in token_dic:
+        access_token = token_dic['access_token']
+
+    # message test used in post
+    match_date = uts_to_date_utc(matchinfo_dic_['date_uts'], '%d.%m.%Y')
+    message = 'Hier ein paar Charts zum Spiel {0} gg. {1}. vom {5} (Endstand: {6}).\nMehr unter https://hockeygraphs.dynamop.de/matchstatistics/{3}/{4} ...'.format(matchinfo_dic['home_team__shortcut'].upper(), matchinfo_dic['visitor_team__shortcut'].upper(), 'bsbs', season_id, match_id, match_date, matchinfo_dic['result_full'])
+
+    # list of groups to be published to
+    group_list = ['1799006236944342']
+
+    # post to facebook group
+    facebook_post(logger, group_list, message, img_list_, access_token)
+
 
 if __name__ == '__main__':
 
@@ -295,6 +333,7 @@ if __name__ == '__main__':
     for match_id in MATCH_ID_LIST:
         # we need some match_information
         matchinfo_dic = match_info_get(LOGGER, match_id, None)
+
         # hack to have a better result
         if 'result_suffix' in matchinfo_dic and matchinfo_dic['result_suffix']:
             matchinfo_dic['result_full'] = '{0} {1}'.format(matchinfo_dic['result'], matchinfo_dic['result_suffix'])
@@ -330,6 +369,14 @@ if __name__ == '__main__':
             if not FAKE:
                 # twitterle
                 twitter_it(LOGGER, matchinfo_dic, img_list, SEASON_ID, match_id)
+                # fb-post
+                fbook_it(LOGGER, matchinfo_dic, img_list, SEASON_ID, match_id)
+
+            # temporary email
+            MATCH_DATE = uts_to_date_utc(matchinfo_dic['date_uts'], '%d.%m.%Y')
+            MESSAGE = 'Hier ein paar Charts zum Spiel {0} gg. {1}. vom {5} (Endstand: {6}).\nMehr unter https://hockeygraphs.dynamop.de/matchstatistics/{3}/{4} ...'.format(matchinfo_dic['home_team__shortcut'].upper(), matchinfo_dic['visitor_team__shortcut'].upper(), 'bsbs', SEASON_ID, match_id, MATCH_DATE, matchinfo_dic['result_full'])
+            SUBJECT = '{0} vs {1}'.format(matchinfo_dic['home_team__shortcut'], matchinfo_dic['visitor_team__shortcut'])
+            send_mail('joern.mewes@gmail.com', 'joern.mewes@gmail.com', SUBJECT, MESSAGE, img_list, server=settings.EMAIL_HOST, username=settings.EMAIL_HOST_USER, password=settings.EMAIL_HOST_PASSWORD)
 
             # update database and set post flag
             match_add(LOGGER, 'match_id', match_id, {'tweet': True})
