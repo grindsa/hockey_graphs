@@ -389,3 +389,8 @@ if __name__ == '__main__':
                     simple_send(settings.WA_SRV, settings.WA_PORT, settings.WA_ADMIN_NUMBER, MESSAGE)
                 except BaseException:
                     pass
+
+            # cleanup and housekeeping
+            os.remove('/tmp/tmp_{0}.png'.format(match_id))            
+            for img in img_list:
+                os.remove(img)
