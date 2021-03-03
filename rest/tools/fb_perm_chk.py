@@ -47,8 +47,7 @@ if __name__ == '__main__':
     name = result['name']
     user_id = result['id']
 
-    print('name: {0}'.format(name))
-    print('user_id: {0}'.format(user_id))
+    print('name: {0}\nuser_id: {0}'.format(user_id, name))
 
     # get access-rights
     ACC_URL = "https://graph.facebook.com/v10.0/{0}/accounts".format(user_id)
