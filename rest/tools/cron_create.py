@@ -61,6 +61,11 @@ def create_cron_entries(logger, tzone):
     self.hour.on(1)
     self.minute.on(5)
 
+    # create cron-entry to check facebook-token
+    tkchk = cron.new(command=path + '/fb_token_chk.py -t 7 -i /var/www/hockey_graphs/rest/tools/conf/fb-ua-token.json', comment='update player information', user='root')
+    tkchk.hour.on(1)
+    tkchk.minute.on(5)
+
     # create cron-entry to update player data
     pupd = cron.new(command=path + '/players_update.py', comment='update player information', user='root')
     pupd.dow.on('MON', 'WED', 'FRI')
