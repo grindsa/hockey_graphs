@@ -47,7 +47,7 @@ if __name__ == '__main__':
     name = result['name']
     user_id = result['id']
 
-    print('name: {0}\nuser_id: {0}'.format(user_id, name))
+    print('name: {0}\nuser_id: {1}'.format(user_id, name))
 
     # get access-rights
     ACC_URL = "https://graph.facebook.com/v10.0/{0}/accounts".format(user_id)
@@ -59,7 +59,10 @@ if __name__ == '__main__':
     pprint(result)
 
     # check access
-    CHK_URL = 'https://graph.facebook.com/1260098154385578/feed'
+    # flo
+    # CHK_URL = 'https://graph.facebook.com/1260098154385578/feed'
+    # hockeygraphs
+    CHK_URL = 'https://graph.facebook.com/1799006236944342/feed'
 
     req = requests.get(CHK_URL, params=data_dic)
     result = req.json()
