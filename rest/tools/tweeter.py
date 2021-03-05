@@ -275,7 +275,7 @@ def twitter_it(logger, matchinfo_dic_, img_list_, season_id, match_id_):
     id_str = result['id']
     result = twitter_api.statuses.update(status=text_reply, media_ids=id_string_reply, in_reply_to_status_id=id_str)
 
-def fbook_it(logger, matchinfo_dic_, img_list_, season_id, match_id_):
+def fbook_it(logger, matchinfo_dic_, img_list_, _season_id, _match_id):
     """ facebook post """
     # pylint: disable=R0914
     logger.debug('fbook_it()')
@@ -291,7 +291,7 @@ def fbook_it(logger, matchinfo_dic_, img_list_, season_id, match_id_):
 
     # message test used in post
     match_date = uts_to_date_utc(matchinfo_dic_['date_uts'], '%d.%m.%Y')
-    message = 'Hier ein paar Charts zum Spiel {0} gg. {1}. vom {5} (Endstand: {6}).\nMehr unter https://hockeygraphs.dynamop.de/matchstatistics/{3}/{4} ...'.format(matchinfo_dic['home_team__shortcut'].upper(), matchinfo_dic['visitor_team__shortcut'].upper(), 'bsbs', season_id, match_id, match_date, matchinfo_dic['result_full'])
+    message = 'Hier ein paar Charts zum Spiel {0} gg. {1}. vom {2} (Endstand: {3}).\nMehr unter https://hockeygraphs.dynamop.de/matchstatistics/{3}/{4} ...'.format(matchinfo_dic['home_team__shortcut'].upper(), matchinfo_dic['visitor_team__shortcut'].upper(), match_date, matchinfo_dic['result_full'])
 
     # list of groups to be published to
     group_list = ['1799006236944342']
@@ -374,7 +374,7 @@ if __name__ == '__main__':
 
             # temporary email
             MATCH_DATE = uts_to_date_utc(matchinfo_dic['date_uts'], '%d.%m.%Y')
-            MESSAGE = 'Hier ein paar Charts zum Spiel {0} gg. {1}. vom {5} (Endstand: {6}).\nMehr unter https://hockeygraphs.dynamop.de/matchstatistics/{3}/{4} ...'.format(matchinfo_dic['home_team__shortcut'].upper(), matchinfo_dic['visitor_team__shortcut'].upper(), 'bsbs', SEASON_ID, match_id, MATCH_DATE, matchinfo_dic['result_full'])
+            MESSAGE = 'Hier ein paar Charts zum Spiel {0} gg. {1}. vom {2} (Endstand: {3}).\nMehr unter https://hockeygraphs.dynamop.de/matchstatistics/{3}/{4} ...'.format(matchinfo_dic['home_team__shortcut'].upper(), matchinfo_dic['visitor_team__shortcut'].upper(), MATCH_DATE, matchinfo_dic['result_full'])
             SUBJECT = '{0} vs {1}'.format(matchinfo_dic['home_team__shortcut'], matchinfo_dic['visitor_team__shortcut'])
             send_mail('joern.mewes@gmail.com', 'joern.mewes@gmail.com', SUBJECT, MESSAGE, img_list, server=settings.EMAIL_HOST, username=settings.EMAIL_HOST_USER, password=settings.EMAIL_HOST_PASSWORD)
 
@@ -383,6 +383,11 @@ if __name__ == '__main__':
 
             # send notification via whatsapp
             if(hasattr(settings, 'WA_ADMIN_NUMBER') and hasattr(settings, 'WA_SRV') and hasattr(settings, 'WA_PORT')):
+                if matchinfo_dic['home_team__facebook_groups']:
+                    matchinfo_dic['home_team__shortcut'] = '*{0}*'.format(matchinfo_dic['home_team__shortcut'])
+                if matchinfo_dic['visitor_team__facebook_groups']:
+                    matchinfo_dic['visitor_team__shortcut'] = '*{0}*'.format(matchinfo_dic['visitor_team__shortcut'])
+
                 # send whatsapp message
                 MESSAGE = 'hockey_graphs: tweety.py: {0} vs {1}'.format(matchinfo_dic['home_team__shortcut'].upper(), matchinfo_dic['visitor_team__shortcut'].upper())
                 try:
@@ -391,6 +396,6 @@ if __name__ == '__main__':
                     pass
 
             # cleanup and housekeeping
-            os.remove('/tmp/tmp_{0}.png'.format(match_id))            
+            os.remove('/tmp/tmp_{0}.png'.format(match_id))
             for img in img_list:
                 os.remove(img)
