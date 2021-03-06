@@ -13,13 +13,13 @@ The project is under heavy development.  So far charts for single del matches an
 
 In case you are missing a certain chart you would like to see let me know. Just create an [issue](https://github.com/grindsa/hockey_graphs/issues/new) or drop an email to <grindelsack@gmail.com>. Suggestions for improvements and objective criticism are welcome at any time.
 
-If you are interested in raw (but much more detailed) statistics please visit [leaffan.net](https://www.leaffan.net/del/#!/home). That's by far the best page for advanced statistics of Penny-DEL.   
+If you are interested in raw (but much more detailed) statistics please visit [leaffan.net](https://www.leaffan.net/del/#!/home) or [5plusspieldauer.de](https://5plusspieldauer.de/). These two sites are by far the best sources for advanced statistics of Penny-DEL.   
 
 ## Disclaimer
 
 I am not a professional software developer. Main aim for this project was to do something useful while being stuck in COVID prison. Keep this in mind while laughing about my code and don’t forget to send patches.
 
-I do neither work for (P-)DEL nor any of the German hockey clubs. I just found the raw data while checking [penny-del.org](https://www.penny-del.org/) and started playing with it.
+I do neither work for (P-)DEL nor any of the German hockey clubs. I just found the raw data while checking the source code of [penny-del.org](https://www.penny-del.org/) and by inserting the right parameters into Google search.
 
 ## Architecture
 
