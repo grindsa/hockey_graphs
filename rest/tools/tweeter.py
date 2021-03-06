@@ -327,8 +327,7 @@ if __name__ == '__main__':
         if INTERVAL:
             MATCH_ID_LIST = untweetedmatch_list_get(LOGGER, SEASON_ID, UTS, INTERVAL*3600, ['match_id'], )
 
-    IMGSIZE_DIC = {1: 49000, 2: 48500, 4: 55000, 5: 150000, 11: 30000, 12: 30000}
-    # IMGSIZE_DIC = {5: 150000}
+    IMGSIZE_DIC = {1: 49000, 2: 48500, 4: 55000, 5: 150000, 9: 30000, 10: 30000}
 
     for match_id in MATCH_ID_LIST:
         # we need some match_information
@@ -374,7 +373,7 @@ if __name__ == '__main__':
 
             # temporary email
             MATCH_DATE = uts_to_date_utc(matchinfo_dic['date_uts'], '%d.%m.%Y')
-            MESSAGE = 'Hier ein paar Charts zum Spiel {0} gg. {1}. vom {2} (Endstand: {3}).\nMehr unter https://hockeygraphs.dynamop.de/matchstatistics/{3}/{4} ...'.format(matchinfo_dic['home_team__shortcut'].upper(), matchinfo_dic['visitor_team__shortcut'].upper(), MATCH_DATE, matchinfo_dic['result_full'])
+            MESSAGE = 'Hier ein paar Charts zum Spiel {0} gg. {1}. vom {2} (Endstand: {3}).\nMehr unter https://hockeygraphs.dynamop.de/matchstatistics/{4}/{5} ...'.format(matchinfo_dic['home_team__shortcut'].upper(), matchinfo_dic['visitor_team__shortcut'].upper(), MATCH_DATE, matchinfo_dic['result_full'], SEASON_ID, match_id)
             SUBJECT = '{0} vs {1}'.format(matchinfo_dic['home_team__shortcut'], matchinfo_dic['visitor_team__shortcut'])
             send_mail('joern.mewes@gmail.com', 'joern.mewes@gmail.com', SUBJECT, MESSAGE, img_list, server=settings.EMAIL_HOST, username=settings.EMAIL_HOST_USER, password=settings.EMAIL_HOST_PASSWORD)
 
