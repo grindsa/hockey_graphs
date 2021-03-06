@@ -26,6 +26,7 @@ class DelAppHelper():
     base_url = None
     mobile_api = None
     del_api = None
+    shift_name = None
 
     def __init__(self, debug=False, deviceid='bada55bada55666'):
         self.debug = debug
@@ -55,6 +56,9 @@ class DelAppHelper():
                 self.mobile_api = config_dic['Tools']['mobile_api']
             if 'del_api' in config_dic['Tools']:
                 self.del_api = config_dic['Tools']['del_api']
+            if 'Shifts' in config_dic and 'shift_name' in config_dic['Shifts']:
+                self.shift_name = config_dic['Shifts']['shift_name']
+
         self.logger.debug('_config_load() ended.')
 
     def api_post(self, url, data):
@@ -367,7 +371,7 @@ class DelAppHelper():
     def shifts_get(self, match_id):
         """ get shifts from DEL api """
         self.logger.debug('DelAppHelper.shifts_get({0})\n'.format(match_id))
-        url = '{0}/matches/{1}/shifts.json'.format(self.del_api, match_id)
+        url = '{0}/matches/{1}/{2}'.format(self.del_api, match_id, self.shift_name)
         return requests.get(url, headers=self.headers, verify=False).json()
 
     def shots_get(self, match_id):

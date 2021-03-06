@@ -253,7 +253,7 @@ if __name__ == '__main__':
                 if ADDSHIFTS:
                     json_store('{0}/{1}'.format(MATCH_DIR, 'shifts.json'), shift_dic)
                     if HGS_DATA:
-                        json_store('{0}/{1}.json'.format(HGS_DATA, match_id), shift_dic)
+                        json_store('{0}/files/{1}.json'.format(HGS_DATA, match_id), shift_dic)
 
     if GITREPO and SAVE:
         # check changes into repo
