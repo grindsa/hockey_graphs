@@ -132,9 +132,6 @@ def create_cron_entries(logger, tzone):
                 teamstats.hour.on(23)
                 teamstats.minute.on(5)
 
-
-
-
                 message = '{0}{1}'.format(message, today)
 
         if match_list_yesterday:
