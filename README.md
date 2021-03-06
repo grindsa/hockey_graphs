@@ -19,7 +19,7 @@ If you are interested in raw (but much more detailed) statistics please visit [l
 
 I am not a professional software developer. Main aim for this project was to do something useful while being stuck in COVID prison. Keep this in mind while laughing about my code and don’t forget to send patches.
 
-I do neither work for (P-)DEL nor any of the German hockey clubs. I just found the raw data while checking the source code of [penny-del.org](https://www.penny-del.org/) and by inserting the right parameters into Google search.
+I do neither work for (P-)DEL nor any of the German hockey clubs. I just found the raw data while checking the source code of [penny-del.org](https://www.penny-del.org/) and by putting the right parameters into Google search bar.
 
 ## Architecture
 
