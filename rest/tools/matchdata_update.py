@@ -104,6 +104,7 @@ def arg_parse():
     parser.add_argument('--shifts', help='debug mode', action="store_true", default=False)
     parser.add_argument('-s', '--season', help='season id', default=None)
     parser.add_argument('--save', help='save directory', default=None)
+    parser.add_argument('--hgs', help='hgs directory', default=None)
     parser.add_argument('--gitrepo', help='git repository', action="store_true", default=False)
     mlist = parser.add_mutually_exclusive_group()
     mlist.add_argument('--matchlist', help='list of del matchids', default=[])
@@ -125,6 +126,7 @@ def arg_parse():
     interval = int(args.interval)
     save = args.save
     gitrepo = args.gitrepo
+    hgs_data = args.hgs
 
     # process matchlist
     try:
@@ -139,7 +141,7 @@ def arg_parse():
         print('either -i -o -p parameter must be specified')
         sys.exit(0)
 
-    return(debug, season, match_list, addshifts, openmatches, pastmatches, interval, save, gitrepo)
+    return(debug, season, match_list, addshifts, openmatches, pastmatches, interval, save, hgs_data, gitrepo)
 
 def _path_check_create(logger, path):
     """ check save path - create if does not exist """
@@ -148,7 +150,7 @@ def _path_check_create(logger, path):
 
 if __name__ == '__main__':
 
-    (DEBUG, SEASON_ID, MATCH_LIST, ADDSHIFTS, OPENMATCHES, PASTMATCHES, INTERVAL, SAVE, GITREPO) = arg_parse()
+    (DEBUG, SEASON_ID, MATCH_LIST, ADDSHIFTS, OPENMATCHES, PASTMATCHES, INTERVAL, SAVE, HGS_DATA, GITREPO) = arg_parse()
 
     TOURNAMENT_ID = None
 
@@ -250,10 +252,22 @@ if __name__ == '__main__':
                 json_store('{0}/{1}'.format(MATCH_DIR, 'shots.json'), shots_dic)
                 if ADDSHIFTS:
                     json_store('{0}/{1}'.format(MATCH_DIR, 'shifts.json'), shift_dic)
+                    if HGS_DATA:
+                        json_store('{0}/{1}.json'.format(HGS_DATA, match_id), shift_dic)
 
     if GITREPO and SAVE:
         # check changes into repo
         repo = git.Repo(SAVE)
+        if repo.is_dirty(untracked_files=True):
+            commit_message = datetime.fromtimestamp(UTS).strftime("%Y-%m-%d %H:%M")
+            LOGGER.debug('Changes detected. Creating commit: {0}'.format(commit_message))
+            repo.git.add(all=True)
+            repo.index.commit(commit_message)
+            repo.remotes.origin.push()
+
+    if GITREPO and HGS_DATA:
+        # check changes into repo
+        repo = git.Repo(HGS_DATA)
         if repo.is_dirty(untracked_files=True):
             commit_message = datetime.fromtimestamp(UTS).strftime("%Y-%m-%d %H:%M")
             LOGGER.debug('Changes detected. Creating commit: {0}'.format(commit_message))
