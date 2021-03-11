@@ -45,7 +45,7 @@ hm_color_list = ['#a90c38', '#c11b39', '#e54444', '#ec4f4a', '#e06f5b', '#f98973
 
 twitter_color = '#1DA1F2'
 
-def credit(text='©2020 GrindSa (https://hockeygraphs.dynamop.de)', href='https://hockeygraphs.dynamop.de'):
+def credit(text='©2021 GrindSa (https://hockeygraphs.dynamop.de)', href='https://hockeygraphs.dynamop.de'):
     """ add credits """
     return {'text': text, 'href': href}
 

@@ -182,7 +182,7 @@ def gameflowchart_create(logger, ctitle, csubtitle, ismobile, gameflow_dic, goal
         },
 
         'exporting': exporting(filename=ctitle),
-        'credits': credit(_('based on an idea of @DanielT_W'), 'https://twitter.com/danielt_w'),
+        'credits': credit(),
         'tooltip': tooltip('<b>{point.x}.%s</b><br>' % _('min')),
         'legend': legend(0),
         'plotOptions': plotoptions_marker_disable('areaspline'),
@@ -1260,7 +1260,7 @@ def gamecorsichart_create(logger, ctitle, csubtitle, ismobile, corsi_dic, plotba
         'plotOptions': plotoptions_marker_disable('line'),
         'legend': legend(),
         'responsive': responsive_y1(),
-        'credits': credit(),        
+        'credits': credit(),
         'tooltip': {
             'useHTML': 0,
             'headerFormat': '',
