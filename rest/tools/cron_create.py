@@ -141,7 +141,7 @@ def create_cron_entries(logger, tzone):
         if match_list_yesterday:
             if 'matches' in match_list_yesterday[yesterday]:
                 # update shifts at 11pm
-                ndshifts = cron.new(command=path+'/matchdata_update.py -i 30 --save /var/www/hockey_graphs/data --gitrepo', comment='update shifts', user='root')
+                ndshifts = cron.new(command=path+'/matchdata_update.py -i 24 --shifts --hgs /var/www/hockey_graphs/hgs_data --save /var/www/hockey_graphs/data --gitrepo', comment='update shifts', user='root')
                 ndshifts.hour.on(3, 9, 15)
                 ndshifts.minute.on(0)
 
