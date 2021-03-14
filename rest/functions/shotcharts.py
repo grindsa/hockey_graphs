@@ -1233,6 +1233,7 @@ def gamecorsichart_create(logger, ctitle, csubtitle, ismobile, corsi_dic, plotba
     variable_dic = variables_get(ismobile)
 
     minute_list = corsi_dic.keys()
+
     value_list = corsi_dic.values()
     abs_value = highlowabs_get(logger, value_list)
 
@@ -1288,8 +1289,8 @@ def gamecorsichart_create(logger, ctitle, csubtitle, ismobile, corsi_dic, plotba
 
         'annotations': [{
             'shapes': [
-                {'type': 'image', 'src': matchinfo_dic['home_team_logo'], 'width': img_width, 'height': img_width, 'point': {'x': 2, 'y': home_y, 'xAxis': 0}},
-                {'type': 'image', 'src': matchinfo_dic['visitor_team_logo'], 'width': img_width, 'height': img_width, 'point': {'x': 2, 'y': visitor_y, 'xAxis': 0}},
+                {'type': 'image', 'src': matchinfo_dic['visitor_team_logo'], 'width': img_width, 'height': img_width, 'point': {'x': 2, 'y': home_y, 'xAxis': 0}},
+                {'type': 'image', 'src': matchinfo_dic['home_team_logo'], 'width': img_width, 'height': img_width, 'point': {'x': 2, 'y': visitor_y, 'xAxis': 0}},
             ],
         }],
 

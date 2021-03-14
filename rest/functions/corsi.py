@@ -408,10 +408,9 @@ def gamecorsi_get(logger, shot_list, shot_list_5v5, matchinfo_dic, color_dic):
     # aggregate 5v5 shots per min
     shotsum_dic = shotspermin_aggregate(logger, shotmin_dic)
 
-
     corsi_dic = {}
     for min_, _value in shotsum_dic['home_team'].items():
-        corsi = shotsum_dic['home_team'][min_] - shotsum_dic['visitor_team'][min_]
+        corsi = shotsum_dic['visitor_team'][min_] - shotsum_dic['home_team'][min_]
         if min_ in goal_dic['home_team'].keys():
             # corsi_dic[min_] = {'y': corsi, 'marker' : {'enabled': 1, 'width': 25, 'height': 25, 'symbol': 'url({0})'.format(matchinfo_dic['home_team_logo'])}, 'dataLabels': {'enabled': 1, 'color': chart_color4, 'format': '{0}'.format(goal_dic['home_team'][min_])}}
             corsi_dic[min_] = {'y': corsi, 'marker' : {'enabled': 1, 'fillColor': color_dic['home_team_color_primary']}, 'dataLabels': {'enabled': 1, 'color': text_color, 'format': '{0}'.format(goal_dic['home_team'][min_])}}
