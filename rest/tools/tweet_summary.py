@@ -15,7 +15,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.
 # pylint: disable=C0413
 from django.conf import settings
 # pylint: disable=E0401, C0413
-from rest.functions.helper import logger_setup, uts_now, date_to_uts_utc, config_load, json_load
+from rest.functions.helper import logger_setup, uts_now, uts_to_date_utc, date_to_uts_utc, config_load, json_load
 from rest.functions.match import match_info_get, sincematch_list_get
 from rest.functions.season import season_latest_get
 from rest.functions.socialnetworkevent import facebook_post
@@ -111,6 +111,7 @@ def arg_parse():
     parser = argparse.ArgumentParser(description='match_import.py - update matches in database')
     parser.add_argument('-d', '--debug', help='debug mode', action="store_true", default=False)
     parser.add_argument('-f', '--fake', help='fake mode', action="store_true", default=False)
+    parser.add_argument('--date', help='specify match date', default=None)
     mlist = parser.add_mutually_exclusive_group()
     mlist.add_argument('--matchlist', help='list of del matchids', default=[])
     args = parser.parse_args()
@@ -121,6 +122,7 @@ def arg_parse():
     debug = args.debug
     fake = args.fake
     matchlist = args.matchlist
+    matchdate = args.date
 
     # process matchlist
     try:
@@ -131,7 +133,7 @@ def arg_parse():
     for match_ in _tmp_list:
         match_list.append(int(match_))
 
-    return(debug, fake, match_list)
+    return(debug, fake, match_list, matchdate)
 
 def fbook_it(logger, img_list_, message):
     """ facebook post """
@@ -156,7 +158,7 @@ def fbook_it(logger, img_list_, message):
 
 if __name__ == '__main__':
 
-    (DEBUG, FAKE, MATCH_ID_LIST) = arg_parse()
+    (DEBUG, FAKE, MATCH_ID_LIST, MATCHDATE) = arg_parse()
 
     URL = 'https://hockeygraphs.dynamop.de'
     MATCHSTAT = '/api/v1/matchstatistics/'
@@ -170,16 +172,20 @@ if __name__ == '__main__':
     # initialize logger
     LOGGER = logger_setup(DEBUG)
 
-    # unix timestamp
-    UTS = uts_now()
-    TODAY = date.today().strftime('%d.%m.%Y')
+    if MATCHDATE:
+        TODAY = MATCHDATE
+        UTS = date_to_uts_utc('{0} 23:59:59'.format(TODAY)) + 1
+    else:
+        # unix timestamp
+        UTS = uts_now()
+        TODAY = date.today().strftime('%d.%m.%Y')
+    LOGGER.debug('matchdate: {0}, uts: {1}'.format(TODAY, UTS))
 
     # get season_id
     SEASON_ID = season_latest_get(LOGGER)
 
     if not MATCH_ID_LIST:
         DELTA = UTS - date_to_uts_utc(TODAY, '%d.%m.%Y')
-        DELTA = 86400
         if UTS and DELTA:
             MATCH_ID_LIST = sincematch_list_get(LOGGER, SEASON_ID, UTS, DELTA, ['match_id'], )
 
