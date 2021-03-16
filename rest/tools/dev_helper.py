@@ -31,10 +31,10 @@ if __name__ == '__main__':
     request.META = {'foo': 'bar'}
 
     FKEY = 'match_id'
-    FVALUE = 1853
+    FVALUE = 1926
 
-    # result = matchstatistics_get(LOGGER, request, FKEY, FVALUE)
-    result = teamcomparison_get(LOGGER, request, FKEY, FVALUE)
+    result = matchstatistics_get(LOGGER, request, FKEY, FVALUE)
+    # result = teamcomparison_get(LOGGER, request, FKEY, FVALUE)
 
     # from pprint import pprint
     # pprint(result)
