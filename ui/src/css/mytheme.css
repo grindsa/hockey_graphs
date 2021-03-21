@@ -184,6 +184,6 @@ select.selectbg {
 }
 
 .helpselector {
-  right: 0;
-  min-width: 100px;
+  /* right: 0; */
+  min-width: 60px;
 }
