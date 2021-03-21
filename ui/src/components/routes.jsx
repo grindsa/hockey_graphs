@@ -1,6 +1,7 @@
 import React from 'react';
 import { MatchDayList } from '../components/matchday';
 import { TeamComparison } from '../components/teamcomparison';
+import { Dsgvo } from '../components/dsgvo';
 
 function tc_route(endpoint, language, selectedSeason, season, setSelectedSeason, selectedStat, changeStat, stat){
   // update season and return TeamComparison route
@@ -43,6 +44,8 @@ function mdl_route(ep_matchdays, ep_matchstatistics, language, selectedSeason, s
 export const Routes = (endpoints, language, selectedSeason, setSelectedSeason, selectedStat, changeStat) => {
     return ({
       '/': () => <MatchDayList matchdays={endpoints.matchdays} matchstatistics={endpoints.matchstatistics} language={language} season={selectedSeason} />,
+      '/dsgvo': () => <Dsgvo />,
+
       // just the path
       '/matchstatistics': () => <MatchDayList matchdays={endpoints.matchdays} matchstatistics={endpoints.matchstatistics} language={language} season={selectedSeason} />,
       // just the season
