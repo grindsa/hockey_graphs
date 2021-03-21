@@ -3,6 +3,7 @@ import Cookies from 'universal-cookie';
 import { LanguageSelector } from '../components/languageselector';
 import { SeasonSelector } from '../components/seasonselector';
 import { StatSelector } from '../components/statselector';
+import { HelpSelector } from '../components/helpselector';
 import { Routes } from '../components/routes'
 import { navigate, useRoutes, useRedirect } from "hookrouter";
 // import { Canvas } from '../components/canvas';
@@ -119,7 +120,7 @@ export const App = () => {
       <div className="w3-bar pcolor">
         <SeasonSelector seasonValue={selectedSeason} seasonlist={ seasonlist.results } onchangeSeason={ changeSeason } />
         <StatSelector statlist={ statList } statValue={ selectedStat} onchangeStat={ changeStat }/>
-        <a href="https://github.com/grindsa/hockey_graphs"><span className="w3-margin-right w3-round pcolor w3-right w3-margin-top">?</span></a>
+        <HelpSelector />
         <LanguageSelector langValue={language } onClick={() => toggleLanguage()} />
       </div>
       <div>

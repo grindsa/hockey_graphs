@@ -41,7 +41,7 @@ td.middle {
 }
 
 .mobile {
-  font-size: 8px;  
+  font-size: 8px;
 }
 
 .result{
@@ -181,4 +181,9 @@ select.selectbg {
 
 .jsheatmap_visitorlogo_mobile {
   margin-right: 10px;
+}
+
+.helpselector {
+  right: 0;
+  min-width: 100px;
 }
