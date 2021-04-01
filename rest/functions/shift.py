@@ -134,7 +134,16 @@ def shiftsperplayer_get(logger, matchinfo_dic, shift_list, roster_list, penalty_
                     shift_dic[team][pid]['surname'] = roster_list[selector][player]['surname']
                     shift_dic[team][pid]['jersey'] = roster_list[selector][player]['jersey']
 
-    return shift_dic
+
+    # consistency check to cover cornercases where a player is not in roster list
+    new_shift_dic = {}
+    for team in shift_dic:
+        new_shift_dic[team] = {}
+        for player_id in shift_dic[team]:
+            if 'line_number' in shift_dic[team][player_id]:
+                new_shift_dic[team][player_id] = shift_dic[team][player_id]
+
+    return new_shift_dic
 
 def _datastructure_create(logger, period, tst_end, matchinfo_dic, img_width):
     """ create datastructure """

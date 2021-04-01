@@ -113,7 +113,15 @@ def gameplayercorsi_get(logger, shot_list, shift_list, periodevent_list, matchin
     else:
         player_corsi_dic = {}
 
-    return player_corsi_dic
+    final_player_corsi_dic = {}
+    # consistency check delete all entries without corsi
+    for team in player_corsi_dic:
+        final_player_corsi_dic[team] = {}
+        for player in player_corsi_dic[team]:
+            if 'corsi' in player_corsi_dic[team][player] and 'toi' in player_corsi_dic[team][player]:
+                final_player_corsi_dic[team][player] = player_corsi_dic[team][player]
+
+    return final_player_corsi_dic
 
 def gameshots5v5_get(logger, match_info_dic, team, shot_list, shift_list, periodevent_list):
     # pylint: disable=R0914
