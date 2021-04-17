@@ -74,6 +74,8 @@ def penalties_include(logger, soi_dic, period_events):
                             if event['data']['disciplinedPlayer']:
                                 soi_dic[team][second_]['penalty'] = event['data']['disciplinedPlayer']['surname']
                             else:
-                                soi_dic[team][second_]['penalty'] = event['data']['replacedPlayer']['surname']
+                                if 'replacedPlayer' in event['data'] and event['data']['replacedPlayer']:
+                                    if 'surename' in event['data']['replacedPlayer']:
+                                        soi_dic[team][second_]['penalty'] = event['data']['replacedPlayer']['surname']
 
     return soi_dic
