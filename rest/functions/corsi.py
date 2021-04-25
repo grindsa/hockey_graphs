@@ -151,11 +151,13 @@ def gameshots5v5_get(logger, match_info_dic, team, shot_list, shift_list, period
 
         if process_shot:
             home_penalty = False
-            if 'penalty' in soi_dic['home_team'][shot['timestamp']]:
-                home_penalty = True
+            if shot['timestamp'] in soi_dic['home_team']:
+                if 'penalty' in soi_dic['home_team'][shot['timestamp']]:
+                    home_penalty = True
             visitor_penalty = False
-            if 'penalty' in soi_dic['visitor_team'][shot['timestamp']]:
-                visitor_penalty = True
+            if shot['timestamp'] in soi_dic['visitor_team']:
+                if 'penalty' in soi_dic['visitor_team'][shot['timestamp']]:
+                    visitor_penalty = True
 
             count_shot = False
             if home_penalty == visitor_penalty:
