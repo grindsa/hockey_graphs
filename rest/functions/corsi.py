@@ -148,7 +148,6 @@ def gameshots5v5_get(logger, match_info_dic, team, shot_list, shift_list, period
     for shot in shot_list:
         # sync shots with leaffan
         (process_shot, ltime, ldate) = shot_leaffan_sync(shot, ltime, ldate)
-
         if process_shot:
             home_penalty = False
             if shot['timestamp'] in soi_dic['home_team']:
@@ -163,8 +162,11 @@ def gameshots5v5_get(logger, match_info_dic, team, shot_list, shift_list, period
             if home_penalty == visitor_penalty:
                 count_shot = True
 
-            home_count = soi_dic['visitor_team'][shot['timestamp']]['count']
-            _visitor_count = soi_dic['visitor_team'][shot['timestamp']]['count']
+            try:
+                home_count = soi_dic['visitor_team'][shot['timestamp']]['count']
+            except BaseException:
+                home_count = 0
+            # _visitor_count = soi_dic['visitor_team'][shot['timestamp']]['count']
 
             # count only shots at 5v5
             if count_shot:
