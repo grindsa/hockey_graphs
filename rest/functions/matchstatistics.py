@@ -61,7 +61,8 @@ def matchstatistics_get(logger, request, fkey=None, fvalue=None):
         roster_list = roster_get(logger, fkey, fvalue, ['roster'])
 
         # create plotlines to be addedd to chart
-        plotbands_list = penaltyplotlines_get(logger, fkey, fvalue, color_dic['home_team_color_penalty_primary'], color_dic['visitor_team_color_penalty_secondary'])
+        # plotbands_list = penaltyplotlines_get(logger, fkey, fvalue, color_dic['home_team_color_penalty_primary'], color_dic['visitor_team_color_penalty_secondary'])
+        plotbands_list = penaltyplotlines_get(logger, fkey, fvalue, color_dic['visitor_team_color_penalty_secondary'], color_dic['home_team_color_penalty_primary'])
 
         (_sf_5v5, _sa_5v5, _sogf_5v5, _soga_5v5, shot_list_5v5) = gameshots5v5_get(logger, matchinfo_dic, 'foo', shot_list, shift_list, periodevent_list)
 
@@ -133,7 +134,7 @@ def _gameflow_get(logger, title, subtitle, ismobile, request, fkey, fvalue, matc
         gameflow_dic = gameflow_get(logger, shotmin_dic)
 
         # create plotlines to be addedd to chart
-        plotline_list = penaltyplotlines_get(logger, fkey, fvalue, color_dic['home_team_color_penalty_primary'], color_dic['visitor_team_color_penalty_secondary'])
+        plotline_list = penaltyplotlines_get(logger, fkey, fvalue, color_dic['visitor_team_color_penalty_secondary'], color_dic['home_team_color_penalty_primary'])
 
         # create the chart
         shot_chart = gameflowchart_create(logger, title, subtitle, ismobile, gameflow_dic, goal_dic, plotline_list, matchinfo_dic, color_dic)
@@ -222,7 +223,7 @@ def _gameshots_get(logger, title, subtitle, ismobile, request, fkey, fvalue, mat
         shotsum_dic = shotspermin_aggregate(logger, shotmin_dic)
 
         # create plotlines to be addedd to chart
-        plotline_list = penaltyplotlines_get(logger, fkey, fvalue, color_dic['home_team_color_penalty_primary'], color_dic['visitor_team_color_penalty_secondary'])
+        plotline_list = penaltyplotlines_get(logger, fkey, fvalue, color_dic['visitor_team_color_penalty_secondary'], color_dic['home_team_color_penalty_primary'])
 
         # pylint: disable=E0602
         stat_entry = {
@@ -492,7 +493,8 @@ def _shiftchart_get(logger, title, subtitle, ismobile, request, fkey, fvalue, ma
 
         # get list of penalties
         penalty_dic = penaltiesfromevents_get(logger, periodevent_list)
-        plotlbands_list = penaltyplotlines_get(logger, fkey, fvalue, color_dic['home_team_color_penalty_primary'], color_dic['visitor_team_color_penalty_secondary'], scale='millisecond')
+        # plotlbands_list = penaltyplotlines_get(logger, fkey, fvalue, color_dic['home_team_color_penalty_primary'], color_dic['visitor_team_color_penalty_secondary'], scale='millisecond')
+        plotlbands_list = penaltyplotlines_get(logger, fkey, fvalue, color_dic['visitor_team_color_penalty_secondary'], color_dic['home_team_color_penalty_primary'])
 
         # get matrix showing the different player relations
         (shiftsperplayer_dic) = shiftsperplayer_get(logger, matchinfo_dic, shift_list, roster_list, penalty_dic)
