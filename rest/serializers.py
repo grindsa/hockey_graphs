@@ -11,9 +11,15 @@ LOGGER = logger_setup(DEBUG)
 
 class PlayerSerializer(serializers.HyperlinkedModelSerializer):
     """ player serializer """
+    name = serializers.SerializerMethodField('get_name')
+    def get_name(self, obj):
+        """ get name and jersey """
+        if self.context:
+            return '{0} {1} ({2})'.format(obj.first_name, obj.last_name, obj.jersey)
     class Meta:
         model = Player
-        fields = ('player_id', 'first_name', 'last_name', 'jersey')
+        # fields = ('player_id', 'first_name', 'last_name', 'jersey')
+        fields = ('player_id', 'name')
 
 class MatchSerializer(serializers.HyperlinkedModelSerializer):
     """ match serializer """
