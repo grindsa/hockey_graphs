@@ -46,6 +46,7 @@
     "react-dom": "^16.14.0",
     "react-markdown": "^5.0.3",
     "react-rangeslider": "^2.2.0",
+    "react-search-autocomplete": "^5.4.2",
     "remark-gfm": "^1.0.0",
     "style-loader": "^2.0.0"
   }
