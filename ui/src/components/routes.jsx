@@ -1,6 +1,7 @@
 import React from 'react';
 import { MatchDayList } from '../components/matchday';
 import { TeamComparison } from '../components/teamcomparison';
+import { Playerstatistic } from '../components/playerstatistic';
 import { Dsgvo } from '../components/dsgvo';
 
 function tc_route(endpoint, language, selectedSeason, season, setSelectedSeason, selectedStat, changeStat, stat){
@@ -41,6 +42,21 @@ function mdl_route(ep_matchdays, ep_matchstatistics, language, selectedSeason, s
   )
 }
 
+function ps_route(pl_endpoint, language, selectedSeason, season, setSelectedSeason, selectedStat, changeStat, stat){
+  // update season and return TeamComparison route
+  season = parseInt(season)
+  if (season && selectedSeason && season && season !== selectedSeason) {
+    setSelectedSeason(season)
+  }
+  if(selectedStat != 2){
+    // checkge stat in upper bar if required
+    changeStat(2)
+  }
+  return(
+    <Playerstatistic players={ pl_endpoint } language={ language } season={ selectedSeason } stat={stat} />
+  )
+}
+
 export const Routes = (endpoints, language, selectedSeason, setSelectedSeason, selectedStat, changeStat) => {
     return ({
       '/': () => <MatchDayList matchdays={endpoints.matchdays} matchstatistics={endpoints.matchstatistics} language={language} season={selectedSeason} />,
@@ -65,6 +81,9 @@ export const Routes = (endpoints, language, selectedSeason, setSelectedSeason, s
       '/teamcomparison/:season/': ({season}) => tc_route(endpoints.teamcomparison, language, selectedSeason, season, setSelectedSeason, selectedStat, changeStat, "1"),
       // season and statnumber
       '/teamcomparison/:season/:stat': ({season, stat}) => tc_route(endpoints.teamcomparison, language, selectedSeason, season, setSelectedSeason, selectedStat, changeStat, stat),
-      '/teamcomparison/:season/:stat/': ({season, stat}) => tc_route(endpoints.teamcomparison, language, selectedSeason, season, setSelectedSeason, selectedStat, changeStat, stat)
+      '/teamcomparison/:season/:stat/': ({season, stat}) => tc_route(endpoints.teamcomparison, language, selectedSeason, season, setSelectedSeason, selectedStat, changeStat, stat),
+
+      // just the path
+      '/playerstatistics': () => ps_route(endpoints.players, language, selectedSeason, selectedSeason, setSelectedSeason, selectedStat, changeStat, "0")
     })
 }

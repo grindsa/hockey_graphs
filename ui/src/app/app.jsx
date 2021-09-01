@@ -22,7 +22,7 @@ export const App = () => {
 
   const [endpoints, setEndpoints] = useState([])
   const [seasonlist, setSeasonlist] = useState([])
-  const [statList, setStatList] = useState([{id: 0, name: 'Spielstatistiken', route: '/matchstatistics'}, {id: 1, name: 'Teamvergleich', route: '/teamcomparison'}])
+  const [statList, setStatList] = useState([{id: 0, name: 'Spielstatistiken', route: '/matchstatistics'}, {id: 1, name: 'Teamvergleich', route: '/teamcomparison'}, {id: 2, name: 'Spielerstatistiken', route: '/playerstatistics'}])
   const [language, setLanguage] = useState('DE')
   const [selectedSeason, setSelectedSeason] = useState(0)
   const [selectedStat, setSelectedStat] = useState(0)
@@ -36,6 +36,8 @@ export const App = () => {
     // navigate to new season
     if (selectedStat == 1){
       navigate('/teamcomparison/' + newSeason);
+    }else if (selectedStat == 2){
+        navigate('/playerstatistics/' + newSeason);
     }else{
       navigate('/matchstatistics/' + newSeason)
     }
@@ -113,6 +115,7 @@ export const App = () => {
   // useRedirect('/', '/matchstatistics')
   useRedirect('/matchstatistics/', '/matchstatistics')
   useRedirect('/teamcomparison/', '/teamcomparison')
+  useRedirect('/playerstatistics/', '/playerstatistics')
 
   const routeResult = useRoutes(routes);
   return (

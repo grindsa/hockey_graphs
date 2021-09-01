@@ -1,8 +1,8 @@
 export const creatstatList = function(language){
   /* build statnames based on language setting */
-  var statlist = [{id: 0, name: 'Match statistics', route: '/matchstatistics'}, {id: 1, name: 'Team benchmarks', route: '/teamcomparison'}]
+  var statlist = [{id: 0, name: 'Match statistics', route: '/matchstatistics'}, {id: 1, name: 'Team benchmarks', route: '/teamcomparison'}, {id: 2, name: 'Player statistics', route: '/playerstatistics'}]
   if (language == 'DE'){
-    statlist = [{id: 0, name: 'Spielstatistiken', route: '/matchstatistics'}, {id: 1, name: 'Teamvergleich', route: '/teamcomparison'}]
+    statlist = [{id: 0, name: 'Spielstatistiken', route: '/matchstatistics'}, {id: 1, name: 'Teamvergleich', route: '/teamcomparison'}, {id: 2, name: 'Spielerstatistiken', route: '/playerstatistics'}]
   }
   return statlist
 }
@@ -24,7 +24,6 @@ export const createnoChartMessage = function(language){
   }
   return nostatmessage
 }
-
 
 export const createTcSliderText = function(language, select, max){
   let slidermessage
