@@ -16,11 +16,11 @@ class PlayerSerializer(serializers.HyperlinkedModelSerializer):
     def get_name(self, obj):
         """ get name and jersey """
         if self.context:
-            return '{0} {1} ({2})'.format(obj.first_name, obj.last_name, obj.jersey)
+            return '{0} {1}'.format(obj.first_name, obj.last_name)
     def get_id(self, obj):
         """ get id """
         if self.context:
-            return obj.player_id            
+            return obj.player_id
     class Meta:
         model = Player
         # fields = ('player_id', 'first_name', 'last_name', 'jersey')

@@ -23,6 +23,28 @@ export async function asyncGET(apiEndpoint){
   }
 }
 
+export async function asyncGETPaging(apiEndpoint, next, data){
+
+  var resultList = []
+  if(apiEndpoint){
+    var link = apiEndpoint
+    while(link){
+      const { data: Items } = await GET(link);
+      if (Items) {
+        if (resultList){
+          resultList = [...resultList, ...Items[data]]
+        }else{
+          resultList = Items[next]
+        }
+        link = Items[next]
+      }else{
+        // error
+      }
+    }
+  }
+  return resultList
+}
+
 export function CookieSet(app_name, options){
     // save state to coookie
     const cookies = new Cookies();
@@ -33,6 +55,6 @@ export function getParams(location) {
   const searchParams = new URLSearchParams(location.search);
   return {
     lang: searchParams.get('lang') || '',
-    disableperiod: Boolean(searchParams.get('disableperiod')) || false,    
+    disableperiod: Boolean(searchParams.get('disableperiod')) || false,
   };
 }
