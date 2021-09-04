@@ -8,12 +8,12 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir, os.path.pardir)))
 from rest.functions.helper import logger_setup
 from rest.functions.team import team_dic_get
-from rest.functions.player import player_add
+from rest.functions.player import player_add, playerperseason_add
 from delapphelper import DelAppHelper
 
 if __name__ == '__main__':
 
-    DEBUG = False
+    DEBUG = True
 
     # initialize logger
     LOGGER = logger_setup(DEBUG)
@@ -31,6 +31,7 @@ if __name__ == '__main__':
 
     # get list of teams
     TEAM_DIC = team_dic_get(LOGGER, None)
+    SEASON_ID = 3
 
     with DelAppHelper(None, DEBUG) as del_app_helper:
         for season_year in SEASON_YEAR_LIST:
@@ -49,6 +50,10 @@ if __name__ == '__main__':
                                 'weight': player['weight'],
                                 'height': player['height']
                             }
-                            pid = player_add(LOGGER, 'player_id', player['id'], data_dic)
+                            # pid = player_add(LOGGER, 'player_id', player['id'], data_dic)
+
+                            data_dic = {'player_id': player['id'], 'season_id': SEASON_ID}
+                            pid = playerperseason_add(LOGGER, 'player_id', player['id'], data_dic)
+
                     except BaseException:
                         LOGGER.debug('ERROR: {0}: {1}: {2}'.format(season_year, league, team_id))

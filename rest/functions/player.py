@@ -7,7 +7,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "hockey_graphs.settings")
 import django
 django.setup()
-from rest.models import Player
+from rest.models import Player, Playerperseason
 from rest.functions.helper import list2dic
 
 def player_dic_get(logger):
@@ -49,4 +49,18 @@ def player_add(logger, fkey, fvalue, data_dic):
         logger.critical('error in player_add(): {0}'.format(err_))
         result = None
     logger.debug('player_add({0}:{1}) ended with {2}'.format(fkey, fvalue, result))
+    return result
+
+def playerperseason_add(logger, fkey, fvalue, data_dic):
+    """ add player to database """
+    logger.debug('playerperseason_add({0}:{1})'.format(fkey, fvalue))
+    try:
+        # add authorization
+        obj, _created = Playerperseason.objects.update_or_create(**{fkey: fvalue}, defaults=data_dic)
+        obj.save()
+        result = obj.player_id
+    except BaseException as err_:
+        logger.critical('error in playerperseason_add(): {0}'.format(err_))
+        result = None
+    logger.debug('playerperseason_add({0}:{1}) ended with {2}'.format(fkey, fvalue, result))
     return result

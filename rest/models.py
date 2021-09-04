@@ -67,6 +67,10 @@ class Player(models.Model):
     def __str__(self):
         return self.last_name
 
+class Playerperseason(models.Model):
+    player = models.ForeignKey(Player, on_delete=models.CASCADE, default=0)
+    season = models.ForeignKey(Season, on_delete=models.CASCADE, default=0)
+
 class Playerstat(models.Model):
     """ shifts """
     match = models.ForeignKey(Match, on_delete=models.CASCADE)
