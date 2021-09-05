@@ -51,16 +51,16 @@ def player_add(logger, fkey, fvalue, data_dic):
     logger.debug('player_add({0}:{1}) ended with {2}'.format(fkey, fvalue, result))
     return result
 
-def playerperseason_add(logger, fkey, fvalue, data_dic):
+def playerperseason_add(logger, player_id, season_id, data_dic):
     """ add player to database """
-    logger.debug('playerperseason_add({0}:{1})'.format(fkey, fvalue))
+    logger.debug('playerperseason_add({0}:{1})'.format(player_id, season_id))
     try:
         # add authorization
-        obj, _created = Playerperseason.objects.update_or_create(**{fkey: fvalue}, defaults=data_dic)
+        obj, _created = Playerperseason.objects.update_or_create(player_id=player_id, season_id=season_id, defaults=data_dic)
         obj.save()
         result = obj.player_id
     except BaseException as err_:
         logger.critical('error in playerperseason_add(): {0}'.format(err_))
         result = None
-    logger.debug('playerperseason_add({0}:{1}) ended with {2}'.format(fkey, fvalue, result))
+    logger.debug('playerperseason_add({0}:{1}) ended with {2}'.format(player_id, season_id, result))
     return result

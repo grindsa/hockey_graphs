@@ -1,7 +1,7 @@
 """ serializers.py """
 from django.conf import settings
 from rest_framework import serializers
-from rest.models import Match, Periodevent, Player, Season, Shift, Shot, Team
+from rest.models import Match, Periodevent, Player, Season, Shift, Shot, Team, Playerperseason
 from rest.functions.helper import url_build, logger_setup
 from rest.functions.match import matchstats_get
 
@@ -70,6 +70,23 @@ class PeriodeventSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Periodevent
         fields = ('period_event', )
+
+class PlayerperSeasonSerializer(serializers.HyperlinkedModelSerializer):
+    """ season serializer """
+    name = serializers.SerializerMethodField('get_player')
+    id = serializers.SerializerMethodField('get_id')
+    def get_player(self, obj):
+        """ get_player """
+        if self.context:
+            return '{0} {1}'.format(obj['player__first_name'], obj['player__last_name'])
+    def get_id(self, obj):
+        """ get_player """
+        if self.context:
+            return obj['player_id']
+
+    class Meta:
+        model = Playerperseason
+        fields = ('id', 'name')
 
 class SeasonSerializer(serializers.HyperlinkedModelSerializer):
     """ season serializer """

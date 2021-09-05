@@ -11,8 +11,8 @@ from rest.functions.matchstatistics import matchstatistics_get
 from rest.functions.teamcomparison import teamcomparison_get
 from rest.functions.helper import logger_setup
 from rest.version import __version__
-from .serializers import MatchSerializer, PeriodeventSerializer, PlayerSerializer, SeasonSerializer, ShiftSerializer, ShotSerializer, TeamSerializer
-from .models import Match, Periodevent, Player, Season, Shift, Shot, Team
+from .serializers import MatchSerializer, PeriodeventSerializer, PlayerSerializer, PlayerperSeasonSerializer, SeasonSerializer, ShiftSerializer, ShotSerializer, TeamSerializer
+from .models import Match, Periodevent, Player, Season, Shift, Shot, Team, Playerperseason
 import gettext
 
 # initialize logger
@@ -85,7 +85,6 @@ class TeamComparisonViewSet(viewsets.ViewSet):
         response = Response(result, status=status.HTTP_200_OK)
         return response
 
-
 class MatchDayViewSet(viewsets.ViewSet):
     """ view for matchdays """
 
@@ -114,6 +113,22 @@ class PlayerViewSet(viewsets.ModelViewSet):
     queryset = Player.objects.all().order_by('player_id')
     serializer_class = PlayerSerializer
     http_method_names = ['get']
+
+# pylint: disable=R0901
+class PlayerperSeasonViewSet(viewsets.ModelViewSet):
+    """ viewset for players """
+    serializer_class = PlayerperSeasonSerializer
+    http_method_names = ['get']
+    def get_queryset(self):
+        season_id = self.request.query_params.get('season', None)
+        # only return data if season id got specified
+        if season_id:
+            queryset = Playerperseason.objects.filter(season_id=season_id).order_by('player_id').values('player_id', 'player__first_name', 'player__last_name')
+        else:
+            # queryset = Playerperseason.objects.all().order_by('player_id').values('player_id', 'player__first_name', 'player__last_name')
+            queryset = Playerperseason.objects.none()
+
+        return queryset
 
 # pylint: disable=R0901
 class PeriodeventViewSet(viewsets.ModelViewSet):

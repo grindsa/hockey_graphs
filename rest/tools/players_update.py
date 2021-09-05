@@ -53,7 +53,6 @@ if __name__ == '__main__':
                             # pid = player_add(LOGGER, 'player_id', player['id'], data_dic)
 
                             data_dic = {'player_id': player['id'], 'season_id': SEASON_ID}
-                            pid = playerperseason_add(LOGGER, 'player_id', player['id'], data_dic)
-
+                            pid = playerperseason_add(LOGGER, player['id'], SEASON_ID, data_dic)
                     except BaseException:
                         LOGGER.debug('ERROR: {0}: {1}: {2}'.format(season_year, league, team_id))
