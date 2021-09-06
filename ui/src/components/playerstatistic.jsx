@@ -6,7 +6,6 @@ import { asyncGET, asyncGETPaging, isEmpty } from './sharedfunctions.js';
 import { navigate } from "hookrouter";
 
 export const Playerstatistic = (props) => {
-  // console.log(props)
   // team-comparison
   const [playerstatList, setPlayerstatList] = useState([])
   const [selectedstat, setSelectedstat] = useState(0)
@@ -28,12 +27,12 @@ export const Playerstatistic = (props) => {
       }
       plist_get()
     }
-  }, [props.playerstatistic, props.season, props.language])
+  }, [props.players, props.season, props.language])
 
   useEffect(() => {
-      if (props.stat){
-        setSelectedstat(props.stat-1)
-      }
+    if (props.stat){
+      setSelectedstat(props.stat-1)
+    }
   }, [props.stat, props.players])
 
   const nostatmessage = createnostatMessage(props.language)

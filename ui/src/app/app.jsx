@@ -37,7 +37,7 @@ export const App = () => {
     if (selectedStat == 1){
       navigate('/teamcomparison/' + newSeason);
     }else if (selectedStat == 2){
-        navigate('/playerstatistics/' + newSeason);
+      navigate('/playerstatistics/' + newSeason);
     }else{
       navigate('/matchstatistics/' + newSeason)
     }

@@ -84,6 +84,9 @@ export const Routes = (endpoints, language, selectedSeason, setSelectedSeason, s
       '/teamcomparison/:season/:stat/': ({season, stat}) => tc_route(endpoints.teamcomparison, language, selectedSeason, season, setSelectedSeason, selectedStat, changeStat, stat),
 
       // just the path
-      '/playerstatistics': () => ps_route(endpoints.players, language, selectedSeason, selectedSeason, setSelectedSeason, selectedStat, changeStat, "0")
+      '/playerstatistics': () => ps_route(endpoints.players, language, selectedSeason, selectedSeason, setSelectedSeason, selectedStat, changeStat, "0"),
+      '/playerstatistics/:season': ({season}) => ps_route(endpoints.players, language, selectedSeason, season, setSelectedSeason, selectedStat, changeStat, "0"),
+      '/playerstatistics/:season/': ({season}) => ps_route(endpoints.players, language, selectedSeason, season, setSelectedSeason, selectedStat, changeStat, "0")
+
     })
 }
