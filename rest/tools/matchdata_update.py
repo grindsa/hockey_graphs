@@ -252,9 +252,9 @@ if __name__ == '__main__':
                 json_store('{0}/{1}'.format(MATCH_DIR, 'shots.json'), shots_dic)
                 if ADDSHIFTS:
                     json_store('{0}/{1}'.format(MATCH_DIR, 'shifts.json'), shift_dic)
-                    if HGS_DATA and not os.path.exists('{0}/shifts/2020/1/{1}.json'.format(HGS_DATA, match_id)):
+                    if HGS_DATA and not os.path.exists('{0}/shifts/2021/1/{1}.json'.format(HGS_DATA, match_id)):
                         LOGGER.debug('fetch shifts')
-                        json_store('{0}/shifts/2020/1/{1}.json'.format(HGS_DATA, match_id), shift_dic)
+                        json_store('{0}/shifts/2021/1/{1}.json'.format(HGS_DATA, match_id), shift_dic)
 
     if GITREPO and SAVE:
         # check changes into repo
