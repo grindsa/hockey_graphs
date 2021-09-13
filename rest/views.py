@@ -8,6 +8,7 @@ from rest_framework import status
 from rest_framework.pagination import PageNumberPagination
 from rest.functions.matchday import matchdays_get
 from rest.functions.matchstatistics import matchstatistics_get
+from rest.functions.playerstatistics import playerstatistics_get
 from rest.functions.teamcomparison import teamcomparison_get
 from rest.functions.helper import logger_setup
 from rest.version import __version__
@@ -67,6 +68,32 @@ class MatchStatisticsViewSet(viewsets.ViewSet):
         result = matchstatistics_get(LOGGER, request, fkey='match', fvalue=pk)
         response = Response(result, status=status.HTTP_200_OK)
         return response
+
+class PlayerStatisticsViewSet(viewsets.ViewSet):
+    """ view for matchdays """
+
+    #def get_queryset(self, *args, **kwargs):
+    #    season_id = self.kwargs.get("season_pk")
+    #    print(seson_id)
+    #
+    #    #    print(season_id)
+
+
+    def list(self, request, season_pk=None, player_pk=None):
+        """ get a list of matchdays and matches per day """
+        set_language(LOGGER, request)
+        result = playerstatistics_get(LOGGER, request, season_pk, player_pk)
+        response = Response(result, status=status.HTTP_200_OK)
+        return response
+
+    #def retrieve(self, request, pk=None):
+    #    """ filter matches for a single matchday """
+    #    print(pk)
+    #    set_language(LOGGER, request)
+    #    result = playerstatistics_get(LOGGER, request, fkey='player_id', fvalue=pk)
+    #    response = Response(result, status=status.HTTP_200_OK)
+    #    return response
+
 
 class TeamComparisonViewSet(viewsets.ViewSet):
     """ view for matchdays """

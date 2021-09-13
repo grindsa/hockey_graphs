@@ -27,6 +27,7 @@ router.register(r'matchdays', views.MatchDayViewSet, basename='matchdays')
 router.register(r'matchstatistics', views.MatchStatisticsViewSet, basename='matchstatistics')
 router.register(r'teamcomparison', views.TeamComparisonViewSet, basename='teamcomparison')
 router.register(r'players', views.PlayerperSeasonViewSet, basename='PlayerperSeason')
+router.register(r'playerstatistics', views.PlayerStatisticsViewSet, basename='playerstatistics')
 # router.register(r'shifts', views.ShiftViewSet, basename='Shift')
 router.register(r'seasons', views.SeasonViewSet)
 # router.register(r'shots', views.ShotViewSet, basename='Shot')
@@ -36,6 +37,7 @@ router.register(r'teams', views.TeamViewSet)
 # Additionally, we include login URLs for the browsable API.
 urlpatterns = [
     path('', include(router.urls)),
+    url(r'^playerstatistics/(?P<season_pk>\d+)/(?P<player_pk>\d+)/?$', views.PlayerStatisticsViewSet.as_view({'get': 'list'}), name='playerstatistics')
     # url(r'^matchdays/(?P<resource_id>\d+)[/]?$', views.MatchDayViewSet.as_view(), name='MatchDayViewSet'),
     # url(r'^matchdays[/]?$', views.MatchDayViewSet.as_view(), name='MatchDayViewSet'),
     #url(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),

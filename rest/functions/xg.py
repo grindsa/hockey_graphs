@@ -574,12 +574,10 @@ def dgf_chartseries_get(logger, data_dic):
     logger.debug('dgf_chartseries_get()')
     chartseries_dic = {}
 
-    print(data_dic)
     for mday in data_dic:
         chartseries_dic[mday] = {'data': {'team_list': [], 'dgf_list': [], 'gf_list': []}, 'gf_5v5_pctg_min': 0}
 
         for idx, datapoint in enumerate(sorted(data_dic[mday], key=lambda i: i['gf_5v5_pctg'])):
-            print(idx)
             datapoint['color'] = hm_color_list[idx]
 
         for datapoint in sorted(data_dic[mday], key=lambda i: i['dgf_5v5']):
