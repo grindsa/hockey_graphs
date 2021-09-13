@@ -143,9 +143,15 @@ def _xgfa_sumup(logger, teamstat_dic):
             # calculate 60
             ele['avg_xgoals_for_60'] = round(sum_xgoals_for * 3600 / sum_matchduration, 2)
             ele['avg_xgoals_against_60'] = round(sum_xgoals_against * 3600 / sum_matchduration, 2)
-            # calculate gf% xgf%
-            ele['xgf_5v5_pctg'] = round(sum_xgoals_for*100/(sum_xgoals_for + sum_xgoals_against), 2)
-            ele['gf_5v5_pctg'] = round(ele['sum_goals_for_5v5']*100/(ele['sum_goals_for_5v5'] + ele['sum_goals_against_5v5']), 2)
+            if sum_xgoals_for + sum_xgoals_against > 0:
+                ele['xgf_5v5_pctg'] = round(sum_xgoals_for*100/(sum_xgoals_for + sum_xgoals_against), 2)
+            else:
+                ele['xgf_5v5_pctg'] = 0
+            if ele['sum_goals_for_5v5'] + ele['sum_goals_against_5v5'] > 0:
+                ele['gf_5v5_pctg'] = round(ele['sum_goals_for_5v5']*100/(ele['sum_goals_for_5v5'] + ele['sum_goals_against_5v5']), 2)
+            else:
+                ele['gf_5v5_pctg'] = 0
+
             ele['dgf_5v5'] = ele['gf_5v5_pctg'] - ele['xgf_5v5_pctg']
 
     return (teamstat_sum_dic, update_amount)
@@ -568,10 +574,12 @@ def dgf_chartseries_get(logger, data_dic):
     logger.debug('dgf_chartseries_get()')
     chartseries_dic = {}
 
+    print(data_dic)
     for mday in data_dic:
         chartseries_dic[mday] = {'data': {'team_list': [], 'dgf_list': [], 'gf_list': []}, 'gf_5v5_pctg_min': 0}
 
         for idx, datapoint in enumerate(sorted(data_dic[mday], key=lambda i: i['gf_5v5_pctg'])):
+            print(idx)
             datapoint['color'] = hm_color_list[idx]
 
         for datapoint in sorted(data_dic[mday], key=lambda i: i['dgf_5v5']):
