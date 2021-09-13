@@ -41,7 +41,7 @@ line4_color = chart_color2
 line5_color = chart_color5
 
 # hm_color_list = ['#a90c38', '#c11b39', '#e54444', '#ec4f4a', '#e06f5b', '#f98973', '#fa8e78', '#fc9783', '#eac7bf', '#b2cfe2', '#a4cbe5', '#8bb8db', '#70a2c9', '#43719f', '#416f9d', '#2e5b87']
-hm_color_list = ['#a90c38', '#c11b39', '#e54444', '#ec4f4a', '#e06f5b', '#f98973', '#fa8e78', '#b2cfe2', '#a4cbe5', '#8bb8db', '#70a2c9', '#43719f', '#416f9d', '#2e5b87']
+hm_color_list = ['#a90c38', '#c11b39', '#e54444', '#ec4f4a', '#e06f5b', '#f98973', '#fa8e78', '#b2cfe2', '#a4cbe5', '#8bb8db', '#70a2c9', '#43719f', '#416f9d', '#2e5b87', '#2e5b87']
 
 twitter_color = '#1DA1F2'
 
