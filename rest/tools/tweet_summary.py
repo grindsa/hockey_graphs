@@ -195,7 +195,7 @@ if __name__ == '__main__':
     RESULT_LIST = []
 
     # create images per match
-    if MATCH_ID_LIST:
+    if MATCH_ID_LIST and len(MATCH_ID_LIST) > 1:
         for match_id in MATCH_ID_LIST:
 
             # we need some match_information
