@@ -8,6 +8,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "hockey_graphs.settings")
 import django
 django.setup()
 from django.conf import settings
+from rest.functions.bananachart import banana_chart1_create, banana_chart2_create
 from rest.functions.helper import url_build, mobile_check
 
 def playerstatistics_get(logger, request, season_pk=None, player_pk=None):
@@ -24,7 +25,12 @@ def playerstatistics_get(logger, request, season_pk=None, player_pk=None):
     # we protect the REST and will not return anything without matchid
     if season_pk and player_pk:
         # we need some match_information
-        result = {'foo': 'bar'}
+        result = []
+
+        # get matchstatistics
+        result.append(banana_chart1_create(logger, 'title1'))
+        result.append(banana_chart2_create(logger, 'title2'))
+
         print(season_pk, player_pk )
         pass
     else:
