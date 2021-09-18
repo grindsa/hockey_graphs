@@ -9,6 +9,7 @@ export const Searchbar = (props) => {
       <ReactSearchAutocomplete
         items={props.items}
         onSelect={props.onselect}
+        inputSearchString={props.PlayerName}
         autoFocus
         styling={{borderRadius: "1px",
                   boxShadow: "rgba(32, 33, 36, 0.28) 0px 0px 0px 0px",

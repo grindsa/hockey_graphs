@@ -42,7 +42,7 @@ function mdl_route(ep_matchdays, ep_matchstatistics, language, selectedSeason, s
   )
 }
 
-function ps_route(pl_endpoint, language, selectedSeason, season, setSelectedSeason, selectedStat, changeStat, stat){
+function ps_route(pl_endpoint, pls_endpoint, language, selectedSeason, season, setSelectedSeason, selectedStat, changeStat, player, stat){
   // update season and return TeamComparison route
   season = parseInt(season)
   if (season && selectedSeason && season && season !== selectedSeason) {
@@ -53,7 +53,7 @@ function ps_route(pl_endpoint, language, selectedSeason, season, setSelectedSeas
     changeStat(2)
   }
   return(
-    <Playerstatistic players={ pl_endpoint } language={ language } season={ selectedSeason } stat={stat} />
+    <Playerstatistic players={ pl_endpoint } playerstatistics={ pls_endpoint } language={ language } season={ selectedSeason } stat={stat} player_id={player}/>
   )
 }
 
@@ -84,9 +84,14 @@ export const Routes = (endpoints, language, selectedSeason, setSelectedSeason, s
       '/teamcomparison/:season/:stat/': ({season, stat}) => tc_route(endpoints.teamcomparison, language, selectedSeason, season, setSelectedSeason, selectedStat, changeStat, stat),
 
       // just the path
-      '/playerstatistics': () => ps_route(endpoints.players, language, selectedSeason, selectedSeason, setSelectedSeason, selectedStat, changeStat, "0"),
-      '/playerstatistics/:season': ({season}) => ps_route(endpoints.players, language, selectedSeason, season, setSelectedSeason, selectedStat, changeStat, "0"),
-      '/playerstatistics/:season/': ({season}) => ps_route(endpoints.players, language, selectedSeason, season, setSelectedSeason, selectedStat, changeStat, "0")
-
+      '/playerstatistics': () => ps_route(endpoints.players, endpoints.playerstatistics, language, selectedSeason, selectedSeason, setSelectedSeason, selectedStat, changeStat, null, null),
+      '/playerstatistics/:season': ({season}) => ps_route(endpoints.players, endpoints.playerstatistics, language, selectedSeason, season, setSelectedSeason, selectedStat, changeStat, null, null),
+      '/playerstatistics/:season/': ({season}) => ps_route(endpoints.players, endpoints.playerstatistics, language, selectedSeason, season, setSelectedSeason, selectedStat, changeStat, null, null),
+      // season and player
+      '/playerstatistics/:season/:player': ({season, player}) => ps_route(endpoints.players, endpoints.playerstatistics, language, selectedSeason, season, setSelectedSeason, selectedStat, changeStat, player, null),
+      '/playerstatistics/:season/:player/': ({season, player}) => ps_route(endpoints.players, endpoints.playerstatistics, language, selectedSeason, season, setSelectedSeason, selectedStat, changeStat, player, null),
+      // season, player and stat
+      '/playerstatistics/:season/:player/:stat': ({season, player, stat}) => ps_route(endpoints.players, endpoints.playerstatistics, language, selectedSeason, season, setSelectedSeason, selectedStat, changeStat, player, stat),
+      '/playerstatistics/:season/:player/:stat/': ({season, player, stat}) => ps_route(endpoints.players, endpoints.playerstatistics, language, selectedSeason, season, setSelectedSeason, selectedStat, changeStat, player, stat)
     })
 }
