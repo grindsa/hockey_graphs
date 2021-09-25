@@ -259,7 +259,7 @@ def _gamezoneshots_get(logger, title, subtitle, ismobile, request, matchinfo_dic
 
 def _gameheatmap_get(logger, title, subtitle, _ismobile, request, fkey, fvalue, matchinfo_dic, shot_list):
     """ get gameshotmap """
-    logger.debug('_gameshotmap_get({0}:{1})'.format(fkey, fvalue))
+    logger.debug('_gameheatmap_get({0}:{1})'.format(fkey, fvalue))
 
     shot_table = None
     shotmap_dic = {}

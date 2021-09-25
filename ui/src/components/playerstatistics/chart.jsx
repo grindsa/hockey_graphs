@@ -21,21 +21,22 @@ Heatmap(Highcharts);
 
 export const Chart = (props) => {
   /* block to render chart moetection is done via chartoptions */
+  console.log(props.options)
   if (!isEmpty(props.options) && props.options.ctype === 'gantt'){
     return (
       <div className="w3-border">
         <Gantt options={props.options} updates={props.updates}/>
       </div>
     )
+  }else if (!isEmpty(props.options) && props.options.chart.leftlabel){
+    return(
+      <HeatmapJs data={props.options.chart} />
+    )
   }else if (!isEmpty(props.options) && props.options.chart){
     return (
       <div className="w3-border">
         <HighchartsReact highcharts={Highcharts} options={props.options.chart} immutable={true} />
       </div>
-    )
-  }else if (!isEmpty(props.options) && props.options.leftlabel){
-    return(
-      <HeatmapJs data={props.options} />
     )
   }else{
     const nochartdata = createnoChartMessage(props.language)

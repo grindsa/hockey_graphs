@@ -72,18 +72,37 @@ class Playerperseason(models.Model):
     season = models.ForeignKey(Season, on_delete=models.CASCADE, default=0)
 
 class Playerstat(models.Model):
-    """ shifts """
+    """ playerstats from del """
     match = models.ForeignKey(Match, on_delete=models.CASCADE)
     home = jsonfield.JSONField(default=dict)
     visitor = jsonfield.JSONField(default=dict)
 
+class Playerstatistics(models.Model):
+    """ playerstats from del """
+    match = models.ForeignKey(Match, on_delete=models.CASCADE)
+    player = models.ForeignKey(Player, on_delete=models.CASCADE, default=0)
+    team = models.ForeignKey(Team, related_name='team', on_delete=models.CASCADE)
+    oteam = models.ForeignKey(Team, related_name='oteam', on_delete=models.CASCADE)
+    roadgame = models.BooleanField(default=False)
+    shots_for = models.IntegerField(default=0)
+    shots_for_avg = models.FloatField(default=0)
+    shots_for_5v5 = models.IntegerField(default=0)
+    shots_for_5v5_avg = models.FloatField(default=0)
+    shots_against = models.IntegerField(default=0)
+    shots_against_avg = models.FloatField(default=0)
+    shots_against_5v5 = models.IntegerField(default=0)
+    shots_against_5v5_avg = models.FloatField(default=0)    
+    toi = jsonfield.JSONField(default=dict)
+    toi_pp = models.IntegerField(default=0)
+    toi_pk = models.IntegerField(default=0)
+
 class Gameheader(models.Model):
-    """ shifts """
+    """ gameheader json from del """
     match = models.ForeignKey(Match, on_delete=models.CASCADE)
     gameheader = jsonfield.JSONField(default=dict)
 
 class Roster(models.Model):
-    """ shifts """
+    """ roster json from del """
     match = models.ForeignKey(Match, on_delete=models.CASCADE)
     roster = jsonfield.JSONField(default=dict)
 
@@ -120,7 +139,7 @@ class Socialnetworkevent(models.Model):
     tag = models.CharField(max_length=10)
 
 class Teamstat(models.Model):
-    """ shifts """
+    """ teamstatistics from del """
     match = models.ForeignKey(Match, on_delete=models.CASCADE)
     home = jsonfield.JSONField(default=dict)
     visitor = jsonfield.JSONField(default=dict)

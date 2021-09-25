@@ -7,7 +7,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "hockey_graphs.settings")
 import django
 django.setup()
-from rest.models import Playerstat
+from rest.models import Playerstat, Playerstatistics
 from rest.functions.timeline import skatersonice_get, penalties_include
 from rest.functions.lineup import lineup_sort
 from rest.functions.shot import shotpersecondlist_get
@@ -53,6 +53,20 @@ def _matchupmatrix_gen(logger, shotpersec_list, soi_dic, lineup_dic, player_dic,
                         if shotpersec_list['visitor_team'].count(sec) > 0:
                             matchup_matrix[player_dic[hplayer_id]][player_dic[vplayer_id]]['visitor_shots'] += shotpersec_list['visitor_team'].count(sec)
     return matchup_matrix
+
+def playerstatistics_add(logger, match_id, player_id, data_dic):
+    """ add playerstatistics to database """
+    logger.debug('playerstatistics_add({0}:{1})'.format(match_id, player_id))
+    try:
+        # add playerstat
+        obj, _created = Playerstatistics.objects.update_or_create(player_id=player_id, match_id=match_id, defaults=data_dic)
+        obj.save()
+        result = obj.id
+    except BaseException as err_:
+        logger.critical('error in playerstatistics_add(): {0}'.format(err_))
+        result = None
+    logger.debug('playerstatistics_add()) ended with {0}'.format(result))
+    return result
 
 def playerstat_add(logger, fkey, fvalue, data_dic):
     """ add team to database """
@@ -110,7 +124,7 @@ def toifromplayerstats_get(logger, _matchinfo_dic, playerstat_dic):
                         tmp_toi_sum_dic[team_name][player['name']] = player['statistics']['timeOnIce']
     return toi_dic
 
-def toipppk_get(logger, _matchinfo_dic, playerstat_dic):
+def toipppk_get(logger, _matchinfo_dic, playerstat_dic, key='name'):
     """ get timeonice for powerplay and penalty killing"""
     logger.debug('toipppk_get()')
 
@@ -132,13 +146,13 @@ def toipppk_get(logger, _matchinfo_dic, playerstat_dic):
                 for player in playerstat_dic[team][period]:
                     # store values in a temporary dic as playerstats contains aggregated values only
                     if player['statistics']['timeOnIcePP'] > 0:
-                        if player['name'] not in toi_sum_dic[team_name]:
-                            toi_sum_dic[team_name][player['name']] = {'pp': 0, 'pk': 0}
-                        toi_sum_dic[team_name][player['name']]['pp'] = player['statistics']['timeOnIcePP']
+                        if player[key] not in toi_sum_dic[team_name]:
+                            toi_sum_dic[team_name][player[key]] = {'pp': 0, 'pk': 0}
+                        toi_sum_dic[team_name][player[key]]['pp'] = player['statistics']['timeOnIcePP']
                     if player['statistics']['timeOnIceSH'] > 0:
-                        if player['name'] not in toi_sum_dic[team_name]:
-                            toi_sum_dic[team_name][player['name']] = {'pp': 0, 'pk': 0}
-                        toi_sum_dic[team_name][player['name']]['pk'] = player['statistics']['timeOnIceSH']
+                        if player[key] not in toi_sum_dic[team_name]:
+                            toi_sum_dic[team_name][player[key]] = {'pp': 0, 'pk': 0}
+                        toi_sum_dic[team_name][player[key]]['pk'] = player['statistics']['timeOnIceSH']
 
     return toi_sum_dic
 

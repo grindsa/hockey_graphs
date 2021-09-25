@@ -24,7 +24,7 @@ def match_info_get(logger, match_id, request, vlist=('date', 'date_uts', 'result
     # change logo link
     try:
         base_url = url_build(request)
-    except BaseException:
+    except BaseException as err:
         base_url = None
 
     if 'home_team__logo' in match_dic:
@@ -53,6 +53,18 @@ def match_list_get(logger, fkey=None, fvalue=None, vlist=('match_id', 'season', 
         match_list = []
     logger.debug('match_list_get({0}:{1}) ended with {2}'.format(fkey, fvalue, bool(match_list)))
     return list(match_list)
+
+def matchinfo_list_get(logger, matchid_list, request):
+    """ query match_information for a list of matchids """
+    logger.debug('matchinfo_list_get({0})'.format(len(matchid_list)))
+    matchinfo_dic = {}
+    for match_id in matchid_list:
+        _matchinfo_dic = match_info_get(logger, match_id, request, ['date', 'date_uts', 'match_id', 'result', 'result_suffix', 'home_team_id', 'home_team__shortcut', 'home_team__logo', 'visitor_team_id', 'visitor_team__shortcut', 'visitor_team__logo'])
+        if _matchinfo_dic:
+            matchinfo_dic[match_id] = _matchinfo_dic
+    logger.debug('matchinfo_list_get() ended with {0} entries'.format(len(matchinfo_dic.keys())))
+    
+    return matchinfo_dic
 
 def match_add(logger, fkey, fvalue, data_dic):
     """ add team to database """

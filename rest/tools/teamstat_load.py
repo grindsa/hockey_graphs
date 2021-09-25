@@ -88,7 +88,7 @@ if __name__ == '__main__':
         elif PASTMATCHES:
             MATCH_LIST = pastmatch_list_get(LOGGER, SEASON_ID, UTS, ['match_id'])
         elif INTERVAL:
-            MATCH_LIST = sincematch_list_get(LOGGER, SEASON_ID, UTS, INTERVAL*3600, ['match_id'], )
+            MATCH_LIST = sincematch_list_get(LOGGER, SEASON_ID, UTS, INTERVAL*3600, ['match_id'])
 
     # get list of matches
     if MATCH_LIST:

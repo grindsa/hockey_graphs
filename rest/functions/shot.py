@@ -48,6 +48,25 @@ def shot_list_get(logger, fkey=None, fvalue=None, vlist=('shot_id', 'match_shot_
 
     return list(shot_list)
 
+def shot_list_perplayer_get(logger, player_id=None, match_list=None, vlist=('shot_id', 'match_shot_resutl_id', 'player_id', 'zone', 'timestamp')):
+    """ query shot(s) oer player per season with optional filtering """
+    try:
+        if match_list:
+            if len(vlist) == 1:
+                shot_list = Shot.objects.filter(player_id=player_id, match__in=match_list).order_by('shot_id').values_list(vlist[0], flat=True)
+            else:
+                shot_list = Shot.objects.filter(player_id=player_id, match__in=match_list).order_by('shot_id').values(*vlist)
+        else:
+            if len(vlist) == 1:
+                shot_list = Shot.objects.filter(player_id=player_id).order_by('shot_id').values_list(vlist[0], flat=True)
+            else:
+                shot_list = Shot.objects.filter(player_id=player_id).order_by('shot_id').values(*vlist)
+    except BaseException as err_:
+        logger.critical('shot_list_perplayer_get(): {0}'.format(err_))
+        shot_list = []
+
+    return list(shot_list)
+
 def shot_delete(logger, fkey, fvalue):
     """ add team to database """
     logger.debug('shot_add({0}:{1})'.format(fkey, fvalue))
@@ -457,6 +476,26 @@ def shotsperzone_aggregate(logger, shotzone_dic, match_info_dic):
                     shotzonesum_dic[team][zone]['roundpercent'] = 0
 
     return shotzonesum_dic
+
+def shot_dic_convert(logger, shot_dic, match_info_dic):
+    """ convert shot coordinates for a list of matches and resturn them as both has and list """
+    logger.debug('shot_dic_convert()')
+    converted_shot_list = []
+    converted_shot_dic = {}
+
+    for match_id in shot_dic:
+        from pprint import pprint
+        shotmap_dic = shotcoordinates_get(logger, shot_dic[match_id], match_info_dic[match_id])
+        from pprint import pprint
+        if shotmap_dic['home_team']:
+            converted_shot_dic[match_id] = shotmap_dic['home_team']
+            converted_shot_list.extend(shotmap_dic['home_team'])
+        else:
+            converted_shot_dic[match_id] = shotmap_dic['visitor_team']
+            converted_shot_list.extend(shotmap_dic['visitor_team'])
+
+    logger.debug('shot_dic_convert() ended')             
+    return(converted_shot_list, converted_shot_dic)
 
 def shotcoordinates_get(logger, shot_list, matchinfo_dic):
     """ get shootcoordindates """

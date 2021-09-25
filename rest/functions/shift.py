@@ -39,7 +39,7 @@ def shift_get(logger, fkey, fvalue, vlist=('match_id', 'shift')):
 
     return shift_dic
 
-def toifromshifts_get(logger, matchinfo_dic, shift_list):
+def toifromshifts_get(logger, matchinfo_dic, shift_list, key='name'):
     """ get time on ice per player"""
     logger.debug('toifromshifts_get()')
 
@@ -53,7 +53,7 @@ def toifromshifts_get(logger, matchinfo_dic, shift_list):
             team_name = 'visitor_team'
 
         # get the shift data we need
-        player_name = shift['player']['name']
+        player_name = shift['player'][key]
         period = math.ceil(shift['endTime']['time']/1200)
         shift_duration = (shift['endTime']['time'] - shift['startTime']['time'])
 

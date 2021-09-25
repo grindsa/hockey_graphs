@@ -3,7 +3,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from rest.models import Comment, Gameheader, Match, Periodevent, Player, Playerstat, Roster, Season, Shift, Shot, Socialnetworkevent, Team, Teamstat, Teammatchstat, Xg, Playerperseason
+from rest.models import Comment, Gameheader, Match, Periodevent, Player, Playerstat, Playerstatistics, Roster, Season, Shift, Shot, Socialnetworkevent, Team, Teamstat, Teammatchstat, Xg, Playerperseason
 
 class MatchAdmin(admin.ModelAdmin):
     """ match admin """
@@ -33,6 +33,12 @@ class PlayerstatAdmin(admin.ModelAdmin):
     """ shots admin """
     fields = ['match', 'home', 'visitor']
     list_display = ['match']
+    ordering = ['match_id']
+
+class PlayerstatisticsAdmin(admin.ModelAdmin):
+    """ shots admin """
+    fields = [field.name for field in Playerstatistics._meta.get_fields()]
+    list_display = [field.name for field in Playerstatistics._meta.get_fields()]
     ordering = ['match_id']
 
 class GameheaderAdmin(admin.ModelAdmin):
@@ -103,6 +109,7 @@ admin.site.register(Comment, CommentAdmin)
 admin.site.register(Match, MatchAdmin)
 admin.site.register(Periodevent, PeriodeventAdmin)
 admin.site.register(Player, PlayerAdmin)
+admin.site.register(Playerstatistics, PlayerstatisticsAdmin)
 admin.site.register(Playerstat, PlayerstatAdmin)
 admin.site.register(Roster, RosterAdmin)
 admin.site.register(Gameheader, GameheaderAdmin)
