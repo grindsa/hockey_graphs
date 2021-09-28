@@ -64,6 +64,7 @@ class Player(models.Model):
     stick = models.CharField(max_length=5, blank=True, null=True)
     weight = models.IntegerField(default=0)
     height = models.IntegerField(default=0)
+    team = models.ForeignKey(Team, on_delete=models.CASCADE)
     def __str__(self):
         return self.last_name
 
@@ -91,7 +92,7 @@ class Playerstatistics(models.Model):
     shots_against = models.IntegerField(default=0)
     shots_against_avg = models.FloatField(default=0)
     shots_against_5v5 = models.IntegerField(default=0)
-    shots_against_5v5_avg = models.FloatField(default=0)    
+    shots_against_5v5_avg = models.FloatField(default=0)
     toi = jsonfield.JSONField(default=dict)
     toi_pp = models.IntegerField(default=0)
     toi_pk = models.IntegerField(default=0)

@@ -8,7 +8,7 @@ from rest_framework import status
 from rest_framework.pagination import PageNumberPagination
 from rest.functions.matchday import matchdays_get
 from rest.functions.matchstatistics import matchstatistics_get
-from rest.functions.playerstatistics import playerstatistics_get
+from rest.functions.playerstatistics import playerstatistics_fetch
 from rest.functions.teamcomparison import teamcomparison_get
 from rest.functions.helper import logger_setup
 from rest.version import __version__
@@ -82,7 +82,7 @@ class PlayerStatisticsViewSet(viewsets.ViewSet):
     def list(self, request, season_pk=None, player_pk=None):
         """ get a list of matchdays and matches per day """
         set_language(LOGGER, request)
-        result = playerstatistics_get(LOGGER, request, season_pk, player_pk)
+        result = playerstatistics_fetch(LOGGER, request, season_pk, player_pk)
         response = Response(result, status=status.HTTP_200_OK)
         return response
 
@@ -137,7 +137,7 @@ class MatchViewSet(viewsets.ModelViewSet):
 # pylint: disable=R0901
 class PlayerViewSet(viewsets.ModelViewSet):
     """ viewset for players """
-    queryset = Player.objects.all().order_by('player_id')
+    queryset = Player.objects.all().order_by('player_id').values('player_id', 'first_name', 'last_name', 'team__shortcut')
     serializer_class = PlayerSerializer
     http_method_names = ['get']
 
@@ -150,11 +150,10 @@ class PlayerperSeasonViewSet(viewsets.ModelViewSet):
         season_id = self.request.query_params.get('season', None)
         # only return data if season id got specified
         if season_id:
-            queryset = Playerperseason.objects.filter(season_id=season_id).order_by('player_id').values('player_id', 'player__first_name', 'player__last_name')
+            queryset = Playerperseason.objects.filter(season_id=season_id).order_by('player_id').values('player_id', 'player__first_name', 'player__last_name', 'player__team__shortcut')
         else:
             # queryset = Playerperseason.objects.all().order_by('player_id').values('player_id', 'player__first_name', 'player__last_name')
             queryset = Playerperseason.objects.none()
-
         return queryset
 
 # pylint: disable=R0901
