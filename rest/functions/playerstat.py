@@ -7,10 +7,12 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "hockey_graphs.settings")
 import django
 django.setup()
+from django.conf import settings
 from rest.models import Playerstat, Playerstatistics
-from rest.functions.timeline import skatersonice_get, penalties_include
+from rest.functions.helper import list2dic, url_build
 from rest.functions.lineup import lineup_sort
 from rest.functions.shot import shotpersecondlist_get
+from rest.functions.timeline import skatersonice_get, penalties_include
 
 def _matchupmatrix_initialize(logger, lineup_dic):
     """ add team to database """
@@ -67,6 +69,34 @@ def playerstatistics_add(logger, match_id, player_id, data_dic):
         result = None
     logger.debug('playerstatistics_add()) ended with {0}'.format(result))
     return result
+
+def playerstatistics_get(logger, match_list, player_id, request, vlist=('match_id', 'player_id', 'team_id', 'oteam_id', 'shots_for', 'shots_for_avg', 'shots_for_5v5', 'shots_for_5v5_avg', 'shots_against', 'shots_against_avg', 'shots_against_5v5', 'shots_against_5v5_avg', 'toi', 'toi_pp', 'toi_pk', 'team__team_name', 'team__shortcut', 'team__logo', 'team__team_name', 'oteam__shortcut', 'oteam__logo')):
+    """ get info for a specifc match_id """
+    logger.debug('playerstatistics_get({0})'.format(player_id))
+    try:
+        if len(vlist) == 1:
+            playerstatistics_list = list(Playerstatistics.objects.filter(player_id=player_id, match_id__in=match_list).order_by('match_id').values_list(vlist[0], flat=True))
+        else:
+            playerstatistics_list = list(Playerstatistics.objects.filter(player_id=player_id, match_id__in=match_list).order_by('match_id').values(*vlist))
+    except BaseException as err:
+        playerstatistics_list = {}
+
+    # change logo link
+    try:
+        base_url = url_build(request.META)
+    except BaseException:
+        base_url = None
+
+    for match in playerstatistics_list:
+        if 'oteam__logo' in match:
+            match['oteam_logo'] = '{0}{1}{2}'.format(base_url, settings.STATIC_URL, match['oteam__logo'])
+        if 'team__logo' in match:
+            match['team_logo'] = '{0}{1}{2}'.format(base_url, settings.STATIC_URL, match['team__logo'])
+
+    # convert2dict
+    playerstatistics_dic = list2dic(logger, playerstatistics_list, 'match_id')
+
+    return playerstatistics_list, playerstatistics_dic
 
 def playerstat_add(logger, fkey, fvalue, data_dic):
     """ add team to database """

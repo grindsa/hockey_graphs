@@ -80,26 +80,17 @@ class PlayerperSeasonSerializer(serializers.HyperlinkedModelSerializer):
     """ season serializer """
     name = serializers.SerializerMethodField('get_player')
     id = serializers.SerializerMethodField('get_id')
-    team = serializers.SerializerMethodField('get_shortcut')
     def get_player(self, obj):
         """ get_player """
         if self.context:
-            return '{0} {1}'.format(obj['player__first_name'], obj['player__last_name'])
+            return '{0} {1} ({2})'.format(obj['player__first_name'], obj['player__last_name'], obj['player__team__shortcut'])
     def get_id(self, obj):
         """ get_player """
         if self.context:
             return obj['player_id']
-    def get_shortcut(self, obj):
-        """ get id """
-        if self.context:
-            if 'player__team__shortcut' in obj:
-                return obj['player__team__shortcut']
-            else:
-                return ''
-
     class Meta:
         model = Playerperseason
-        fields = ('id', 'name', 'team')
+        fields = ('id', 'name')
 
 class SeasonSerializer(serializers.HyperlinkedModelSerializer):
     """ season serializer """

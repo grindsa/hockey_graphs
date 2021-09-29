@@ -12,10 +12,11 @@ from rest.functions.bananachart import banana_chart1_create, banana_chart2_creat
 from rest.functions.heatmap import gameheatmapdata_get
 from rest.functions.helper import url_build, mobile_check
 from rest.functions.match import match_list_get, matchinfo_list_get
+from rest.functions.playerstat import playerstatistics_get
 from rest.functions.shot import shot_list_perplayer_get, shot_dic_convert
 from rest.functions.shotcharts import shotmapchart_create
 
-def playerstatistics_get(logger, request, season_id=None, player_id=None):
+def playerstatistics_fetch(logger, request, season_id=None, player_id=None):
     """ matchstatistics grouped by days """
     logger.debug('matchstatistics_get({0}:{1})'.format(season_id, player_id))
 
@@ -37,15 +38,17 @@ def playerstatistics_get(logger, request, season_id=None, player_id=None):
         # shotlist and shot dic with converted coordinates
         (converted_shot_list, converted_shot_dic) =  shot_dic_convert(logger, shot_dic, match_info_dic)
 
-        fake_matchinfo_dic = {'home_team__shortcut': 'foofofoshortcut', 'visitor_team__shortcut': 'foofoovistiorshortcut', 'home_team_logo': 'foohometeamlogo', 'visitor_team_logo': 'visitor_team_logo'}
+        # fake_matchinfo_dic = {'home_team__shortcut': 'foofofoshortcut', 'visitor_team__shortcut': 'foofoovistiorshortcut', 'home_team_logo': 'foohometeamlogo', 'visitor_team_logo': 'visitor_team_logo'}
         # disabled as it looks ugly
         # result.append(_playershotmap_get(logger, 'title', 'subtitle', ismobile, fake_matchinfo_dic, shot_list))
-        result.append(_playerheatmap_get(logger, _('Shot attempts'), 'subtitle', ismobile, fake_matchinfo_dic, shot_list))
+        #result.append(_playerheatmap_get(logger, _('Shot attempts'), 'subtitle', ismobile, fake_matchinfo_dic, shot_list))
 
-
+        (playerstatistics_list, playerstatistics_dic) = playerstatistics_get(logger, match_list, player_id, request)
+        from pprint import pprint
+        pprint(playerstatistics_list)
         # get matchstatistics
-        result.append(banana_chart1_create(logger, 'title1'))
-        result.append(banana_chart2_create(logger, 'title2'))
+        #result.append(banana_chart1_create(logger, 'title1'))
+        #result.append(banana_chart2_create(logger, 'title2'))
 
 
         pass
