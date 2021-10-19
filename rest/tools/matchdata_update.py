@@ -197,9 +197,12 @@ if __name__ == '__main__':
 
             if 'actualTimeAlias' in gameheader_dic:
                 period = gameheader_dic['actualTimeAlias']
-                home_dic = del_app_helper.playerstats_get(match_id, True)
-                visitor_dic = del_app_helper.playerstats_get(match_id, False)
-                _playerstats_process(LOGGER, match_id, period, home_dic, visitor_dic)
+                try:
+                    home_dic = del_app_helper.playerstats_get(match_id, True)
+                    visitor_dic = del_app_helper.playerstats_get(match_id, False)
+                    _playerstats_process(LOGGER, match_id, period, home_dic, visitor_dic)
+                except BaseException:
+                    LOGGER.debug('ERROR: playerstats_get() failed.')
 
             # get and store periodevents
             try:
