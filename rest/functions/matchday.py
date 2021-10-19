@@ -28,7 +28,7 @@ def _seasonid_get(logger, request):
     logger.debug('_seasonid_get() ended with: {0}'.format(fvalue))
     return (fkey, fvalue)
 
-def matchdays_get(logger, request, fkey=None, fvalue=None, vlist=('match_id', 'season', 'date', 'date_uts', 'home_team__shortcut', 'home_team__team_name', 'home_team__logo', 'visitor_team__team_name', 'visitor_team__shortcut', 'visitor_team__logo', 'result')):
+def matchdays_get(logger, request, fkey=None, fvalue=None, vlist=('match_id', 'season', 'date', 'date_uts', 'home_team__shortcut', 'home_team__team_name', 'home_team__logo', 'visitor_team__team_name', 'visitor_team__shortcut', 'visitor_team__logo', 'result', 'finish')):
     """ matches grouped by days """
     logger.debug('matchdays_get({0}:{1})'.format(fkey, fvalue))
 
