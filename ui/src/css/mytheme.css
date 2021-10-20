@@ -50,6 +50,18 @@ td.middle {
   font-size:14px;
 }
 
+.result_finish_true{
+  color : #000034;
+  font-weight: bold;
+  font-size:14px;
+}
+
+.result_finish_false{
+  color : #d61825;
+  font-weight: bold;
+  font-size:14px;
+}
+
 select.selectbg {
   background-color:#f1f2f3
 }
