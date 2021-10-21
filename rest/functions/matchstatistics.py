@@ -17,7 +17,7 @@ from rest.functions.toicharts import gametoichart_create, gametoipppkchart_creat
 from rest.functions.heatmapcharts import gamematchupchart_create
 from rest.functions.heatmap import gameheatmapdata_get
 from rest.functions.shottables import shotsperiodtable_get, shotstatussumtable_get, shotzonetable_get, gamecorsi_table
-from rest.functions.toitables import gametoi_table
+from rest.functions.toitables import gametoi_table, toi_chk
 from rest.functions.match import match_info_get, matchstats_get
 from rest.functions.shift import shift_get, toifromshifts_get, shiftsperplayer_get, shiftchartdata_get, shiftsupdates_get
 from rest.functions.shiftcharts import shiftsperplayerchart_create
@@ -395,15 +395,19 @@ def _gametoi_get(logger, title, subtitle, ismobile, request, fkey, fvalue, match
     if shift_list:
         # get time-on-ice based on shifts
         toi_dic = toifromshifts_get(logger, matchinfo_dic, shift_list)
+        toi_check = True
     else:
         # get time-on-ice based on playerstats - THIS IS UNTESTED
         toi_dic = toifromplayerstats_get(logger, matchinfo_dic, playerstat_dic)
+        # check toi for
+        toi_check = toi_chk(logger, toi_dic)
+
 
     if toi_dic:
         # create chart and table
         toi_chart = [
-            gametoichart_create(logger, '{1} - {0}'.format(title, matchinfo_dic['home_team__shortcut']), subtitle, ismobile, toi_dic['home_team'], matchinfo_dic['home_team__color_primary'], matchinfo_dic['home_team__color_secondary'], matchinfo_dic['home_team__color_tertiary'], matchinfo_dic['home_team__color_quaternary']),
-            gametoichart_create(logger, '{1} - {0}'.format(title, matchinfo_dic['visitor_team__shortcut']), subtitle, ismobile, toi_dic['visitor_team'], matchinfo_dic['visitor_team__color_primary'], matchinfo_dic['visitor_team__color_secondary'], matchinfo_dic['visitor_team__color_tertiary'], matchinfo_dic['visitor_team__color_quaternary']),
+            gametoichart_create(logger, '{1} - {0}'.format(title, matchinfo_dic['home_team__shortcut']), subtitle, ismobile, toi_dic['home_team'], matchinfo_dic['home_team__color_primary'], matchinfo_dic['home_team__color_secondary'], matchinfo_dic['home_team__color_tertiary'], matchinfo_dic['home_team__color_quaternary'], toi_check),
+            gametoichart_create(logger, '{1} - {0}'.format(title, matchinfo_dic['visitor_team__shortcut']), subtitle, ismobile, toi_dic['visitor_team'], matchinfo_dic['visitor_team__color_primary'], matchinfo_dic['visitor_team__color_secondary'], matchinfo_dic['visitor_team__color_tertiary'], matchinfo_dic['visitor_team__color_quaternary'], toi_check),
         ]
         toi_table = [
             gametoi_table(logger, toi_dic['home_team']),

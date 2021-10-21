@@ -41,3 +41,26 @@ def gametoi_table(logger, toi_dic):
         table_dic['td'].append([player_name, p1_val, p2_val, p3_val, p4_val])
 
     return table_dic
+
+def toi_chk(logger, toi_dic):
+    """ check toi_dic for consistency """
+    # pylint: disable=E0602
+    logger.debug('toi_chk()')
+
+    toi_chk = True
+    for team in toi_dic:
+        if toi_chk:
+            for period in toi_dic[team]:
+                # skip checking overtime
+                if period != 4:
+                    # consistency check failes if there are no playerdata in a period
+                    if len(toi_dic[team][period].keys()) == 0:
+                        toi_chk = False
+                        break
+                    else:
+                        # consistency check failes if there is no player playing at least for 5min in the period
+                        if max(toi_dic[team][period].values()) < 300:
+                            toi_chk = False
+                            break
+    logger.debug('toi_chk() ended with {0}'.format(toi_chk))
+    return toi_chk

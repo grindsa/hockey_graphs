@@ -4,7 +4,7 @@
 from rest.functions.chartparameters import chartstyle, credit, exporting, responsive_y1, title, subtitle, legend, font_size, variables_get, responsive_y1_nolabel
 from rest.functions.chartparameters import chart_color1, chart_color2, chart_color3, chart_color4
 
-def gametoichart_create(logger, ctitle, csubtitle, ismobile, toi_dic, bar_color1, bar_color2, bar_color3, bar_color4):
+def gametoichart_create(logger, ctitle, csubtitle, ismobile, toi_dic, bar_color1, bar_color2, bar_color3, bar_color4, toi_check):
     # pylint: disable=E0602
     """ create time-on-ice chart """
     logger.debug('gametoichart_create()')
@@ -31,6 +31,19 @@ def gametoichart_create(logger, ctitle, csubtitle, ismobile, toi_dic, bar_color1
             else:
                 y_dic[period].append(0)
 
+    if toi_check:
+        series_list = [
+            {'name': _('1st Period'), 'data': y_dic[1], 'color': bar_color1},
+            {'name': _('2nd Period'), 'data': y_dic[2], 'color': bar_color2},
+            {'name': _('3rd Period'), 'data': y_dic[3], 'color': bar_color3},
+            {'name': _('OT'), 'data': y_dic[4], 'color': bar_color4}
+        ]
+    else:
+        if max(y_dic[4]) > 0:
+           series_list = [{'name': _('Time on Ice'), 'data': y_dic[4], 'color': bar_color1}]
+        else:
+           series_list = [{'name': _('Time on Ice'), 'data': y_dic[3], 'color': bar_color1}]
+
     chart_options = {
 
         'chart': {
@@ -50,6 +63,7 @@ def gametoichart_create(logger, ctitle, csubtitle, ismobile, toi_dic, bar_color1
         'plotOptions': {'series': {'stacking': 'normal'}},
 
         'tooltip': {
+            'enabled': toi_check,
             'shared': 1,
             'useHTML': 1,
             'headerFormat': '<span style="font-size: %s"><b>{point.x}</b></span><br/>' % font_size,
@@ -73,12 +87,7 @@ def gametoichart_create(logger, ctitle, csubtitle, ismobile, toi_dic, bar_color1
             'labels': {'style': {'fontSize': font_size},},
         },
 
-        'series': [
-            {'name': _('1st Period'), 'data': y_dic[1], 'color': bar_color1},
-            {'name': _('2nd Period'), 'data': y_dic[2], 'color': bar_color2},
-            {'name': _('3rd Period'), 'data': y_dic[3], 'color': bar_color3},
-            {'name': _('OT'), 'data': y_dic[4], 'color': bar_color4}
-        ]
+        'series': series_list,
     }
     return chart_options
 
