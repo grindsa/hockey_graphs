@@ -2,7 +2,6 @@
 """ time on ice charts """
 # pylint: disable=E0401
 from rest.functions.chartparameters import chartstyle, credit, exporting, responsive_y1, title, subtitle, legend, font_size, variables_get, responsive_y1_nolabel
-from rest.functions.chartparameters import chart_color1, chart_color2, chart_color3, chart_color4
 
 def gametoichart_create(logger, ctitle, csubtitle, ismobile, toi_dic, bar_color1, bar_color2, bar_color3, bar_color4, toi_check):
     # pylint: disable=E0602
@@ -40,9 +39,9 @@ def gametoichart_create(logger, ctitle, csubtitle, ismobile, toi_dic, bar_color1
         ]
     else:
         if max(y_dic[4]) > 0:
-           series_list = [{'name': _('Time on Ice'), 'data': y_dic[4], 'color': bar_color1}]
+            series_list = [{'name': _('Time on Ice'), 'data': y_dic[4], 'color': bar_color1}]
         else:
-           series_list = [{'name': _('Time on Ice'), 'data': y_dic[3], 'color': bar_color1}]
+            series_list = [{'name': _('Time on Ice'), 'data': y_dic[3], 'color': bar_color1}]
 
     chart_options = {
 
