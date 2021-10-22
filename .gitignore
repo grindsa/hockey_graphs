@@ -144,4 +144,4 @@ static/admin
 rest/tools/hockeygraphs.cfg
 hockey_graphs/urls.py
 chromedriver.exe
-ui/src/components/constants.js
+ui/webpack.config.js
