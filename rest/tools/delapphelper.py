@@ -73,12 +73,21 @@ class DelAppHelper():
             print(api_response.raise_for_status())
             return None
 
-    def gamesituations_get(self, game_id):
+    def gamesituations_get(self, tournament_id, game_id):
         """ get game situations """
         self.logger.debug('DelAppHelper.gamesituations_get({0})\n'.format(game_id))
         data = {'requestName': 'gameSituations',
                 'gameNumber': game_id,
-                'tournamentId': self.tournamentid,
+                'tournamentId': tournament_id,
+                'lastUpdate': 0}
+        return self.api_post(self.mobile_api, data)
+
+    def gamesituations_extended_get(self, tournament_id, game_id):
+        """ get game situations """
+        self.logger.debug('DelAppHelper.gamesituations_get({0})\n'.format(game_id))
+        data = {'requestName': 'gameSituationsExtended',
+                'gameNumber': game_id,
+                'tournamentId': tournament_id,
                 'lastUpdate': 0}
         return self.api_post(self.mobile_api, data)
 
