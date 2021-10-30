@@ -408,10 +408,13 @@ def _gametoi_get(logger, title, subtitle, ismobile, request, fkey, fvalue, match
             gametoichart_create(logger, '{1} - {0}'.format(title, matchinfo_dic['home_team__shortcut']), subtitle, ismobile, toi_dic['home_team'], matchinfo_dic['home_team__color_primary'], matchinfo_dic['home_team__color_secondary'], matchinfo_dic['home_team__color_tertiary'], matchinfo_dic['home_team__color_quaternary'], toi_check),
             gametoichart_create(logger, '{1} - {0}'.format(title, matchinfo_dic['visitor_team__shortcut']), subtitle, ismobile, toi_dic['visitor_team'], matchinfo_dic['visitor_team__color_primary'], matchinfo_dic['visitor_team__color_secondary'], matchinfo_dic['visitor_team__color_tertiary'], matchinfo_dic['visitor_team__color_quaternary'], toi_check),
         ]
-        toi_table = [
-            gametoi_table(logger, toi_dic['home_team']),
-            gametoi_table(logger, toi_dic['visitor_team']),
-        ]
+        if toi_check:
+            toi_table = [
+                gametoi_table(logger, toi_dic['home_team']),
+                gametoi_table(logger, toi_dic['visitor_team']),
+            ]
+        else:
+            toi_table = []
         stat_entry = {
             'title': title,
             'chart': toi_chart,

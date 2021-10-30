@@ -39,10 +39,16 @@ def gametoichart_create(logger, ctitle, csubtitle, ismobile, toi_dic, bar_color1
         ]
     else:
         if y_dic[4]:
-            if isinstance(y_dic[4], list) and isinstance(y_dic[4][0], dict):
-                series_list = [{'name': _('Time on Ice'), 'data': y_dic[3], 'color': bar_color1}, {'name': _('Time on Ice'), 'data': y_dic[4], 'color': bar_color1, 'showInLegend': 0}]
-            else:
-                series_list = [{'name': _('Time on Ice'), 'data': y_dic[3], 'color': bar_color1}]
+            value_list = []
+            for idx, ele in enumerate(y_dic[1]):
+                y_val = 0
+                for period in [1, 2, 3, 4]:
+                    if isinstance(y_dic[period][idx], dict):
+                        y_val = y_val + y_dic[period][idx]['y']
+                    else:
+                        y_val = y_val +  y_dic[period][idx]
+                value_list.append(y_val)
+            series_list = [{'name': _('Time on Ice'), 'data': value_list, 'color': bar_color1}]
         else:
             series_list = []
 
