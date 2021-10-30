@@ -38,10 +38,13 @@ def gametoichart_create(logger, ctitle, csubtitle, ismobile, toi_dic, bar_color1
             {'name': _('OT'), 'data': y_dic[4], 'color': bar_color4}
         ]
     else:
-        if isinstance(y_dic[4], list) and isinstance(y_dic[4][0], dict):
-            series_list = [{'name': _('Time on Ice'), 'data': y_dic[3], 'color': bar_color1}, {'name': _('Time on Ice'), 'data': y_dic[4], 'color': bar_color1, 'showInLegend': 0}]
+        if y_dic[4]:
+            if isinstance(y_dic[4], list) and isinstance(y_dic[4][0], dict):
+                series_list = [{'name': _('Time on Ice'), 'data': y_dic[3], 'color': bar_color1}, {'name': _('Time on Ice'), 'data': y_dic[4], 'color': bar_color1, 'showInLegend': 0}]
+            else:
+                series_list = [{'name': _('Time on Ice'), 'data': y_dic[3], 'color': bar_color1}]
         else:
-            series_list = [{'name': _('Time on Ice'), 'data': y_dic[3], 'color': bar_color1}]
+            series_list = []
 
     chart_options = {
 

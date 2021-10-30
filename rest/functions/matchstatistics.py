@@ -402,7 +402,6 @@ def _gametoi_get(logger, title, subtitle, ismobile, request, fkey, fvalue, match
         # check toi for
         toi_check = toi_chk(logger, toi_dic)
 
-
     if toi_dic:
         # create chart and table
         toi_chart = [
