@@ -603,7 +603,7 @@ def shotzonechart_create(logger, ctitle, csubtitle, ismobile, request, shotzonea
 def gameplayercorsichart_create(logger, ctitle, csubtitle, ismobile, player_corsi_dic):
     """ create corsi chart for a certain game """
     # pylint: disable=E0602, R0915
-    logger.debug('gamecorsichart_create()')
+    logger.debug('gameplayercorsichart_create()')
 
     variable_dic = variables_get(ismobile)
 
@@ -1252,10 +1252,14 @@ def gamecorsichart_create(logger, ctitle, csubtitle, ismobile, corsi_dic, plotba
         img_width = 30
         home_y = 10
         visitor_y = 120
+        export_sourcewidth = 373
+        export_sourceheight =  298
     else:
         img_width = 85
         home_y = 30
         visitor_y = 380
+        export_sourcewidth = 800
+        export_sourceheight = 640
 
     chart_options = {
 
@@ -1265,8 +1269,11 @@ def gamecorsichart_create(logger, ctitle, csubtitle, ismobile, corsi_dic, plotba
             'alignTicks': 0,
             'style': chartstyle()
         },
-
-        'exporting': exporting(filename=ctitle),
+        'exporting': exporting(filename=ctitle, sourcewidth=export_sourcewidth, sourceheight=export_sourceheight),
+        #'exporting': {
+        #    'sourceWidth': 800,
+        #    'sourceHeight': 640
+        #},
         'title': title(ctitle, variable_dic['title_size'], decoration=True),
         'subtitle': subtitle(csubtitle, variable_dic['subtitle_size']),
         'plotOptions': plotoptions_marker_disable('line'),

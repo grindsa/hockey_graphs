@@ -53,13 +53,18 @@ def labels():
     """ set labels """
     return {'style': {'fontSize': font_size},}
 
-def exporting(_button=None, filename=None, allowhtml=1):
+def exporting(_button=None, filename=None, allowhtml=1, sourcewidth=0, sourceheight=0):
     """ export structure """
     # output_dic = {'chartOptions': {'plotOptions': {'series': {'dataLabels': {'enabled': 0}}}}, 'fallbackToExportServer': 0}
     output_dic = {'fallbackToExportServer': 0, 'allowHTML': allowhtml}
     # output_dic['buttons'] = {'customButton': {'text': button}}
     if filename:
         output_dic['filename'] = filename
+
+    if sourcewidth and sourceheight:
+        output_dic['sourceWidth'] = sourcewidth
+        output_dic['sourceHeight'] = sourceheight
+
     return output_dic
 
 def plotoptions_marker_disable(ele):
