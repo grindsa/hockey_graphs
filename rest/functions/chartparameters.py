@@ -365,9 +365,9 @@ def chart_colors_get(logger, matchinfo_dic):
 def variables_get(ismobile):
     """ build variables based on mobile detection """
     if ismobile:
-        data_dic = {'linewidth': 2, 'title_margin': 40, 'timeline_distance': 25, 'ticker_startval': 20, 'ticker_multiplier': 5, 'timeline_font_size': font_size, 'timeline_wrap_length': 40, 'border_width': 5, 'title_size': title_font_size_mobile, 'subtitle_size': subtitle_font_size_mobile, 'font_size': font_size_mobile, 'label_size': font_size_mobile, 'shotmap_height_pctg': '130%', 'shotzone_height_pctg': '85%'}
+        data_dic = {'export_sourcewidth': 373, 'export_sourceheight': 298, 'linewidth': 2, 'title_margin': 40, 'timeline_distance': 25, 'ticker_startval': 20, 'ticker_multiplier': 5, 'timeline_font_size': font_size, 'timeline_wrap_length': 40, 'border_width': 5, 'title_size': title_font_size_mobile, 'subtitle_size': subtitle_font_size_mobile, 'font_size': font_size_mobile, 'label_size': font_size_mobile, 'shotmap_height_pctg': '130%', 'shotzone_height_pctg': '85%'}
     else:
-        data_dic = {'linewidth': 3, 'title_margin': 50, 'timeline_distance': 50, 'ticker_startval': 15, 'ticker_multiplier': 3.42, 'timeline_font_size': '12px', 'timeline_wrap_length': 90, 'border_width': 10, 'title_size': title_font_size, 'subtitle_size': subtitle_font_size, 'font_size': font_size, 'label_size': font_size, 'shotmap_height_pctg': '110%', 'shotzone_height_pctg': '80%'}
+        data_dic = {'export_sourcewidth': 800, 'export_sourceheight': 600, 'linewidth': 3, 'title_margin': 50, 'timeline_distance': 50, 'ticker_startval': 15, 'ticker_multiplier': 3.42, 'timeline_font_size': '12px', 'timeline_wrap_length': 90, 'border_width': 10, 'title_size': title_font_size, 'subtitle_size': subtitle_font_size, 'font_size': font_size, 'label_size': font_size, 'shotmap_height_pctg': '110%', 'shotzone_height_pctg': '80%'}
 
     return data_dic
 

@@ -58,7 +58,7 @@ def shotsumchart_create(logger, ctitle, csubtitle, ismobile, shot_sum_dic, shot_
             'style': chartstyle()
         },
 
-        'exporting': exporting(filename=ctitle),
+        'exporting': exporting(filename=ctitle, sourcewidth=variable_dic['export_sourcewidth'], sourceheight=variable_dic['export_sourceheight']),
         'title': title(ctitle, variable_dic['title_size'], decoration=True),
         'subtitle': subtitle(csubtitle, variable_dic['subtitle_size']),
         'legend': legend(),
@@ -181,7 +181,7 @@ def gameflowchart_create(logger, ctitle, csubtitle, ismobile, gameflow_dic, goal
             'style': chartstyle()
         },
 
-        'exporting': exporting(filename=ctitle),
+        'exporting': exporting(filename=ctitle, sourcewidth=variable_dic['export_sourcewidth'], sourceheight=variable_dic['export_sourceheight']/80*110),
         'credits': credit(),
         'tooltip': tooltip('<b>{point.x}.%s</b><br>' % _('min')),
         'legend': legend(0),
