@@ -11,8 +11,8 @@ import git
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir, os.path.pardir)))
 from rest.functions.gameheader import gameheader_add
-from rest.functions.helper import logger_setup, uts_now, json_store
-from rest.functions.match import openmatch_list_get, match_add, pastmatch_list_get, sincematch_list_get
+from rest.functions.helper import logger_setup, uts_now, json_store, uts_to_date_utc
+from rest.functions.match import openmatch_list_get, match_add, pastmatch_list_get, sincematch_list_get, match_info_get
 from rest.functions.periodevent import periodevent_add
 from rest.functions.player import player_list_get, player_add
 from rest.functions.playerstat import playerstat_add, playerstat_get
@@ -96,6 +96,79 @@ def shots_process(logger, match_dic):
             'zone': zone,
         }
         shot_add(logger, 'shot_id', shot['id'], data_dic)
+
+def seconds_get(time_str):
+    """Get Seconds from time."""
+    (m, s) = time_str.split(':', 2)
+    return int(m) * 60 + int(s)
+
+def shots_convert(logger, match_id, shots_mobile_dic, gameheader_dic):
+    """ convert shots to DEL json format """
+    logger.debug('shots_convert()')
+    match_result_dic = {'SSG': 1, 'SPG': 2, 'SSP': 3, 'G': 4}
+
+    shots_dic = {'match': {'id': match_id, 'shots': []}}
+
+    # populate team information
+    for team in ('home', 'visitor'):
+        for value in ('id', 'shortcut', 'name'):
+            key_name = '{0}_{1}'.format(team, value)
+            shots_dic['match'][key_name] = gameheader_dic['teamInfo'][team][value]
+
+    for shot in shots_mobile_dic:
+        # filter shots
+        if 'actionCode1' in shot and shot['actionCode1'] == 'SHOT':
+            tmp_dic = {}
+
+            # shotid
+            if 'uniqueID' in shot:
+                tmp_dic['id'] = shot['uniqueID']
+
+            # playerid
+            if 'playerId' in shot:
+                tmp_dic['player_id'] = shot['playerId']
+
+            # jersey
+            if 'jerseyNumber' in shot:
+                tmp_dic['jersey'] = shot['jerseyNumber']
+
+            # playername
+            if 'playerName' in shot:
+                tmp_dic['last_name'] = shot['playerName']
+
+            # shotresult
+            if 'actionCode2' in shot:
+                if shot['actionCode2'] in match_result_dic:
+                    tmp_dic['match_shot_resutl_id'] = match_result_dic[shot['actionCode2']]
+                else:
+                    tmp_dic['match_shot_resutl_id'] = 5
+
+            # team_id
+            if 'noc' in shot:
+                if shot['noc'] == shots_dic['match']['home_shortcut']:
+                    tmp_dic['team_id'] = shots_dic['match']['home_id']
+                elif shot['noc'] == shots_dic['match']['visitor_shortcut']:
+                    tmp_dic['team_id'] = shots_dic['match']['visitor_id']
+                else:
+                    tmp_dic['team_id'] = 0
+
+            # time
+            if 'time' in shot:
+                tmp_dic['time'] = seconds_get(shot['time'])
+                tmp_dic['real_date'] = '{0} {1}'.format(gameheader_dic['match_day'], shot['time'])
+
+            # coordinates
+            if 'x' in shot:
+                tmp_dic['coordinate_x'] = int(200 * shot['x'] - 100)
+            if 'y' in shot:
+                tmp_dic['coordinate_y'] = int(200 * shot['y'] - 100)
+
+            # add polygon
+            tmp_dic['polygon'] = 'tbd'
+
+            shots_dic['match']['shots'].append(tmp_dic)
+
+    return shots_dic
 
 def arg_parse():
     """ simple argparser """
@@ -195,6 +268,10 @@ if __name__ == '__main__':
             gameheader_add(LOGGER, 'match_id', match_id, {'match_id': match_id, 'gameheader': gameheader_dic})
             _match_update(LOGGER, match_id, gameheader_dic)
 
+            # add matchday to game-header
+            match_date_uts = match_info_get(LOGGER, match_id, None, ['date_uts'])['date_uts']
+            gameheader_dic['match_day'] = uts_to_date_utc(match_date_uts, '%d.%m.%Y')
+
             if 'actualTimeAlias' in gameheader_dic:
                 period = gameheader_dic['actualTimeAlias']
                 try:
@@ -207,7 +284,6 @@ if __name__ == '__main__':
             # get and store periodevents
             try:
                 event_dic = del_app_helper.periodevents_get(match_id)
-                # pprint(event_dic)
                 periodevent_add(LOGGER, 'match_id', match_id, {'match_id': match_id, 'period_event': event_dic})
             except BaseException:
                 LOGGER.debug('ERROR: periodevents_get() failed.')
@@ -236,11 +312,15 @@ if __name__ == '__main__':
             try:
                 # delete shots for the match to cope with renumbering (rember EBBvBHV in 12/20)
                 shot_delete(LOGGER, 'match_id', match_id)
-                # get shots
-                shots_dic = del_app_helper.shots_get(match_id)
+                # get shots from del
+                # shots_dic = del_app_helper.shots_get(match_id)
+                # get shots and convert them into the format we need
+                shots_mobile_dic = del_app_helper.gamesituations_extended_get(TOURNAMENT_ID, match_id)
+                shots_dic = shots_convert(LOGGER, match_id, shots_mobile_dic, gameheader_dic)
+
                 shots_process(LOGGER, shots_dic['match'])
-            except BaseException:
-                LOGGER.debug('ERROR: shots_get() failed.')
+            except BaseException as err:
+                LOGGER.debug('ERROR: shots_get() failed with err: {0}'.format(err))
 
             if SAVE_DIR:
                 MATCH_DIR = '{0}/matches/{1}'.format(SAVE_DIR, match_id)
@@ -258,6 +338,9 @@ if __name__ == '__main__':
                     if HGS_DATA and not os.path.exists('{0}/shifts/2021/1/{1}.json'.format(HGS_DATA, match_id)):
                         LOGGER.debug('fetch shifts')
                         json_store('{0}/shifts/2021/1/{1}.json'.format(HGS_DATA, match_id), shift_dic)
+                    if HGS_DATA and not os.path.exists('{0}/shots/2021/1/{1}.json'.format(HGS_DATA, match_id)):
+                        LOGGER.debug('fetch shots')
+                        json_store('{0}/shots/2021/1/{1}.json'.format(HGS_DATA, match_id), shots_dic)
 
     if GITREPO and SAVE:
         # check changes into repo

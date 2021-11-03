@@ -241,9 +241,8 @@ def shot_leaffan_sync(shot, ltime, ldate):
         process_shot = True
         # ldate = mday
     elif ldate == mday:
-        # consider corrections outsid
+        # consider corrections on same date but outside of match
         process_shot = True
-
     else:
         process_shot = False
 
