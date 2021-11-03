@@ -67,10 +67,10 @@ def create_cron_entries(logger, tzone):
     tkchk.minute.on(5)
 
     # create cron-entry to update player data
-    pupd = cron.new(command=path + '/players_update.py', comment='update player information', user='root')
-    pupd.dow.on('MON', 'WED', 'FRI')
-    pupd.hour.on(1)
-    pupd.minute.on(15)
+    # pupd = cron.new(command=path + '/players_update.py', comment='update player information', user='root')
+    # pupd.dow.on('MON', 'WED', 'FRI')
+    # pupd.hour.on(1)
+    # pupd.minute.on(15)
 
     # create cron-entry to update match data
     mupd = cron.new(command=path + '/match_import.py -s 4', comment='update match_information', user='root')
@@ -94,7 +94,12 @@ def create_cron_entries(logger, tzone):
                 # create cron-entry to get live statistics
                 lstats = cron.new(command=path + '/matchdata_update.py -o', comment='update match statistics', user='root')
                 lstats.hour.during(int(fhour), int(lhour)+3).every(1)
-                lstats.minute.every(2)
+                lstats.minute.every(5)
+
+                # create cron-entry to update player data
+                pupd = cron.new(command=path + '/players_update.py', comment='update player information', user='root')
+                pupd.hour.on(int(fhour)-1)
+                pupd.minute.on(0)
 
                 # start export server
                 svc_st = cron.new(command='service highcharts start', comment='start export server', user='root')
@@ -109,7 +114,7 @@ def create_cron_entries(logger, tzone):
                 # create cron-entry for tweeter.py
                 lstats = cron.new(command=path + '/tweeter.py -i 24', comment='tweet statistics', user='root')
                 lstats.hour.during(int(fhour), int(lhour)+3).every(1)
-                lstats.minute.every(5)
+                lstats.minute.every(10)
 
                 # create cron-entry to get live statistics
                 ltag = cron.new(command=path + '/tag_fetcher.py -i 24 -b 4', comment='update twitter tags', user='root')
