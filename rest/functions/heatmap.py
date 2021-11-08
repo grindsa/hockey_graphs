@@ -248,6 +248,10 @@ def gameheatmapdata_get(logger, title, subtitle, ismobile, matchinfo_dic, shot_l
         # get period from timestamp
         period = math.ceil(shot['timestamp']/1200)
 
+        # handle cornercase (shot during 0 sec)
+        if period == 0:
+            period = 1
+
         calc_x = float(shot['coordinate_x'])
         calc_y = float(shot['coordinate_y'])
 
