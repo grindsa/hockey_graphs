@@ -137,9 +137,9 @@ def create_cron_entries(logger, tzone):
                 teamstats.minute.on(5)
 
                 # update fbook group at 11pm
-                teamstats = cron.new(command=path+'/tweet_summary.py', comment='matchday summary into facebook hockeygraphs', user='root')
-                teamstats.hour.on(23)
-                teamstats.minute.on(5)
+                # teamstats = cron.new(command=path+'/tweet_summary.py', comment='matchday summary into facebook hockeygraphs', # user='root')
+                # teamstats.hour.on(23)
+                # teamstats.minute.on(5)
 
                 message = '{0}{1}'.format(message, today)
 
