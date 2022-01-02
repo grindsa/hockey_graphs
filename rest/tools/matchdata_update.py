@@ -312,13 +312,18 @@ if __name__ == '__main__':
             try:
                 # delete shots for the match to cope with renumbering (rember EBBvBHV in 12/20)
                 shot_delete(LOGGER, 'match_id', match_id)
-                # get shots from del
-                # shots_dic = del_app_helper.shots_get(match_id)
-                # get shots and convert them into the format we need
-                shots_mobile_dic = del_app_helper.gamesituations_extended_get(TOURNAMENT_ID, match_id)
-                shots_dic = shots_convert(LOGGER, match_id, shots_mobile_dic, gameheader_dic)
+                if ADDSHIFTS:
+                    LOGGER.debug('get shots from API')
+                    # get shots from api
+                    shots_dic = del_app_helper.shots_get(match_id)
+                else:
+                    LOGGER.debug('get shots from mobile API')                    
+                    # get shots from mobile_api and convert them into the format we need
+                    shots_mobile_dic = del_app_helper.gamesituations_extended_get(TOURNAMENT_ID, match_id)
+                    shots_dic = shots_convert(LOGGER, match_id, shots_mobile_dic, gameheader_dic)
+                if shots_dic:
+                    shots_process(LOGGER, shots_dic['match'])
 
-                shots_process(LOGGER, shots_dic['match'])
             except BaseException as err:
                 LOGGER.debug('ERROR: shots_get() failed with err: {0}'.format(err))
 

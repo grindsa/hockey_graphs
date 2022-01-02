@@ -386,7 +386,7 @@ class DelAppHelper():
     def shots_get(self, match_id):
         """ get shots from del.org """
         self.logger.debug('DelAppHelper.periodevents_get({0})\n'.format(match_id))
-        url = '{0}/visualization/shots/{1}.json'.format(self.base_url, match_id)
+        url = '{0}/visualization/shots/{1}.json'.format(self.del_api, match_id)
         return requests.get(url, headers=self.headers, verify=False).json()
 
     def teamplayers_get(self, season_name, team_id=3, league_id=1):
