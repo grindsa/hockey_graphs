@@ -279,21 +279,21 @@ if __name__ == '__main__':
                     visitor_dic = del_app_helper.playerstats_get(match_id, False)
                     _playerstats_process(LOGGER, match_id, period, home_dic, visitor_dic)
                 except BaseException:
-                    LOGGER.debug('ERROR: playerstats_get() failed.')
+                    LOGGER.error('ERROR: playerstats_get() failed.')
 
             # get and store periodevents
             try:
                 event_dic = del_app_helper.periodevents_get(match_id)
                 periodevent_add(LOGGER, 'match_id', match_id, {'match_id': match_id, 'period_event': event_dic})
             except BaseException:
-                LOGGER.debug('ERROR: periodevents_get() failed.')
+                LOGGER.error('ERROR: periodevents_get() failed.')
 
             try:
                 # get and store rosters
                 roster_dic = del_app_helper.roster_get(match_id)
                 roster_add(LOGGER, 'match_id', match_id, {'match_id': match_id, 'roster': roster_dic})
             except BaseException:
-                LOGGER.debug('ERROR: roster_get() failed.')
+                LOGGER.error('ERROR: roster_get() failed.')
 
             try:
                 # get teamstat
@@ -301,7 +301,7 @@ if __name__ == '__main__':
                 tvisitor_dic = del_app_helper.teamstats_get(match_id, False)
                 teamstat_add(LOGGER, 'match_id', match_id, {'match_id': match_id, 'home': thome_dic, 'visitor': tvisitor_dic})
             except BaseException:
-                LOGGER.debug('ERROR: teamstats_get() failed.')
+                LOGGER.error('ERROR: teamstats_get() failed.')
 
             # get shifts if required
             if ADDSHIFTS:
@@ -317,7 +317,7 @@ if __name__ == '__main__':
                     # get shots from api
                     shots_dic = del_app_helper.shots_get(match_id)
                 else:
-                    LOGGER.debug('get shots from mobile API')                    
+                    LOGGER.debug('get shots from mobile API')
                     # get shots from mobile_api and convert them into the format we need
                     shots_mobile_dic = del_app_helper.gamesituations_extended_get(TOURNAMENT_ID, match_id)
                     shots_dic = shots_convert(LOGGER, match_id, shots_mobile_dic, gameheader_dic)
@@ -325,7 +325,7 @@ if __name__ == '__main__':
                     shots_process(LOGGER, shots_dic['match'])
 
             except BaseException as err:
-                LOGGER.debug('ERROR: shots_get() failed with err: {0}'.format(err))
+                LOGGER.error('ERROR: shots_get() failed with err: {0}'.format(err))
 
             if SAVE_DIR:
                 MATCH_DIR = '{0}/matches/{1}'.format(SAVE_DIR, match_id)
