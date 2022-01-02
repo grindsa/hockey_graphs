@@ -48,6 +48,7 @@
     "react-rangeslider": "^2.2.0",
     "react-search-autocomplete": "^5.4.2",
     "remark-gfm": "^1.0.0",
-    "style-loader": "^2.0.0"
+    "style-loader": "^2.0.0",
+    "webpack": "^4.37.0"
   }
 }

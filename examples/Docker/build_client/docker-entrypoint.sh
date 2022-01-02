@@ -4,8 +4,9 @@ P1=$1
 
 cd /tmp/ui
 npm install
-npm install --only=dev
-npm install webpack
+npm install webpack@4.37.0
+# npm install --only=dev
+# npm install webpack
 npm run compile
 
 
