@@ -539,10 +539,12 @@ def _prematchoverview_get(logger, request, fkey, fvalue, matchinfo_dic):
     # pylint: disable=R0913
     logger.debug('_prematch_overview()')
 
+    title = 'head-to-head'
     chart_data = prematchoverview_get(logger, request, fkey, fvalue, matchinfo_dic)
-
+    chart_data['title'] = title
+    
     stat_entry = {
-        'title': 'heat-to-heat',
+        'title': title,
         'chart': chart_data,
         'tabs': False,
         'table': {},

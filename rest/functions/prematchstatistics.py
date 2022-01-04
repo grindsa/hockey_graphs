@@ -20,10 +20,12 @@ def prematchoverview_get(logger, request, fkey, fvalue, matchinfo_dic):
     prematch_dic = {}
 
     prematch_dic['date'] = matchinfo_dic['date']
-    prematch_dic['home_team_logo'] =  matchinfo_dic['home_team_logo']
-    prematch_dic['home_team_color'] =  matchinfo_dic['home_team__color_penalty_primary']
+    prematch_dic['home_team_logo'] = matchinfo_dic['home_team_logo']
+    prematch_dic['home_team_shortcut'] = matchinfo_dic['home_team__shortcut']
+    prematch_dic['home_team_color'] = matchinfo_dic['home_team__color_primary']
     prematch_dic['visitor_team_logo'] = matchinfo_dic['visitor_team_logo']
-    prematch_dic['visitor_team_color'] =  matchinfo_dic['visitor_team__color_secondary']
+    prematch_dic['visitor_team_shortcut'] = matchinfo_dic['visitor_team__shortcut']
+    prematch_dic['visitor_team_color'] = matchinfo_dic['visitor_team__color_secondary']
 
     # stats per team per match
     matchstat_list = teammatchstats_get(logger, 'match__season_id', matchinfo_dic['season_id'])
