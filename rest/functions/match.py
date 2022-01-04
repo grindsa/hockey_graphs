@@ -26,6 +26,7 @@ def match_info_get(logger, match_id, request, vlist=('date', 'date_uts', 'result
         base_url = url_build(request)
     except BaseException as err:
         base_url = None
+    match_dic['base_url'] = base_url
 
     if 'home_team__logo' in match_dic:
         match_dic['home_team_logo'] = '{0}{1}{2}'.format(base_url, settings.STATIC_URL, match_dic['home_team__logo'])
