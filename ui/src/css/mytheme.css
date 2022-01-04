@@ -203,3 +203,21 @@ select.selectbg {
   /* right: 0; */
   min-width: 60px;
 }
+
+.prematch_container {
+  position: relative;
+  margin: 0 auto;
+}
+
+.prematch_container img {vertical-align: middle;}
+
+.prematch_container .content {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  padding: 20px;
+}
+
+.uc {
+    text-transform:uppercase;
+}
