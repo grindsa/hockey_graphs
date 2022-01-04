@@ -9,6 +9,7 @@ import Heatmap from 'highcharts/modules/heatmap.js';
 import highchartsGantt from "highcharts/modules/gantt";
 import { HeatmapJs } from './heatmapjs';
 import { MatchOverview } from './matchoverview';
+import { PreMatchOverview } from './prematchoverview';
 import { PeriodSelector } from './periodselector';
 import { createnoChartMessage } from '../localization.js';
 import { isEmpty } from '../sharedfunctions.js';
@@ -42,6 +43,10 @@ export const Chart = (props) => {
   }else if (!isEmpty(props.options) && props.options.leftlabel){
     return(
       <HeatmapJs data={props.options} />
+    )
+  }else if (!isEmpty(props.options) && props.options.home_pdo && props.options.visitor_pdo){
+    return(
+      <PreMatchOverview options={props.options} />
     )
   }else{
     const nochartdata = createnoChartMessage(props.language)

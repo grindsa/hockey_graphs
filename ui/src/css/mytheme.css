@@ -30,6 +30,10 @@ td.middle {
   vertical-align: middle;
 }
 
+.strong{
+  font-weight: bold;
+}
+
 .pseudohead{font-size:14px; font-weight: bold;}
 
 .cpr {
