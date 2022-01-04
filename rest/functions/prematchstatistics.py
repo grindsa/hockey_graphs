@@ -3,12 +3,13 @@
 # pylint: disable=E0401, C0413, R0914
 import sys
 import os
+import random
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "hockey_graphs.settings")
 import django
 django.setup()
 from django.conf import settings
-from rest.functions.helper import list_sumup, pctg_float_get, random_file_pick
+from rest.functions.helper import list_sumup, pctg_float_get, random_file_pick, url_build
 from rest.functions.teammatchstat import teammatchstats_get
 from rest.functions.teamstat import teamstat_dic_get
 
@@ -18,6 +19,11 @@ def prematchoverview_get(logger, request, fkey, fvalue, matchinfo_dic, color_dic
     logger.debug('prematchoverview_get({0}:{1})'.format(fkey, fvalue))
 
     prematch_dic = {}
+
+    # generate random background image
+    file_name = 'img/backgrounds/{0}.png'.format(random.randint(1,6))
+    prematch_dic['background_image'] = '{0}{1}{2}'.format(matchinfo_dic['base_url'], settings.STATIC_URL, file_name)
+
     prematch_dic['date'] = matchinfo_dic['date']
     prematch_dic['home_team_logo'] = matchinfo_dic['home_team_logo']
     prematch_dic['home_team_shortcut'] = matchinfo_dic['home_team__shortcut']
@@ -26,9 +32,6 @@ def prematchoverview_get(logger, request, fkey, fvalue, matchinfo_dic, color_dic
     prematch_dic['visitor_team_shortcut'] = matchinfo_dic['visitor_team__shortcut']
     prematch_dic['visitor_team_color'] = color_dic['visitor_team_color']
 
-    prematch_dic['background_image'] = 'http://127.0.0.1:8081/static/img/backgrounds/3.jpg'
-
-    foo  = random_file_pick(logger, 'static/img/backgrounds')
 
     # stats per team per match
     matchstat_list = teammatchstats_get(logger, 'match__season_id', matchinfo_dic['season_id'])
@@ -64,13 +67,13 @@ def _pmodata_get(logger, team_list, teamstat_dic):
         teamstat_sum_dic[team_id]['goals_for_pg'] = round(tmp_dic['sum_goals_for']/games_num, 2)
         teamstat_sum_dic[team_id]['goals_against_pg'] = round(tmp_dic['sum_goals_against']/games_num, 2)
         # shots on goal per game
-        teamstat_sum_dic[team_id]['shots_ongoal_for_pg'] = round(tmp_dic['sum_shots_ongoal_for']/games_num, 2)
-        teamstat_sum_dic[team_id]['shots_ongoal_against_pg'] = round(tmp_dic['sum_shots_ongoal_against']/games_num, 2)
+        teamstat_sum_dic[team_id]['shots_ongoal_for_pg'] = round(tmp_dic['sum_shots_ongoal_for']/games_num, 1)
+        teamstat_sum_dic[team_id]['shots_ongoal_against_pg'] = round(tmp_dic['sum_shots_ongoal_against']/games_num, 1)
         # corsi
         teamstat_sum_dic[team_id]['corsi_pctg'] = pctg_float_get(tmp_dic['sum_shots_for_5v5'], tmp_dic['sum_shots_for_5v5'] + tmp_dic['sum_shots_against_5v5'], 1)
         # pp/ppk %
-        teamstat_sum_dic[team_id]['pp_pctg'] = pctg_float_get(tmp_dic['sum_goals_pp'], tmp_dic['sum_ppcount'], 0)
-        teamstat_sum_dic[team_id]['pk_pctg'] = 100 - pctg_float_get(tmp_dic['sum_goals_pp_against'], tmp_dic['sum_shcount'], 0)
+        teamstat_sum_dic[team_id]['pp_pctg'] = pctg_float_get(tmp_dic['sum_goals_pp'], tmp_dic['sum_ppcount'], 1)
+        teamstat_sum_dic[team_id]['pk_pctg'] = 100 - pctg_float_get(tmp_dic['sum_goals_pp_against'], tmp_dic['sum_shcount'], 1)
         # pdo
         teamstat_sum_dic[team_id]['sh_pctg'] = pctg_float_get(tmp_dic['sum_goals_for'], tmp_dic['sum_shots_ongoal_for'], 0)
         teamstat_sum_dic[team_id]['sv_pctg'] = pctg_float_get(tmp_dic['sum_saves'], tmp_dic['sum_shots_ongoal_against'], 0)

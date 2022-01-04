@@ -12,6 +12,8 @@ import math
 import numpy as np
 from dateutil.parser import parse
 import pytz
+import os
+import random
 
 sys.path.insert(0, '.')
 sys.path.insert(1, '..')
@@ -388,3 +390,9 @@ def periodseconds_get(logger, period, tst_end):
         end_val = period * 1200000
 
     return (start_val, end_val)
+
+def random_file_pick(logger, path):
+    """ pick random file from directory """
+    logger.debug('random_file_pick({0})'.format(path))
+    file = random.choice(os.listdir(path))
+    print(file)
