@@ -12,7 +12,7 @@ from rest.models import Match
 from rest.functions.helper import url_build, pctg_get, min2sec
 from rest.functions.teamstat import teamstat_get
 
-def match_info_get(logger, match_id, request, vlist=('date', 'date_uts', 'result', 'result_suffix', 'home_team_id', 'home_team__team_name', 'home_team__shortcut', 'home_team__logo', 'home_team__color_primary', 'home_team__color_secondary', 'home_team__color_tertiary', 'home_team__color_quaternary', 'home_team__color_penalty_primary', 'home_team__color_penalty_secondary', 'visitor_team_id', 'visitor_team__team_name', 'visitor_team__shortcut', 'visitor_team__logo', 'visitor_team__color_primary', 'visitor_team__color_secondary',  'visitor_team__color_tertiary', 'visitor_team__color_quaternary', 'visitor_team__color_penalty_primary', 'visitor_team__color_penalty_secondary', 'home_team__twitter_name', 'visitor_team__twitter_name', 'home_team__facebook_groups', 'visitor_team__facebook_groups')):
+def match_info_get(logger, match_id, request, vlist=('date', 'date_uts', 'result', 'result_suffix', 'home_team_id', 'home_team__team_name', 'home_team__shortcut', 'home_team__logo', 'home_team__color_primary', 'home_team__color_secondary', 'home_team__color_tertiary', 'home_team__color_quaternary', 'home_team__color_penalty_primary', 'home_team__color_penalty_secondary', 'visitor_team_id', 'visitor_team__team_name', 'visitor_team__shortcut', 'visitor_team__logo', 'visitor_team__color_primary', 'visitor_team__color_secondary',  'visitor_team__color_tertiary', 'visitor_team__color_quaternary', 'visitor_team__color_penalty_primary', 'visitor_team__color_penalty_secondary', 'home_team__twitter_name', 'visitor_team__twitter_name', 'home_team__facebook_groups', 'visitor_team__facebook_groups', 'season_id')):
     """ get info for a specifc match_id """
     logger.debug('match_info_get()')
     try:
@@ -63,7 +63,7 @@ def matchinfo_list_get(logger, matchid_list, request):
         if _matchinfo_dic:
             matchinfo_dic[match_id] = _matchinfo_dic
     logger.debug('matchinfo_list_get() ended with {0} entries'.format(len(matchinfo_dic.keys())))
-    
+
     return matchinfo_dic
 
 def match_add(logger, fkey, fvalue, data_dic):
