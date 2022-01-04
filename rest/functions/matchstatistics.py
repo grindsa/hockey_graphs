@@ -123,7 +123,7 @@ def matchstatistics_get(logger, request, fkey=None, fvalue=None):
             result.append(_chatterchart_get(logger, _('Real-Time Fan Reactions'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list, periodevent_list, color_dic))
         else:
             # future match
-            result.append(_prematchoverview_get(logger, request, fkey, fvalue, matchinfo_dic))
+            result.append(_prematchoverview_get(logger, request, fkey, fvalue, matchinfo_dic, color_dic))
 
     else:
         result = {'error': 'Please specify a matchid'}
@@ -534,15 +534,15 @@ def _shiftchart_get(logger, title, subtitle, ismobile, request, fkey, fvalue, ma
 
     return stat_entry
 
-def _prematchoverview_get(logger, request, fkey, fvalue, matchinfo_dic):
+def _prematchoverview_get(logger, request, fkey, fvalue, matchinfo_dic, color_dic):
     """ heat-to-heat overview """
     # pylint: disable=R0913
     logger.debug('_prematch_overview()')
 
     title = 'head-to-head'
-    chart_data = prematchoverview_get(logger, request, fkey, fvalue, matchinfo_dic)
+    chart_data = prematchoverview_get(logger, request, fkey, fvalue, matchinfo_dic, color_dic)
     chart_data['title'] = title
-    
+
     stat_entry = {
         'title': title,
         'chart': chart_data,

@@ -8,24 +8,27 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "hockey_graphs.settings")
 import django
 django.setup()
 from django.conf import settings
-from rest.functions.helper import list_sumup, pctg_float_get
+from rest.functions.helper import list_sumup, pctg_float_get, random_file_pick
 from rest.functions.teammatchstat import teammatchstats_get
 from rest.functions.teamstat import teamstat_dic_get
 
 
-def prematchoverview_get(logger, request, fkey, fvalue, matchinfo_dic):
+def prematchoverview_get(logger, request, fkey, fvalue, matchinfo_dic, color_dic):
     """ get pre-stats """
     logger.debug('prematchoverview_get({0}:{1})'.format(fkey, fvalue))
 
     prematch_dic = {}
-
     prematch_dic['date'] = matchinfo_dic['date']
     prematch_dic['home_team_logo'] = matchinfo_dic['home_team_logo']
     prematch_dic['home_team_shortcut'] = matchinfo_dic['home_team__shortcut']
-    prematch_dic['home_team_color'] = matchinfo_dic['home_team__color_primary']
+    prematch_dic['home_team_color'] = color_dic['home_team_color']
     prematch_dic['visitor_team_logo'] = matchinfo_dic['visitor_team_logo']
     prematch_dic['visitor_team_shortcut'] = matchinfo_dic['visitor_team__shortcut']
-    prematch_dic['visitor_team_color'] = matchinfo_dic['visitor_team__color_secondary']
+    prematch_dic['visitor_team_color'] = color_dic['visitor_team_color']
+
+    prematch_dic['background_image'] = 'http://127.0.0.1:8081/static/img/backgrounds/3.jpg'
+
+    foo  = random_file_pick(logger, 'static/img/backgrounds')
 
     # stats per team per match
     matchstat_list = teammatchstats_get(logger, 'match__season_id', matchinfo_dic['season_id'])
