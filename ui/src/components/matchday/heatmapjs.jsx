@@ -60,7 +60,7 @@ export const HeatmapJs = ({data, title}) => {
         <div className={left_text_classes}>{data.leftlabel}</div>
         <div className={right_text_classes}>{data.rightlabel}</div>
       </div>
-      <div className="cpr">@2020 GrindSa <a href="https://hockeygraphs.dynamop.de">(https://hockeygraphs.dynamop.de)</a></div>
+      <div className="cpr">@2022 GrindSa <a href="https://hockeygraphs.dynamop.de">(https://hockeygraphs.dynamop.de)</a></div>
     </div>
   )
 }
