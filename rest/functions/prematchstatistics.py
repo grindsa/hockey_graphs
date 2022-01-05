@@ -32,6 +32,12 @@ def prematchoverview_get(logger, request, fkey, fvalue, matchinfo_dic, color_dic
     prematch_dic['visitor_team_shortcut'] = matchinfo_dic['visitor_team__shortcut']
     prematch_dic['visitor_team_color'] = color_dic['visitor_team_color']
 
+    # some texts to be translated
+    prematch_dic['txt_gfpg'] = _('Goals For/Game')
+    prematch_dic['txt_gapg'] = _('Goals Against/Game')
+    prematch_dic['txt_sfpg'] = _('Shots For/Game')
+    prematch_dic['txt_sapg'] = _('Shots Against/Game')
+    prematch_dic['txt_fac'] = _('Faceoff')
 
     # stats per team per match
     matchstat_list = teammatchstats_get(logger, 'match__season_id', matchinfo_dic['season_id'])
@@ -62,21 +68,21 @@ def _pmodata_get(logger, team_list, teamstat_dic):
 
         tmp_dic = tmp_list[-1]
         # faceoff percentage
-        teamstat_sum_dic[team_id]['fac_pctg'] = pctg_float_get(tmp_dic['sum_faceoffswon'], tmp_dic['sum_faceoffswon'] + tmp_dic['sum_faceoffslost'], 1)
+        teamstat_sum_dic[team_id]['fac_pctg'] = "%.1f" % pctg_float_get(tmp_dic['sum_faceoffswon'], tmp_dic['sum_faceoffswon'] + tmp_dic['sum_faceoffslost'], 1)
         # goals per game
-        teamstat_sum_dic[team_id]['goals_for_pg'] = round(tmp_dic['sum_goals_for']/games_num, 2)
-        teamstat_sum_dic[team_id]['goals_against_pg'] = round(tmp_dic['sum_goals_against']/games_num, 2)
+        teamstat_sum_dic[team_id]['goals_for_pg'] = "%.2f" % round(tmp_dic['sum_goals_for']/games_num, 2)
+        teamstat_sum_dic[team_id]['goals_against_pg'] = "%.2f" % round(tmp_dic['sum_goals_against']/games_num, 2)
         # shots on goal per game
-        teamstat_sum_dic[team_id]['shots_ongoal_for_pg'] = round(tmp_dic['sum_shots_ongoal_for']/games_num, 1)
-        teamstat_sum_dic[team_id]['shots_ongoal_against_pg'] = round(tmp_dic['sum_shots_ongoal_against']/games_num, 1)
+        teamstat_sum_dic[team_id]['shots_ongoal_for_pg'] = "%.1f" % round(tmp_dic['sum_shots_ongoal_for']/games_num, 1)
+        teamstat_sum_dic[team_id]['shots_ongoal_against_pg'] = "%.1f" % round(tmp_dic['sum_shots_ongoal_against']/games_num, 1)
         # corsi
         teamstat_sum_dic[team_id]['corsi_pctg'] = pctg_float_get(tmp_dic['sum_shots_for_5v5'], tmp_dic['sum_shots_for_5v5'] + tmp_dic['sum_shots_against_5v5'], 1)
         # pp/ppk %
-        teamstat_sum_dic[team_id]['pp_pctg'] = pctg_float_get(tmp_dic['sum_goals_pp'], tmp_dic['sum_ppcount'], 1)
-        teamstat_sum_dic[team_id]['pk_pctg'] = 100 - pctg_float_get(tmp_dic['sum_goals_pp_against'], tmp_dic['sum_shcount'], 1)
+        teamstat_sum_dic[team_id]['pp_pctg'] = "%.1f" % pctg_float_get(tmp_dic['sum_goals_pp'], tmp_dic['sum_ppcount'], 1)
+        teamstat_sum_dic[team_id]['pk_pctg'] = "%.1f" % (100 - pctg_float_get(tmp_dic['sum_goals_pp_against'], tmp_dic['sum_shcount'], 1))
         # pdo
-        teamstat_sum_dic[team_id]['sh_pctg'] = pctg_float_get(tmp_dic['sum_goals_for'], tmp_dic['sum_shots_ongoal_for'], 0)
-        teamstat_sum_dic[team_id]['sv_pctg'] = pctg_float_get(tmp_dic['sum_saves'], tmp_dic['sum_shots_ongoal_against'], 0)
-        teamstat_sum_dic[team_id]['pdo'] = teamstat_sum_dic[team_id]['sh_pctg'] + teamstat_sum_dic[team_id]['sv_pctg']
+        teamstat_sum_dic[team_id]['sh_pctg'] = pctg_float_get(tmp_dic['sum_goals_for'], tmp_dic['sum_shots_ongoal_for'], 1)
+        teamstat_sum_dic[team_id]['sv_pctg'] = pctg_float_get(tmp_dic['sum_saves'], tmp_dic['sum_shots_ongoal_against'], 1)
+        teamstat_sum_dic[team_id]['pdo'] = "%.1f" % (teamstat_sum_dic[team_id]['sh_pctg'] + teamstat_sum_dic[team_id]['sv_pctg'])
 
     return teamstat_sum_dic

@@ -535,11 +535,11 @@ def _shiftchart_get(logger, title, subtitle, ismobile, request, fkey, fvalue, ma
     return stat_entry
 
 def _prematchoverview_get(logger, request, fkey, fvalue, matchinfo_dic, color_dic):
-    """ heat-to-heat overview """
+    """ head-to-head overview """
     # pylint: disable=R0913
     logger.debug('_prematch_overview()')
 
-    title = 'head-to-head'
+    title = _('head-to-head')
     chart_data = prematchoverview_get(logger, request, fkey, fvalue, matchinfo_dic, color_dic)
     chart_data['title'] = title
 
