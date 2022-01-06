@@ -422,6 +422,13 @@ class DelAppHelper():
             url = '{0}/matches/{1}/team-stats-guest.json'.format(self.base_url, match_id)
         return requests.get(url, headers=self.headers, verify=False).json()
 
+    def teamstatssummary_get(self, delseason, leagueid, team_id):
+        """ get teamstats_get from del.org """
+        self.logger.debug('DelAppHelper.teamstatssummary_get({0}:{1}:{2})\n'.format(delseason, leagueid, team_id))
+        url = '{0}/league-all-team-stats/{1}/{2}/{3}.json'.format(self.del_api, delseason, leagueid, team_id)
+        print(url)
+        return requests.get(url, headers=self.headers, verify=False).json()
+
     def teamstandings_get(self):
         """ get games """
         self.logger.debug('DelAppHelper.teamStandings_get()\n')

@@ -3,7 +3,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from rest.models import Comment, Gameheader, Match, Periodevent, Player, Playerstat, Playerstatistics, Roster, Season, Shift, Shot, Socialnetworkevent, Team, Teamstat, Teammatchstat, Xg, Playerperseason
+from rest.models import Comment, Gameheader, Match, Periodevent, Player, Playerstat, Playerstatistics, Roster, Season, Shift, Shot, Socialnetworkevent, Team, Teamstat, Teamstatdel, Teammatchstat, Xg, Playerperseason
 
 class MatchAdmin(admin.ModelAdmin):
     """ match admin """
@@ -61,8 +61,8 @@ class RosterAdmin(admin.ModelAdmin):
 
 class SeasonAdmin(admin.ModelAdmin):
     """ season admin """
-    fields = ['name', 'shortcut', 'tournament']
-    list_display = ['name', 'shortcut', 'tournament']
+    fields = ['name', 'shortcut', 'tournament', 'delname']
+    list_display = ['name', 'shortcut', 'tournament', 'delname']
     ordering = ['tournament']
 
 class ShiftAdmin(admin.ModelAdmin):
@@ -87,6 +87,12 @@ class TeamAdmin(admin.ModelAdmin):
     fields = ['team_id', 'team_name', 'shortcut', 'logo', 'color_primary', 'color_secondary', 'color_tertiary', 'color_quaternary', 'color_penalty_primary', 'color_penalty_secondary', 'twitter_name', 'facebook_groups']
     list_display = ['team_id', 'team_name', 'shortcut', 'logo', 'color_primary', 'color_secondary', 'color_tertiary', 'color_quaternary', 'color_penalty_primary', 'color_penalty_secondary', 'twitter_name', 'facebook_groups']
     ordering = ['team_id']
+
+class TeamstatdelAdmin(admin.ModelAdmin):
+    """ teamstatdel admin """
+    fields = ['season', 'team', 'leagueallteamstats', 'stats_updated']
+    list_display = ['season', 'team', 'leagueallteamstats', 'stats_updated']
+    ordering = ['season', 'team']
 
 class TeamstatAdmin(admin.ModelAdmin):
     """ shots admin """
@@ -119,6 +125,7 @@ admin.site.register(Season, SeasonAdmin)
 admin.site.register(Socialnetworkevent, SocialnetworkeventAdmin)
 admin.site.register(Team, TeamAdmin)
 admin.site.register(Teamstat, TeamstatAdmin)
+admin.site.register(Teamstatdel, TeamstatdelAdmin)
 admin.site.register(Teammatchstat, TeammatchstatAdmin)
 admin.site.register(Playerperseason, PlayerperseasonAdmin)
 #admin.site.register(Xg, XgAdmin)

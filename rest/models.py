@@ -8,6 +8,8 @@ class Season(models.Model):
     name = models.CharField(max_length=20)
     shortcut = models.CharField(max_length=5)
     tournament = models.IntegerField(default=0)
+    delname = models.IntegerField(default=0)
+
     def __str__(self):
         return self.name
 
@@ -138,6 +140,13 @@ class Socialnetworkevent(models.Model):
     text_raw = models.CharField(max_length=400)
     text_cleaned = models.CharField(max_length=300, blank=True, null=True)
     tag = models.CharField(max_length=10)
+
+class Teamstatdel(models.Model):
+    """ teamstatistics from del """
+    season = models.ForeignKey(Season, on_delete=models.CASCADE)
+    team = models.ForeignKey(Team, on_delete=models.CASCADE)
+    leagueallteamstats = jsonfield.JSONField(default=dict)
+    stats_updated = models.CharField(max_length=25, blank=True)
 
 class Teamstat(models.Model):
     """ teamstatistics from del """

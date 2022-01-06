@@ -136,6 +136,11 @@ def create_cron_entries(logger, tzone):
                 teamstats.hour.on(23)
                 teamstats.minute.on(5)
 
+                # update teamstatsdel at 11pm
+                teamstats = cron.new(command=path+'/teamstatisticsdel_update.py -d -l 1', comment='teamstatsdel', user='root')
+                teamstats.hour.on(23)
+                teamstats.minute.on(5)
+
                 # update fbook group at 11pm
                 # teamstats = cron.new(command=path+'/tweet_summary.py', comment='matchday summary into facebook hockeygraphs', # user='root')
                 # teamstats.hour.on(23)
@@ -154,6 +159,11 @@ def create_cron_entries(logger, tzone):
                 ndteamstats = cron.new(command=path+'/teamstat_load.py -i 30 --xgdata /var/www/hockey_graphs/rest/tools/conf/xg_model_data.json --xgweights /var/www/hockey_graphs/rest/tools/conf/xg_weights.json', comment='teamstats', user='root')
                 ndteamstats.hour.on(3, 9, 15)
                 ndteamstats.minute.on(5)
+
+                # update teamstatsdel at 11pm
+                teamstats = cron.new(command=path+'/teamstatisticsdel_update.py -d -l 1', comment='teamstatsdel', user='root')
+                teamstats.hour.on(3, 9, 15)
+                teamstats.minute.on(5)
 
                 ndtag = cron.new(command=path+'/tag_fetcher.py -i 24 -b 4 --save /var/www/hockey_graphs/data', comment='update twitter tags', user='root')
                 ndtag.hour.on(3)
