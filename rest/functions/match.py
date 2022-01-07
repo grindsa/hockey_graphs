@@ -219,6 +219,21 @@ def sincematch_list_get(logger, season_id, uts=0, treshold=0, vlist=('match_id',
     logger.debug('sincematch_list_get() ended with {0}'.format(bool(match_list)))
     return list(match_list)
 
+def futurematch_list_get(logger, season_id, uts=0, treshold=0, vlist=('match_id', 'season', 'date', 'date_uts', 'home_team', 'visitor_team')):
+    """ get a list of non finished matches from past """
+    logger.debug('sincematch_list_get({0}:{1})'.format(season_id, uts))
+    try:
+        if len(vlist) == 1:
+            match_list = Match.objects.filter(season_id=season_id, date_uts__gt=uts, date_uts__lt=uts+treshold).order_by('match_id').exclude(disable=True).values_list(vlist[0], flat=True)
+        else:
+            match_list = Match.objects.filter(season_id=season_id, date_uts__gt=uts, date_uts__lt=uts+treshold).order_by('match_id').exclude(disable=True).values(*vlist)
+    except BaseException as err_:
+        logger.critical('error in sincematch_list_get(): {0}'.format(err_))
+        match_list = []
+    logger.debug('sincematch_list_get() ended with {0}'.format(bool(match_list)))
+    return list(match_list)
+
+
 def untweetedmatch_list_get(logger, season_id, uts=0, treshold=0, vlist=('match_id', 'season', 'date', 'date_uts', 'home_team', 'visitor_team')):
     """ get a list of non finished matches from past """
     logger.debug('untweetedmatch_list_get({0}:{1})'.format(season_id, uts))

@@ -43,6 +43,8 @@ class Match(models.Model):
     finish = models.BooleanField(default=False)
     tweet = models.BooleanField(default=False)
     disable = models.BooleanField(default=False)
+    prematch_tweet_id = models.BigIntegerField(default=0)
+
     def __str__(self):
         return '{0} ({1}-{2})'.format(self.match_id, self.home_team, self.visitor_team)
 
