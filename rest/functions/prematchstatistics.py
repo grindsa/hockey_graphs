@@ -65,9 +65,6 @@ def prematchoverview_get(logger, request, fkey, fvalue, matchinfo_dic, delstat_d
         for key in prematchoverview_dic[team_id]:
             prematch_dic['{0}_{1}'.format(team, key)] = prematchoverview_dic[team_id][key]
 
-    from pprint import pprint
-    pprint(prematch_dic)
-
     return prematch_dic
 
 def _pmoshotdata_get(logger, team_list, teamstat_dic):
