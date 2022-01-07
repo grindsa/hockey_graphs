@@ -21,7 +21,6 @@ def season_get(logger, fkey, fvalue, vlist=('id', 'name', 'shortcut', 'tournamen
         season_list = []
     return season_list
 
-
 def season_latest_get(logger):
     """get latest season"""
     logger.debug('season_latest_get()')

@@ -13,6 +13,7 @@ from rest.functions.socialnetworkeventcharts import chatterchart_create
 from rest.functions.socialnetworkevent import socialnetworkevent_get, eventspermin_combine
 from rest.functions.shot import shot_list_get, shotspermin_count, shotspermin_aggregate, shotstatus_count, shotstatus_aggregate, shotsperzone_count, shotsperzone_aggregate, shotcoordinates_get, gameflow_get
 from rest.functions.shotcharts import shotsumchart_create, gameflowchart_create, shotstatussumchart_create, shotmapchart_create, gamecorsichart_create, gameplayercorsichart_create, gamecorsippctgchart_create, puckpossessionchart_create, shotzonechart_create
+from rest.functions.season import season_latest_get
 from rest.functions.toicharts import gametoichart_create, gametoipppkchart_create
 from rest.functions.heatmapcharts import gamematchupchart_create
 from rest.functions.heatmap import gameheatmapdata_get
@@ -20,6 +21,7 @@ from rest.functions.shottables import shotsperiodtable_get, shotstatussumtable_g
 from rest.functions.toitables import gametoi_table, toi_chk
 from rest.functions.match import match_info_get, matchstats_get
 from rest.functions.prematchstatistics import prematchoverview_get
+from rest.functions.teamstatdel import teamstatdel_get
 from rest.functions.shift import shift_get, toifromshifts_get, shiftsperplayer_get, shiftchartdata_get, shiftsupdates_get
 from rest.functions.shiftcharts import shiftsperplayerchart_create
 from rest.functions.roster import roster_get
@@ -539,8 +541,12 @@ def _prematchoverview_get(logger, request, fkey, fvalue, matchinfo_dic, color_di
     # pylint: disable=R0913
     logger.debug('_prematch_overview()')
 
+
+    season_id = season_latest_get(logger)
+    delstat_dic = {'home': teamstatdel_get(logger, season_id, matchinfo_dic['home_team_id'])[0]['leagueallteamstats'], 'visitor': teamstatdel_get(logger, season_id, matchinfo_dic['visitor_team_id'])[0]['leagueallteamstats']}
+
     title = _('head-to-head')
-    chart_data = prematchoverview_get(logger, request, fkey, fvalue, matchinfo_dic, color_dic)
+    chart_data = prematchoverview_get(logger, request, fkey, fvalue, matchinfo_dic, delstat_dic, color_dic)
     chart_data['title'] = title
 
     stat_entry = {

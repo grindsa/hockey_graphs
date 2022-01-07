@@ -14,7 +14,7 @@ from rest.functions.teammatchstat import teammatchstats_get
 from rest.functions.teamstat import teamstat_dic_get
 
 
-def prematchoverview_get(logger, request, fkey, fvalue, matchinfo_dic, color_dic):
+def prematchoverview_get(logger, request, fkey, fvalue, matchinfo_dic, delstat_dic, color_dic):
     """ get pre-stats """
     logger.debug('prematchoverview_get({0}:{1})'.format(fkey, fvalue))
 
@@ -25,12 +25,8 @@ def prematchoverview_get(logger, request, fkey, fvalue, matchinfo_dic, color_dic
     prematch_dic['background_image'] = '{0}{1}{2}'.format(matchinfo_dic['base_url'], settings.STATIC_URL, file_name)
 
     prematch_dic['date'] = matchinfo_dic['date']
-    prematch_dic['home_team_logo'] = matchinfo_dic['home_team_logo']
-    prematch_dic['home_team_shortcut'] = matchinfo_dic['home_team__shortcut']
-    prematch_dic['home_team_color'] = color_dic['home_team_color']
-    prematch_dic['visitor_team_logo'] = matchinfo_dic['visitor_team_logo']
-    prematch_dic['visitor_team_shortcut'] = matchinfo_dic['visitor_team__shortcut']
-    prematch_dic['visitor_team_color'] = color_dic['visitor_team_color']
+    # prematch_dic['home_team_color'] = color_dic['home_team_color']
+    # prematch_dic['visitor_team_color'] = color_dic['visitor_team_color']
 
     # some texts to be translated
     prematch_dic['txt_gfpg'] = _('Goals For/Game')
@@ -38,13 +34,28 @@ def prematchoverview_get(logger, request, fkey, fvalue, matchinfo_dic, color_dic
     prematch_dic['txt_sfpg'] = _('Shots For/Game')
     prematch_dic['txt_sapg'] = _('Shots Against/Game')
     prematch_dic['txt_fac'] = _('Faceoff')
+    prematch_dic['txt_bil'] = _('W-L')
 
     # stats per team per match
     matchstat_list = teammatchstats_get(logger, 'match__season_id', matchinfo_dic['season_id'])
     # stacked stats per team
     teamstat_dic = teamstat_dic_get(logger, matchstat_list)
 
-    prematchoverview_dic = _pmodata_get(logger, [matchinfo_dic['home_team_id'], matchinfo_dic['visitor_team_id']], teamstat_dic)
+    for team in ('home', 'visitor'):
+        prematch_dic['{0}_team_logo'.format(team)] = matchinfo_dic['{0}_team_logo'.format(team)]
+        prematch_dic['{0}_team_shortcut'.format(team)] = matchinfo_dic['{0}_team__shortcut'.format(team)]
+        prematch_dic['{0}_team_color'.format(team)] = color_dic['{0}_team_color'.format(team)]
+        prematch_dic['{0}_fac_pctg'.format(team)] = "%.1f" % delstat_dic[team]['faceOffsWinsPercent']
+        prematch_dic['{0}_pk_pctg'.format(team)] = "%.1f" % delstat_dic[team]['penaltyKillingEfficiency']
+        prematch_dic['{0}_pp_pctg'.format(team)] = "%.1f" % delstat_dic[team]['powerPlayEfficiency']
+        prematch_dic['{0}_goals_for_pg'.format(team)] = "%.2f" % ((delstat_dic[team]['goalScored']['home'] + delstat_dic[team]['goalScored']['away'])/delstat_dic[team]['games'])
+        prematch_dic['{0}_goals_against_pg'.format(team)] = "%.2f" % ((delstat_dic[team]['goalsAgainst']['home'] + delstat_dic[team]['goalsAgainst']['away'])/delstat_dic[team]['games'])
+        prematch_dic['{0}_wins'.format(team)] = '{0}/{1}/{2}'.format(delstat_dic[team]['regularWins']['home'] + delstat_dic[team]['regularWins']['home'], delstat_dic[team]['overtimeWins']['home'] + delstat_dic[team]['overtimeWins']['home'], delstat_dic[team]['shootoutWins']['home'] + delstat_dic[team]['shootoutWins']['home'])
+        prematch_dic['{0}_losses'.format(team)] = '{0}/{1}/{2}'.format(delstat_dic[team]['regularLosses']['home'] + delstat_dic[team]['regularLosses']['home'], delstat_dic[team]['overtimeLosses']['home'] + delstat_dic[team]['overtimeLosses']['home'], delstat_dic[team]['shootoutLosses']['home'] + delstat_dic[team]['shootoutLosses']['home'])
+        prematch_dic['{0}_bilance'.format(team)] = delstat_dic[team]['bilance']
+        prematch_dic['{0}_last10'.format(team)] = delstat_dic[team]['last10']
+
+    prematchoverview_dic = _pmoshotdata_get(logger, [matchinfo_dic['home_team_id'], matchinfo_dic['visitor_team_id']], teamstat_dic)
     for team_id in prematchoverview_dic:
         if team_id == matchinfo_dic['home_team_id']:
             team = 'home'
@@ -54,10 +65,14 @@ def prematchoverview_get(logger, request, fkey, fvalue, matchinfo_dic, color_dic
         for key in prematchoverview_dic[team_id]:
             prematch_dic['{0}_{1}'.format(team, key)] = prematchoverview_dic[team_id][key]
 
+    from pprint import pprint
+    pprint(prematch_dic)
+
     return prematch_dic
 
-def _pmodata_get(logger, team_list, teamstat_dic):
+def _pmoshotdata_get(logger, team_list, teamstat_dic):
     """ get prematch overview data """
+    logger.debug('_pmoshotdata_get()')
 
     teamstat_sum_dic = {}
     for team_id in team_list:
@@ -67,19 +82,11 @@ def _pmodata_get(logger, team_list, teamstat_dic):
         games_num = len(tmp_list)
 
         tmp_dic = tmp_list[-1]
-        # faceoff percentage
-        teamstat_sum_dic[team_id]['fac_pctg'] = "%.1f" % pctg_float_get(tmp_dic['sum_faceoffswon'], tmp_dic['sum_faceoffswon'] + tmp_dic['sum_faceoffslost'], 1)
-        # goals per game
-        teamstat_sum_dic[team_id]['goals_for_pg'] = "%.2f" % round(tmp_dic['sum_goals_for']/games_num, 2)
-        teamstat_sum_dic[team_id]['goals_against_pg'] = "%.2f" % round(tmp_dic['sum_goals_against']/games_num, 2)
         # shots on goal per game
         teamstat_sum_dic[team_id]['shots_ongoal_for_pg'] = "%.1f" % round(tmp_dic['sum_shots_ongoal_for']/games_num, 1)
         teamstat_sum_dic[team_id]['shots_ongoal_against_pg'] = "%.1f" % round(tmp_dic['sum_shots_ongoal_against']/games_num, 1)
         # corsi
         teamstat_sum_dic[team_id]['corsi_pctg'] = pctg_float_get(tmp_dic['sum_shots_for_5v5'], tmp_dic['sum_shots_for_5v5'] + tmp_dic['sum_shots_against_5v5'], 1)
-        # pp/ppk %
-        teamstat_sum_dic[team_id]['pp_pctg'] = "%.1f" % pctg_float_get(tmp_dic['sum_goals_pp'], tmp_dic['sum_ppcount'], 1)
-        teamstat_sum_dic[team_id]['pk_pctg'] = "%.1f" % (100 - pctg_float_get(tmp_dic['sum_goals_pp_against'], tmp_dic['sum_shcount'], 1))
         # pdo
         teamstat_sum_dic[team_id]['sh_pctg'] = pctg_float_get(tmp_dic['sum_goals_for'], tmp_dic['sum_shots_ongoal_for'], 1)
         teamstat_sum_dic[team_id]['sv_pctg'] = pctg_float_get(tmp_dic['sum_saves'], tmp_dic['sum_shots_ongoal_against'], 1)

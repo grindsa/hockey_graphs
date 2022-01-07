@@ -23,20 +23,15 @@ def teamstatdel_add(logger, season_id=None, team_id=None, data_dic=None):
     logger.debug('teamstatdel_add({0}:{1}) ended with {2}'.format(season_id, team_id, result))
     return result
 
-def teamstatdel_get(logger, fkey=None, fvalue=None, vlist=('seaon', 'team', 'leagueallteamstats')):
+def teamstatdel_get(logger, season_id=None, team_id=None, vlist=('season', 'team', 'leagueallteamstats')):
     """ get info for a specifc match_id """
-    logger.debug('teamstatdel_get({0}:{1})'.format(fkey, fvalue))
+    logger.debug('teamstatdel_get({0}:{1})'.format(season_id, team_id))
     try:
-        if fkey:
-            if len(vlist) == 1:
-                teamstatdel_dic = list(Teamstatdel.objects.filter(**{fkey: fvalue}).values_list(vlist[0], flat=True))
-            else:
-                teamstatdel_dic = list(Teamstatdel.objects.filter(**{fkey: fvalue}).values(*vlist))
+        if len(vlist) == 1:
+            teamstatdel_dic = list(Teamstatdel.objects.filter(season_id=season_id, team_id=team_id).values_list(vlist[0], flat=True))
         else:
-            if len(vlist) == 1:
-                teamstatdel_dic = Teamstatdel.objects.all().order_by('team_id').values_list(vlist[0], flat=True)
-            else:
-                teamstatdel_dic = Teamstatdel.objects.all().order_by('team_id').values(*vlist)
+            teamstatdel_dic = list(Teamstatdel.objects.filter(season_id=season_id, team_id=team_id).values(*vlist))
+
     except BaseException as err_:
         logger.debug('Error in teamstatdel_get(): {0}'.format(err_))
         teamstatdel_dic = []

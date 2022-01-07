@@ -21,6 +21,15 @@ export const PreMatchOverview = ({options}) => {
                 <img className="w3-left" src={stats.visitor_team_logo} alt={stats.visitor_team_shortcut} width="80px"></img>
               </div >
             </div>
+            <div className="w3-center w3-row w3-margin-top">
+              <div className="w3-col" style={{width:'40%'}}>
+                <div className="w3-right w3-large strong">{stats.home_bilance} ({stats.home_last10})</div>
+              </div>
+              <div className="w3-col" style={{width:'20%'}}>&nbsp;</div >
+              <div className="w3-col" style={{width:'40%'}}>
+                <div className="w3-left w3-large strong">{stats.visitor_bilance} ({stats.visitor_last10})</div>
+              </div >
+            </div>
         </div>
 
         <div>
