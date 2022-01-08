@@ -14,11 +14,11 @@ export const PreMatchOverview = ({options}) => {
           <div className="w3-container w3-center w3-jumbo uc strong">{stats.title}</div>
             <div className="w3-center w3-row">
               <div className="w3-col" style={{width:'40%'}}>
-                <img className="w3-right" src={stats.home_team_logo} alt={stats.home_team_shortcut} width="80px"></img>
+                <img className="w3-right" src={stats.home_team_logo} alt={stats.home_team_shortcut} height="80px"></img>
               </div>
-              <div className="w3-col w3-xlarge strong horizontal-middle" style={{width:'20%'}}>vs</div >
+              <div className="w3-col w3-margin-top horizontal-middle" style={{width:'20%'}}><i className="w3-xxxlarge fa fa-bolt"></i></div >
               <div className="w3-col" style={{width:'40%'}}>
-                <img className="w3-left" src={stats.visitor_team_logo} alt={stats.visitor_team_shortcut} width="80px"></img>
+                <img className="w3-left" src={stats.visitor_team_logo} alt={stats.visitor_team_shortcut} height="80px"></img>
               </div >
             </div>
             <div className="w3-center w3-row w3-margin-top">
