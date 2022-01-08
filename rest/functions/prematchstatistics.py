@@ -19,7 +19,7 @@ def _bg_image_select(logger, bg_image_list):
     """ bg image selection """
     logger.debug('_bg_image_select()')
     if bg_image_list:
-        logger.debug('_bg_image_select(): pick team specific background image')    
+        logger.debug('_bg_image_select(): pick team specific background image')
         file_name = 'img/backgrounds/{0}'.format(random.choice(bg_image_list))
     else:
         # generate random background image
@@ -79,9 +79,6 @@ def prematchoverview_get(logger, request, fkey, fvalue, matchinfo_dic, delstat_d
 
         for key in prematchoverview_dic[team_id]:
             prematch_dic['{0}_{1}'.format(team, key)] = prematchoverview_dic[team_id][key]
-
-    from pprint import pprint
-    pprint(prematch_dic)
 
     return prematch_dic
 
