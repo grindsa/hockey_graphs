@@ -9,7 +9,8 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "hockey_graphs.settings")
 import django
 django.setup()
 from django.conf import settings
-from rest.functions.helper import list_sumup, pctg_float_get, random_file_pick, url_build
+from rest.functions.helper import list_sumup, pctg_float_get, random_file_pick, url_build, uts_now
+from rest.functions.match import pastmatch_list_get
 from rest.functions.teammatchstat import teammatchstats_get
 from rest.functions.teamstat import teamstat_dic_get
 
@@ -52,8 +53,14 @@ def prematchoverview_get(logger, request, fkey, fvalue, matchinfo_dic, delstat_d
         prematch_dic['{0}_goals_against_pg'.format(team)] = "%.2f" % ((delstat_dic[team]['goalsAgainst']['home'] + delstat_dic[team]['goalsAgainst']['away'])/delstat_dic[team]['games'])
         prematch_dic['{0}_wins'.format(team)] = '{0}/{1}/{2}'.format(delstat_dic[team]['regularWins']['home'] + delstat_dic[team]['regularWins']['home'], delstat_dic[team]['overtimeWins']['home'] + delstat_dic[team]['overtimeWins']['home'], delstat_dic[team]['shootoutWins']['home'] + delstat_dic[team]['shootoutWins']['home'])
         prematch_dic['{0}_losses'.format(team)] = '{0}/{1}/{2}'.format(delstat_dic[team]['regularLosses']['home'] + delstat_dic[team]['regularLosses']['home'], delstat_dic[team]['overtimeLosses']['home'] + delstat_dic[team]['overtimeLosses']['home'], delstat_dic[team]['shootoutLosses']['home'] + delstat_dic[team]['shootoutLosses']['home'])
-        prematch_dic['{0}_bilance'.format(team)] = delstat_dic[team]['bilance']
-        prematch_dic['{0}_last10'.format(team)] = delstat_dic[team]['last10']
+        if not delstat_dic[team]['bilance'] or not delstat_dic[team]['last10']:
+            # count matches as its missing in json file
+            (bilance, last10) = _winloss_count(logger, matchinfo_dic['season_id'], delstat_dic[team]['teamId'], delstat_dic[team]['bilance'], delstat_dic[team]['last10'])
+            prematch_dic['{0}_bilance'.format(team)] = bilance
+            prematch_dic['{0}_last10'.format(team)] = last10
+        else:
+            prematch_dic['{0}_bilance'.format(team)] = delstat_dic[team]['bilance']
+            prematch_dic['{0}_last10'.format(team)] = delstat_dic[team]['last10']
 
     prematchoverview_dic = _pmoshotdata_get(logger, [matchinfo_dic['home_team_id'], matchinfo_dic['visitor_team_id']], teamstat_dic)
     for team_id in prematchoverview_dic:
@@ -90,3 +97,44 @@ def _pmoshotdata_get(logger, team_list, teamstat_dic):
         teamstat_sum_dic[team_id]['pdo'] = "%.1f" % (teamstat_sum_dic[team_id]['sh_pctg'] + teamstat_sum_dic[team_id]['sv_pctg'])
 
     return teamstat_sum_dic
+
+def _winloss_count(logger, season_id, team_id, bilance, last10):
+    """ count win/loss """
+    logger.debug('_winloss_count({0}:{1})'.format(season_id, team_id))
+
+    uts = uts_now()
+
+    # get list of matches
+    match_list = pastmatch_list_get(logger, season_id, uts, ['date', 'date_uts', 'home_team', 'visitor_team', 'result'])
+    win_all = 0
+    loss_all = 0
+    win_10 = 0
+    loss_10 = 0
+    cnt = 0
+    for match in sorted(match_list, key=lambda i: i['date_uts'], reverse=True):
+        # filter team
+        if match['home_team'] == int(team_id) or match['visitor_team'] == int(team_id):
+            cnt += 1
+            (home_goals, visitor_goals) = match['result'].split(':', 2)
+            if match['home_team'] == int(team_id):
+                # home-game
+                if int(home_goals) > int(visitor_goals):
+                    win_all += 1
+                    if cnt <= 10:
+                        win_10 += 1
+                elif int(home_goals) < int(visitor_goals):
+                    loss_all += 1
+                    if cnt <= 10:
+                        loss_10 += 1
+            elif match['visitor_team'] == int(team_id):
+                # roadgame
+                if int(visitor_goals) > int(home_goals):
+                    win_all += 1
+                    if cnt <= 10:
+                        win_10 += 1
+                elif int(visitor_goals) < int(home_goals):
+                    loss_all += 1
+                    if cnt <= 10:
+                        loss_10 += 1
+
+    return ('{0}-{1}'.format(win_all, loss_all), '{0}-{1}'.format(win_10, loss_10))
