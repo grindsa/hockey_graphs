@@ -15,16 +15,24 @@ from rest.functions.teammatchstat import teammatchstats_get
 from rest.functions.teamstat import teamstat_dic_get
 
 
+def _bg_image_select(logger, bg_image_list):
+    """ bg image selection """
+    logger.debug('_bg_image_select()')
+    if bg_image_list:
+        logger.debug('_bg_image_select(): pick team specific background image')    
+        file_name = 'img/backgrounds/{0}'.format(random.choice(bg_image_list))
+    else:
+        # generate random background image
+        file_name = 'img/backgrounds/{0}.png'.format(random.randint(1,6))
+
+    return file_name
+
 def prematchoverview_get(logger, request, fkey, fvalue, matchinfo_dic, delstat_dic, color_dic):
     """ get pre-stats """
     logger.debug('prematchoverview_get({0}:{1})'.format(fkey, fvalue))
 
     prematch_dic = {}
-
-    # generate random background image
-    file_name = 'img/backgrounds/{0}.png'.format(random.randint(1,6))
-    prematch_dic['background_image'] = '{0}{1}{2}'.format(matchinfo_dic['base_url'], settings.STATIC_URL, file_name)
-
+    prematch_dic['background_image'] = '{0}{1}{2}'.format(matchinfo_dic['base_url'], settings.STATIC_URL, _bg_image_select(logger, matchinfo_dic['home_team__bg_images']))
     prematch_dic['date'] = matchinfo_dic['date']
     # prematch_dic['home_team_color'] = color_dic['home_team_color']
     # prematch_dic['visitor_team_color'] = color_dic['visitor_team_color']
@@ -71,6 +79,9 @@ def prematchoverview_get(logger, request, fkey, fvalue, matchinfo_dic, delstat_d
 
         for key in prematchoverview_dic[team_id]:
             prematch_dic['{0}_{1}'.format(team, key)] = prematchoverview_dic[team_id][key]
+
+    from pprint import pprint
+    pprint(prematch_dic)
 
     return prematch_dic
 
