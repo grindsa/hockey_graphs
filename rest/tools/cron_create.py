@@ -112,7 +112,12 @@ def create_cron_entries(logger, tzone):
                 svc_end.minute.on(45)
 
                 # create cron-entry for tweeter.py
-                lstats = cron.new(command=path + '/tweeter.py -i 24', comment='tweet statistics', user='root')
+                prestats = cron.new(command=path + '/tweety_prematch.py -i 12', comment='tweet prematch statistics', user='root')
+                prestats.hour.on(10)
+                prestats.minute.on(30)
+
+                # create cron-entry for tweeter.py
+                lstats = cron.new(command=path + '/tweeter.py -i 24 -r', comment='tweet statistics', user='root')
                 lstats.hour.during(int(fhour), int(lhour)+3).every(1)
                 lstats.minute.every(10)
 

@@ -136,6 +136,7 @@ def arg_parse():
     parser = argparse.ArgumentParser(description='match_import.py - update matches in database')
     parser.add_argument('-d', '--debug', help='debug mode', action="store_true", default=False)
     parser.add_argument('-f', '--fake', help='fake mode', action="store_true", default=False)
+    parser.add_argument('-r', '--reply', help='post as reply to prematch stat tweet', action="store_true", default=False)
     parser.add_argument('-s', '--season', help='season id', default=None)
     mlist = parser.add_mutually_exclusive_group()
     mlist.add_argument('--matchlist', help='list of del matchids', default=[])
@@ -148,6 +149,7 @@ def arg_parse():
 
     debug = args.debug
     fake = args.fake
+    reply = args.reply
     season = args.season
     matchlist = args.matchlist
     interval = int(args.interval)
@@ -165,7 +167,7 @@ def arg_parse():
         print('either -i or --matchlist parameter must be specified')
         sys.exit(0)
 
-    return(debug, fake, season, match_list, interval)
+    return(debug, fake, reply, season, match_list, interval)
 
 def page_get_via_selenium(logger, url, file_):
     """ get page via selenium """
@@ -241,7 +243,7 @@ def image_crop(logger, src, dst):
     cimg = img.crop((left, top, right, bottom))
     cimg = cimg.save(dst)
 
-def twitter_it(logger, matchinfo_dic_, img_list_, season_id, match_id_):
+def twitter_it(logger, matchinfo_dic_, img_list_, season_id, match_id_, reply_):
     """ twitter post """
     # pylint: disable=R0914
     logger.debug('twitter_it()')
@@ -271,7 +273,11 @@ def twitter_it(logger, matchinfo_dic_, img_list_, season_id, match_id_):
 
     twitter_api = twitter_login(logger, consumer_key, consumer_secret, oauth_token, oauth_token_secret)
     tweet_text = '{0} {1}'.format(text_initial, tags)
-    result = twitter_api.statuses.update(status=tweet_text, media_ids=id_string)
+    if reply_ and 'prematch_tweet_id' in matchinfo_dic_ and matchinfo_dic_['prematch_tweet_id']:
+        logger.debug('twitter_it(): tweet reply to prematch tweet {0}'.format(matchinfo_dic_['prematch_tweet_id']))
+        result = twitter_api.statuses.update(status=tweet_text, media_ids=id_string, in_reply_to_status_id=matchinfo_dic_['prematch_tweet_id'])
+    else:
+        result = twitter_api.statuses.update(status=tweet_text, media_ids=id_string)
     id_str = result['id']
     result = twitter_api.statuses.update(status=text_reply, media_ids=id_string_reply, in_reply_to_status_id=id_str)
 
@@ -302,7 +308,7 @@ def fbook_it(logger, matchinfo_dic_, img_list_, season_id, match_id):
 
 if __name__ == '__main__':
 
-    (DEBUG, FAKE, SEASON_ID, MATCH_ID_LIST, INTERVAL) = arg_parse()
+    (DEBUG, FAKE, REPLY, SEASON_ID, MATCH_ID_LIST, INTERVAL) = arg_parse()
 
     URL = 'https://hockeygraphs.dynamop.de'
     MATCHSTAT = '/api/v1/matchstatistics/'
@@ -331,7 +337,7 @@ if __name__ == '__main__':
 
     for match_id in MATCH_ID_LIST:
         # we need some match_information
-        matchinfo_dic = match_info_get(LOGGER, match_id, None)
+        matchinfo_dic = match_info_get(LOGGER, match_id, None, ['result_suffix', 'result', 'home_team__shortcut', 'visitor_team__shortcut', 'home_team__facebook_groups', 'date_uts', 'visitor_team__facebook_groups', 'prematch_tweet_id'])
 
         # hack to have a better result
         if 'result_suffix' in matchinfo_dic and matchinfo_dic['result_suffix']:
@@ -371,7 +377,7 @@ if __name__ == '__main__':
                 match_add(LOGGER, 'match_id', match_id, {'tweet': True})
 
                 # twitterle
-                twitter_it(LOGGER, matchinfo_dic, img_list, SEASON_ID, match_id)
+                twitter_it(LOGGER, matchinfo_dic, img_list, SEASON_ID, match_id, REPLY)
                 # fb-post
                 fbook_it(LOGGER, matchinfo_dic, img_list, SEASON_ID, match_id)
 

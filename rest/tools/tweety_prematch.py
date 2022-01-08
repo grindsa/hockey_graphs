@@ -186,7 +186,7 @@ def twitter_it(logger, matchinfo_dic_, img_list_, season_id, match_id_):
     (consumer_key, consumer_secret, oauth_token, oauth_token_secret, _fb_token_file) = _config_load(LOGGER)
 
     match_date = uts_to_date_utc(matchinfo_dic_['date_uts'], '%d.%m.%Y')
-    text = 'Hier ein paar Pre-Game Statistiken zum Spiel {0} gg. {1}. am {2}...'.format(matchinfo_dic_['home_team__shortcut'].upper(), matchinfo_dic['visitor_team__shortcut'].upper(), match_date)
+    text = 'Hier ein paar Pre-Game Stats zum Spiel {0} gg. {1}. am {2}...'.format(matchinfo_dic_['home_team__shortcut'].upper(), matchinfo_dic['visitor_team__shortcut'].upper(), match_date)
 
     # LogIn
     twitter_uploader = twitter_login(logger, consumer_key, consumer_secret, oauth_token, oauth_token_secret, 'upload.twitter.com')
@@ -253,3 +253,7 @@ if __name__ == '__main__':
                                 simple_send(settings.WA_SRV, settings.WA_PORT, settings.WA_ADMIN_NUMBER, MESSAGE)
                             except BaseException:
                                 pass
+
+                        os.remove('/tmp/tmp_{0}.png'.format(match['match_id']))
+                        for img in img_list:
+                            os.remove(img)
