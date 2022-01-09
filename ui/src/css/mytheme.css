@@ -109,6 +109,10 @@ select.selectbg {
   height: 70px;
 }
 
+.hidden {
+  display: none;
+}
+
 .vertical-center {
   margin: 0;
   position: absolute;

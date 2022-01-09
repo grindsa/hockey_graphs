@@ -1,17 +1,28 @@
 import React, {useState, useEffect} from 'react';
 import PropTypes from "prop-types";
+import { isMobileOnly } from 'react-device-detect';
 import { overviewClassnames } from './matchstatisticservice.js';
 
 export const PreMatchOverview = ({options}) => {
   // matchoverview shoing shots, gols, toi and penalties
   const stats = options
-  console.log(stats)
+
+  if (isMobileOnly){
+    var headline_classes = "w3-xlarge"
+    var img_classes = "hidden"
+    var footer_classes = "hidden"
+  } else {
+    var headline_classes = "w3-jumbo"
+    var img_classes = "w3-opacity-max"
+    var footer_classes = "w3-display-bottomright "
+  }
+
   return(
     <div className="w3-border prematch_container w3-display-container">
-      <img className="w3-opacity-max" style={{width:'100%'}} src={stats.background_image}></img>
+      <img className={img_classes} style={{width:'100%'}} src={stats.background_image}></img>
       <div className="content">
         <div>
-          <div className="w3-container w3-center w3-jumbo uc strong">{stats.title}</div>
+          <div className={"w3-container w3-center uc strong " + headline_classes}>{stats.title}</div>
             <div className="w3-center w3-row">
               <div className="w3-col" style={{width:'40%'}}>
                 <img className="w3-right" src={stats.home_team_logo} alt={stats.home_team_shortcut} height="80px"></img>
@@ -96,7 +107,7 @@ export const PreMatchOverview = ({options}) => {
           </div>
         </div>
       </div>
-      <div className="w3-display-bottomright cpr">@2022 GrindSa <a href="https://hockeygraphs.dynamop.de">(https://hockeygraphs.dynamop.de)</a></div>
+      <div className={"cpr " + footer_classes}>@2022 GrindSa <a href="https://hockeygraphs.dynamop.de">(https://hockeygraphs.dynamop.de)</a></div>
     </div>
   )
 }
