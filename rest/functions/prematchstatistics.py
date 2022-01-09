@@ -9,7 +9,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "hockey_graphs.settings")
 import django
 django.setup()
 from django.conf import settings
-from rest.functions.helper import list_sumup, pctg_float_get, random_file_pick, url_build, uts_now
+from rest.functions.helper import list_sumup, pctg_float_get, random_file_pick, url_build, uts_now, uts_to_date_utc
 from rest.functions.match import pastmatch_list_get
 from rest.functions.teammatchstat import teammatchstats_get
 from rest.functions.teamstat import teamstat_dic_get
@@ -50,6 +50,10 @@ def prematchoverview_get(logger, request, fkey, fvalue, matchinfo_dic, delstat_d
     # stacked stats per team
     teamstat_dic = teamstat_dic_get(logger, matchstat_list)
 
+    # get list of matches for h2h overview
+    uts = uts_now()
+    past_match_list = pastmatch_list_get(logger, matchinfo_dic['season_id'], uts, ['date', 'date_uts', 'home_team', 'visitor_team', 'result', 'result_suffix', 'finish', 'home_team__logo', 'home_team__shortcut', 'visitor_team__logo', 'visitor_team__shortcut'])
+
     for team in ('home', 'visitor'):
         prematch_dic['{0}_team_logo'.format(team)] = matchinfo_dic['{0}_team_logo'.format(team)]
         prematch_dic['{0}_team_shortcut'.format(team)] = matchinfo_dic['{0}_team__shortcut'.format(team)]
@@ -63,7 +67,7 @@ def prematchoverview_get(logger, request, fkey, fvalue, matchinfo_dic, delstat_d
         prematch_dic['{0}_losses'.format(team)] = '{0}/{1}/{2}'.format(delstat_dic[team]['regularLosses']['home'] + delstat_dic[team]['regularLosses']['home'], delstat_dic[team]['overtimeLosses']['home'] + delstat_dic[team]['overtimeLosses']['home'], delstat_dic[team]['shootoutLosses']['home'] + delstat_dic[team]['shootoutLosses']['home'])
         if not delstat_dic[team]['bilance'] or not delstat_dic[team]['last10']:
             # count matches as its missing in json file
-            (bilance, last10) = _winloss_count(logger, matchinfo_dic['season_id'], delstat_dic[team]['teamId'], delstat_dic[team]['bilance'], delstat_dic[team]['last10'])
+            (bilance, last10) = _winloss_count(logger, matchinfo_dic['season_id'], delstat_dic[team]['teamId'], delstat_dic[team]['bilance'], delstat_dic[team]['last10'], past_match_list)
             prematch_dic['{0}_bilance'.format(team)] = bilance
             prematch_dic['{0}_last10'.format(team)] = last10
         else:
@@ -79,6 +83,8 @@ def prematchoverview_get(logger, request, fkey, fvalue, matchinfo_dic, delstat_d
 
         for key in prematchoverview_dic[team_id]:
             prematch_dic['{0}_{1}'.format(team, key)] = prematchoverview_dic[team_id][key]
+
+    prematch_dic['h2h_results'] = _h2h_results_get(logger, request, past_match_list, matchinfo_dic['home_team_id'], matchinfo_dic['visitor_team_id'])
 
     return prematch_dic
 
@@ -106,24 +112,23 @@ def _pmoshotdata_get(logger, team_list, teamstat_dic):
 
     return teamstat_sum_dic
 
-def _winloss_count(logger, season_id, team_id, bilance, last10):
+def _winloss_count(logger, season_id, team_id, bilance, last10, match_list):
     """ count win/loss """
     logger.debug('_winloss_count({0}:{1})'.format(season_id, team_id))
 
-    uts = uts_now()
-
-    # get list of matches
-    match_list = pastmatch_list_get(logger, season_id, uts, ['date', 'date_uts', 'home_team', 'visitor_team', 'result'])
     win_all = 0
     loss_all = 0
     win_10 = 0
     loss_10 = 0
     cnt = 0
     for match in sorted(match_list, key=lambda i: i['date_uts'], reverse=True):
+
         # filter team
-        if match['home_team'] == int(team_id) or match['visitor_team'] == int(team_id):
+        if match['home_team'] == int(team_id) or match['visitor_team'] == int(team_id) and match['finish']:
             cnt += 1
+            # could be that there is a pending game
             (home_goals, visitor_goals) = match['result'].split(':', 2)
+
             if match['home_team'] == int(team_id):
                 # home-game
                 if int(home_goals) > int(visitor_goals):
@@ -146,3 +151,26 @@ def _winloss_count(logger, season_id, team_id, bilance, last10):
                         loss_10 += 1
 
     return ('{0}-{1}'.format(win_all, loss_all), '{0}-{1}'.format(win_10, loss_10))
+
+
+def _h2h_results_get(logger, request, match_list, home_team_id, visitor_team_id):
+    """ get head-to-head results """
+    logger.debug('_h2h_results_get({0}:{1})'.format(home_team_id, visitor_team_id))
+
+    base_url = url_build(request.META)
+
+    h2h_list = []
+    for match in sorted(match_list, key=lambda i: i['date_uts']):
+        # filter finished matches as per team combination
+        if (match['home_team'] == int(home_team_id) and match['visitor_team'] == int(visitor_team_id) and match['finish']) or (match['visitor_team'] == int(home_team_id) and match['home_team'] == int(visitor_team_id) and match['finish']):
+            tmp_dic = {'home_team_shortcut': match['home_team__shortcut'], 'visitor_team_shortcut': match['visitor_team__shortcut']}
+            tmp_dic['home_team_logo'] = '{0}{1}{2}'.format(base_url, settings.STATIC_URL, match['home_team__logo'])
+            tmp_dic['visitor_team_logo'] = '{0}{1}{2}'.format(base_url, settings.STATIC_URL, match['visitor_team__logo'])
+            if match['result_suffix']:
+                tmp_dic['result'] = '{0} {1}'.format(match['result'], match['result_suffix'])
+            else:
+                tmp_dic['result'] = match['result']
+            tmp_dic['date'] = uts_to_date_utc(match['date_uts'], '%d.%m.%Y')
+            h2h_list.append(tmp_dic)
+
+    return h2h_list
