@@ -74,9 +74,9 @@ def create_cron_entries(logger, tzone):
 
     # create cron-entry to update match data
     mupd = cron.new(command=path + '/match_import.py -s 4', comment='update match_information', user='root')
-    mupd.dow.on('MON', 'WED', 'FRI')
-    mupd.hour.on(1)
-    mupd.minute.on(20)
+    # mupd.dow.on('MON', 'WED', 'FRI')
+    mupd.hour.on(23)
+    mupd.minute.on(30)
 
     ltime = time.strftime("%d.%m.%Y")
 
