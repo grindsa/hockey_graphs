@@ -52,7 +52,7 @@ def prematchoverview_get(logger, request, fkey, fvalue, matchinfo_dic, delstat_d
 
     # get list of matches for h2h overview
     uts = uts_now()
-    past_match_list = pastmatch_list_get(logger, matchinfo_dic['season_id'], uts, ['date', 'date_uts', 'home_team', 'visitor_team', 'result', 'result_suffix', 'finish', 'home_team__logo', 'home_team__shortcut', 'visitor_team__logo', 'visitor_team__shortcut'])
+    past_match_list = pastmatch_list_get(logger, matchinfo_dic['season_id'], uts, ['match_id', 'date', 'date_uts', 'home_team', 'visitor_team', 'result', 'result_suffix', 'finish', 'home_team__logo', 'home_team__shortcut', 'visitor_team__logo', 'visitor_team__shortcut'])
 
     for team in ('home', 'visitor'):
         prematch_dic['{0}_team_logo'.format(team)] = matchinfo_dic['{0}_team_logo'.format(team)]
@@ -171,6 +171,7 @@ def _h2h_results_get(logger, request, match_list, home_team_id, visitor_team_id)
             else:
                 tmp_dic['result'] = match['result']
             tmp_dic['date'] = uts_to_date_utc(match['date_uts'], '%d.%m.%Y')
+            tmp_dic['match_id'] = match['match_id']
             h2h_list.append(tmp_dic)
 
     return h2h_list

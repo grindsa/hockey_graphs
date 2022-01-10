@@ -17,6 +17,18 @@ export const PreMatchOverview = ({options}) => {
     var footer_classes = "w3-display-bottomright "
   }
 
+  console.log(stats.h2h_results)
+  const MatchTable = stats.h2h_results.map((Match) =>{
+    return(
+      <tr key={Match.match_id} className="strong">
+        <td>{Match.date}</td>
+        <td><img src={Match.home_team_logo} alt={Match.home_team_shortcut} width="20px"></img></td>
+        <td>{Match.result}</td>
+        <td><img src={Match.visitor_team_logo} alt={Match.visitor_team_shortcut} width="20px"></img></td>
+      </tr>
+    )
+  });
+
   return(
     <div className="w3-border prematch_container w3-display-container">
       <img className={img_classes} style={{width:'100%'}} src={stats.background_image}></img>
@@ -24,21 +36,29 @@ export const PreMatchOverview = ({options}) => {
         <div>
           <div className={"w3-container w3-center uc strong " + headline_classes}>{stats.title}</div>
             <div className="w3-center w3-row">
-              <div className="w3-col" style={{width:'40%'}}>
+              <div className="w3-col" style={{width:'20%'}}>
                 <img className="w3-right" src={stats.home_team_logo} alt={stats.home_team_shortcut} height="80px"></img>
               </div>
               <div className="w3-col w3-margin-top horizontal-middle" style={{width:'20%'}}><i className="w3-xxxlarge fa fa-bolt"></i></div >
-              <div className="w3-col" style={{width:'40%'}}>
+              <div className="w3-col" style={{width:'23%'}}>
                 <img className="w3-left" src={stats.visitor_team_logo} alt={stats.visitor_team_shortcut} height="80px"></img>
               </div >
+              <div className="w3-col" style={{width:'35%'}}>
+                <div className="w3-left">
+                  <table className="w3-table w3-small w3-light-grey w3-border w3-border-dark-grey">
+                    <tbody>
+                      {MatchTable}
+                    </tbody>
+                  </table>
+                </div>
+              </div >
             </div>
-            <div className="w3-center w3-row w3-margin-top">
-              <div className="w3-col" style={{width:'40%'}}>
-                <div className="w3-right w3-large strong">{stats.home_bilance} ({stats.home_last10})</div>
+            <div className="w3-row w3-margin-top">
+              <div className="w3-col" style={{width:'30%'}}>
+                <div className="w3-center w3-large strong">{stats.home_bilance} ({stats.home_last10})</div>
               </div>
-              <div className="w3-col" style={{width:'20%'}}>&nbsp;</div >
-              <div className="w3-col" style={{width:'40%'}}>
-                <div className="w3-left w3-large strong">{stats.visitor_bilance} ({stats.visitor_last10})</div>
+              <div className="w3-col" style={{width:'32%'}}>
+                <div className="w3-center w3-large strong">{stats.visitor_bilance} ({stats.visitor_last10})</div>
               </div >
             </div>
         </div>
