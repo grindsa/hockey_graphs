@@ -23,7 +23,7 @@ def _bg_image_select(logger, bg_image_list):
         file_name = 'img/backgrounds/{0}'.format(random.choice(bg_image_list))
     else:
         # generate random background image
-        file_name = 'img/backgrounds/{0}.png'.format(random.randint(1,6))
+        file_name = 'img/backgrounds/{0}.png'.format(random.randint(1,7))
 
     return file_name
 
