@@ -41,15 +41,20 @@ def matchdays_get(logger, request, fkey=None, fvalue=None, vlist=('match_id', 's
     matchday_dic = {}
     matchday_uts_dic = {}
     lastmday_uts = 0
+    firstmday_uts = 0
     firstmday_uts = 9999999999
     lastmday_human = ''
     firstmday_human = ''
+    nextmday_human = ''
 
     # we need the url to be added to the logo URL
     if request and request.META:
         base_url = url_build(request.META)
     else:
         base_url = ''
+
+
+    uts = uts_now()
 
     # we need to group the list by matchdays
     for match in sorted(match_list, key=lambda i: i['date_uts'], reverse=False):
@@ -60,9 +65,13 @@ def matchdays_get(logger, request, fkey=None, fvalue=None, vlist=('match_id', 's
 
         # we need the completed matchday to set the display key to true
         if match['date_uts'] > lastmday_uts:
-            if uts_now() >  match['date_uts']:
+            if uts >  match['date_uts']:
                 lastmday_uts =  match['date_uts']
                 lastmday_human = match['date']
+            elif uts > (match['date_uts'] - 12 * 3600):
+                # if matches are supposed to start within next 12 hours show the mathday
+                nextmday_uts = match['date_uts']
+                nextmday_human = match['date']
         # we need the first machday for cornercase handling (begin of season with no matches yet)
         if match['date_uts'] <= firstmday_uts:
             firstmday_uts =  match['date_uts']
@@ -88,7 +97,9 @@ def matchdays_get(logger, request, fkey=None, fvalue=None, vlist=('match_id', 's
 
         matchday_dic[match['date']]['matches'].append(match)
 
-    if matchday_dic and lastmday_human:
+    if matchday_dic and nextmday_human:
+        matchday_dic[nextmday_human]['displayday'] = True
+    elif matchday_dic and lastmday_human:
         # set displayflag to last matchday (during season this should be the case)
         matchday_dic[lastmday_human]['displayday'] = True
     elif matchday_dic and firstmday_human:
