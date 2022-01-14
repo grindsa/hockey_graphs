@@ -20,7 +20,7 @@ from rest.functions.heatmap import gameheatmapdata_get
 from rest.functions.shottables import shotsperiodtable_get, shotstatussumtable_get, shotzonetable_get, gamecorsi_table
 from rest.functions.toitables import gametoi_table, toi_chk
 from rest.functions.match import match_info_get, matchstats_get
-from rest.functions.prematchstatistics import prematchoverview_get
+from rest.functions.prematchstatistics import prematchoverview_get, prematchpdo_get
 from rest.functions.teamstatdel import teamstatdel_get
 from rest.functions.shift import shift_get, toifromshifts_get, shiftsperplayer_get, shiftchartdata_get, shiftsupdates_get
 from rest.functions.shiftcharts import shiftsperplayerchart_create
@@ -29,6 +29,9 @@ from rest.functions.periodevent import periodevent_get, penaltyplotlines_get, go
 from rest.functions.playerstat import playerstat_get, toifromplayerstats_get, matchupmatrix_get, toipppk_get
 from rest.functions.chartparameters import chart_colors_get
 from rest.functions.helper import url_build, mobile_check, uts_now
+from rest.functions.teammatchstat import teammatchstats_get
+from rest.functions.teamstat import teamstat_dic_get
+
 
 def matchstatistics_get(logger, request, fkey=None, fvalue=None):
     """ matchstatistics grouped by days """
@@ -125,7 +128,17 @@ def matchstatistics_get(logger, request, fkey=None, fvalue=None):
             result.append(_chatterchart_get(logger, _('Real-Time Fan Reactions'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list, periodevent_list, color_dic))
         else:
             # future match
-            result.append(_prematchoverview_get(logger, request, fkey, fvalue, matchinfo_dic, color_dic))
+            # stats per team per match
+            matchstat_list = teammatchstats_get(logger, 'match__season_id', matchinfo_dic['season_id'], vlist=('id', 'match_id', 'team_id', 'goals_pp', 'goals_pp_against', 'ppcount', 'shcount', 'faceoffslost', 'faceoffswon', 'goals_for', 'goals_against', 'shots_for_5v5', 'shots_for_5v5', 'shots_against_5v5', 'shots_ongoal_for', 'shots_ongoal_against', 'saves', 'match__date_uts'))
+
+            # stacked stats per team
+            teamstat_dic = teamstat_dic_get(logger, matchstat_list)
+
+            # prematch_overview
+            # result.append(_prematchoverview_get(logger, request, fkey, fvalue, matchinfo_dic, teamstat_dic, color_dic))
+
+            # h2h pdo comparison
+            result.append(_prematchpdo_get(logger, request, fkey, fvalue, matchinfo_dic, teamstat_dic, color_dic))
 
     else:
         result = {'error': 'Please specify a matchid'}
@@ -536,7 +549,7 @@ def _shiftchart_get(logger, title, subtitle, ismobile, request, fkey, fvalue, ma
 
     return stat_entry
 
-def _prematchoverview_get(logger, request, fkey, fvalue, matchinfo_dic, color_dic):
+def _prematchoverview_get(logger, request, fkey, fvalue, matchinfo_dic, teamstat_dic, color_dic):
     """ head-to-head overview """
     # pylint: disable=R0913
     logger.debug('_prematch_overview()')
@@ -546,7 +559,7 @@ def _prematchoverview_get(logger, request, fkey, fvalue, matchinfo_dic, color_di
     delstat_dic = {'home': teamstatdel_get(logger, season_id, matchinfo_dic['home_team_id'])[0]['leagueallteamstats'], 'visitor': teamstatdel_get(logger, season_id, matchinfo_dic['visitor_team_id'])[0]['leagueallteamstats']}
 
     title = _('head-to-head')
-    chart_data = prematchoverview_get(logger, request, fkey, fvalue, matchinfo_dic, delstat_dic, color_dic)
+    chart_data = prematchoverview_get(logger, request, fkey, fvalue, matchinfo_dic, teamstat_dic, delstat_dic, color_dic)
     chart_data['title'] = title
 
     stat_entry = {
@@ -557,3 +570,20 @@ def _prematchoverview_get(logger, request, fkey, fvalue, matchinfo_dic, color_di
     }
 
     return stat_entry
+
+def _prematchpdo_get(logger, request, fkey, fvalue, matchinfo_dic, teamstat_dic, color_dic):
+    """ get pdo chart for both team """
+    logger.debug('_prematchpdo_get()')
+
+    title = _('pdo_foo')
+
+    h2h_pdo_dic = prematchpdo_get(logger, matchinfo_dic, teamstat_dic)
+    from pprint import pprint
+    pprint(h2h_pdo_dic)
+
+    stat_entry = {
+        'title': title,
+        # 'chart': chart_data,
+        'tabs': False,
+        'table': {},
+    }

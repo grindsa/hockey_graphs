@@ -11,8 +11,6 @@ django.setup()
 from django.conf import settings
 from rest.functions.helper import list_sumup, pctg_float_get, random_file_pick, url_build, uts_now, uts_to_date_utc
 from rest.functions.match import pastmatch_list_get
-from rest.functions.teammatchstat import teammatchstats_get
-from rest.functions.teamstat import teamstat_dic_get
 
 
 def _bg_image_select(logger, bg_image_list):
@@ -27,7 +25,7 @@ def _bg_image_select(logger, bg_image_list):
 
     return file_name
 
-def prematchoverview_get(logger, request, fkey, fvalue, matchinfo_dic, delstat_dic, color_dic):
+def prematchoverview_get(logger, request, fkey, fvalue, matchinfo_dic, teamstat_dic, delstat_dic, color_dic):
     """ get pre-stats """
     logger.debug('prematchoverview_get({0}:{1})'.format(fkey, fvalue))
 
@@ -44,11 +42,6 @@ def prematchoverview_get(logger, request, fkey, fvalue, matchinfo_dic, delstat_d
     prematch_dic['txt_sapg'] = _('Shots Against/Game')
     prematch_dic['txt_fac'] = _('Faceoff')
     prematch_dic['txt_bil'] = _('W-L')
-
-    # stats per team per match
-    matchstat_list = teammatchstats_get(logger, 'match__season_id', matchinfo_dic['season_id'])
-    # stacked stats per team
-    teamstat_dic = teamstat_dic_get(logger, matchstat_list)
 
     # get list of matches for h2h overview
     uts = uts_now()
@@ -175,3 +168,13 @@ def _h2h_results_get(logger, request, match_list, home_team_id, visitor_team_id)
             h2h_list.append(tmp_dic)
 
     return h2h_list
+
+def prematchpdo_get(logger, matchinfo_dic, teamstat_dic):
+    """ prematchpdo_get """
+    logger.debug('prematchpdo_get()')
+
+    for team_id in [matchinfo_dic['home_team_id'], matchinfo_dic['visitor_team_id']]:
+        for match in sorted(teamstat_dic[team_id], key=lambda i: i['match__date_uts']):
+            print(team_id, match['match_id'])
+
+    return {'foo': 'bar'}
