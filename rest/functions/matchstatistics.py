@@ -135,10 +135,10 @@ def matchstatistics_get(logger, request, fkey=None, fvalue=None):
             teamstat_dic = teamstat_dic_get(logger, matchstat_list)
 
             # prematch_overview
-            # result.append(_prematchoverview_get(logger, request, fkey, fvalue, matchinfo_dic, teamstat_dic, color_dic))
+            result.append(_prematchoverview_get(logger, request, fkey, fvalue, matchinfo_dic, teamstat_dic, color_dic))
 
             # h2h pdo comparison
-            result.append(_prematchpdo_get(logger, request, fkey, fvalue, matchinfo_dic, teamstat_dic, color_dic))
+            # result.append(_prematchpdo_get(logger, request, fkey, fvalue, matchinfo_dic, teamstat_dic, color_dic))
 
     else:
         result = {'error': 'Please specify a matchid'}
