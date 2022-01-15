@@ -47,10 +47,13 @@ def prematchoverview_get(logger, request, fkey, fvalue, matchinfo_dic, teamstat_
     uts = uts_now()
     past_match_list = pastmatch_list_get(logger, matchinfo_dic['season_id'], uts, ['match_id', 'date', 'date_uts', 'home_team', 'visitor_team', 'result', 'result_suffix', 'finish', 'home_team__logo', 'home_team__shortcut', 'visitor_team__logo', 'visitor_team__shortcut'])
 
+    prematch_dic['home_team_color'] = color_dic['home_team_color_primary']
+    prematch_dic['visitor_team_color'] = color_dic['visitor_team_color_secondary']  
+
     for team in ('home', 'visitor'):
         prematch_dic['{0}_team_logo'.format(team)] = matchinfo_dic['{0}_team_logo'.format(team)]
         prematch_dic['{0}_team_shortcut'.format(team)] = matchinfo_dic['{0}_team__shortcut'.format(team)]
-        prematch_dic['{0}_team_color'.format(team)] = color_dic['{0}_team_color'.format(team)]
+        # prematch_dic['{0}_team_color'.format(team)] = color_dic['{0}_team_color'.format(team)]
         prematch_dic['{0}_fac_pctg'.format(team)] = "%.1f" % delstat_dic[team]['faceOffsWinsPercent']
         prematch_dic['{0}_pk_pctg'.format(team)] = "%.1f" % delstat_dic[team]['penaltyKillingEfficiency']
         prematch_dic['{0}_pp_pctg'.format(team)] = "%.1f" % delstat_dic[team]['powerPlayEfficiency']
@@ -173,8 +176,11 @@ def prematchpdo_get(logger, matchinfo_dic, teamstat_dic):
     """ prematchpdo_get """
     logger.debug('prematchpdo_get()')
 
-    for team_id in [matchinfo_dic['home_team_id'], matchinfo_dic['visitor_team_id']]:
-        for match in sorted(teamstat_dic[team_id], key=lambda i: i['match__date_uts']):
-            print(team_id, match['match_id'])
+    pdo_dic = {}
+    for team in ['home', 'visitor']:
+        pdo_dic[team] = {'sh_pctg': [], 'sv_pctg': []}
+        for match in sorted(teamstat_dic[matchinfo_dic['{0}_team_id'.format(team)]], key=lambda i: i['match__date_uts']):
+            pdo_dic[team]['sh_pctg'].append(pctg_float_get(match['goals_for'], match['shots_ongoal_for'], 1))
+            pdo_dic[team]['sv_pctg'].append(pctg_float_get(match['saves'], match['shots_ongoal_against'], 1))
 
-    return {'foo': 'bar'}
+    return pdo_dic
