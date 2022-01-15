@@ -23,7 +23,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.
 from django.conf import settings
 # pylint: disable=E0401, C0413
 from rest.functions.helper import logger_setup, uts_now, uts_to_date_utc, config_load, json_load
-from rest.functions.match import match_info_get, futurematch_list_get, match_add
+from rest.functions.match import match_info_get, futurematch_list_get, match_add, matchinfo_list_get
 from rest.functions.season import season_latest_get
 from rest.functions.socialnetworkevent import twitter_login, twitter_image_upload, facebook_post
 from rest.functions.email import send_mail
@@ -206,6 +206,30 @@ def twitter_it(logger, matchinfo_dic_, img_list_, season_id, match_id_):
     if tweet_id:
         match_add(LOGGER, 'match_id', match_id_, {'prematch_tweet_id': tweet_id})
 
+def fbook_it(logger, matchinfo_dic_, img_list_, season_id, match_id):
+    """ facebook post """
+    # pylint: disable=R0914
+    logger.debug('fbook_it()')
+
+    # load rebound and break interval from config file
+    (_consumer_key, _consumer_secret, _oauth_token, _oauth_token_secret, fb_token_file) = _config_load(LOGGER)
+
+    # get access token
+    token_dic = json_load(fb_token_file)
+    access_token = None
+    if 'access_token' in token_dic:
+        access_token = token_dic['access_token']
+
+    # message test used in post
+    match_date = uts_to_date_utc(matchinfo_dic_['date_uts'], '%d.%m.%Y')
+    message = 'Hier ein paar Pre-Game Stats zum Spiel {0} gg. {1}. am {2}...'.format(matchinfo_dic_['home_team__shortcut'].upper(), matchinfo_dic['visitor_team__shortcut'].upper(), match_date)
+
+    # list of groups to be published
+    group_list = ['1799006236944342']
+
+    # post to facebook group
+    facebook_post(logger, group_list, message, img_list_, access_token)
+
 
 if __name__ == '__main__':
 
@@ -225,35 +249,42 @@ if __name__ == '__main__':
         # get season_id
         SEASON_ID = season_latest_get(LOGGER)
 
-
+    MATCH_STAT_LIST = []
     if not MATCH_ID_LIST:
         if INTERVAL:
-            MATCH_ID_LIST = futurematch_list_get(LOGGER, SEASON_ID, UTS, INTERVAL*3600, ['match_id', 'prematch_tweet_id'])
+            MATCH_STAT_LIST = futurematch_list_get(LOGGER, SEASON_ID, UTS, INTERVAL*3600, ['match_id', 'prematch_tweet_id'])
+    else:
+        match_dic = matchinfo_list_get(LOGGER, MATCH_ID_LIST, None, ['match_id', 'prematch_tweet_id'])
+        for match_id in match_dic:
+            MATCH_STAT_LIST.append(match_dic[match_id])
 
-            for match in MATCH_ID_LIST:
-                img_list = []
-                if not match['prematch_tweet_id']:
-                    img_list.append(prematch_overview(LOGGER, URL, SEASON_ID, match['match_id'], TMP_DIR))
-                    if img_list:
-                        matchinfo_dic = match_info_get(LOGGER, match['match_id'], None)
-                        if not FAKE:
-                            # twitterle
-                            twitter_it(LOGGER, matchinfo_dic, img_list, SEASON_ID, match['match_id'])
+    if MATCH_STAT_LIST:
+        for match in MATCH_STAT_LIST:
+            img_list = []
+            if not match['prematch_tweet_id']:
+                img_list.append(prematch_overview(LOGGER, URL, SEASON_ID, match['match_id'], TMP_DIR))
+                if img_list:
+                    matchinfo_dic = match_info_get(LOGGER, match['match_id'], None)
+                    if not FAKE:
+                        # twitterle
+                        twitter_it(LOGGER, matchinfo_dic, img_list, SEASON_ID, match['match_id'])
+                        # fb-post
+                        fbook_it(LOGGER, matchinfo_dic, img_list, SEASON_ID, match_id)
 
-                        # send notification via whatsapp
-                        if(hasattr(settings, 'WA_ADMIN_NUMBER') and hasattr(settings, 'WA_SRV') and hasattr(settings, 'WA_PORT')):
-                            if matchinfo_dic['home_team__facebook_groups']:
-                                matchinfo_dic['home_team__shortcut'] = '*{0}*'.format(matchinfo_dic['home_team__shortcut'])
-                            if matchinfo_dic['visitor_team__facebook_groups']:
-                                matchinfo_dic['visitor_team__shortcut'] = '*{0}*'.format(matchinfo_dic['visitor_team__shortcut'])
+                    # send notification via whatsapp
+                    if(hasattr(settings, 'WA_ADMIN_NUMBER') and hasattr(settings, 'WA_SRV') and hasattr(settings, 'WA_PORT')):
+                        if matchinfo_dic['home_team__facebook_groups']:
+                            matchinfo_dic['home_team__shortcut'] = '*{0}*'.format(matchinfo_dic['home_team__shortcut'])
+                        if matchinfo_dic['visitor_team__facebook_groups']:
+                            matchinfo_dic['visitor_team__shortcut'] = '*{0}*'.format(matchinfo_dic['visitor_team__shortcut'])
 
-                            # send whatsapp message
-                            MESSAGE = 'hockey_graphs: tweety_prematch.py: {0} vs {1}'.format(matchinfo_dic['home_team__shortcut'].upper(), matchinfo_dic['visitor_team__shortcut'].upper())
-                            try:
-                                simple_send(settings.WA_SRV, settings.WA_PORT, settings.WA_ADMIN_NUMBER, MESSAGE)
-                            except BaseException:
-                                pass
+                        # send whatsapp message
+                        MESSAGE = 'hockey_graphs: tweety_prematch.py: {0} vs {1}'.format(matchinfo_dic['home_team__shortcut'].upper(), matchinfo_dic['visitor_team__shortcut'].upper())
+                        try:
+                            simple_send(settings.WA_SRV, settings.WA_PORT, settings.WA_ADMIN_NUMBER, MESSAGE)
+                        except BaseException:
+                            pass
 
-                        os.remove('/tmp/tmp_{0}.png'.format(match['match_id']))
-                        for img in img_list:
-                            os.remove(img)
+                    os.remove('/tmp/tmp_{0}.png'.format(match['match_id']))
+                    for img in img_list:
+                        os.remove(img)

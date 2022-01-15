@@ -55,12 +55,12 @@ def match_list_get(logger, fkey=None, fvalue=None, vlist=('match_id', 'season', 
     logger.debug('match_list_get({0}:{1}) ended with {2}'.format(fkey, fvalue, bool(match_list)))
     return list(match_list)
 
-def matchinfo_list_get(logger, matchid_list, request):
+def matchinfo_list_get(logger, matchid_list, request, vlist=('date', 'date_uts', 'match_id', 'result', 'result_suffix', 'home_team_id', 'home_team__shortcut', 'home_team__logo', 'visitor_team_id', 'visitor_team__shortcut', 'visitor_team__logo')):
     """ query match_information for a list of matchids """
     logger.debug('matchinfo_list_get({0})'.format(len(matchid_list)))
     matchinfo_dic = {}
     for match_id in matchid_list:
-        _matchinfo_dic = match_info_get(logger, match_id, request, ['date', 'date_uts', 'match_id', 'result', 'result_suffix', 'home_team_id', 'home_team__shortcut', 'home_team__logo', 'visitor_team_id', 'visitor_team__shortcut', 'visitor_team__logo'])
+        _matchinfo_dic = match_info_get(logger, match_id, request, vlist)
         if _matchinfo_dic:
             matchinfo_dic[match_id] = _matchinfo_dic
     logger.debug('matchinfo_list_get() ended with {0} entries'.format(len(matchinfo_dic.keys())))
