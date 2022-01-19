@@ -60,6 +60,12 @@ td.middle {
   font-size:14px;
 }
 
+.result_finish_time{
+  color : #000034;
+  font-weight: bold;
+  font-size:12px;
+}
+
 .result_finish_false{
   color : #d61825;
   font-weight: bold;

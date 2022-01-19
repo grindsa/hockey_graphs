@@ -92,11 +92,17 @@ export const MatchDayList = (props) => {
 
   if(!selectedMatch){
     const MatchDay = filterMatchDay(matchdaydic).map((Match) =>{
+      if(Match.time){
+        Match.display = Match.time
+        Match.finish = 'time'
+      }else{
+        Match.display = Match.result
+      }
       return(
         <tr key={Match.match_id} className="w3-hover-blue" onClick={() => handleMatchSelect(Match)}>
           <td className="w3-right-align middle" style={{width:'35%'}}>{Match.home_team_name}</td>
           <td className="w3-right-align middle" style={{width:'10%'}}><img src={Match.home_team_logo} alt={Match.home_team_shortcut} width="40px"/></td>
-          <td className={"w3-center middle result_finish_" + Match.finish} style={{width:'10%'}}>{Match.result} </td>
+          <td className={"w3-center middle result_finish_" + Match.finish} style={{width:'10%'}}>{Match.display} </td>
           <td className="w3-left-align middle" style={{width:'10%'}}><img src={Match.visitor_team_logo} alt={Match.visitor_team_shortcut} width="40px"/></td>
           <td className="w3-left-align middle" style={{width:'35%'}}>{Match.visitor_team_name}</td>
         </tr>
