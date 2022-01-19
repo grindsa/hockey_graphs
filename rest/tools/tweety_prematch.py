@@ -269,7 +269,7 @@ if __name__ == '__main__':
                         # twitterle
                         twitter_it(LOGGER, matchinfo_dic, img_list, SEASON_ID, match['match_id'])
                         # fb-post
-                        fbook_it(LOGGER, matchinfo_dic, img_list, SEASON_ID, match_id)
+                        fbook_it(LOGGER, matchinfo_dic, img_list, SEASON_ID, match['match_id'])
 
                     # send notification via whatsapp
                     if(hasattr(settings, 'WA_ADMIN_NUMBER') and hasattr(settings, 'WA_SRV') and hasattr(settings, 'WA_PORT')):

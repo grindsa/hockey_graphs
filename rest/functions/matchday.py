@@ -9,7 +9,7 @@ import django
 django.setup()
 from django.conf import settings
 from rest.functions.match import match_list_get
-from rest.functions.helper import date_to_datestr, datestr_to_date, date_to_uts_utc, url_build, uts_now
+from rest.functions.helper import date_to_datestr, datestr_to_date, date_to_uts_utc, url_build, uts_now, uts_to_date_utc
 from rest.functions.season import season_latest_get
 
 def _seasonid_get(logger, request):
@@ -95,6 +95,9 @@ def matchdays_get(logger, request, fkey=None, fvalue=None, vlist=('match_id', 's
         match['visitor_team_name'] = match.pop('visitor_team__team_name')
         match['visitor_team_logo'] = '{0}{1}{2}'.format(base_url, settings.STATIC_URL, match.pop('visitor_team__logo'))
 
+        if not match['result']:
+            # set time for future matches
+            match['time'] = uts_to_date_utc(match['date_uts']+3600, '%H:%M')
         matchday_dic[match['date']]['matches'].append(match)
 
     if matchday_dic and nextmday_human:
