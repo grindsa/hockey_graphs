@@ -81,7 +81,7 @@ def match_add(logger, fkey, fvalue, data_dic):
     logger.debug('match_add({0}:{1}) ended with {2}'.format(fkey, fvalue, result))
     return (result, created)
 
-def matchstats_get(logger, match_id):
+def matchstats_get(logger, match_id, color_dic={}):
     """ get matchstatistics """
     # pylint: disable=E0602
     try:
@@ -136,6 +136,13 @@ def matchstats_get(logger, match_id):
                 'puckpossession_pctg': pctg_get(matchstat_dic['visitor']['shotsAttempts'], (matchstat_dic['home']['shotsAttempts'] + matchstat_dic['visitor']['shotsAttempts']))
             }
         }
+
+        if color_dic:
+            for team in ('home', 'visitor'):
+                    for ele in ['team_color']:
+                        print(team, ele)
+                        if '{0}_{1}'.format(team, ele) in color_dic:
+                            stat_dic['{0}_team'.format(team)]['{0}_{1}'.format(team, ele)] = color_dic['{0}_{1}'.format(team, ele)]
 
         stat_entry = {
             'title': _('Overview'),
