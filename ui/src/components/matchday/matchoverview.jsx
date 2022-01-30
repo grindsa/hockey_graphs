@@ -6,18 +6,86 @@ export const MatchOverview = ({options}) => {
   // matchoverview shoing shots, gols, toi and penalties
   const stats = options
   return(
-    <table className="w3-table w3-border w3-centered">
-      <tbody>
-        <TableRow statname={stats.shotsOnGoal} leftvalue = {stats.home_team.shotsOnGoal} rightvalue = {stats.visitor_team.shotsOnGoal} leftwidth = {stats.home_team.shotsOnGoal_pctg} rightwidth = {stats.visitor_team.shotsOnGoal_pctg} />
-        <TableRow statname={stats.saves} leftvalue = {stats.home_team.saves} rightvalue = {stats.visitor_team.saves} leftwidth = {stats.home_team.saves_pctg} rightwidth = {stats.visitor_team.saves_pctg} />
-        <TableRow statname={stats.puckpossession} leftvalue = {stats.home_team.puckpossession} rightvalue = {stats.visitor_team.puckpossession} leftwidth = {stats.home_team.puckpossession_pctg} rightwidth = {stats.visitor_team.puckpossession_pctg} />
-        <TableRow statname={stats.penaltyMinutes} leftvalue = {stats.home_team.penaltyMinutes} rightvalue = {stats.visitor_team.penaltyMinutes} leftwidth = {stats.home_team.penaltyMinutes_pctg} rightwidth = {stats.visitor_team.penaltyMinutes_pctg} />
-        <TableRow statname={stats.powerplaymin} leftvalue = {stats.home_team.powerplaymin} rightvalue = {stats.visitor_team.powerplaymin} leftwidth = {stats.home_team.powerplaymin_pctg} rightwidth = {stats.visitor_team.powerplaymin_pctg} />
-        <TableRow statname={stats.ppGoals} leftvalue = {stats.home_team.ppGoals} rightvalue = {stats.visitor_team.ppGoals} leftwidth = {stats.home_team.ppGoals_pctg} rightwidth = {stats.visitor_team.ppGoals_pctg} />
-        <TableRow statname={stats.shGoals} leftvalue = {stats.home_team.shGoals} rightvalue = {stats.visitor_team.shGoals} leftwidth = {stats.home_team.shGoals_pctg} rightwidth = {stats.visitor_team.shGoals_pctg} />
-        <TableRow statname={stats.faceOffsWon} leftvalue = {stats.home_team.faceOffsWon} rightvalue = {stats.visitor_team.faceOffsWon} leftwidth = {stats.home_team.faceOffsWon_pctg} rightwidth = {stats.visitor_team.faceOffsWon_pctg} />
-      </tbody>
-    </table>
+    <div className="w3-border prematch_container w3-display-container">
+      <img className="w3-opacity-max" style={{width:'100%'}} src={stats.background_image}></img>
+      <div className="content">
+        <div>
+          <div className="w3-container w3-center w3-jumbo uc strong">{stats.title}</div>
+            <div className="w3-center w3-row">
+              <div className="w3-col" style={{width:'40%'}}>
+                <img className="w3-right" src={stats.home_team.logo} alt={stats.home_team.shortcut} height="80px"></img>
+              </div>
+              <div className="w3-col w3-margin-top horizontal-middle" style={{width:'20%'}}><i className="w3-xxxlarge fa fa-bolt"></i></div >
+              <div className="w3-col" style={{width:'40%'}}>
+                <img className="w3-left" src={stats.visitor_team.logo} alt={stats.visitor_team.shortcut} height="80px"></img>
+              </div >
+            </div>
+        </div>
+        <div>
+          <div className="w3-section w3-row-padding w3-center">
+            <div className="w3-quarter">
+              <div className="w3-container pcolor w3-padding-small">{stats.goals}</div>
+              <div className="w3-row w3-xlarge strong">
+                <div className="w3-half" style={{color:stats.home_team.team_color}}>{stats.home_team.goals}</div>
+                <div className="w3-half" style={{color:stats.visitor_team.team_color}}>{stats.visitor_team.goals}</div>
+              </div>
+            </div>
+            <div className="w3-quarter">
+              <div className="w3-container pcolor w3-padding-small">{stats.powerplay}</div>
+              <div className="w3-row w3-xlarge strong">
+                <div className="w3-half" style={{color:stats.home_team.team_color}}>{stats.home_team.powerplay}</div>
+                <div className="w3-half" style={{color:stats.visitor_team.team_color}}>{stats.visitor_team.powerplay}</div>
+              </div>
+            </div>
+            <div className="w3-quarter">
+              <div className="w3-container pcolor w3-padding-small">{stats.puckpossession} %</div>
+              <div className="w3-row w3-xlarge strong">
+                <div className="w3-half" style={{color:stats.home_team.team_color}}>{stats.home_team.puckpossession}</div>
+                <div className="w3-half" style={{color:stats.visitor_team.team_color}}>{stats.visitor_team.puckpossession}</div>
+              </div>
+            </div>
+            <div className="w3-quarter">
+              <div className="w3-container pcolor w3-padding-small">{stats.faceOffsWon}</div>
+              <div className="w3-row w3-xlarge strong">
+                <div className="w3-half" style={{color:stats.home_team.team_color}}>{stats.home_team.faceOffsWon}</div>
+                <div className="w3-half" style={{color:stats.visitor_team.team_color}}>{stats.visitor_team.faceOffsWon}</div>
+              </div>
+            </div>
+          </div>
+          <div className="w3-section w3-row-padding w3-center">
+            <div className="w3-quarter">
+              <div className="w3-container pcolor w3-padding-small">{stats.shots}</div>
+              <div className="w3-row w3-xlarge strong">
+                <div className="w3-half" style={{color:stats.home_team.team_color}}>{stats.home_team.shots}</div>
+                <div className="w3-half" style={{color:stats.visitor_team.team_color}}>{stats.visitor_team.shots}</div>
+              </div>
+            </div>
+            <div className="w3-quarter">
+              <div className="w3-container pcolor w3-padding-small">{stats.shotsOnGoal}</div>
+              <div className="w3-row w3-xlarge strong">
+                <div className="w3-half" style={{color:stats.home_team.team_color}}>{stats.home_team.shotsOnGoal}</div>
+                <div className="w3-half" style={{color:stats.visitor_team.team_color}}>{stats.visitor_team.shotsOnGoal}</div>
+              </div>
+            </div>
+            <div className="w3-quarter">
+            <div className="w3-container pcolor w3-padding-small">{stats.saves}</div>
+              <div className="w3-row w3-xlarge strong">
+                <div className="w3-half" style={{color:stats.home_team.team_color}}>{stats.home_team.saves}</div>
+                <div className="w3-half" style={{color:stats.visitor_team.team_color}}>{stats.visitor_team.saves}</div>
+              </div>
+            </div>
+            <div className="w3-quarter">
+              <div className="w3-container pcolor w3-padding-small">{stats.shotsBlocked}</div>
+              <div className="w3-row w3-xlarge strong">
+                <div className="w3-half" style={{color:stats.home_team.team_color}}>{stats.home_team.shotsBlocked}</div>
+                <div className="w3-half" style={{color:stats.visitor_team.team_color}}>{stats.visitor_team.shotsBlocked}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="w3-display-bottomright cpr">@2022 GrindSa <a href="https://hockeygraphs.dynamop.de">(https://hockeygraphs.dynamop.de)</a></div>
+    </div>
   )
 }
 

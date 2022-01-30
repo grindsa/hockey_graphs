@@ -66,17 +66,17 @@ export const createSelectOptions = function(data){
   return optionlist
 }
 
-export const overviewClassnames = function(leftValue, rightValue){
+export const overviewClassnames = function(leftValue, rightValue, colors){
   /* specify classes for matchstat overview compare shots/gols/pp */
   let leftcolor
   let rightcolor
   if (leftValue === 0 && rightValue !== 0){
     /*  cases like ppgoal visitor_team) */
     leftcolor = ''
-    rightcolor = ' pcolor'
+    rightcolor = colors.visitor_team_color_lead
   }else if (leftValue !== 0 && rightValue === 0){
     /*  cases like ppgoal home_team) */
-    leftcolor = ' pcolor'
+    leftcolor = colors.home_team_color_lead
     rightcolor = ''
   }else if (leftValue === 0 && rightValue === 0){
     /* both values */
@@ -84,20 +84,23 @@ export const overviewClassnames = function(leftValue, rightValue){
     rightcolor = ''
   }else if(leftValue === rightValue) {
     /* equal values but not zero */
-    leftcolor = ' scolor'
-    rightcolor = ' scolor'
+    leftcolor = colors.home_team_color_lead
+    rightcolor = colors.visitor_team_color_lead
   }else if(leftValue > rightValue) {
     /* home team has better value than visitor */
-    leftcolor = ' pcolor'
-    rightcolor = ' scolor'
+    leftcolor = colors.home_team_color_lead
+    rightcolor = colors.visitor_team_color_behind
   }else{
     /* vistior team does better than home_team */
-    leftcolor = ' scolor'
-    rightcolor = ' pcolor'
+    leftcolor = colors.home_team_color_behind
+    rightcolor = colors.visitor_team_color_lead
   }
-  /* final classnames */
-  var leftClassNames = 'w3-container w3-right-align w3-right' + leftcolor
-  var rightClassNames = 'w3-container w3-left-align' + rightcolor
 
- return [leftClassNames, rightClassNames]
+  /* final classnames */
+  // var leftClassNames = 'w3-container w3-right-align w3-right' + leftcolor
+  // var rightClassNames = 'w3-container w3-left-align' + rightcolor
+  var leftClassNames = 'w3-container w3-right-align w3-right'
+  var rightClassNames = 'w3-container w3-left-align'
+
+ return [leftClassNames, rightClassNames, leftcolor, rightcolor]
 }
