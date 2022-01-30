@@ -4,33 +4,22 @@
 import sys
 import os
 import random
+from scipy.signal import savgol_filter
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "hockey_graphs.settings")
 import django
 django.setup()
 from django.conf import settings
-from rest.functions.helper import list_sumup, pctg_float_get, random_file_pick, url_build, uts_now, uts_to_date_utc
+from rest.functions.helper import list_sumup, pctg_float_get, random_file_pick, url_build, uts_now, uts_to_date_utc, bg_image_select
 from rest.functions.match import pastmatch_list_get
 
-
-def _bg_image_select(logger, bg_image_list):
-    """ bg image selection """
-    logger.debug('_bg_image_select()')
-    if bg_image_list:
-        logger.debug('_bg_image_select(): pick team specific background image')
-        file_name = 'img/backgrounds/{0}'.format(random.choice(bg_image_list))
-    else:
-        # generate random background image
-        file_name = 'img/backgrounds/{0}.png'.format(random.randint(1,7))
-
-    return file_name
 
 def prematchoverview_get(logger, request, fkey, fvalue, matchinfo_dic, teamstat_dic, delstat_dic, color_dic):
     """ get pre-stats """
     logger.debug('prematchoverview_get({0}:{1})'.format(fkey, fvalue))
 
     prematch_dic = {}
-    prematch_dic['background_image'] = '{0}{1}{2}'.format(matchinfo_dic['base_url'], settings.STATIC_URL, _bg_image_select(logger, matchinfo_dic['home_team__bg_images']))
+    prematch_dic['background_image'] = '{0}{1}{2}'.format(matchinfo_dic['base_url'], settings.STATIC_URL, bg_image_select(logger, matchinfo_dic['home_team__bg_images']))
     prematch_dic['date'] = matchinfo_dic['date']
     # prematch_dic['home_team_color'] = color_dic['home_team_color']
     # prematch_dic['visitor_team_color'] = color_dic['visitor_team_color']
@@ -48,7 +37,7 @@ def prematchoverview_get(logger, request, fkey, fvalue, matchinfo_dic, teamstat_
     past_match_list = pastmatch_list_get(logger, matchinfo_dic['season_id'], uts, ['match_id', 'date', 'date_uts', 'home_team', 'visitor_team', 'result', 'result_suffix', 'finish', 'home_team__logo', 'home_team__shortcut', 'visitor_team__logo', 'visitor_team__shortcut'])
 
     prematch_dic['home_team_color'] = color_dic['home_team_color_primary']
-    prematch_dic['visitor_team_color'] = color_dic['visitor_team_color_secondary']  
+    prematch_dic['visitor_team_color'] = color_dic['visitor_team_color_secondary']
 
     for team in ('home', 'visitor'):
         prematch_dic['{0}_team_logo'.format(team)] = matchinfo_dic['{0}_team_logo'.format(team)]
@@ -178,9 +167,19 @@ def prematchpdo_get(logger, matchinfo_dic, teamstat_dic):
 
     pdo_dic = {}
     for team in ['home', 'visitor']:
-        pdo_dic[team] = {'sh_pctg': [], 'sv_pctg': []}
+        pdo_dic[team] = {'sh_pctg': [], 'sv_pctg': [], 'pp_pctg': [], 'pk_pctg': [], 'pppk': [], 'pdo': []}
         for match in sorted(teamstat_dic[matchinfo_dic['{0}_team_id'.format(team)]], key=lambda i: i['match__date_uts']):
             pdo_dic[team]['sh_pctg'].append(pctg_float_get(match['goals_for'], match['shots_ongoal_for'], 1))
             pdo_dic[team]['sv_pctg'].append(pctg_float_get(match['saves'], match['shots_ongoal_against'], 1))
+            pdo_dic[team]['pdo'].append(pctg_float_get(match['goals_for'], match['shots_ongoal_for'], 1) + pctg_float_get(match['saves'], match['shots_ongoal_against'], 1))
+
+            pdo_dic[team]['pp_pctg'].append(pctg_float_get(match['goals_pp'], match['ppcount'], 0))
+            pdo_dic[team]['pk_pctg'].append(100 - pctg_float_get(match['goals_pp_against'], match['shcount'], 0))
+            pdo_dic[team]['pppk'].append(pctg_float_get(match['goals_pp'], match['ppcount'], 0) + (100 - pctg_float_get(match['goals_pp_against'], match['shcount'], 0)))
+
+
+        # smoothing the pdo by using savogl filter function
+        pdo_dic[team]['pdo_smoothed'] = savgol_filter(pdo_dic[team]['pdo'], 9, 3) # window size 9, polynomial order 3
+        pdo_dic[team]['pppk_smoothed'] = savgol_filter(pdo_dic[team]['pppk'], 9, 3) # window size 9, polynomial order 3
 
     return pdo_dic
