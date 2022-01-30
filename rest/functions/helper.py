@@ -396,3 +396,15 @@ def random_file_pick(logger, path):
     logger.debug('random_file_pick({0})'.format(path))
     file = random.choice(os.listdir(path))
     print(file)
+
+def bg_image_select(logger, bg_image_list):
+    """ bg image selection """
+    logger.debug('bg_image_select()')
+    if bg_image_list:
+        logger.debug('_bg_image_select(): pick team specific background image')
+        file_name = 'img/backgrounds/{0}'.format(random.choice(bg_image_list))
+    else:
+        # generate random background image
+        file_name = 'img/backgrounds/{0}.png'.format(random.randint(1,7))
+
+    return file_name

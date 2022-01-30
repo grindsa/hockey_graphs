@@ -21,6 +21,7 @@ from rest.functions.shottables import shotsperiodtable_get, shotstatussumtable_g
 from rest.functions.toitables import gametoi_table, toi_chk
 from rest.functions.match import match_info_get, matchstats_get
 from rest.functions.prematchstatistics import prematchoverview_get, prematchpdo_get
+from rest.functions.pdocharts import prematchpdochart_create
 from rest.functions.teamstatdel import teamstatdel_get
 from rest.functions.shift import shift_get, toifromshifts_get, shiftsperplayer_get, shiftchartdata_get, shiftsupdates_get
 from rest.functions.shiftcharts import shiftsperplayerchart_create
@@ -80,7 +81,7 @@ def matchstatistics_get(logger, request, fkey=None, fvalue=None):
             (_sf_5v5, _sa_5v5, _sogf_5v5, _soga_5v5, shot_list_5v5) = gameshots5v5_get(logger, matchinfo_dic, 'foo', shot_list, shift_list, periodevent_list)
 
             # get matchstatistics
-            result.append(matchstats_get(logger, fvalue))
+            result.append(matchstats_get(logger, fvalue, color_dic, matchinfo_dic))
 
             # create chart for shots per match
             # pylint: disable=E0602
@@ -138,7 +139,7 @@ def matchstatistics_get(logger, request, fkey=None, fvalue=None):
             result.append(_prematchoverview_get(logger, request, fkey, fvalue, matchinfo_dic, teamstat_dic, color_dic))
 
             # h2h pdo comparison
-            # result.append(_prematchpdo_get(logger, request, fkey, fvalue, matchinfo_dic, teamstat_dic, color_dic))
+            # result.append(_prematchpdo_get(logger, ismobile, request, fkey, fvalue, matchinfo_dic, teamstat_dic, color_dic))
 
     else:
         result = {'error': 'Please specify a matchid'}
@@ -571,19 +572,20 @@ def _prematchoverview_get(logger, request, fkey, fvalue, matchinfo_dic, teamstat
 
     return stat_entry
 
-def _prematchpdo_get(logger, request, fkey, fvalue, matchinfo_dic, teamstat_dic, color_dic):
+def _prematchpdo_get(logger, ismobile, request, fkey, fvalue, matchinfo_dic, teamstat_dic, color_dic):
     """ get pdo chart for both team """
     logger.debug('_prematchpdo_get()')
 
     title = _('pdo_foo')
-
+    subtitle = 'subtitle'
     h2h_pdo_dic = prematchpdo_get(logger, matchinfo_dic, teamstat_dic)
-    from pprint import pprint
-    pprint(h2h_pdo_dic)
+    chart_data = prematchpdochart_create(logger, title, subtitle, ismobile, h2h_pdo_dic, color_dic)
 
     stat_entry = {
         'title': title,
-        # 'chart': chart_data,
+        'chart': chart_data,
         'tabs': False,
         'table': {},
     }
+
+    return stat_entry

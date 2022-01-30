@@ -9,7 +9,7 @@ import django
 django.setup()
 from django.conf import settings
 from rest.models import Match
-from rest.functions.helper import url_build, pctg_get, min2sec
+from rest.functions.helper import url_build, pctg_get, min2sec, bg_image_select
 from rest.functions.teamstat import teamstat_get
 
 def match_info_get(logger, match_id, request, vlist=('date', 'date_uts', 'result', 'result_suffix', 'home_team_id', 'home_team__team_name', 'home_team__shortcut', 'home_team__logo', 'home_team__color_primary', 'home_team__color_secondary', 'home_team__color_tertiary', 'home_team__color_quaternary', 'home_team__color_penalty_primary', 'home_team__color_penalty_secondary', 'visitor_team_id', 'visitor_team__team_name', 'visitor_team__shortcut', 'visitor_team__logo', 'visitor_team__color_primary', 'visitor_team__color_secondary',  'visitor_team__color_tertiary', 'visitor_team__color_quaternary', 'visitor_team__color_penalty_primary', 'visitor_team__color_penalty_secondary', 'home_team__twitter_name', 'visitor_team__twitter_name', 'home_team__facebook_groups', 'visitor_team__facebook_groups', 'home_team__bg_images', 'visitor_team__bg_images', 'season_id')):
@@ -81,7 +81,7 @@ def match_add(logger, fkey, fvalue, data_dic):
     logger.debug('match_add({0}:{1}) ended with {2}'.format(fkey, fvalue, result))
     return (result, created)
 
-def matchstats_get(logger, match_id, color_dic={}):
+def matchstats_get(logger, match_id, color_dic={}, matchinfo_dic={}):
     """ get matchstatistics """
     # pylint: disable=E0602
     try:
@@ -99,6 +99,7 @@ def matchstats_get(logger, match_id, color_dic={}):
             'faceOffsWon': _('Faceoff Win'),
             'puckpossession': _('Puck Possession'),
             'powerplaymin': _('Time in Powerplay'),
+            'background_image': '{0}{1}{2}'.format(matchinfo_dic['base_url'], settings.STATIC_URL, bg_image_select(logger, matchinfo_dic['home_team__bg_images'])),
             'home_team': {
                 'shotsOnGoal': matchstat_dic['home']['shotsOnGoal'],
                 'shotsOnGoal_pctg': pctg_get(matchstat_dic['home']['shotsOnGoal'], (matchstat_dic['home']['shotsOnGoal'] + matchstat_dic['visitor']['shotsOnGoal'])),
@@ -140,7 +141,6 @@ def matchstats_get(logger, match_id, color_dic={}):
         if color_dic:
             for team in ('home', 'visitor'):
                     for ele in ['team_color']:
-                        print(team, ele)
                         if '{0}_{1}'.format(team, ele) in color_dic:
                             stat_dic['{0}_team'.format(team)]['{0}_{1}'.format(team, ele)] = color_dic['{0}_{1}'.format(team, ele)]
 
