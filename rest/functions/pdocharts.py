@@ -183,3 +183,75 @@ def ppg_chart_get(logger, ctitle, csubtitle, ismobile, ppg_data):
         'series': [{'zIndex': 1, 'name': _('Standard Deviation'), 'color': plotlines_color, 'marker': {'symbol': 'square'}, 'data': ppg_data['data']}],
     }
     return chart_options
+
+
+def prematchpdochart_create(logger, ctitle, csubtitle, ismobile, h2h_pdo_dic, color_dic):
+    """ prematch chart """
+    logger.debug('prematchpdochart_create()')
+
+    variable_dic = variables_get(ismobile)
+
+    chart_options = {
+        'chart': {
+            'type': 'spline',
+            'height': '80%',
+            'alignTicks': 0,
+            'style': chartstyle()
+        },
+
+        'exporting': exporting(filename=ctitle),
+        'title': title(ctitle, variable_dic['title_size'], decoration=True),
+        'subtitle': subtitle(csubtitle, variable_dic['subtitle_size']),
+        'credits': credit(),
+        'legend': legend(),
+        'responsive': responsive_y1(),
+        'tooltip': {'enabled': 0},
+
+        'plotOptions': {
+            'series': {
+                'states': {'inactive': {'opacity': 1}},
+                'dataLabels': {
+                    'enabled': 0,
+                    'useHTML': 0,
+                    'style': {'fontSize': font_size, 'textOutline': 0, 'color': '#ffffff', 'fontWeight': 0}
+                }
+            }
+        },
+
+        'xAxis': {
+            # 'categories': pdo_dic['team_list'],
+            'title': title('', font_size),
+            'labels': {'useHTML': 1, 'align': 'center'},
+            # 'labels': {'style': {'fontSize': font_size}},
+        },
+
+        'yAxis': [{
+            # pylint: disable=E0602
+            'title': title(_('PDO'), font_size),
+            'labels': {'style': {'fontSize': font_size}},
+            'min': 80,
+            'max': 130,
+            'height': '50%',
+            'plotLines': [{'color': plotlines_color, 'width': 2, 'value': 100}],
+        }, {
+            # pylint: disable=E0602
+            'title': title(_('PDO1'), font_size),
+            'labels': {'style': {'fontSize': font_size}},
+            'offset': 0,
+            'top': '50%',
+            'height': '50%',
+            'min': 50,
+            'max': 130,
+            'plotLines': [{'color': plotlines_color, 'width': 2, 'value': 100}],
+        }],
+
+        'series': [
+            # pylint: disable=E0602
+            {'name': 'home pdo ', 'marker': {'enabled': 0, 'symbol': 'square'}, 'data': h2h_pdo_dic['home']['pdo_smoothed'], 'color': color_dic['home_team_color_primary']},
+            {'name': 'visitor_pdo', 'marker': {'enabled': 0, 'symbol': 'square'}, 'data': h2h_pdo_dic['visitor']['pdo_smoothed'], 'color': color_dic['visitor_team_color_secondary']},
+            {'name': 'home pppk', 'marker': {'enabled': 0, 'symbol': 'square'}, 'data': h2h_pdo_dic['home']['pppk_smoothed'], 'color': color_dic['home_team_color_secondary'], 'yAxis': 1},
+            {'name': 'visitor_pppk', 'marker': {'enabled': 0, 'symbol': 'square'}, 'data': h2h_pdo_dic['visitor']['pppk_smoothed'], 'color': color_dic['visitor_team_color_primary'], 'yAxis': 1},
+        ]
+    }
+
+    return chart_options

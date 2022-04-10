@@ -3,3 +3,10 @@ djangorestframework
 django-filter
 python-crontab
 gitpython
+drf_yasg
+mysqlclient
+jsonfield
+numpy
+scipy
+shapely
+twitter

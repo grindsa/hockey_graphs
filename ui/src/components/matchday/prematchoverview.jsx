@@ -37,11 +37,17 @@ export const PreMatchOverview = ({options}) => {
           <div className={"w3-container w3-center uc strong " + headline_classes}>{stats.title}</div>
             <div className="w3-center w3-row">
               <div className="w3-col" style={{width:'20%'}}>
-                <img className="w3-right" src={stats.home_team_logo} alt={stats.home_team_shortcut} height="80px"></img>
+                <div className="w3-right">
+                  <img src={stats.home_team_logo} alt={stats.home_team_shortcut} height="80px"></img>
+                  <div className="w3-section w3-large strong">{stats.home_bilance} ({stats.home_last10})</div>
+                </div>
               </div>
               <div className="w3-col w3-margin-top horizontal-middle" style={{width:'20%'}}><i className="w3-xxxlarge fa fa-bolt"></i></div >
               <div className="w3-col" style={{width:'23%'}}>
-                <img className="w3-left" src={stats.visitor_team_logo} alt={stats.visitor_team_shortcut} height="80px"></img>
+                <div className="w3-left">
+                  <img src={stats.visitor_team_logo} alt={stats.visitor_team_shortcut} height="80px"></img>
+                  <div className="w3-section w3-large strong">{stats.visitor_bilance} ({stats.visitor_last10})</div>
+                </div>
               </div >
               <div className="w3-col" style={{width:'35%'}}>
                 <div className="w3-left">
@@ -51,14 +57,6 @@ export const PreMatchOverview = ({options}) => {
                     </tbody>
                   </table>
                 </div>
-              </div >
-            </div>
-            <div className="w3-row w3-margin-top">
-              <div className="w3-col" style={{width:'30%'}}>
-                <div className="w3-center w3-large strong">{stats.home_bilance} ({stats.home_last10})</div>
-              </div>
-              <div className="w3-col" style={{width:'32%'}}>
-                <div className="w3-center w3-large strong">{stats.visitor_bilance} ({stats.visitor_last10})</div>
               </div >
             </div>
         </div>

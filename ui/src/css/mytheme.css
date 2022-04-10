@@ -236,3 +236,11 @@ select.selectbg {
 .uc {
     text-transform:uppercase;
 }
+
+div.alignleft {
+  text-align: left;
+}
+
+div.alignright {
+  text-align: right;
+}
