@@ -15,7 +15,7 @@ from rest.functions.match import pastmatch_list_get
 from rest.functions.season import season_latest_get, season_get
 
 
-def prematchoverview_get(logger, request, fkey, fvalue, matchinfo_dic, teamstat_dic, delstat_dic, color_dic):
+def prematchoverview_get(logger, request, fkey, fvalue, matchinfo_dic, teamstat_dic, delstat_dic, color_dic, playoff_start):
     """ get pre-stats """
     logger.debug('prematchoverview_get({0}:{1})'.format(fkey, fvalue))
 
