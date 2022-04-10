@@ -12,12 +12,28 @@ export const MatchOverview = ({options}) => {
         <div>
           <div className="w3-container w3-center w3-jumbo uc strong">{stats.title}</div>
             <div className="w3-center w3-row">
-              <div className="w3-col" style={{width:'40%'}}>
-                <img className="w3-right" src={stats.home_team.logo} alt={stats.home_team.shortcut} height="80px"></img>
+              <div className="w3-col w3-row" style={{width:'40%'}}>
+                  <div className="w3-col w3-margin-left" style={{width:'50%'}}>
+                    <div className="strong w3-tiny alignleft">{stats.shotEfficiency}: {stats.home_team.shotEfficiency_pctg}</div>
+                    <div className="w3-container w3-light-grey w3-tiny nopadding"><div style={{width:stats.home_team.shotEfficiency_pctg, backgroundColor:stats.home_team.team_color, color: '#ffffff'}}>&nbsp;</div></div>
+                    <div className="strong w3-tiny w3-margin-top alignleft">{stats.puckpossession}: {stats.home_team.puckpossession_pctg}</div>
+                    <div className="w3-container w3-light-grey w3-tiny nopadding"><div style={{width:stats.home_team.puckpossession_pctg, backgroundColor:stats.home_team.team_color, color: '#ffffff'}}>&nbsp;</div></div>
+                  </div>
+                  <div className="w3-col" style={{width:'40%'}}>
+                    <img className="w3-right" src={stats.home_team.logo} alt={stats.home_team.shortcut} height="80px"></img>
+                  </div>
               </div>
               <div className="w3-col w3-margin-top horizontal-middle" style={{width:'20%'}}><i className="w3-xxxlarge fa fa-bolt"></i></div >
-              <div className="w3-col" style={{width:'40%'}}>
-                <img className="w3-left" src={stats.visitor_team.logo} alt={stats.visitor_team.shortcut} height="80px"></img>
+              <div className="w3-col w3-row" style={{width:'40%'}}>
+                <div className="w3-col w3-margin-left" style={{width:'40%'}}>
+                  <img className="w3-left" src={stats.visitor_team.logo} alt={stats.visitor_team.shortcut} height="80px"></img>
+                </div>
+                <div className="w3-col" style={{width:'50%'}}>
+                  <div className="strong w3-tiny alignright">{stats.shotEfficiency}: {stats.visitor_team.shotEfficiency_pctg}</div>
+                  <div className="w3-container w3-light-grey w3-tiny nopadding"><div className="w3-right" style={{width: stats.visitor_team.shotEfficiency_pctg, backgroundColor:stats.visitor_team.team_color, color: '#ffffff'}}>&nbsp;</div></div>
+                  <div className="strong w3-tiny w3-margin-top alignright">{stats.puckpossession}: {stats.visitor_team.puckpossession_pctg}</div>
+                  <div className="w3-container w3-light-grey w3-tiny nopadding"><div className="w3-right" style={{width: stats.visitor_team.puckpossession_pctg, backgroundColor:stats.visitor_team.team_color, color: '#ffffff'}}>&nbsp;</div></div>
+                </div>
               </div >
             </div>
         </div>
@@ -38,10 +54,10 @@ export const MatchOverview = ({options}) => {
               </div>
             </div>
             <div className="w3-quarter">
-              <div className="w3-container pcolor w3-padding-small">{stats.puckpossession} %</div>
+              <div className="w3-container pcolor w3-padding-small">{stats.penaltyMinutes}</div>
               <div className="w3-row w3-xlarge strong">
-                <div className="w3-half" style={{color:stats.home_team.team_color}}>{stats.home_team.puckpossession}</div>
-                <div className="w3-half" style={{color:stats.visitor_team.team_color}}>{stats.visitor_team.puckpossession}</div>
+                <div className="w3-half" style={{color:stats.home_team.team_color}}>{stats.home_team.penaltyMinutes}</div>
+                <div className="w3-half" style={{color:stats.visitor_team.team_color}}>{stats.visitor_team.penaltyMinutes}</div>
               </div>
             </div>
             <div className="w3-quarter">
