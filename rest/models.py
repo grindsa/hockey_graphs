@@ -9,7 +9,7 @@ class Season(models.Model):
     shortcut = models.CharField(max_length=5)
     tournament = models.IntegerField(default=0)
     delname = models.IntegerField(default=0)
-
+    playoffstart = models.IntegerField(default=0)
     def __str__(self):
         return self.name
 
@@ -26,7 +26,7 @@ class Team(models.Model):
     color_penalty_primary = models.CharField(max_length=7, blank=True)
     color_penalty_secondary = models.CharField(max_length=7, blank=True)
     twitter_name = models.CharField(max_length=15, blank=True)
-    bg_images = jsonfield.JSONField(default=dict)    
+    bg_images = jsonfield.JSONField(default=dict)
     facebook_groups = jsonfield.JSONField(default=dict)
     def __str__(self):
         return self.team_name

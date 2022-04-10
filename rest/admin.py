@@ -61,8 +61,8 @@ class RosterAdmin(admin.ModelAdmin):
 
 class SeasonAdmin(admin.ModelAdmin):
     """ season admin """
-    fields = ['name', 'shortcut', 'tournament', 'delname']
-    list_display = ['name', 'shortcut', 'tournament', 'delname']
+    fields = ['name', 'shortcut', 'tournament', 'delname', 'playoffstart']
+    list_display = ['name', 'shortcut', 'tournament', 'delname', 'playoffstart']
     ordering = ['tournament']
 
 class ShiftAdmin(admin.ModelAdmin):

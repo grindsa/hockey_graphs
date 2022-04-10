@@ -12,6 +12,7 @@ django.setup()
 from django.conf import settings
 from rest.functions.helper import list_sumup, pctg_float_get, random_file_pick, url_build, uts_now, uts_to_date_utc, bg_image_select
 from rest.functions.match import pastmatch_list_get
+from rest.functions.season import season_latest_get, season_get
 
 
 def prematchoverview_get(logger, request, fkey, fvalue, matchinfo_dic, teamstat_dic, delstat_dic, color_dic):
@@ -144,7 +145,11 @@ def _h2h_results_get(logger, request, match_list, home_team_id, visitor_team_id)
 
     base_url = url_build(request.META)
 
+    season_id = season_latest_get(logger)
+    playoff_start = season_get(logger, 'id', season_id, ['playoffstart'])
+
     h2h_list = []
+    playoff_h2h_list = []
     for match in sorted(match_list, key=lambda i: i['date_uts']):
         # filter finished matches as per team combination
         if (match['home_team'] == int(home_team_id) and match['visitor_team'] == int(visitor_team_id) and match['finish']) or (match['visitor_team'] == int(home_team_id) and match['home_team'] == int(visitor_team_id) and match['finish']):
@@ -157,7 +162,13 @@ def _h2h_results_get(logger, request, match_list, home_team_id, visitor_team_id)
                 tmp_dic['result'] = match['result']
             tmp_dic['date'] = uts_to_date_utc(match['date_uts'], '%d.%m.%Y')
             tmp_dic['match_id'] = match['match_id']
+            if playoff_start and match['date_uts'] > playoff_start:
+                playoff_h2h_list.append(tmp_dic)
             h2h_list.append(tmp_dic)
+
+    # we are in playoffs and already had matches - replace h2h with playoff-h2h
+    if playoff_h2h_list:
+        h2h_list = playoff_h2h_list
 
     return h2h_list
 
