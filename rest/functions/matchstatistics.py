@@ -13,7 +13,7 @@ from rest.functions.socialnetworkeventcharts import chatterchart_create
 from rest.functions.socialnetworkevent import socialnetworkevent_get, eventspermin_combine
 from rest.functions.shot import shot_list_get, shotspermin_count, shotspermin_aggregate, shotstatus_count, shotstatus_aggregate, shotsperzone_count, shotsperzone_aggregate, shotcoordinates_get, gameflow_get
 from rest.functions.shotcharts import shotsumchart_create, gameflowchart_create, shotstatussumchart_create, shotmapchart_create, gamecorsichart_create, gameplayercorsichart_create, gamecorsippctgchart_create, puckpossessionchart_create, shotzonechart_create
-from rest.functions.season import season_latest_get
+from rest.functions.season import season_latest_get, season_get
 from rest.functions.toicharts import gametoichart_create, gametoipppkchart_create
 from rest.functions.heatmapcharts import gamematchupchart_create
 from rest.functions.heatmap import gameheatmapdata_get
@@ -128,15 +128,22 @@ def matchstatistics_get(logger, request, fkey=None, fvalue=None):
             # pylint: disable=E0602
             result.append(_chatterchart_get(logger, _('Real-Time Fan Reactions'), subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list, periodevent_list, color_dic))
         else:
+
             # future match
+            season_id = season_latest_get(logger)
+            playoff_start = season_get(logger, 'id', season_id, ['playoffstart'])
+
             # stats per team per match
             matchstat_list = teammatchstats_get(logger, 'match__season_id', matchinfo_dic['season_id'], vlist=('id', 'match_id', 'team_id', 'goals_pp', 'goals_pp_against', 'ppcount', 'shcount', 'faceoffslost', 'faceoffswon', 'goals_for', 'goals_against', 'shots_for_5v5', 'shots_for_5v5', 'shots_against_5v5', 'shots_ongoal_for', 'shots_ongoal_against', 'saves', 'match__date_uts'))
 
+            if playoff_start and utsnow > playoff_start:
+                matchstat_list = _matchstat_filter(logger, matchstat_list, playoff_start)
+                
             # stacked stats per team
             teamstat_dic = teamstat_dic_get(logger, matchstat_list)
 
             # prematch_overview
-            result.append(_prematchoverview_get(logger, request, fkey, fvalue, matchinfo_dic, teamstat_dic, color_dic))
+            result.append(_prematchoverview_get(logger, request, utsnow, fkey, fvalue, matchinfo_dic, teamstat_dic, color_dic, season_id, playoff_start))
 
             # h2h pdo comparison
             # result.append(_prematchpdo_get(logger, ismobile, request, fkey, fvalue, matchinfo_dic, teamstat_dic, color_dic))
@@ -145,6 +152,17 @@ def matchstatistics_get(logger, request, fkey=None, fvalue=None):
         result = {'error': 'Please specify a matchid'}
 
     return result
+
+def _matchstat_filter(logger, matchstat_list, playoff_start):
+    """ prepare shots per match chart """
+    logger.debug('_matchstat_filter({0})'.format(playoff_start))
+
+    filter_matchstat_list = []
+    for match in matchstat_list:
+        if match['match__date_uts'] > playoff_start:
+            filter_matchstat_list.append(match)
+
+    return filter_matchstat_list
 
 def _gameflow_get(logger, title, subtitle, ismobile, request, fkey, fvalue, matchinfo_dic, shot_list, color_dic):
     """ prepare shots per match chart """
@@ -550,17 +568,19 @@ def _shiftchart_get(logger, title, subtitle, ismobile, request, fkey, fvalue, ma
 
     return stat_entry
 
-def _prematchoverview_get(logger, request, fkey, fvalue, matchinfo_dic, teamstat_dic, color_dic):
+def _prematchoverview_get(logger, request, uts_now, fkey, fvalue, matchinfo_dic, teamstat_dic, color_dic, season_id, playoff_start):
     """ head-to-head overview """
     # pylint: disable=R0913
     logger.debug('_prematch_overview()')
 
+    if playoff_start and uts_now > playoff_start:
+        title = _('po-head-to-head')
+    else:
+        title = _('head-to-head')
 
-    season_id = season_latest_get(logger)
     delstat_dic = {'home': teamstatdel_get(logger, season_id, matchinfo_dic['home_team_id'])[0]['leagueallteamstats'], 'visitor': teamstatdel_get(logger, season_id, matchinfo_dic['visitor_team_id'])[0]['leagueallteamstats']}
 
-    title = _('head-to-head')
-    chart_data = prematchoverview_get(logger, request, fkey, fvalue, matchinfo_dic, teamstat_dic, delstat_dic, color_dic)
+    chart_data = prematchoverview_get(logger, request, fkey, fvalue, matchinfo_dic, teamstat_dic, delstat_dic, color_dic, playoff_start)
     chart_data['title'] = title
 
     stat_entry = {

@@ -50,6 +50,9 @@ if __name__ == '__main__':
 
         if SEASON_ID and DELSEASON_NAME and TEAM_ID_LIST:
             for team_id in TEAM_ID_LIST:
-                stats_dic = del_app_helper.teamstatssummary_get(DELSEASON_NAME, LEAGUE_ID, team_id)
+                try:
+                    stats_dic = del_app_helper.teamstatssummary_get(DELSEASON_NAME, LEAGUE_ID, team_id)
+                except BaseException:
+                    stats_dic = {}
                 if stats_dic:
                     result = teamstatdel_add(LOGGER, SEASON_ID, team_id, {'leagueallteamstats': stats_dic, 'stats_updated': DATE})
