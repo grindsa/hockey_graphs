@@ -97,7 +97,7 @@ def matchdays_get(logger, request, fkey=None, fvalue=None, vlist=('match_id', 's
 
         if not match['result']:
             # set time for future matches
-            match['time'] = uts_to_date_utc(match['date_uts']+3600, '%H:%M')
+            match['time'] = uts_to_date_utc(match['date_uts'], '%H:%M', tz="Europe/Berlin")
         matchday_dic[match['date']]['matches'].append(match)
 
     if matchday_dic and nextmday_human:

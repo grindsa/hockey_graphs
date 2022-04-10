@@ -123,9 +123,9 @@ def uts_now():
     """ return unixtimestamp in utc """
     return calendar.timegm(datetime.utcnow().utctimetuple())
 
-def uts_to_date_utc(uts, tformat='%Y-%m-%dT%H:%M:%SZ'):
+def uts_to_date_utc(uts, tformat='%Y-%m-%dT%H:%M:%SZ', tz='UTC'):
     """ convert unix timestamp to date format """
-    return datetime.fromtimestamp(int(uts), tz=pytz.utc).strftime(tformat)
+    return datetime.fromtimestamp(int(uts), tz=pytz.timezone(tz)).strftime(tformat)
 
 def date_to_uts_utc(date_human, _tformat='%Y-%m-%dT%H:%M:%S'):
     """ convert date to unix timestamp """
