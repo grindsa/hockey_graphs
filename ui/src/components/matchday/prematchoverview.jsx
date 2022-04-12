@@ -12,12 +12,11 @@ export const PreMatchOverview = ({options}) => {
     var img_classes = "hidden"
     var footer_classes = "hidden"
   } else {
-    var headline_classes = "w3-jumbo"
+    var headline_classes = "w3-xxlarge"
     var img_classes = "w3-opacity-max"
     var footer_classes = "w3-display-bottomright "
   }
 
-  console.log(stats.h2h_results)
   const MatchTable = stats.h2h_results.map((Match) =>{
     return(
       <tr key={Match.match_id} className="strong">
@@ -35,6 +34,7 @@ export const PreMatchOverview = ({options}) => {
       <div className="content">
         <div>
           <div className={"w3-container w3-center uc strong " + headline_classes}>{stats.title}</div>
+            <div className="w3-center strong w3-xlarge w3-margin-bottom">{stats.subtitle}</div>
             <div className="w3-center w3-row">
               <div className="w3-col" style={{width:'20%'}}>
                 <div className="w3-right">

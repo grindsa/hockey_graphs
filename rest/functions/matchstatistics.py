@@ -138,7 +138,7 @@ def matchstatistics_get(logger, request, fkey=None, fvalue=None):
 
             if playoff_start and utsnow > playoff_start:
                 matchstat_list = _matchstat_filter(logger, matchstat_list, playoff_start)
-                
+
             # stacked stats per team
             teamstat_dic = teamstat_dic_get(logger, matchstat_list)
 
@@ -573,15 +573,15 @@ def _prematchoverview_get(logger, request, uts_now, fkey, fvalue, matchinfo_dic,
     # pylint: disable=R0913
     logger.debug('_prematch_overview()')
 
-    if playoff_start and uts_now > playoff_start:
-        title = _('po-head-to-head')
-    else:
-        title = _('head-to-head')
+    title = _('head-to-head')
 
     delstat_dic = {'home': teamstatdel_get(logger, season_id, matchinfo_dic['home_team_id'])[0]['leagueallteamstats'], 'visitor': teamstatdel_get(logger, season_id, matchinfo_dic['visitor_team_id'])[0]['leagueallteamstats']}
 
     chart_data = prematchoverview_get(logger, request, fkey, fvalue, matchinfo_dic, teamstat_dic, delstat_dic, color_dic, playoff_start)
     chart_data['title'] = title
+
+    if playoff_start and uts_now > playoff_start:
+        chart_data['subtitle'] = _('(Playoffs)')
 
     stat_entry = {
         'title': title,
