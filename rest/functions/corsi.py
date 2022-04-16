@@ -75,7 +75,7 @@ def gameplayercorsi_get(logger, shot_list, shift_list, periodevent_list, matchin
             #    continue
 
             # do we have to count the shot
-            if five_filter:
+            if five_filter and shot['timestamp'] in soi_dic['home_team'] and shot['timestamp'] in soi_dic['visitor_team']:
                 # so far a bid unclear we only count 5vs5
                 # 5v5 is ok we can count it
                 # pylint: disable=R1703
@@ -98,16 +98,16 @@ def gameplayercorsi_get(logger, shot_list, shift_list, periodevent_list, matchin
                 else:
                     against_team = 'home_team'
                     for_team = 'visitor_team'
+                if shot['timestamp'] in soi_dic['home_team'] and shot['timestamp'] in soi_dic['visitor_team']:
+                    for player in soi_dic[for_team][shot['timestamp']]['player_list']:
+                        if player not in player_corsi_dic[for_team]:
+                            player_corsi_dic[for_team][player] = {'shots': 0, 'shots_against': 0, 'name': player}
+                        player_corsi_dic[for_team][player]['shots'] += 1
 
-                for player in soi_dic[for_team][shot['timestamp']]['player_list']:
-                    if player not in player_corsi_dic[for_team]:
-                        player_corsi_dic[for_team][player] = {'shots': 0, 'shots_against': 0, 'name': player}
-                    player_corsi_dic[for_team][player]['shots'] += 1
-
-                for player in soi_dic[against_team][shot['timestamp']]['player_list']:
-                    if player not in player_corsi_dic[against_team]:
-                        player_corsi_dic[against_team][player] = {'shots': 0, 'shots_against': 0, 'name': player}
-                    player_corsi_dic[against_team][player]['shots_against'] += 1
+                    for player in soi_dic[against_team][shot['timestamp']]['player_list']:
+                        if player not in player_corsi_dic[against_team]:
+                            player_corsi_dic[against_team][player] = {'shots': 0, 'shots_against': 0, 'name': player}
+                        player_corsi_dic[against_team][player]['shots_against'] += 1
 
         player_corsi_dic = _rosterinformation_add(logger, player_corsi_dic, toi_dic, scorer_dic, roster_list)
     else:

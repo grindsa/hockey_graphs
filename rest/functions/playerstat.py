@@ -43,7 +43,11 @@ def _matchupmatrix_gen(logger, shotpersec_list, soi_dic, lineup_dic, player_dic,
 
     for sec in soi_dic['home_team']:
         # 5v5 check
-        process_sec = _five_filter(five_filter, soi_dic['home_team'][sec], soi_dic['visitor_team'][sec])
+        if sec in soi_dic['home_team'] and sec in soi_dic['visitor_team']:
+            process_sec = _five_filter(five_filter, soi_dic['home_team'][sec], soi_dic['visitor_team'][sec])
+        else:
+            process_sec = False
+
         if process_sec:
             for hplayer_id in soi_dic['home_team'][sec]['player_list']:
                 for vplayer_id in soi_dic['visitor_team'][sec]['player_list']:
