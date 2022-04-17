@@ -443,6 +443,10 @@ def shotsperzone_count(logger, shot_list, matchinfo_dic):
         else:
             team = 'visitor_team'
 
+        # cover situations in playoff with 2 or more OT
+        if period not in shot_zone_dic[team][shot['zone']]:
+            shot_zone_dic[team][shot['zone']][period] = 0
+
         #  count shots per zone per period
         shot_zone_dic[team][shot['zone']][period] += 1
 
@@ -494,7 +498,7 @@ def shot_dic_convert(logger, shot_dic, match_info_dic):
             converted_shot_dic[match_id] = shotmap_dic['visitor_team']
             converted_shot_list.extend(shotmap_dic['visitor_team'])
 
-    logger.debug('shot_dic_convert() ended')             
+    logger.debug('shot_dic_convert() ended')
     return(converted_shot_list, converted_shot_dic)
 
 def shotcoordinates_get(logger, shot_list, matchinfo_dic):
