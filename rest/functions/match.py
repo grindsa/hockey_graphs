@@ -165,8 +165,6 @@ def matchstats_get(logger, match_id, color_dic={}, matchinfo_dic={}):
         #                    stat_dic['{0}_team'.format(team)]['{0}'.format(ele)] = color_dic['{0}_{1}'.format(team, ele)]
         #                    stat_dic['{0}_team'.format(team)]['{0}_penalty'.format(ele)] = color_dic['{0}_{1}_penalty'.format(team, ele)]
 
-        from pprint import pprint
-        pprint(matchstat_dic)
         stat_entry = {
             'title': _('Overview'),
             'chart': stat_dic,

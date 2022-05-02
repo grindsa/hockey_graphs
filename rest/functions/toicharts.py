@@ -23,6 +23,9 @@ def gametoichart_create(logger, ctitle, csubtitle, ismobile, toi_dic, bar_color1
 
     # 2nd one to add toi per player
     for period in toi_dic:
+        if period not in y_dic:
+            y_dic[period] = []
+            
         for player_name in sorted(x_list):
             if player_name in toi_dic[period]:
                 # y_dic[period].append('{0:02d}:{1:02d}'.format(*divmod(shifts_dic['ebb'][period][player_name], 60)))

@@ -58,6 +58,9 @@ def toifromshifts_get(logger, matchinfo_dic, shift_list, key='name'):
         shift_duration = (shift['endTime']['time'] - shift['startTime']['time'])
 
         # create entry if does not exist and add sum
+        if period not in shift_dic[team_name]:
+            shift_dic[team_name][period] = {}
+
         if player_name not in shift_dic[team_name][period]:
             shift_dic[team_name][period][player_name] = 0
 
