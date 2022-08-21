@@ -7,9 +7,6 @@ import HighchartsExporting from 'highcharts/modules/exporting';
 import HighchartsOfflineExporting from "highcharts/modules/offline-exporting";
 import AnnotationsModule from 'highcharts/modules/annotations';
 import Heatmap from 'highcharts/modules/heatmap.js';
-
-import Slider from 'react-rangeslider'
-import '../../css/slider.css';
 import { Comment } from './comment';
 import { createTcSliderText, createnoChartMessage} from '../localization.js';
 
@@ -58,16 +55,7 @@ export const Chart = (props) => {
     }
     return (
       <React.Fragment>
-        <Slider
-          min={1}
-          max={slidermaxval}
-          value = {slidervalue}
-          step={1}
-          orientation='horizontal'
-          onChange={handleSliderChange}
-          className={classNames}
-        />
-        <div className="w3-center w3-margin-bottom">{slidertext}</div>
+
         <div className="w3-border">
           <HighchartsReact highcharts={Highcharts} options={chart} immutable={true}/>
         </div>
