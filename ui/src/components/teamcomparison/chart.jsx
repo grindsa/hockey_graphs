@@ -10,6 +10,9 @@ import Heatmap from 'highcharts/modules/heatmap.js';
 import { Comment } from './comment';
 import { createTcSliderText, createnoChartMessage} from '../localization.js';
 
+import Slider from 'rc-slider';
+import 'rc-slider/assets/index.css';
+
 // Load Highcharts modules
 HighchartsExporting(Highcharts);
 HighchartsOfflineExporting(Highcharts);
@@ -48,6 +51,7 @@ export const Chart = (props) => {
     // get the number of dataupdates as this will be the max-val for the slider
     const slidermaxval = Object.keys(props.options.updates).length
     const slidertext = createTcSliderText(props.language, slidervalue, slidermaxval)
+    // const SliderWithTooltip = createSliderWithTooltip(Slider);
     var classNames = ""
 
     if (isMobile) {
@@ -55,7 +59,17 @@ export const Chart = (props) => {
     }
     return (
       <React.Fragment>
-
+        <Slider
+          min={1}
+          max={slidermaxval}
+          defaultValue={slidervalue}
+          onChange={handleSliderChange}
+          trackStyle={{ backgroundColor: '#999999', }}
+          handleStyle={{
+            borderColor: '#999999',
+          }}
+        />
+        <div className="w3-center w3-margin-bottom">{slidertext}</div>
         <div className="w3-border">
           <HighchartsReact highcharts={Highcharts} options={chart} immutable={true}/>
         </div>
