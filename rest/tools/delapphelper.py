@@ -73,12 +73,12 @@ class DelAppHelper():
             print(api_response.raise_for_status())
             return None
 
-    def gamesituations_get(self, tournament_id, game_id):
+    def gamesituations_get(self, game_id):
         """ get game situations """
         self.logger.debug('DelAppHelper.gamesituations_get({0})\n'.format(game_id))
         data = {'requestName': 'gameSituations',
                 'gameNumber': game_id,
-                'tournamentId': tournament_id,
+                'tournamentId': self.tournamentid,
                 'lastUpdate': 0}
         return self.api_post(self.mobile_api, data)
 
@@ -408,7 +408,7 @@ class DelAppHelper():
         """ get data from all players of a team """
         self.logger.debug('DelAppHelper.teammembers_get({0})\n'.format(team_name))
         data = {'requestName': 'teamMembers',
-                'tournamentId': self.tournamentid,
+                'tournamentId': 68, # self.tournamentid,
                 'noc': team_name,
                 'lastUpdate': 0}
         return self.api_post(self.mobile_api, data)
@@ -444,6 +444,7 @@ class DelAppHelper():
         result = self.api_post(self.mobile_api, data)
         if result:
             if 'tournamentID' in result[-1]:
+                self.logger.debug('DelAppHelper.tournamentid_get() set tournament to: {0}\n'.format(result[-1]['tournamentID']))
                 self.tournamentid = result[-1]['tournamentID']
         self.logger.debug('DelAppHelper.tournamentid_get() ended with: {}\n'.format(self.tournamentid))
         return result

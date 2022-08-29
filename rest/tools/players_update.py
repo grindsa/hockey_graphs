@@ -31,7 +31,7 @@ if __name__ == '__main__':
 
     # get list of teams
     TEAM_DIC = team_dic_get(LOGGER, None)
-    SEASON_ID = 3
+    SEASON_ID = 4
 
     with DelAppHelper(None, DEBUG) as del_app_helper:
         for season_year in SEASON_YEAR_LIST:
@@ -49,6 +49,8 @@ if __name__ == '__main__':
                                 'stick': player['stick'],
                                 'weight': player['weight'],
                                 'height': player['height'],
+                                'birthdate': player['dateOfBirth'],
+                                'position': player['position'],
                                 'team_id': team_id
                             }
                             pid = player_add(LOGGER, 'player_id', player['id'], data_dic)

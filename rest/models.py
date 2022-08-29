@@ -69,6 +69,8 @@ class Player(models.Model):
     stick = models.CharField(max_length=5, blank=True, null=True)
     weight = models.IntegerField(default=0)
     height = models.IntegerField(default=0)
+    birthdate = models.CharField(max_length=10, blank=True, null=True)
+    position = models.CharField(max_length=5, blank=True, null=True)
     team = models.ForeignKey(Team, on_delete=models.CASCADE)
     def __str__(self):
         return self.last_name
@@ -149,6 +151,7 @@ class Teamstatdel(models.Model):
     season = models.ForeignKey(Season, on_delete=models.CASCADE)
     team = models.ForeignKey(Team, on_delete=models.CASCADE)
     leagueallteamstats = jsonfield.JSONField(default=dict)
+    agestats = jsonfield.JSONField(default=dict)
     stats_updated = models.CharField(max_length=25, blank=True)
 
 class Teamstat(models.Model):

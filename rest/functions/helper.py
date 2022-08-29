@@ -7,7 +7,7 @@ import calendar
 import pathlib
 import json
 import configparser
-from datetime import datetime
+from datetime import datetime, date
 import math
 import numpy as np
 from dateutil.parser import parse
@@ -17,6 +17,13 @@ import random
 
 sys.path.insert(0, '.')
 sys.path.insert(1, '..')
+
+
+def age_calculate(birthdate):
+    """ calculate age """
+    today = date.today()
+    age = today.year - birthdate.year - ((today.month, today.day) < (birthdate.month, birthdate.day))
+    return age
 
 def config_load(logger=None, mfilter=None, cfg_file='hockeygraphs.cfg'):
     """ small configparser wrappter to load a config file """
@@ -408,3 +415,24 @@ def bg_image_select(logger, bg_image_list):
         file_name = 'img/backgrounds/{0}.png'.format(random.randint(1,7))
 
     return file_name
+
+def position_get(logger, position):
+    """ get position """
+
+    position_dic = {
+        'GK': 'GK',
+        'FO': 'FO',
+        'CE': 'FO',
+        'LW': 'FO',
+        'RW': 'FO',
+        'LD': 'DE',
+        'RD': 'DE',
+        'DE': 'DE'
+    }
+
+    if position in position_dic:
+        result = position_dic[position]
+    else:
+        result = 'UNK'
+
+    return result
