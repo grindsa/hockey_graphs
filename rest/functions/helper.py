@@ -436,3 +436,18 @@ def position_get(logger, position):
         result = 'UNK'
 
     return result
+
+def region_get(logger, country):
+    """ get region GER/NAM/OTHER """
+    region_dic = {
+        'GER': 'GER',
+        'CAN':'NAM',
+        'USA': 'NAM'
+    }
+
+    if country not in region_dic:
+        result = 'Others'
+    else:
+        result = region_dic[country]
+
+    return result

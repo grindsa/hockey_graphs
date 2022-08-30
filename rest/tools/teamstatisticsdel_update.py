@@ -8,8 +8,8 @@ import argparse
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir, os.path.pardir)))
 from delapphelper import DelAppHelper
-from rest.functions.season import season_get
-from rest.functions.helper import logger_setup, uts_now, uts_to_date_utc, age_calculate, datestr_to_date, deviation_avg_get, position_get
+from rest.functions.season import season_get, season_latest_get
+from rest.functions.helper import logger_setup, uts_now, uts_to_date_utc, age_calculate, datestr_to_date, deviation_avg_get, position_get, region_get
 from rest.functions.team import team_list_get
 from rest.functions.teamstatdel import teamstatdel_add
 
@@ -40,7 +40,7 @@ if __name__ == '__main__':
     DATE = uts_to_date_utc(UTS)
 
     # get lasted seasonid and database
-    SEASON_ID = 4  # season_latest_get(LOGGER)
+    SEASON_ID = season_latest_get(LOGGER)
     DELSEASON_NAME = season_get(LOGGER, 'id', SEASON_ID, ['delname'])
     TEAM_ID_LIST = team_list_get(LOGGER, None, None, ['team_id'])
 
@@ -50,10 +50,18 @@ if __name__ == '__main__':
             for team_id in TEAM_ID_LIST:
                 playerinfo_dic = del_app_helper.teamplayers_get(DELSEASON_NAME, team_id, LEAGUE_ID)
                 age_dic = {'ALL': []}
-
+                region_dic = {}
                 for player in playerinfo_dic:
                     age = age_calculate(datestr_to_date(player['dateOfBirth'], tformat='%Y-%m-%d'))
                     position = position_get(LOGGER, player['position'])
+                    region = region_get(LOGGER, player['nationalityShort'])
+                    if region not in region_dic:
+                        region_dic[region] = {}
+                    if age not in region_dic[region]:
+                        region_dic[region][age] = 1
+                    else:
+                        region_dic[region][age] += 1
+
                     if position not in age_dic:
                         age_dic[position] = []
 
@@ -63,10 +71,9 @@ if __name__ == '__main__':
                     age_dic[position].append(mydict)
                     age_dic['ALL'].append(mydict)
 
-                agestat_dic = {}
+                agestat_dic = {'position': {}, 'region': region_dic}
                 for position, age_list in age_dic.items():
-                    agestat_dic[position] = deviation_avg_get(LOGGER, age_list, ['age'])
-
+                    agestat_dic['position'][position] = deviation_avg_get(LOGGER, age_list, ['age'])
                 try:
                     stats_dic = del_app_helper.teamstatssummary_get(DELSEASON_NAME, LEAGUE_ID, team_id)
                 except BaseException:
