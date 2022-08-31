@@ -10,6 +10,8 @@ django.setup()
 from rest.functions.corsi import pace_data_get, pace_updates_get, shotrates_updates_get
 from rest.functions.faceoff import faceoff_overview_get, faceoffs_updates_get
 from rest.functions.faceoffcharts import faceoff_overview_chart
+from rest.functions.age import age_overview_get, league_agestats_get
+from rest.functions.agecharts import age_overviewchart_get, league_agechart_get
 from rest.functions.helper import mobile_check, language_get
 from rest.functions.comment import comment_get
 from rest.functions.pdo import pdo_breakdown_data_get, pdo_overview_data_get, breakdown_updates_get, overview_updates_get, ppg_data_get, ppg_updates_get
@@ -22,6 +24,7 @@ from rest.functions.pppkchart import pppk_chart_get, discipline_chart_get, goali
 from rest.functions.shot import rebound_overview_get, break_overview_get, rebound_updates_get
 from rest.functions.team import team_dic_get
 from rest.functions.teammatchstat import teammatchstats_get
+from rest.functions.teamstatdel import teamstatdel_get
 from rest.functions.teamstat import teamstat_dic_get
 from rest.functions.heatmap import teamcomparison_hmdata_get, teamcomparison_updates_get
 from rest.functions.heatmapcharts import teamcomparison_chart_get
@@ -34,6 +37,7 @@ def teamcomparison_get(logger, request, fkey=None, fvalue=None):
 
     (_fkey, season_id) = seasonid_get(logger, request)
 
+    season_id = 4
     # get teams and matchstatistics
     teams_dic = team_dic_get(logger, request.META)
     matchstat_list = teammatchstats_get(logger, 'match__season_id', season_id)
@@ -43,6 +47,7 @@ def teamcomparison_get(logger, request, fkey=None, fvalue=None):
 
     # stacked stats per team
     teamstat_dic = teamstat_dic_get(logger, matchstat_list)
+    teamstatdel_dic = teamstatdel_get(logger, season_id=season_id, vlist=['season', 'team', 'agestats'])
 
     result = []
 
@@ -52,41 +57,75 @@ def teamcomparison_get(logger, request, fkey=None, fvalue=None):
         result.append(stat_entry)
 
     # create PDO breakdown chart
-    result.extend(_pdo_breakdown_get(logger, ismobile, teamstat_dic, teams_dic))
+    #result.extend(_pdo_breakdown_get(logger, ismobile, teamstat_dic, teams_dic))
 
     # 5on5 shotcharts
-    result.extend(_5v5_pace_get(logger, ismobile, teamstat_dic, teams_dic))
+    #result.extend(_5v5_pace_get(logger, ismobile, teamstat_dic, teams_dic))
 
     # faceoff wins
-    stat_entry = _faceoff_pctg_get(logger, ismobile, teamstat_dic, teams_dic)
-    if stat_entry:
-        result.append(stat_entry)
+    #stat_entry = _faceoff_pctg_get(logger, ismobile, teamstat_dic, teams_dic)
+    #if stat_entry:
+    #    result.append(stat_entry)
 
     # rebound efficentcy
-    stat_entry = _rebound_pctg_get(logger, ismobile, teamstat_dic, teams_dic)
-    if stat_entry:
-        result.append(stat_entry)
+    #stat_entry = _rebound_pctg_get(logger, ismobile, teamstat_dic, teams_dic)
+    #if stat_entry:
+    #    result.append(stat_entry)
 
     # rebound efficentcy
-    stat_entry = _break_pctg_get(logger, ismobile, teamstat_dic, teams_dic)
-    if stat_entry:
-        result.append(stat_entry)
+    #stat_entry = _break_pctg_get(logger, ismobile, teamstat_dic, teams_dic)
+    #if stat_entry:
+    #    result.append(stat_entry)
 
     # Special teams performance
-    result.extend(_pppk_pctg_get(logger, ismobile, teamstat_dic, teams_dic))
+    #result.extend(_pppk_pctg_get(logger, ismobile, teamstat_dic, teams_dic))
 
     # points per game vs. shotefficiency
-    stat_entry = _ppg_get(logger, ismobile, teamstat_dic, teams_dic)
-    if stat_entry:
-        result.append(stat_entry)
+    #stat_entry = _ppg_get(logger, ismobile, teamstat_dic, teams_dic)
+    #if stat_entry:
+    #    result.append(stat_entry)
 
     # xg charts
-    result.extend(_xgfa_get(logger, ismobile, teamstat_dic, teams_dic))
+    #result.extend(_xgfa_get(logger, ismobile, teamstat_dic, teams_dic))
 
     # goaliepull effect
-    result.extend(_goaliepull_get(logger, ismobile, teamstat_dic, teams_dic))
+    #result.extend(_goaliepull_get(logger, ismobile, teamstat_dic, teams_dic))
+
+    # age statistics
+    result.extend(_age_statistics_get(logger, ismobile, teamstatdel_dic, teams_dic))
 
     return result
+
+def _age_statistics_get(logger, ismobile, teamstatdel_dic, teams_dic):
+    """ prepare age_statistics """
+
+    stat_entry_list = []
+
+    agedate_dic = age_overview_get(logger, ismobile, teamstatdel_dic, teams_dic)
+    league_agedate_dic = league_agestats_get(logger, ismobile, teamstatdel_dic, teams_dic)
+
+    if agedate_dic:
+        title = _('agetitle')
+        subtitle = _('agesuptitle')
+
+        stat_entry = {
+            'title': title,
+            'chart':  age_overviewchart_get(logger, title, subtitle, ismobile, agedate_dic['ALL']['data']),
+            'updates': [] # goaliepullen_updates_get(logger, pull_en_data)
+        }
+        stat_entry_list.append(stat_entry)
+
+        title = _('agetitle2')
+        subtitle = _('agesuptitle2')
+
+        stat_entry = {
+            'title': title,
+            'chart':  league_agechart_get(logger, title, subtitle, ismobile, league_agedate_dic),
+            'updates': []
+        }
+        stat_entry_list.append(stat_entry)
+
+    return stat_entry_list
 
 def _goaliepull_get(logger, ismobile, teamstat_dic, teams_dic):
     """ build structure for goaliepull chart """

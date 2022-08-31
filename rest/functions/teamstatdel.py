@@ -28,9 +28,15 @@ def teamstatdel_get(logger, season_id=None, team_id=None, vlist=('season', 'team
     logger.debug('teamstatdel_get({0}:{1})'.format(season_id, team_id))
     try:
         if len(vlist) == 1:
-            teamstatdel_dic = list(Teamstatdel.objects.filter(season_id=season_id, team_id=team_id).values_list(vlist[0], flat=True))
+            if team_id:
+                teamstatdel_dic = list(Teamstatdel.objects.filter(season_id=season_id, team_id=team_id).values_list(vlist[0], flat=True))
+            else:
+                teamstatdel_dic = list(Teamstatdel.objects.filter(season_id=season_id).values_list(vlist[0], flat=True))
         else:
-            teamstatdel_dic = list(Teamstatdel.objects.filter(season_id=season_id, team_id=team_id).values(*vlist))
+            if team_id:
+                teamstatdel_dic = list(Teamstatdel.objects.filter(season_id=season_id, team_id=team_id).values(*vlist))
+            else:
+                teamstatdel_dic = list(Teamstatdel.objects.filter(season_id=season_id).values(*vlist))
 
     except BaseException as err_:
         logger.debug('Error in teamstatdel_get(): {0}'.format(err_))
