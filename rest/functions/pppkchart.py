@@ -6,7 +6,7 @@ from rest.functions.chartparameters import chartstyle, credit, exporting, legend
 def pppk_chart_get(logger, ctitle, csubtitle, ismobile, pppk_data):
     # pylint: disable=E0602
     """ pdo breakdown """
-    logger.debug('pdo_breakdown_chart()')
+    logger.debug('pppk_chart_get()')
 
     variable_dic = variables_get(ismobile)
 

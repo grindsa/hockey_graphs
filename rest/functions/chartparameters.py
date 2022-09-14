@@ -33,6 +33,7 @@ shot_goal_color = '#f01a29'
 shot_sog_color = '#7cb5ec'
 shot_posthit_color = '#68717a'
 line_color = '#c00c18'
+linetrans_color = '#fab7bc'
 
 line1_color = chart_color3
 line2_color = chart_color1
