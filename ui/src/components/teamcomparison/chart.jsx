@@ -3,6 +3,7 @@ import { isMobile } from 'react-device-detect';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import HighchartsMore from 'highcharts/highcharts-more';
+import highchartsDumbbell from "highcharts/modules/dumbbell";
 import HighchartsExporting from 'highcharts/modules/exporting';
 import HighchartsOfflineExporting from "highcharts/modules/offline-exporting";
 import AnnotationsModule from 'highcharts/modules/annotations';
@@ -19,6 +20,7 @@ HighchartsOfflineExporting(Highcharts);
 HighchartsMore(Highcharts);
 Heatmap(Highcharts);
 AnnotationsModule(Highcharts);
+highchartsDumbbell(Highcharts);
 
 export const Chart = (props) => {
   /* block to render chart mobile differenciation is done via chartoptions */
