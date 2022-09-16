@@ -333,8 +333,9 @@ if __name__ == '__main__':
         if INTERVAL:
             MATCH_ID_LIST = untweetedmatch_list_get(LOGGER, SEASON_ID, UTS, INTERVAL*3600, ['match_id'], )
 
-    IMGSIZE_DIC = {1: 49000, 2: 48500, 4: 55000, 5: 150000, 11: 30000, 12: 30000}
-
+    # IMGSIZE_DIC = {1: 49000, 2: 48500, 4: 55000, 5: 150000, 11: 30000, 12: 30000}
+    # new image list due to wrong coordinates in shots.json
+    IMGSIZE_DIC = {1: 49000, 2: 48500, 7: 35000, 10: 35000, 11: 30000, 12: 30000}
     for match_id in MATCH_ID_LIST:
         # we need some match_information
         matchinfo_dic = match_info_get(LOGGER, match_id, None, ['result_suffix', 'result', 'home_team__shortcut', 'visitor_team__shortcut', 'home_team__facebook_groups', 'date_uts', 'visitor_team__facebook_groups', 'prematch_tweet_id'])
