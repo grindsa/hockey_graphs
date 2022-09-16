@@ -403,6 +403,6 @@ if __name__ == '__main__':
                     pass
 
             # cleanup and housekeeping
-            os.remove('/tmp/tmp_{0}.png'.format(match_id))
+            # os.remove('/tmp/tmp_{0}.png'.format(match_id))
             for img in img_list:
                 os.remove(img)
