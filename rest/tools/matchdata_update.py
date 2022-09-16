@@ -69,6 +69,7 @@ def _match_update(logger, match_id_, header_dic):
 
 def shots_process(logger, match_dic):
     """ process match dictionary """
+    logger.debug('shots_process()')
     # get list of players
     player_list = player_list_get(LOGGER, None, None, ['player_id'])
 
@@ -316,6 +317,15 @@ if __name__ == '__main__':
                     LOGGER.debug('get shots from API')
                     # get shots from api
                     shots_dic = del_app_helper.shots_get(match_id)
+                    try:
+                        if not shots_dic['match']['shots'][0]['real_date']:
+                            LOGGER.debug('real_date is missing! fallback to mobile api')
+                            shots_mobile_dic = del_app_helper.gamesituations_extended_get(TOURNAMENT_ID, match_id)
+                            shots_dic = shots_convert(LOGGER, match_id, shots_mobile_dic, gameheader_dic)
+                    except Exceptiona as err_:
+                        LOGGER.debug('real_date check failed! falling back to mobile api')
+                        shots_mobile_dic = del_app_helper.gamesituations_extended_get(TOURNAMENT_ID, match_id)
+                        shots_dic = shots_convert(LOGGER, match_id, shots_mobile_dic, gameheader_dic)
                 else:
                     LOGGER.debug('get shots from mobile API')
                     # get shots from mobile_api and convert them into the format we need
