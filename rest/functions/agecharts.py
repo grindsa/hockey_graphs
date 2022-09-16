@@ -39,6 +39,7 @@ def age_overviewchart_get(logger, ctitle, csubtitle, ismobile, agedate_dic):
         'tooltip': {'enabled': 0},
 
         'plotOptions': {
+            'dumbbell': {'lineColor': '#ff0000'},
             'series': {
                 'states': {'inactive': {'opacity': 1}},
                 'dataLabels': {
@@ -63,7 +64,7 @@ def age_overviewchart_get(logger, ctitle, csubtitle, ismobile, agedate_dic):
 
         'series': [
             # pylint: disable=E0602
-            {'name': _('age low/high'), 'data': age_list},
+            {'name': _('age low/high'), 'data': age_list, 'connectorWidth': 2},
             {'name': _('avg age'), 'type': 'scatter', 'data': scatter_list, 'marker': {'symbol': 'circle', 'fillColor': line_color}}
         ]
     }
