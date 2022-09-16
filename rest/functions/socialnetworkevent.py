@@ -254,4 +254,4 @@ def facebook_post(logger, group_list, message, image_list, access_token):
             feed_dic = {'access_token': access_token, 'message': message, 'attached_media': json.dumps(attached_media_list)}
             # post message
             req = requests.post(feed_url, data=feed_dic)
-            # print(req.json())
+

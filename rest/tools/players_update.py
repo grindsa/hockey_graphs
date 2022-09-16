@@ -20,7 +20,7 @@ if __name__ == '__main__':
 
     # season to scan
     # SEASON_YEAR_LIST = [2019, 2020]
-    SEASON_YEAR_LIST = [2021]
+    SEASON_YEAR_LIST = [2022]
 
     # league (1-regular, 3-playoff)
     # 1 - for DEL Regular season
@@ -31,7 +31,7 @@ if __name__ == '__main__':
 
     # get list of teams
     TEAM_DIC = team_dic_get(LOGGER, None)
-    SEASON_ID = 4
+    SEASON_ID = 5
 
     with DelAppHelper(None, DEBUG) as del_app_helper:
         for season_year in SEASON_YEAR_LIST:
