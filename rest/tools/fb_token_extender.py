@@ -85,5 +85,6 @@ if __name__ == '__main__':
         result['DATE_HUMAN'] = uts_to_date_utc(UTS)
         # store result
         json_store(FILENAME, result)
+        print(result)
     except BaseException as err_:
         print(err_)
