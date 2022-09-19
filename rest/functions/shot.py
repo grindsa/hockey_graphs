@@ -27,7 +27,8 @@ def _shoot_coordinates_convert(logger, coordinate_x, coordinate_y, new_format=Fa
         meter_y = coordinate_y * y_total/y_factor
     else:
         try:
-            x2m = 0.3048
+            # x2m = 0.3048
+            x2m = 0.26
             y2m = 0.1524
             meter_x = x2m * int(coordinate_x)
             meter_y = y2m * int(coordinate_y)

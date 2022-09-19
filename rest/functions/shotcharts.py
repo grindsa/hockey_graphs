@@ -1352,19 +1352,19 @@ def shotmapchart_new_create(logger, ctitle, csubtitle, ismobile, shotmap_dic, ma
     variable_dic = variables_get(ismobile)
 
     if ismobile:
-        img_width = 30
-        home_x = -20
-        home_y = 0
-        visitor_x = 20
-        visitor_y = 0
+        img_width = 25
+        home_x = -26
+        home_y = 85
+        visitor_x = 22
+        visitor_y = 85
+        scatter_radius = 5
     else:
         img_width = 55
         home_x = -26
         home_y = 170
         visitor_x = 22
         visitor_y = 170
-
-    scatter_radius = 8
+        scatter_radius = 8
 
     # data_dic = {'home_team': {1 :[], 2: [], 3: [], 4: [], 5: []}, 'visitor_team': {1 :[], 2: [], 3: [], 4: [], 5: []}}
     data_dic = {}
