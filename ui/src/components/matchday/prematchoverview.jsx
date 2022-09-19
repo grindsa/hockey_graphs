@@ -28,6 +28,17 @@ export const PreMatchOverview = ({options}) => {
     )
   });
 
+  if (MatchTable.length > 0){
+    var hometeam_col_width = '20%'
+    var guestteam_col_width = '23%'
+    var matchlist_col_width = '23%'
+  } else {
+    var hometeam_col_width = '39%'
+    var guestteam_col_width = '39%'
+    var matchlist_col_width = '0%'
+  }
+
+
   return(
     <div className="w3-border prematch_container w3-display-container">
       <img className={img_classes} style={{width:'100%'}} src={stats.background_image}></img>
@@ -36,20 +47,20 @@ export const PreMatchOverview = ({options}) => {
           <div className={"w3-container w3-center uc strong " + headline_classes}>{stats.title}</div>
             <div className="w3-center strong w3-xlarge w3-margin-bottom">{stats.subtitle}</div>
             <div className="w3-center w3-row">
-              <div className="w3-col" style={{width:'20%'}}>
+              <div className="w3-col" style={{width: hometeam_col_width}}>
                 <div className="w3-right">
                   <img src={stats.home_team_logo} alt={stats.home_team_shortcut} height="80px"></img>
                   <div className="w3-section w3-large strong">{stats.home_bilance} ({stats.home_last10})</div>
                 </div>
               </div>
               <div className="w3-col w3-margin-top horizontal-middle" style={{width:'20%'}}><i className="w3-xxxlarge fa fa-bolt"></i></div >
-              <div className="w3-col" style={{width:'23%'}}>
+              <div className="w3-col" style={{width: guestteam_col_width}}>
                 <div className="w3-left">
                   <img src={stats.visitor_team_logo} alt={stats.visitor_team_shortcut} height="80px"></img>
                   <div className="w3-section w3-large strong">{stats.visitor_bilance} ({stats.visitor_last10})</div>
                 </div>
               </div >
-              <div className="w3-col" style={{width:'35%'}}>
+              <div className="w3-col" style={{width: matchlist_col_width}}>
                 <div className="w3-left">
                   <table className="w3-table w3-small w3-light-grey w3-border w3-border-dark-grey">
                     <tbody>
