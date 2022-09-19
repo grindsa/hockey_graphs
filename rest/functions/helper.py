@@ -274,7 +274,7 @@ def deviation_avg_get(logger, input_list, value_list=None):
     deviation_dic = {}
     for value in _tmp_lake:
         if _tmp_lake[value]:
-            deviation_dic[value] = {'std_deviation': round(np.std(_tmp_lake[value]), 2), 'average': round(np.mean(_tmp_lake[value]), 2), 'min': np.amin(_tmp_lake[value]), 'max': np.amax(_tmp_lake[value])}
+            deviation_dic[value] = {'std_deviation': float(round(np.std(_tmp_lake[value]), 2)), 'average': float(round(np.mean(_tmp_lake[value]), 2)), 'min': float(np.amin(_tmp_lake[value])), 'max': float(np.amax(_tmp_lake[value]))}
 
     return deviation_dic
 
