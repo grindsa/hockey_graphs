@@ -10,8 +10,8 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.
 from delapphelper import DelAppHelper
 from rest.functions.season import season_get, season_latest_get
 from rest.functions.helper import logger_setup, uts_now, uts_to_date_utc, age_calculate, datestr_to_date, deviation_avg_get, position_get, region_get
-from rest.functions.team import team_list_get
-from rest.functions.teamstatdel import teamstatdel_add
+# from rest.functions.team import team_list_get
+from rest.functions.teamstatdel import teamstatdel_add, teamstatdel_get
 
 
 def arg_parse():
@@ -42,13 +42,18 @@ if __name__ == '__main__':
     # get lasted seasonid and database
     SEASON_ID = season_latest_get(LOGGER)
     DELSEASON_NAME = season_get(LOGGER, 'id', SEASON_ID, ['delname'])
-    TEAM_ID_LIST = team_list_get(LOGGER, None, None, ['team_id'])
+
+    # TEAM_ID_LIST = team_list_get(LOGGER, None, None, ['team_id'])
+    TEAM_ID_LIST = teamstatdel_get(LOGGER, SEASON_ID, None, vlist=['team'])
 
     with DelAppHelper('0101030405', DEBUG) as del_app_helper:
 
         if SEASON_ID and DELSEASON_NAME and TEAM_ID_LIST:
             for team_id in TEAM_ID_LIST:
-                playerinfo_dic = del_app_helper.teamplayers_get(DELSEASON_NAME, team_id, LEAGUE_ID)
+                try:
+                    playerinfo_dic = del_app_helper.teamplayers_get(DELSEASON_NAME, team_id, LEAGUE_ID)
+                except Exception as err_:
+                    LOGGER.error('del_app_helper.teamplayers_get(): {0}'.format(err_))
                 age_dic = {'ALL': []}
                 region_dic = {}
                 for player in playerinfo_dic:
