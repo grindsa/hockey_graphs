@@ -38,7 +38,6 @@ export const PreMatchOverview = ({options}) => {
     var matchlist_col_width = '0%'
   }
 
-
   return(
     <div className="w3-border prematch_container w3-display-container">
       <img className={img_classes} style={{width:'100%'}} src={stats.background_image}></img>
