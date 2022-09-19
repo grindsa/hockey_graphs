@@ -160,9 +160,9 @@ def shots_convert(logger, match_id, shots_mobile_dic, gameheader_dic):
 
             # coordinates
             if 'x' in shot:
-                tmp_dic['coordinate_x'] = int(200 * shot['x'] - 100)
+                tmp_dic['coordinate_x'] = float('{:.2f}'.format(200 * shot['x'] - 100))
             if 'y' in shot:
-                tmp_dic['coordinate_y'] = int(200 * shot['y'] - 100)
+                tmp_dic['coordinate_y'] = float('{:.2f}'.format(200 * shot['y'] - 100))
 
             # add polygon
             tmp_dic['polygon'] = 'tbd'

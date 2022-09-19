@@ -11,21 +11,30 @@ import django
 django.setup()
 from shapely.geometry import Point
 from rest.models import Shot
-from rest.functions.helper import maxval_get, list_sumup, period_get, sliding_window, date_to_uts_utc
+from rest.functions.helper import maxval_get, list_sumup, period_get, sliding_window, date_to_uts_utc, deviation_avg_get
 from rest.functions.chartparameters import chart_color2, chart_color3, title
 import functions.rink_dimensions as rd
 
-def _shoot_coordinates_convert(logger, coordinate_x, coordinate_y):
+def _shoot_coordinates_convert(logger, coordinate_x, coordinate_y, new_format=False):
     """ convert  arbitrary coordinates to actual coordinates in meters sourse: leaffan.net """
-    try:
-        x2m = 0.3048
-        y2m = 0.1524
-        meter_x = x2m * int(coordinate_x)
-        meter_y = y2m * int(coordinate_y)
-    except BaseException as err_:
-        logger.critical('error in _shoot_coordinates_convert(): {0}'.format(err_))
-        meter_x = 0
-        meter_y = 0
+
+    if new_format:
+        x_total = 61/2   # field length
+        y_total = 30/2 # field width
+        x_factor = 60 # assumed max on x
+        y_factor = 50 # asusmed max on y
+        meter_x = coordinate_x * x_total/x_factor
+        meter_y = coordinate_y * y_total/y_factor
+    else:
+        try:
+            x2m = 0.3048
+            y2m = 0.1524
+            meter_x = x2m * int(coordinate_x)
+            meter_y = y2m * int(coordinate_y)
+        except BaseException as err_:
+            logger.critical('error in _shoot_coordinates_convert(): {0}'.format(err_))
+            meter_x = 0
+            meter_y = 0
 
     return(round(meter_x, 2), round(meter_y, 2))
 
@@ -488,9 +497,7 @@ def shot_dic_convert(logger, shot_dic, match_info_dic):
     converted_shot_dic = {}
 
     for match_id in shot_dic:
-        from pprint import pprint
         shotmap_dic = shotcoordinates_get(logger, shot_dic[match_id], match_info_dic[match_id])
-        from pprint import pprint
         if shotmap_dic['home_team']:
             converted_shot_dic[match_id] = shotmap_dic['home_team']
             converted_shot_list.extend(shotmap_dic['home_team'])
@@ -506,9 +513,12 @@ def shotcoordinates_get(logger, shot_list, matchinfo_dic):
     logger.debug('shotcoordinates_get()')
     shotmap_dic = {'home_team': [], 'visitor_team': []}
 
+    shot_values_new_format = xml_check(logger, shot_list)
+
     for shot in shot_list:
 
-        (m_x, m_y) = _shoot_coordinates_convert(logger, shot['coordinate_x'], shot['coordinate_y'])
+        (m_x, m_y) = _shoot_coordinates_convert(logger, shot['coordinate_x'], shot['coordinate_y'], shot_values_new_format)
+
         shot['meters_x'] = m_x
         shot['meters_y'] = m_y
         shot['minute'] = math.ceil(shot['timestamp']/60)
@@ -516,13 +526,13 @@ def shotcoordinates_get(logger, shot_list, matchinfo_dic):
         if shot['team_id'] == matchinfo_dic['home_team_id']:
             team = 'home_team'
             # flip counter clockwise for home_game
-            shot['x'] = shot['coordinate_y'] * -1
-            shot['y'] = shot['coordinate_x']
+            #shot['x'] = shot['coordinate_y'] * -1
+            #shot['y'] = shot['coordinate_x']
         else:
             team = 'visitor_team'
             # flip clockwise for road_game
-            shot['x'] = shot['coordinate_y']
-            shot['y'] = shot['coordinate_x'] * -1
+            #shot['x'] = shot['coordinate_y']
+            #shot['y'] = shot['coordinate_x'] * -1
 
         shot['name'] = '{0} {1}'.format(shot['player__first_name'], shot['player__last_name'])
 
@@ -786,3 +796,15 @@ def shottime2date_map(logger, shot_list):
             mindate_dic[min_] = mindate_dic[min_-1] + 60
 
     return mindate_dic
+
+def xml_check(logger, shot_list):
+    """ check xml mode (legacy or new) to adapt calculation of shots """
+    logger.debug('xml_check()')
+    deviation_dic = deviation_avg_get(logger, shot_list, ['coordinate_x', 'coordinate_y'])
+
+    new_format = True
+    if deviation_dic['coordinate_x']['max'] > 50 and deviation_dic['coordinate_x']['min'] < -50:
+        new_format = False
+
+    logger.debug('xml_check() returned {0}'.format(new_format))
+    return new_format
