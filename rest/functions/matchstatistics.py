@@ -12,7 +12,7 @@ from rest.functions.corsi import gamecorsi_get, gameplayercorsi_get, gameshots5v
 from rest.functions.socialnetworkeventcharts import chatterchart_create
 from rest.functions.socialnetworkevent import socialnetworkevent_get, eventspermin_combine
 from rest.functions.shot import shot_list_get, shotspermin_count, shotspermin_aggregate, shotstatus_count, shotstatus_aggregate, shotsperzone_count, shotsperzone_aggregate, shotcoordinates_get, gameflow_get
-from rest.functions.shotcharts import shotsumchart_create, gameflowchart_create, shotstatussumchart_create, shotmapchart_create, gamecorsichart_create, gameplayercorsichart_create, gamecorsippctgchart_create, puckpossessionchart_create, shotzonechart_create
+from rest.functions.shotcharts import shotmapchart_new_create, shotsumchart_create, gameflowchart_create, shotstatussumchart_create, shotmapchart_create, gamecorsichart_create, gameplayercorsichart_create, gamecorsippctgchart_create, puckpossessionchart_create, shotzonechart_create
 from rest.functions.season import season_latest_get, season_get
 from rest.functions.toicharts import gametoichart_create, gametoipppkchart_create
 from rest.functions.heatmapcharts import gamematchupchart_create
@@ -331,16 +331,17 @@ def _gameshotmap_get(logger, title, subtitle, ismobile, request, fkey, fvalue, m
         # get shots and goals per min
         shotmap_dic = shotcoordinates_get(logger, shot_list, matchinfo_dic)
 
-        shot_chart = [
-            shotmapchart_create(logger, '{0} {1}'.format(title, matchinfo_dic['home_team__shortcut']), subtitle, ismobile, shotmap_dic['home_team']),
-            shotmapchart_create(logger, '{0} {1}'.format(title, matchinfo_dic['visitor_team__shortcut']), subtitle, ismobile, shotmap_dic['visitor_team'])
-        ]
+        shot_chart = shotmapchart_new_create(logger, title, subtitle, ismobile, shotmap_dic, matchinfo_dic)
+        # shot_chart = [
+        #   shotmapchart_create(logger, '{0} {1}'.format(title, matchinfo_dic['home_team__shortcut']), subtitle, ismobile, shotmap_dic['home_team']),
+        #    shotmapchart_create(logger, '{0} {1}'.format(title, matchinfo_dic['visitor_team__shortcut']), subtitle, ismobile, shotmap_dic['visitor_team'])
+        # ]
 
     stat_entry = {
         'title': title,
         'chart': shot_chart,
-        'table': shot_table,
-        'tabs': True
+        'table': False,
+        'tabs': False
     }
 
     return stat_entry
