@@ -36,12 +36,12 @@ if __name__ == '__main__':
     PLAYER_PK = 6
 
     fkey = 'match_id'
-    fvalue = 2552 # 2455 # 2206
+    fvalue = 2584 # 2455 # 2206
     # game_id = 2578
 
     # result = playerstatistics_fetch(LOGGER, request, SEASON_PK, PLAYER_PK)
-    # result = matchstatistics_get(LOGGER, request, fkey, fvalue)
-    result = teamcomparison_get(LOGGER, request, fkey, fvalue)
+    result = matchstatistics_get(LOGGER, request, fkey, fvalue)
+    # result = teamcomparison_get(LOGGER, request, fkey, fvalue)
     # from pprint import pprint
     # pprint(result)
 

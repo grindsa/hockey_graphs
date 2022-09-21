@@ -295,7 +295,7 @@ if __name__ == '__main__':
         if INTERVAL:
             MATCH_ID_LIST = untweetedmatch_list_get(LOGGER, SEASON_ID, UTS, INTERVAL*3600, ['match_id'], )
 
-    IMGSIZE_DIC = {1: 49000, 2: 48500}
+    IMGSIZE_DIC = {1: 49000, 2: 48500, 7: 35000, 10: 35000, 11: 30000, 12: 30000}
 
     for match_id in MATCH_ID_LIST:
         # we need some match_information

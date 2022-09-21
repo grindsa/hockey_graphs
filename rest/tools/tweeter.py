@@ -305,6 +305,20 @@ def fbook_it(logger, matchinfo_dic_, img_list_, season_id, match_id):
     # post to facebook group
     facebook_post(logger, group_list, message, img_list_, access_token)
 
+def get_imagesize_dic(logger):
+    """ pick images to post """
+    logger.debug('get_imagesize_dic()')
+    source_dic = {2: 48500, 4: 55000, 5: 150000, 7: 35000, 10: 35000, 13: 85000}
+    toi_dic = {11: 30000, 12: 30000}
+
+    imagesize_dic = {1: 49000}
+    for ele in random.sample(list(source_dic), k=3):
+        imagesize_dic[ele] = source_dic[ele]
+    for ele in toi_dic:
+        imagesize_dic[ele] = toi_dic[ele]
+
+    logger.debug('get_imagesize_dic() ended with: {0}'.format(imagesize_dic.keys()))
+    return imagesize_dic
 
 if __name__ == '__main__':
 
@@ -335,7 +349,8 @@ if __name__ == '__main__':
 
     # IMGSIZE_DIC = {1: 49000, 2: 48500, 4: 55000, 5: 150000, 11: 30000, 12: 30000}
     # new image list due to wrong coordinates in shots.json
-    IMGSIZE_DIC = {1: 49000, 2: 48500, 7: 35000, 10: 35000, 11: 30000, 12: 30000}
+    IMGSIZE_DIC = get_imagesize_dic(LOGGER)
+
     for match_id in MATCH_ID_LIST:
         # we need some match_information
         matchinfo_dic = match_info_get(LOGGER, match_id, None, ['result_suffix', 'result', 'home_team__shortcut', 'visitor_team__shortcut', 'home_team__facebook_groups', 'date_uts', 'visitor_team__facebook_groups', 'prematch_tweet_id'])
