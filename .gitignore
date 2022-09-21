@@ -146,3 +146,4 @@ rest/tools/dev_helper.py
 hockey_graphs/urls.py
 chromedriver.exe
 ui/package-lock.json
+ui/webpack.config.js
