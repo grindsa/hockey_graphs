@@ -142,6 +142,7 @@ static/rest_framework
 static/drf-yasg
 static/admin
 rest/tools/hockeygraphs.cfg
+rest/tools/dev_helper.py
 hockey_graphs/urls.py
 chromedriver.exe
 ui/package-lock.json
