@@ -308,7 +308,7 @@ def fbook_it(logger, matchinfo_dic_, img_list_, season_id, match_id):
 def get_imagesize_dic(logger):
     """ pick images to post """
     logger.debug('get_imagesize_dic()')
-    source_dic = {2: 48500, 4: 55000, 5: 150000, 7: 35000, 10: 35000, 13: 85000}
+    source_dic = {2: 48500, 4: 55000, 5: 150000, 7: 35000, 10: 35000}
     toi_dic = {11: 30000, 12: 30000}
 
     imagesize_dic = {1: 49000, 6: 65000}
