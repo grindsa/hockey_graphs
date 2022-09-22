@@ -15,7 +15,7 @@ from rest.functions.helper import maxval_get, list_sumup, period_get, sliding_wi
 from rest.functions.chartparameters import chart_color2, chart_color3, title
 import functions.rink_dimensions as rd
 
-def _shoot_coordinates_convert(logger, coordinate_x, coordinate_y, new_format=False):
+def _shoot_coordinates_convert(logger, coordinate_x, coordinate_y, new_format=False, shotmap=False):
     """ convert  arbitrary coordinates to actual coordinates in meters sourse: leaffan.net """
 
     if new_format:
@@ -27,8 +27,10 @@ def _shoot_coordinates_convert(logger, coordinate_x, coordinate_y, new_format=Fa
         meter_y = coordinate_y * y_total/y_factor
     else:
         try:
-            # x2m = 0.3048
-            x2m = 0.26
+            if shotmap:
+                x2m = 0.26
+            else:
+                x2m = 0.3048
             y2m = 0.1524
             meter_x = x2m * int(coordinate_x)
             meter_y = y2m * int(coordinate_y)
@@ -518,7 +520,7 @@ def shotcoordinates_get(logger, shot_list, matchinfo_dic):
 
     for shot in shot_list:
 
-        (m_x, m_y) = _shoot_coordinates_convert(logger, shot['coordinate_x'], shot['coordinate_y'], shot_values_new_format)
+        (m_x, m_y) = _shoot_coordinates_convert(logger, shot['coordinate_x'], shot['coordinate_y'], shot_values_new_format, shotmap=True)
 
         shot['meters_x'] = m_x
         shot['meters_y'] = m_y
