@@ -1477,12 +1477,12 @@ def shotmapchart_new_create(logger, ctitle, csubtitle, ismobile, shotmap_dic, ma
             {'name': _('Shots on Goal'), 'color': shot_sog_color, 'zIndex': 2, 'data': data_dic['home_team'][1], 'marker': {'lineColor': '#2083df', 'lineWidth': 1, 'radius': scatter_radius, 'symbol': 'diamond'}},
             {'name': _('blocked'), 'zIndex': 3, 'color': shot_blocked_color, 'data': data_dic['home_team'][3], 'marker': {'symbol': 'diamond', 'radius': scatter_radius}},
             {'name': _('Post hit'), 'zIndex': 4, 'color': chart_color4, 'data': data_dic['home_team'][5], 'marker': {'symbol': 'diamond', 'radius': scatter_radius}},
-            {'name': _('Goals'), 'zIndex': 7, 'color': shot_goal_color, 'data': data_dic['home_team'][4], 'marker': {'symbol': 'diamond', 'radius': scatter_radius}},
+            {'name': _('Goals'), 'zIndex': 7, 'color': '#ffffff', 'data': data_dic['home_team'][4], 'marker': {'lineColor': shot_goal_color, 'lineWidth': 5, 'symbol': 'circle', 'radius': scatter_radius-2}},
             {'name': _('missed'), 'zIndex': 1, 'data': data_dic['visitor_team'][2], 'color': shot_missed_color, 'marker': {'lineColor': chart_color2, 'lineWidth': 1, 'symbol': 'diamond', 'radius': scatter_radius}, 'showInLegend': 0},
             {'name': _('Shots on Goal'), 'color': shot_sog_color, 'zIndex': 2, 'data': data_dic['visitor_team'][1], 'marker': {'lineColor': '#2083df', 'lineWidth': 1, 'radius': scatter_radius, 'symbol': 'diamond'}, 'showInLegend': 0},
             {'name': _('blocked'), 'zIndex': 3, 'color': shot_blocked_color, 'data': data_dic['visitor_team'][3], 'marker': {'symbol': 'diamond', 'radius': scatter_radius}, 'showInLegend': 0, 'showInLegend': 0},
             {'name': _('Post hit'), 'zIndex': 4, 'color': chart_color4, 'data': data_dic['visitor_team'][5], 'marker': {'symbol': 'diamond', 'radius': scatter_radius}, 'showInLegend': 0},
-            {'name': _('Goals'), 'zIndex': 7, 'color': shot_goal_color, 'data': data_dic['visitor_team'][4], 'marker': {'symbol': 'diamond', 'radius': scatter_radius}, 'showInLegend': 0},
+            {'name': _('Goals'), 'zIndex': 7, 'color': '#ffffff', 'data': data_dic['visitor_team'][4], 'marker': {'lineColor': shot_goal_color, 'lineWidth': 5, 'symbol': 'circle', 'radius': scatter_radius-2}, 'showInLegend': 0},
             ],
 
         'responsive': {
