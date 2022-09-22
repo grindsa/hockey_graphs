@@ -285,6 +285,7 @@ if __name__ == '__main__':
                         except BaseException:
                             pass
 
-                    os.remove('/tmp/tmp_{0}.png'.format(match['match_id']))
-                    for img in img_list:
-                        os.remove(img)
+                    if not FAKE:
+                        os.remove('/tmp/tmp_{0}.png'.format(match['match_id']))
+                        for img in img_list:
+                            os.remove(img)
