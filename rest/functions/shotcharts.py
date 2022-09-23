@@ -1358,8 +1358,8 @@ def shotmapchart_new_create(logger, ctitle, csubtitle, ismobile, shotmap_dic, ma
         visitor_x = 22
         visitor_y = 85
         scatter_radius = 5
-        export_sourcewidth = 373
-        export_sourceheight = 298
+        export_sourcewidth = 368
+        export_sourceheight = 256
     else:
         img_width = 55
         home_x = -26
@@ -1367,8 +1367,8 @@ def shotmapchart_new_create(logger, ctitle, csubtitle, ismobile, shotmap_dic, ma
         visitor_x = 22
         visitor_y = 170
         scatter_radius = 8
-        export_sourcewidth = 600
-        export_sourceheight = 480
+        export_sourcewidth = 790
+        export_sourceheight = 515
 
     # data_dic = {'home_team': {1 :[], 2: [], 3: [], 4: [], 5: []}, 'visitor_team': {1 :[], 2: [], 3: [], 4: [], 5: []}}
     data_dic = {}
@@ -1455,22 +1455,19 @@ def shotmapchart_new_create(logger, ctitle, csubtitle, ismobile, shotmap_dic, ma
 
         'xAxis': {
             'visible': 0,
-            'labels': {'enabled': 1},
+            'labels': {'enabled': 0},
+            'gridLineWidth': 0,
             'min': -30.5,
             'max': 30.5,
-            'tickInterval': 1,
         },
 
         'yAxis': {
             'visible': 0,
+            'labels': {'enabled': 0},
+            'title': {'text': ''},
             'gridLineWidth': 0,
-            'title': {
-                'text': '',
-            },
-            'labels': {'enabled': 1},
             'min': -15,
             'max': 15,
-            'tickInterval': 1,
         },
 
         'series': [
