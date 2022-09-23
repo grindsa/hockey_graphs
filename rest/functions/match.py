@@ -126,8 +126,6 @@ def matchstats_get(logger, match_id, color_dic={}, matchinfo_dic={}):
                 #'ppGoals_pctg': pctg_get(matchstat_dic['home']['ppGoals'], (matchstat_dic['home']['ppGoals'] + matchstat_dic['visitor']['ppGoals'])),
                 #'shGoals': matchstat_dic['home']['shGoals'],
                 #'shGoals_pctg': pctg_get(matchstat_dic['home']['shGoals'], (matchstat_dic['home']['shGoals'] + matchstat_dic['visitor']['shGoals'])),
-                'puckpossession': "%.0f" % (matchstat_dic['home']['shotsAttempts'] * 100 / (matchstat_dic['home']['shotsAttempts'] + matchstat_dic['visitor']['shotsAttempts'])),
-                'puckpossession_pctg': pctg_get(matchstat_dic['home']['shotsAttempts'], (matchstat_dic['home']['shotsAttempts'] + matchstat_dic['visitor']['shotsAttempts'])),
                 'team_color': color_dic['home_team_color'],
             },
             'visitor_team': {
@@ -149,14 +147,20 @@ def matchstats_get(logger, match_id, color_dic={}, matchinfo_dic={}):
                 #'ppGoals_pctg': pctg_get(matchstat_dic['visitor']['ppGoals'], (matchstat_dic['home']['ppGoals'] + matchstat_dic['visitor']['ppGoals'])),
                 #'shGoals': matchstat_dic['visitor']['shGoals'],
                 #'shGoals_pctg': pctg_get(matchstat_dic['visitor']['shGoals'], (matchstat_dic['home']['shGoals'] + matchstat_dic['visitor']['shGoals'])),
-                'puckpossession': "%.0f" % (matchstat_dic['visitor']['shotsAttempts'] * 100 / (matchstat_dic['home']['shotsAttempts'] + matchstat_dic['visitor']['shotsAttempts'])),
-                'puckpossession_pctg': pctg_get(matchstat_dic['visitor']['shotsAttempts'], (matchstat_dic['home']['shotsAttempts'] + matchstat_dic['visitor']['shotsAttempts'])),
                 'team_color': color_dic['visitor_team_color_secondary'],
             }
         }
+        if matchstat_dic['home']['shotsAttempts'] + matchstat_dic['visitor']['shotsAttempts'] > 0:
+            stat_dic['home_team']['puckpossession'] = "%.0f" % (matchstat_dic['home']['shotsAttempts'] * 100 / (matchstat_dic['home']['shotsAttempts'] + matchstat_dic['visitor']['shotsAttempts'])),
+            stat_dic['home_team']['puckpossession_pctg'] = pctg_get(matchstat_dic['home']['shotsAttempts'], (matchstat_dic['home']['shotsAttempts'] + matchstat_dic['visitor']['shotsAttempts'])),
+            stat_dic['visitor_team']['puckpossession'] = "%.0f" % (matchstat_dic['visitor']['shotsAttempts'] * 100 / (matchstat_dic['home']['shotsAttempts'] + matchstat_dic['visitor']['shotsAttempts'])),
+            stat_dic['visitor_team']['puckpossession_pctg'] = pctg_get(matchstat_dic['visitor']['shotsAttempts'], (matchstat_dic['home']['shotsAttempts'] + matchstat_dic['visitor']['shotsAttempts'])),
 
-
-
+        else:
+            stat_dic['home_team']['puckpossession'] = 0
+            stat_dic['home_team']['puckpossession_pctg'] = '0%'
+            stat_dic['visitor_team']['puckpossession'] = 0
+            stat_dic['visitor_team']['puckpossession_pctg'] = '0%'
 
         #if color_dic:
         #    for team in ('home', 'visitor'):
