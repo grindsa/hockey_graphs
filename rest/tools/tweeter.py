@@ -136,6 +136,7 @@ def arg_parse():
     parser = argparse.ArgumentParser(description='match_import.py - update matches in database')
     parser.add_argument('-d', '--debug', help='debug mode', action="store_true", default=False)
     parser.add_argument('-f', '--fake', help='fake mode', action="store_true", default=False)
+    parser.add_argument('--force', help='force execution even if already tweeted', action="store_true", default=False)
     parser.add_argument('-r', '--reply', help='post as reply to prematch stat tweet', action="store_true", default=False)
     parser.add_argument('-s', '--season', help='season id', default=None)
     mlist = parser.add_mutually_exclusive_group()
@@ -153,6 +154,7 @@ def arg_parse():
     season = args.season
     matchlist = args.matchlist
     interval = int(args.interval)
+    force = args.force
 
     # process matchlist
     try:
@@ -167,7 +169,7 @@ def arg_parse():
         print('either -i or --matchlist parameter must be specified')
         sys.exit(0)
 
-    return(debug, fake, reply, season, match_list, interval)
+    return(debug, fake, reply, season, match_list, interval, force)
 
 def page_get_via_selenium(logger, url, file_):
     """ get page via selenium """
@@ -322,7 +324,7 @@ def get_imagesize_dic(logger):
 
 if __name__ == '__main__':
 
-    (DEBUG, FAKE, REPLY, SEASON_ID, MATCH_ID_LIST, INTERVAL) = arg_parse()
+    (DEBUG, FAKE, REPLY, SEASON_ID, MATCH_ID_LIST, INTERVAL, FORCE) = arg_parse()
 
     URL = 'https://hockeygraphs.dynamop.de'
     MATCHSTAT = '/api/v1/matchstatistics/'
@@ -347,13 +349,19 @@ if __name__ == '__main__':
         if INTERVAL:
             MATCH_ID_LIST = untweetedmatch_list_get(LOGGER, SEASON_ID, UTS, INTERVAL*3600, ['match_id'], )
 
-    # IMGSIZE_DIC = {1: 49000, 2: 48500, 4: 55000, 5: 150000, 11: 30000, 12: 30000}
-    # new image list due to wrong coordinates in shots.json
-    IMGSIZE_DIC = get_imagesize_dic(LOGGER)
-
     for match_id in MATCH_ID_LIST:
+
+        # IMGSIZE_DIC = {1: 49000, 2: 48500, 4: 55000, 5: 150000, 11: 30000, 12: 30000}
+        # new image list due to wrong coordinates in shots.json
+        IMGSIZE_DIC = get_imagesize_dic(LOGGER)
+
         # we need some match_information
-        matchinfo_dic = match_info_get(LOGGER, match_id, None, ['result_suffix', 'result', 'home_team__shortcut', 'visitor_team__shortcut', 'home_team__facebook_groups', 'date_uts', 'visitor_team__facebook_groups', 'prematch_tweet_id'])
+        matchinfo_dic = match_info_get(LOGGER, match_id, None, ['result_suffix', 'result', 'home_team__shortcut', 'visitor_team__shortcut', 'home_team__facebook_groups', 'date_uts', 'visitor_team__facebook_groups', 'prematch_tweet_id', 'tweet'])
+
+        if not FORCE:
+            if matchinfo_dic['tweet']:
+                LOGGER.info('match {0} got already tweeted. Ignoring it...'.format(match_id))
+                continue
 
         # hack to have a better result
         if 'result_suffix' in matchinfo_dic and matchinfo_dic['result_suffix']:
