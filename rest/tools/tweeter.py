@@ -310,12 +310,22 @@ def fbook_it(logger, matchinfo_dic_, img_list_, season_id, match_id):
 def get_imagesize_dic(logger):
     """ pick images to post """
     logger.debug('get_imagesize_dic()')
-    source_dic = {2: 48500, 4: 55000, 5: 150000, 7: 35000, 10: 35000}
+    source_dic = {2: 48500, 4: 55000, 7: 35000, 10: 35000}
     toi_dic = {11: 30000, 12: 30000}
+    map_dic = {5: 150000, 6: 65000}
 
-    imagesize_dic = {1: 49000, 6: 65000}
+    # we always add the shot-chart
+    imagesize_dic = {1: 49000}
+
+    # pick a shotmap randomly
+    for ele in random.sample(list(map_dic), k=1):
+        imagesize_dic[ele] = map_dic[ele]
+
+    # pck to other chats randomly
     for ele in random.sample(list(source_dic), k=2):
         imagesize_dic[ele] = source_dic[ele]
+
+    # add toi chart
     for ele in toi_dic:
         imagesize_dic[ele] = toi_dic[ele]
 
@@ -354,6 +364,7 @@ if __name__ == '__main__':
         # IMGSIZE_DIC = {1: 49000, 2: 48500, 4: 55000, 5: 150000, 11: 30000, 12: 30000}
         # new image list due to wrong coordinates in shots.json
         IMGSIZE_DIC = get_imagesize_dic(LOGGER)
+        print(IMGSIZE_DIC)
 
         # we need some match_information
         matchinfo_dic = match_info_get(LOGGER, match_id, None, ['result_suffix', 'result', 'home_team__shortcut', 'visitor_team__shortcut', 'home_team__facebook_groups', 'date_uts', 'visitor_team__facebook_groups', 'prematch_tweet_id', 'tweet'])
