@@ -326,8 +326,8 @@ def get_imagesize_dic(logger):
         imagesize_dic[ele] = source_dic[ele]
 
     # add toi chart
-    for ele in toi_dic:
-        imagesize_dic[ele] = toi_dic[ele]
+    for ele, value in toi_dic.items():
+        imagesize_dic[ele] = value
 
     logger.debug('get_imagesize_dic() ended with: {0}'.format(imagesize_dic.keys()))
     return imagesize_dic
