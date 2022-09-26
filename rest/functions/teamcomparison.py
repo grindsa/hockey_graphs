@@ -37,11 +37,11 @@ def teamcomparison_get(logger, request, fkey=None, fvalue=None):
 
     (_fkey, season_id) = seasonid_get(logger, request)
 
-
-    # season_id = 5
     # get teams and matchstatistics
-    # teams_dic = team_dic_get(logger, request.META)
     teams_dic = teams_per_season_get(logger, season_id, request.META)
+    if not teams_dic:
+        teams_dic = team_dic_get(logger, request.META)
+
     matchstat_list = teammatchstats_get(logger, 'match__season_id', season_id)
 
     ismobile = mobile_check(logger, request)
