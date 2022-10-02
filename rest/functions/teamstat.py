@@ -26,6 +26,7 @@ def teamstat_add(logger, fkey=None, fvalue=None, data_dic=None):
 def teamstat_get(logger, fkey=None, fvalue=None, vlist=('match_id', 'home', 'visitor')):
     """ get info for a specifc match_id """
     logger.debug('teamstat_get({0}:{1})'.format(fkey, fvalue))
+
     try:
         if fkey:
             if fkey == 'match_id' and isinstance(fvalue, list):
@@ -47,6 +48,7 @@ def teamstat_get(logger, fkey=None, fvalue=None, vlist=('match_id', 'home', 'vis
         logger.debug('Error in teamstat_get(): {0}'.format(err_))
         teamstat_dic = []
 
+    logger.debug('teamstat_get() ended.')
     return teamstat_dic
 
 def teamstat_dic_get(logger, matchstat_list):
