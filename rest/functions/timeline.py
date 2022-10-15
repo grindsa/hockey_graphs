@@ -37,6 +37,8 @@ def skatersonice_get(logger, shift_list, matchinfo_dic, add_id=False):
         toi_dic[team_name][player_name] += shift_duration
 
         for second_ in range(shift['startTime']['time']+1, shift['endTime']['time']+1):
+            if second_ not in skaters_on_ice_dic[team_name]:
+                skaters_on_ice_dic[team_name][second_] = {'player_list': [], 'count': 0}
             # add player_ids or names
             if add_id:
                 skaters_on_ice_dic[team_name][second_]['player_list'].append(shift['player']['id'])

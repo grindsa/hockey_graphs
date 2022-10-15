@@ -312,8 +312,9 @@ def shiftchartdata_get(logger, ismobile, shift_dic, goal_dic, matchinfo_dic, plo
             goal_period = period_get(goal['time'], 'sec')
 
             for ele in (5, goal_period):
-                # add goal in overall tree an into period subtree
-                data_dic[ele]['x2_plotlines_list'].append({'color': team_plotlines_color, 'width': 2, 'value': goal['time'] * 1000, 'zIndex': 5, 'dashStyle': 'Dash', 'label': {'text': '<span><img src="{0}" width="{1}" height="{1}" alt="{2}"></img></span>'.format(logo, img_width, alt), 'align': 'center', 'verticalAlign': 'top', 'textAlign': 'center', 'useHTML': 1, 'rotation': 360, 'x': -1, 'y': -13}})
+                if ele in data_dic:
+                    # add goal in overall tree an into period subtree
+                    data_dic[ele]['x2_plotlines_list'].append({'color': team_plotlines_color, 'width': 2, 'value': goal['time'] * 1000, 'zIndex': 5, 'dashStyle': 'Dash', 'label': {'text': '<span><img src="{0}" width="{1}" height="{1}" alt="{2}"></img></span>'.format(logo, img_width, alt), 'align': 'center', 'verticalAlign': 'top', 'textAlign': 'center', 'useHTML': 1, 'rotation': 360, 'x': -1, 'y': -13}})
     return data_dic
 
 def _goalposition_get(period, timestamp):
