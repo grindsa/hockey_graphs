@@ -288,7 +288,7 @@ if __name__ == '__main__':
                     _playerstats_process(LOGGER, match_id, period, home_dic, visitor_dic, FORCE)
                 except BaseException:
                     LOGGER.error('ERROR: playerstats_get() failed.')
-            sys.exit()
+
             # get and store periodevents
             try:
                 event_dic = del_app_helper.periodevents_get(match_id)
