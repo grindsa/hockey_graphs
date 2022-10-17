@@ -23,13 +23,18 @@ from rest.functions.shot import shot_add, shot_delete, zone_name_get
 from rest.functions.teamstat import teamstat_add
 from delapphelper import DelAppHelper
 
-def _playerstats_process(logger, match_id_, period, home_dic_, visitor_dic_):
+def _playerstats_process(logger, match_id_, period, home_dic_, visitor_dic_, force=False):
     """ update match with result and finish flag """
     playerstat_list = playerstat_get(logger, 'match_id', match_id_)
 
     if period == 'K' and not playerstat_list:
         logger.debug('covering cornercase and set period to "3"')
         period = '3'
+
+    # overwrite period if force option has been set
+    if force:
+        period = sorted(playerstat_list['home'].keys())[-1]
+        logger.debug('force option - set period to {0}'.format(period))
 
     # filter only allowed periods
     periods_allowed = ['1', '2', '3', 'P']
@@ -176,6 +181,7 @@ def arg_parse():
     parser = argparse.ArgumentParser(description='match_import.py - update matches in database')
     parser.add_argument('-d', '--debug', help='debug mode', action="store_true", default=False)
     parser.add_argument('--shifts', help='debug mode', action="store_true", default=False)
+    parser.add_argument('--force', help='debug mode', action="store_true", default=False)
     parser.add_argument('-s', '--season', help='season id', default=None)
     parser.add_argument('--save', help='save directory', default=None)
     parser.add_argument('--hgs', help='hgs directory', default=None)
@@ -201,6 +207,7 @@ def arg_parse():
     save = args.save
     gitrepo = args.gitrepo
     hgs_data = args.hgs
+    force = args.force
 
     # process matchlist
     try:
@@ -215,7 +222,7 @@ def arg_parse():
         print('either -i -o -p parameter must be specified')
         sys.exit(0)
 
-    return(debug, season, match_list, addshifts, openmatches, pastmatches, interval, save, hgs_data, gitrepo)
+    return(debug, season, match_list, addshifts, openmatches, pastmatches, interval, save, hgs_data, gitrepo, force)
 
 def _path_check_create(logger, path):
     """ check save path - create if does not exist """
@@ -224,7 +231,7 @@ def _path_check_create(logger, path):
 
 if __name__ == '__main__':
 
-    (DEBUG, SEASON_ID, MATCH_LIST, ADDSHIFTS, OPENMATCHES, PASTMATCHES, INTERVAL, SAVE, HGS_DATA, GITREPO) = arg_parse()
+    (DEBUG, SEASON_ID, MATCH_LIST, ADDSHIFTS, OPENMATCHES, PASTMATCHES, INTERVAL, SAVE, HGS_DATA, GITREPO, FORCE) = arg_parse()
 
     TOURNAMENT_ID = None
 
@@ -278,10 +285,10 @@ if __name__ == '__main__':
                 try:
                     home_dic = del_app_helper.playerstats_get(match_id, True)
                     visitor_dic = del_app_helper.playerstats_get(match_id, False)
-                    _playerstats_process(LOGGER, match_id, period, home_dic, visitor_dic)
+                    _playerstats_process(LOGGER, match_id, period, home_dic, visitor_dic, FORCE)
                 except BaseException:
                     LOGGER.error('ERROR: playerstats_get() failed.')
-
+            sys.exit()
             # get and store periodevents
             try:
                 event_dic = del_app_helper.periodevents_get(match_id)
