@@ -79,12 +79,15 @@ def gameplayercorsi_get(logger, shot_list, shift_list, periodevent_list, matchin
                 # so far a bid unclear we only count 5vs5
                 # 5v5 is ok we can count it
                 # pylint: disable=R1703
-                if soi_dic['home_team'][shot['timestamp']]['count'] == 5 and soi_dic['visitor_team'][shot['timestamp']]['count'] == 5:
-                # if soi_dict['EBB'][shot['time']]['count'] == soi_dict[oteam_name][shot['time']]['count']:
-                    count_it = True
-                # elif soi_dict['EBB'][shot['time']]['count'] == 4 and soi_dict[oteam_name][shot['time']]['count'] == 4:
-                #     count_it = True
-                else:
+                try:
+                    if soi_dic['home_team'][shot['timestamp']]['count'] == 5 and soi_dic['visitor_team'][shot['timestamp']]['count'] == 5:
+                    # if soi_dict['EBB'][shot['time']]['count'] == soi_dict[oteam_name][shot['time']]['count']:
+                        count_it = True
+                    # elif soi_dict['EBB'][shot['time']]['count'] == 4 and soi_dict[oteam_name][shot['time']]['count'] == 4:
+                    #     count_it = True
+                    else:
+                        count_it = False
+                except Exception:
                     count_it = False
             else:
                 count_it = True
