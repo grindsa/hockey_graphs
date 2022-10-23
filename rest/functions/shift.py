@@ -234,11 +234,10 @@ def shiftchartdata_get(logger, ismobile, shift_dic, goal_dic, matchinfo_dic, plo
 
             # enumerate shifts
             for _sh_idx, shift in enumerate(shift_dic[team][player_id]['shifts']):
-
                 # get period of the shift
                 shift_period = period_get(shift['end'], 'sec')
-                if shift_period < 0:
-                    # detect overtime shifts adjust timestamp and add plotline for end of 3rd period
+                if shift_period > 0:
+                     # detect overtime shifts adjust timestamp and add plotline for end of 3rd period
                     if shift['start'] * 1000 > tst_end or shift['end'] * 1000 > tst_end:
                         tst_end = 3900000
                         data_dic[4] = _datastructure_create(logger, period, tst_end, matchinfo_dic, img_width)
@@ -252,7 +251,6 @@ def shiftchartdata_get(logger, ismobile, shift_dic, goal_dic, matchinfo_dic, plo
                                 # set x_scale for OT
                                 data_dic[period]['shifts_list'][0]['start'] = 3600000
                                 data_dic[period]['shifts_list'][0]['end'] = 3900000
-
                     # add index, count and playername to shift
                     shift['y'] = player_cnt
                     shift['cnt'] = player_cnt + 1
@@ -262,6 +260,7 @@ def shiftchartdata_get(logger, ismobile, shift_dic, goal_dic, matchinfo_dic, plo
                     shift['start_human'] = '{0:02d}:{1:02d}'.format(*divmod(shift['start'], 60))
                     shift['end_human'] = '{0:02d}:{1:02d}'.format(*divmod(shift['end'], 60))
                     shift['color'] = series_color
+
 
                     # add shifts to data_dic
                     data_dic[5]['shifts_list'].append(shift)
