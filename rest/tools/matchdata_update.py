@@ -315,7 +315,7 @@ if __name__ == '__main__':
                 # get teamstat
                 thome_dic = del_app_helper.teamstats_get(match_id, home_id)
                 tvisitor_dic = del_app_helper.teamstats_get(match_id, visitor_id)
-                # teamstat_add(LOGGER, 'match_id', match_id, {'match_id': match_id, 'home': thome_dic, 'visitor': tvisitor_dic})
+                teamstat_add(LOGGER, 'match_id', match_id, {'match_id': match_id, 'home': thome_dic, 'visitor': tvisitor_dic})
             except BaseException:
                 LOGGER.error('ERROR: teamstats_get() failed.')
 
