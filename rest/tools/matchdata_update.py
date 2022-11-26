@@ -280,12 +280,20 @@ if __name__ == '__main__':
             match_date_uts = match_info_get(LOGGER, match_id, None, ['date_uts'])['date_uts']
             gameheader_dic['match_day'] = uts_to_date_utc(match_date_uts, '%d.%m.%Y')
 
+            home_id = None
+            visitor_id = None
             if 'actualTimeAlias' in gameheader_dic:
+
+                if 'teamInfo' in gameheader_dic and 'home' in gameheader_dic['teamInfo'] and 'id' in gameheader_dic['teamInfo']['home']:
+                    home_id = gameheader_dic['teamInfo']['home']['id']
+                if 'teamInfo' in gameheader_dic and 'visitor' in gameheader_dic['teamInfo'] and 'id' in gameheader_dic['teamInfo']['visitor']:
+                    visitor_id = gameheader_dic['teamInfo']['visitor']['id']
+
                 period = gameheader_dic['actualTimeAlias']
                 try:
-                    home_dic = del_app_helper.playerstats_get(match_id, True)
-                    visitor_dic = del_app_helper.playerstats_get(match_id, False)
-                    _playerstats_process(LOGGER, match_id, period, home_dic, visitor_dic, FORCE)
+                    home_dic = del_app_helper.playerstats_get(match_id, home_id)
+                    visitor_dic = del_app_helper.playerstats_get(match_id, visitor_id)
+                    # _playerstats_process(LOGGER, match_id, period, home_dic, visitor_dic, FORCE)
                 except BaseException:
                     LOGGER.error('ERROR: playerstats_get() failed.')
 
@@ -305,9 +313,9 @@ if __name__ == '__main__':
 
             try:
                 # get teamstat
-                thome_dic = del_app_helper.teamstats_get(match_id, True)
-                tvisitor_dic = del_app_helper.teamstats_get(match_id, False)
-                teamstat_add(LOGGER, 'match_id', match_id, {'match_id': match_id, 'home': thome_dic, 'visitor': tvisitor_dic})
+                thome_dic = del_app_helper.teamstats_get(match_id, home_id)
+                tvisitor_dic = del_app_helper.teamstats_get(match_id, visitor_id)
+                # teamstat_add(LOGGER, 'match_id', match_id, {'match_id': match_id, 'home': thome_dic, 'visitor': tvisitor_dic})
             except BaseException:
                 LOGGER.error('ERROR: teamstats_get() failed.')
 
