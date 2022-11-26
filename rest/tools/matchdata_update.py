@@ -293,7 +293,7 @@ if __name__ == '__main__':
                 try:
                     home_dic = del_app_helper.playerstats_get(match_id, home_id)
                     visitor_dic = del_app_helper.playerstats_get(match_id, visitor_id)
-                    # _playerstats_process(LOGGER, match_id, period, home_dic, visitor_dic, FORCE)
+                    _playerstats_process(LOGGER, match_id, period, home_dic, visitor_dic, FORCE)
                 except BaseException:
                     LOGGER.error('ERROR: playerstats_get() failed.')
 

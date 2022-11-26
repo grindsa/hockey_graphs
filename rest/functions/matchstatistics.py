@@ -81,7 +81,9 @@ def matchstatistics_get(logger, request, fkey=None, fvalue=None):
             (_sf_5v5, _sa_5v5, _sogf_5v5, _soga_5v5, shot_list_5v5) = gameshots5v5_get(logger, matchinfo_dic, 'foo', shot_list, shift_list, periodevent_list)
 
             # get matchstatistics
-            result.append(matchstats_get(logger, fvalue, color_dic, matchinfo_dic))
+            matchstat_dic = matchstats_get(logger, fvalue, color_dic, matchinfo_dic)
+            if matchstat_dic:
+                result.append(matchstat_dic)
 
             # create chart for shots per match
             # pylint: disable=E0602
