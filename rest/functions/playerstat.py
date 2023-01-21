@@ -49,15 +49,16 @@ def _matchupmatrix_gen(logger, shotpersec_list, soi_dic, lineup_dic, player_dic,
             process_sec = False
 
         if process_sec:
-            for hplayer_id in soi_dic['home_team'][sec]['player_list']:
-                for vplayer_id in soi_dic['visitor_team'][sec]['player_list']:
-                    if hplayer_id in player_dic and vplayer_id in player_dic:
-                        matchup_matrix[player_dic[hplayer_id]][player_dic[vplayer_id]]['seconds'] += 1
-                        # print(shotpersec_list['home_team'].count(sec), shotpersec_list['visitor_team'].count(sec))
-                        if shotpersec_list['home_team'].count(sec) > 0:
-                            matchup_matrix[player_dic[hplayer_id]][player_dic[vplayer_id]]['home_shots'] += shotpersec_list['home_team'].count(sec)
-                        if shotpersec_list['visitor_team'].count(sec) > 0:
-                            matchup_matrix[player_dic[hplayer_id]][player_dic[vplayer_id]]['visitor_shots'] += shotpersec_list['visitor_team'].count(sec)
+            if 'player_list' in soi_dic['home_team'][sec] and 'player_list' in  soi_dic['visitor_team'][sec]:
+                for hplayer_id in soi_dic['home_team'][sec]['player_list']:
+                    for vplayer_id in soi_dic['visitor_team'][sec]['player_list']:
+                        if hplayer_id in player_dic and vplayer_id in player_dic:
+                            matchup_matrix[player_dic[hplayer_id]][player_dic[vplayer_id]]['seconds'] += 1
+                            # print(shotpersec_list['home_team'].count(sec), shotpersec_list['visitor_team'].count(sec))
+                            if shotpersec_list['home_team'].count(sec) > 0:
+                                matchup_matrix[player_dic[hplayer_id]][player_dic[vplayer_id]]['home_shots'] += shotpersec_list['home_team'].count(sec)
+                            if shotpersec_list['visitor_team'].count(sec) > 0:
+                                matchup_matrix[player_dic[hplayer_id]][player_dic[vplayer_id]]['visitor_shots'] += shotpersec_list['visitor_team'].count(sec)
     return matchup_matrix
 
 def playerstatistics_add(logger, match_id, player_id, data_dic):
