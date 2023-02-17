@@ -32,4 +32,4 @@ else
     echo "no deploy"
 fi
 
-# exec "$@"
+exec "$@"
