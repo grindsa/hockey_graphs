@@ -9,7 +9,7 @@ RUN apt-get install --no-install-recommends -y \
     openssh-client \
     rsync
 
-RUN mkdir /tmp/ui/src
+RUN mkdir -p /tmp/ui/src
 RUN mkdir -p /tmp/rest/functions
 RUN mkdir -p /tmp/rest/tools
 RUN mkdir -p /tmp/static
