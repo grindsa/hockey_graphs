@@ -3,6 +3,7 @@
 P1=$1
 
 cd /tmp/ui
+mkdir src
 npm install
 npm install webpack@4.37.0
 # npm install --only=dev
