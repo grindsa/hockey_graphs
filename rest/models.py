@@ -60,6 +60,11 @@ class Periodevent(models.Model):
     match = models.ForeignKey(Match, on_delete=models.CASCADE)
     period_event = jsonfield.JSONField(default=dict)
 
+class Faceoff(models.Model):
+    """ shifts """
+    match = models.ForeignKey(Match, on_delete=models.CASCADE)
+    faceoff = jsonfield.JSONField(default=dict)
+
 class Player(models.Model):
     """ player """
     player_id = models.IntegerField(primary_key=True)

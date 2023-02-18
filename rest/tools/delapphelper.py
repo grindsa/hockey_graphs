@@ -137,6 +137,12 @@ class DelAppHelper():
                 'lastUpdate': 0}
         return self.api_post(self.mobile_api, data)
 
+    def faceoffs_get(self, match_id):
+        """ get faceoffs per match """
+        self.logger.debug('DelAppHelper.faceoffs_get({0})\n'.format(match_id))
+        url = '{0}/matches/{1}/faceoffs.json'.format(self.del_api, match_id)
+        return requests.get(url, headers=self.headers, verify=False).json()
+
     def lineup_get(self, game_id):
         """ get lineup """
         self.logger.debug('DelAppHelper.linup_get()\n')

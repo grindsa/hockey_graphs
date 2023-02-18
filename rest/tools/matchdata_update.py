@@ -10,6 +10,7 @@ from datetime import datetime
 import git
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir, os.path.pardir)))
+from rest.functions.faceoff import faceoff_add
 from rest.functions.gameheader import gameheader_add
 from rest.functions.helper import logger_setup, uts_now, json_store, uts_to_date_utc
 from rest.functions.match import openmatch_list_get, match_add, pastmatch_list_get, sincematch_list_get, match_info_get
@@ -319,11 +320,15 @@ if __name__ == '__main__':
             except BaseException:
                 LOGGER.error('ERROR: teamstats_get() failed.')
 
-            # get shifts if required
+
             if ADDSHIFTS:
-                # print('adding shifts')
+                # get shifts if required
                 shift_dic = del_app_helper.shifts_get(match_id)
                 shift_add(LOGGER, 'match_id', match_id, {'match_id': match_id, 'shift': shift_dic})
+
+                # add faceoffs
+                faceoff_dic = del_app_helper.faceoffs_get(match_id)
+                faceoff_add(LOGGER, 'match_id', match_id, {'match_id': match_id, 'faceoff': faceoff_dic})
 
             try:
                 # delete shots for the match to cope with renumbering (rember EBBvBHV in 12/20)

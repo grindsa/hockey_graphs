@@ -1,8 +1,45 @@
 # -*- coding: utf-8 -*-
 """ list of functions for faceoff statistics """
+import sys
+import os
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "hockey_graphs.settings")
+import django
+django.setup()
+import math
+from rest.models import Faceoff
 from rest.functions.chartparameters import plotlines_color, chart_color6, title, font_size
 from rest.functions.corsi import pace_chartseries_get
 from rest.functions.helper import list_sumup, pctg_float_get
+
+
+def faceoff_add(logger, fkey, fvalue, data_dic):
+    """ add team to database """
+    logger.debug('faceoff_add({0}:{1})'.format(fkey, fvalue))
+    try:
+        # add faceoff
+        obj, _created = Faceoff.objects.update_or_create(**{fkey: fvalue}, defaults=data_dic)
+        obj.save()
+        result = obj.id
+    except BaseException as err_:
+        logger.critical('error in faceoff_add(): {0}'.format(err_))
+        result = None
+    logger.debug('faceoff_add({0}:{1}) ended with {2}'.format(fkey, fvalue, result))
+    return result
+
+def faceoff_get(logger, fkey, fvalue, vlist=('match_id', 'shift')):
+    """ get info for a specifc match_id """
+    logger.debug('faceoff_get({0}:{1})'.format(fkey, fvalue))
+    try:
+        if len(vlist) == 1:
+            faceoff_dic = list(Faceoff.objects.filter(**{fkey: fvalue}).values_list(vlist[0], flat=True))[0]
+        else:
+            faceoff_dic = Faceoff.objects.filter(**{fkey: fvalue}).values(*vlist)[0]
+    except BaseException:
+        shift_dic = {}
+
+    return faceoff_dic
 
 def _faceoff_sumup(logger, teamstat_dic):
     """ sum up faceoff statistics """
