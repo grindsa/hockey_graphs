@@ -31,15 +31,16 @@ class PlayerperseasonAdmin(admin.ModelAdmin):
 
 class PlayerstatAdmin(admin.ModelAdmin):
     """ shots admin """
-    fields = ['match', 'home', 'visitor']
-    list_display = ['match']
-    ordering = ['match_id']
+    pass
+#    fields = ['match', 'home', 'visitor']
+#    list_display = ['match']
+#    ordering = ['match_id']
 
 class PlayerstatisticsAdmin(admin.ModelAdmin):
     """ shots admin """
     fields = [field.name for field in Playerstatistics._meta.get_fields()]
     list_display = [field.name for field in Playerstatistics._meta.get_fields()]
-    ordering = ['match_id']
+    # ordering = ['season', 'player']
 
 class GameheaderAdmin(admin.ModelAdmin):
     """ gameheader admin """

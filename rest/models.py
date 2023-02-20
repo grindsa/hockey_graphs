@@ -92,22 +92,20 @@ class Playerstat(models.Model):
 
 class Playerstatistics(models.Model):
     """ playerstats from del """
-    match = models.ForeignKey(Match, on_delete=models.CASCADE)
+    season = models.ForeignKey(Season, on_delete=models.CASCADE, default=1)
     player = models.ForeignKey(Player, on_delete=models.CASCADE, default=0)
-    team = models.ForeignKey(Team, related_name='team', on_delete=models.CASCADE)
-    oteam = models.ForeignKey(Team, related_name='oteam', on_delete=models.CASCADE)
-    roadgame = models.BooleanField(default=False)
-    shots_for = models.IntegerField(default=0)
-    shots_for_avg = models.FloatField(default=0)
-    shots_for_5v5 = models.IntegerField(default=0)
-    shots_for_5v5_avg = models.FloatField(default=0)
-    shots_against = models.IntegerField(default=0)
-    shots_against_avg = models.FloatField(default=0)
-    shots_against_5v5 = models.IntegerField(default=0)
-    shots_against_5v5_avg = models.FloatField(default=0)
+    shots_for = models.JSONField(default=0)
+    shots_for_avg = models.JSONField(default=0)
+    shots_for_5v5 = models.JSONField(default=0)
+    shots_for_5v5_avg = models.JSONField(default=0)
+    shots_against = models.JSONField(default=0)
+    shots_against_avg = models.JSONField(default=0)
+    shots_against_5v5 = models.JSONField(default=0)
+    shots_against_5v5_avg = models.JSONField(default=0)
     toi = jsonfield.JSONField(default=dict)
-    toi_pp = models.IntegerField(default=0)
-    toi_pk = models.IntegerField(default=0)
+    toi_pp = models.JSONField(default=0)
+    toi_pk = models.JSONField(default=0)
+    faceoff = jsonfield.JSONField(default=dict)
 
 class Gameheader(models.Model):
     """ gameheader json from del """
