@@ -28,7 +28,7 @@ def faceoff_add(logger, fkey, fvalue, data_dic):
     logger.debug('faceoff_add({0}:{1}) ended with {2}'.format(fkey, fvalue, result))
     return result
 
-def faceoff_get(logger, fkey, fvalue, vlist=('match_id', 'shift')):
+def faceoff_get(logger, fkey, fvalue, vlist=('match_id', 'faceoff')):
     """ get info for a specifc match_id """
     logger.debug('faceoff_get({0}:{1})'.format(fkey, fvalue))
     try:
@@ -37,7 +37,7 @@ def faceoff_get(logger, fkey, fvalue, vlist=('match_id', 'shift')):
         else:
             faceoff_dic = Faceoff.objects.filter(**{fkey: fvalue}).values(*vlist)[0]
     except BaseException:
-        shift_dic = {}
+        faceoff_dic = {}
 
     return faceoff_dic
 
@@ -56,6 +56,25 @@ def _faceoff_sumup(logger, teamstat_dic):
             update_amount = len(teamstat_sum_dic[team_id])
 
     return (teamstat_sum_dic, update_amount)
+
+
+def faceoff_per_player_sort(logger, faceoff_list):
+    """ get faceoff per playerid """
+    logger.debug('faceoff_per_player_sort()')
+    player_dic = {}
+
+    for faceoff in faceoff_list:
+        if faceoff['winner']['id'] not in player_dic:
+            player_dic[faceoff['winner']['id']] = []
+
+        if faceoff['losser']['id'] not in player_dic:
+            player_dic[faceoff['losser']['id']] = []
+
+        player_dic[faceoff['winner']['id']].append({'win': True, 'peer': faceoff['losser']['id'], 'time': faceoff['time'], 'position': faceoff['position']})
+        player_dic[faceoff['losser']['id']].append({'win': False, 'peer': faceoff['winner']['id'], 'time': faceoff['time'], 'position': faceoff['position']})
+
+    return player_dic
+
 
 def faceoff_overview_get(logger, ismobile, teamstat_dic, teams_dic):
     """ collect data for faceoff overview chart """

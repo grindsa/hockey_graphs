@@ -8,7 +8,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "hockey_graphs.settings")
 import django
 django.setup()
 from django.conf import settings
-from rest.functions.bananachart import banana_chart1_create, banana_chart2_create
+from rest.models import Playerstatistics
 from rest.functions.heatmap import gameheatmapdata_get
 from rest.functions.helper import url_build, mobile_check
 from rest.functions.match import match_list_get, matchinfo_list_get
@@ -106,3 +106,31 @@ def _shots_per_match_get(logger, shot_list):
 
     logger.debug('_shots_per_match_get() ended with {0} match_entries'.format(len(shot_dic.keys())))
     return shot_dic
+
+def playerstatistics_single_get(logger, season_id=None, player_id=None,  vlist=('season_id', 'player_id', 'faceoff', 'toi')):
+    """ get playerstatistics for a player per season"""
+    logger.debug('playerstatistics_single_get()')
+    try:
+        if len(vlist) == 1:
+            playerstat_dic = list(Playerstatistics.objects.filter(season_id=season_id, player_id=player_id).values_list(vlist[0], flat=True))[0]
+        else:
+            playerstat_dic = Playerstatistics.objects.filter(season_id=season_id, player_id=player_id).values(*vlist)[0]
+    except BaseException:
+        playerstat_dic = {}
+
+    return playerstat_dic
+
+def playerstatistics_single_add(logger, season_id=None, player_id=None, data_dic={}):
+    """ add playerstat to database """
+    logger.debug('playerstatistics_single_add({0}:{1})'.format(season_id, player_id, data_dic))
+
+    try:
+        # add playerstatistics
+        obj, _created = Playerstatistics.objects.update_or_create(season_id=season_id, player_id=player_id, defaults=data_dic)
+        obj.save()
+        result = obj.id
+    except BaseException as err_:
+        logger.critical('error in playerstatistics_single_add(): {0}'.format(err_))
+        result = None
+    logger.debug('playerstatistics_single_add({0}:{1}) ended with {2}'.format(season_id, player_id, result))
+    return result

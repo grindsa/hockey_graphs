@@ -10,6 +10,8 @@ from datetime import datetime
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir, os.path.pardir)))
 from rest.functions.corsi import gameplayercorsi_get
+from rest.functions.faceoff import faceoff_get, faceoff_per_player_sort
+from rest.functions.playerstatistics import playerstatistics_single_get, playerstatistics_single_add
 from rest.functions.helper import logger_setup, uts_now
 from rest.functions.match import openmatch_list_get, pastmatch_list_get, sincematch_list_get, match_list_get, match_info_get
 from rest.functions.periodevent import periodevent_get
@@ -18,6 +20,22 @@ from rest.functions.roster import roster_get
 from rest.functions.season import season_latest_get
 from rest.functions.shift import shift_get, toifromshifts_get, shiftsperplayer_get
 from rest.functions.shot import shot_list_get
+
+def _update_faceoff_data(logger, season_id, match_id, faceoff_list, ):
+    """ update faceoff data"""
+
+    output_dic = {}
+    # build dictionary container faceoff results per player(id)
+    player_dic = faceoff_per_player_sort(logger, faceoff_list)
+
+    for player_id in player_dic:
+        playerstat_dic = playerstatistics_single_get(logger, season_id, player_id, ['faceoff'])
+        playerstat_dic[match_id] = player_dic[player_id]
+
+        # _result = playerstatistics_single_add(logger, season_id, player_id, {'faceoff': playerstat_dic})
+        output_dic[player_id] = {'faceoff': playerstat_dic}
+
+    return output_dic
 
 def _update_shot_data(logger, match_id, matchinfo_dic, periodevent_list, roster_list, shift_list, shot_list):
     """ update shoot data in playerstatistics """
@@ -29,6 +47,7 @@ def _update_shot_data(logger, match_id, matchinfo_dic, periodevent_list, roster_
 
     _avg_dic = {}
 
+    output_dic = {}
     for team in player_shot_dic:
 
         if team == 'home_team':
@@ -67,13 +86,15 @@ def _update_shot_data(logger, match_id, matchinfo_dic, periodevent_list, roster_
     for player_id in shot_dic:
         playerstatistics_add(logger, match_id, player_id, shot_dic[player_id])
 
-def _update_toi_data(logger, match_id, matchinfo_dic, shift_list, playerstat_dic):
+def _update_toi_data(logger, season_id, match_id, matchinfo_dic, shift_list, playerstat_dic):
     """ update toi data in playerstatistics """
     logger.debug('_update_toi_data: {0}'.format(match_id))
 
     toi_dic = {}
+    output_dic = {}
     # get toi
     period_toi_dic = toifromshifts_get(logger, matchinfo_dic, shift_list, 'id')
+
     # aggregate tois per player
     for team in period_toi_dic:
         if team == 'home_team':
@@ -81,13 +102,14 @@ def _update_toi_data(logger, match_id, matchinfo_dic, shift_list, playerstat_dic
             oteam_id = matchinfo_dic['visitor_team_id']
         else:
             oteam_id = matchinfo_dic['home_team_id']
-            team_id = matchinfo_dic['visitor_team_id']
+            team_id = matchinfo_dic['visitor_team_id']#
 
         for period in period_toi_dic[team]:
             for player_id in period_toi_dic[team][period]:
                 if player_id not in toi_dic:
                     toi_dic[player_id] = {'team_id': team_id, 'oteam_id': oteam_id, 'toi': {}, 'toi_pp': 0, 'toi_pk': 0}
                 toi_dic[player_id]['toi'][period] = period_toi_dic[team][period][player_id]
+
 
     # add toi_pp and toi_sh
     toipppk_dic = toipppk_get(logger, matchinfo_dic, playerstat_dic, 'id')
@@ -97,7 +119,12 @@ def _update_toi_data(logger, match_id, matchinfo_dic, shift_list, playerstat_dic
             toi_dic[player_id]['toi_pp'] = toipppk_dic[team][player_id]['pp']
 
     for player_id in toi_dic:
-        playerstatistics_add(logger, match_id, player_id, toi_dic[player_id])
+        playerstat_dic = playerstatistics_single_get(logger, season_id, player_id, ['toi'])
+        playerstat_dic[match_id] = toi_dic[player_id]
+
+        output_dic[player_id] = {'toi': playerstat_dic}
+
+    return output_dic
 
 
 def arg_parse():
@@ -177,9 +204,18 @@ if __name__ == '__main__':
         roster_list = roster_get(LOGGER, 'match', match_id, ['roster'])
         shift_list = shift_get(LOGGER, 'match', match_id, ['shift'])
         shot_list = shot_list_get(LOGGER, 'match', match_id, ['timestamp', 'match_shot_resutl_id', 'real_date', 'team_id', 'player__first_name', 'player__last_name', 'zone', 'coordinate_x', 'coordinate_y', 'player__jersey'])
+        faceoff_list = faceoff_get(LOGGER, 'match', match_id, ['faceoff'])
 
-        if shot_list and shift_list and roster_list and periodevent_list:
+        if shift_list:
             # update toi
-            # _update_toi_data(LOGGER, match_id, matchinfo_dic, shift_list, playerstat_dic)
+            toi_dic = _update_toi_data(LOGGER, SEASON_ID, match_id, matchinfo_dic, shift_list, playerstat_dic)
             # update shots
-            _update_shot_data(LOGGER, match_id, matchinfo_dic, periodevent_list, roster_list, shift_list, shot_list)
+            # _update_shot_data(LOGGER, match_id, matchinfo_dic, periodevent_list, roster_list, shift_list, shot_list)
+
+        if faceoff_list:
+            faceoff_dic = _update_faceoff_data(LOGGER, SEASON_ID, match_id, faceoff_list)
+
+
+        final_dic = {**toi_dic, **faceoff_dic}
+        from pprint import pprint
+        pprint(final_dic)
