@@ -216,6 +216,9 @@ if __name__ == '__main__':
             faceoff_dic = _update_faceoff_data(LOGGER, SEASON_ID, match_id, faceoff_list)
 
 
-        final_dic = {**toi_dic, **faceoff_dic}
+        for player_id in toi_dic:
+            if player_id in faceoff_dic:
+                toi_dic[player_id].update(faceoff_dic[player_id])
+
         from pprint import pprint
-        pprint(final_dic)
+        pprint(toi_dic)
