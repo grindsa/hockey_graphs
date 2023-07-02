@@ -94,17 +94,8 @@ class Playerstatistics(models.Model):
     """ playerstats from del """
     season = models.ForeignKey(Season, on_delete=models.CASCADE, default=1)
     player = models.ForeignKey(Player, on_delete=models.CASCADE, default=0)
-    shots_for = models.JSONField(default=0)
-    shots_for_avg = models.JSONField(default=0)
-    shots_for_5v5 = models.JSONField(default=0)
-    shots_for_5v5_avg = models.JSONField(default=0)
-    shots_against = models.JSONField(default=0)
-    shots_against_avg = models.JSONField(default=0)
-    shots_against_5v5 = models.JSONField(default=0)
-    shots_against_5v5_avg = models.JSONField(default=0)
+    shots = jsonfield.JSONField(default=dict)
     toi = jsonfield.JSONField(default=dict)
-    toi_pp = models.JSONField(default=0)
-    toi_pk = models.JSONField(default=0)
     faceoff = jsonfield.JSONField(default=dict)
 
 class Gameheader(models.Model):
