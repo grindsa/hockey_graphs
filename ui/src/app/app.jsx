@@ -24,7 +24,7 @@ export const App = () => {
   const [seasonlist, setSeasonlist] = useState([])
   const [statList, setStatList] = useState([{id: 0, name: 'Spielstatistiken', route: '/matchstatistics'}, {id: 1, name: 'Teamvergleich', route: '/teamcomparison'}, {id: 2, name: 'Spielerstatistiken', route: '/playerstatistics'}])
   const [language, setLanguage] = useState('DE')
-  const [selectedSeason, setSelectedSeason] = useState(0)
+  const [selectedSeason, setSelectedSeason] = useState(6)
   const [selectedStat, setSelectedStat] = useState(0)
 
   const changeSeason = (newSeason) => {

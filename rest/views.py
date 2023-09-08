@@ -178,7 +178,7 @@ class PeriodeventViewSet(viewsets.ModelViewSet):
 # pylint: disable=R0901
 class SeasonViewSet(viewsets.ModelViewSet):
     """ viewset for players """
-    queryset = Season.objects.all().order_by('id')
+    queryset = Season.objects.all().order_by('-id')
     serializer_class = SeasonSerializer
     http_method_names = ['get']
 
