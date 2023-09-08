@@ -13,7 +13,7 @@ export const SeasonSelector = (props) => {
           // color pink if magenta sponsored events get selected
           if (seasonlist[key].name.includes('agenta')){
             color = 'w3-pink'
-          }else if (seasonlist[key].name.includes('2023')) {
+          }else if (seasonlist[key].name.includes('2024')) {
             color = 'pdelcolor'
           }
           break
