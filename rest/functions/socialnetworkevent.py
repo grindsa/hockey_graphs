@@ -5,14 +5,14 @@ import sys
 import os
 import re
 import json
-import twitter
+import tweepy
 import requests
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "hockey_graphs.settings")
 import django
 django.setup()
 from rest.models import Socialnetworkevent
-from rest.functions.helper import date_to_uts_utc
+from rest.functions.helper import date_to_uts_utc, config_load
 
 def _tweet_clean(text):
     """" clean tweets (remove hashtages and links) tweets """
@@ -68,21 +68,27 @@ def tags_build(logger, home_team, visitor_team):
     result = ['#{0}vs{1}'.format(home_team.lower(), visitor_team.lower()), '#{0}{1}'.format(home_team.lower(), visitor_team.lower())]
     return result
 
-def twitter_login(logger, consumer_key, consumer_secret, oauth_token, oauth_token_secret, domain=None):
-    """ oauth login """
-    logger.debug('_oauth_login()')
-    # Creating the authentification
-    auth = twitter.oauth.OAuth(oauth_token,
-                               oauth_token_secret,
-                               consumer_key,
-                               consumer_secret)
-    # create twitter instance
-    if domain:
-        twitter_api = twitter.Twitter(domain=domain, auth=auth)
-    else:
-        twitter_api = twitter.Twitter(auth=auth)
+def twitter_login_v1(logger, consumer_key, consumer_secret, access_token_key, access_token_secret, _bearer_token):
+    """ twitter login via v1 """
+    logger.debug('twitter_login_v1()')
+    auth = tweepy.OAuth1UserHandler(consumer_key, consumer_secret)
+    auth.set_access_token(
+        access_token_key,
+        access_token_secret,
+    )
+    return tweepy.API(auth)
 
-    return twitter_api
+def twitter_login_v2(logger, consumer_key, consumer_secret, access_token_key, access_token_secret):
+    """ twitter login via v2 """
+    logger.debug('twitter_login_v1()')
+    client = tweepy.Client(
+        consumer_key=consumer_key,
+        consumer_secret=consumer_secret,
+        access_token=access_token_key,
+        access_token_secret=access_token_secret,
+    )
+    return client
+
 
 def twitter_image_upload(logger, twitter_api, img_list):
     """ upload image to twitter """
@@ -91,14 +97,30 @@ def twitter_image_upload(logger, twitter_api, img_list):
     id_list = []
     for img in img_list:
         if img:
-            logger.debug('upload_img({0})\n'.format(img))
             try:
-                with open(img, 'rb') as imagefile:
-                    imagedata = imagefile.read()
-                    id_list.append(twitter_api.media.upload(media=imagedata)['media_id_string'])
-            except BaseException as err_:
-                print(err_)
+                logger.debug('upload_img({0})\n'.format(img))
+                media = twitter_api.media_upload(filename=img)
+                id_list.append(media.media_id)
+            except Exception as err:
+                logger.error('upload_img(): error: {0}'.format(err))
     return id_list
+
+
+def tweet_send(logger, twitter_api, tweet_text, id_list=None, in_reply_to=None):
+    logger.debug('tweet_send()')
+
+    if in_reply_to:
+        if id_list:
+            result = twitter_api.create_tweet(text=tweet_text, media_ids=id_list, in_reply_to_tweet_id=in_reply_to)
+        else:
+            result = twitter_api.create_tweet(text=tweet_text, in_reply_to_tweet_id=in_reply_to)
+    else:
+        if id_list:
+            result = twitter_api.create_tweet(text=tweet_text, media_ids=id_list)
+        else:
+            result = twitter_api.create_tweet(text=tweet_text)
+
+    return result.data
 
 def tweets_get(logger, twitter_api, hashtag_list):
     """" get tweets """
@@ -255,3 +277,43 @@ def facebook_post(logger, group_list, message, image_list, access_token):
             # post message
             req = requests.post(feed_url, data=feed_dic)
 
+def social_config_load(logger, cfg_file=os.path.dirname(__file__)+'/'+'hockeygraphs.cfg'):
+    """" load config from file """
+    logger.debug(f'social_config_load({cfg_file})')
+
+    consumer_key = None
+    consumer_secret = None
+    access_token_key = None
+    access_token_secret = None
+    bearer_token = None
+    fb_token_file = None
+
+    config_dic = config_load(cfg_file=cfg_file)
+
+    if 'Twitter' in config_dic:
+        if 'consumer_key' in config_dic['Twitter']:
+            consumer_key = config_dic['Twitter']['consumer_key']
+        if 'consumer_secret' in config_dic['Twitter']:
+            consumer_secret = config_dic['Twitter']['consumer_secret']
+        if 'access_token_key' in config_dic['Twitter']:
+            access_token_key = config_dic['Twitter']['access_token_key']
+        if 'access_token_secret' in config_dic['Twitter']:
+            access_token_secret = config_dic['Twitter']['access_token_secret']
+        if 'bearer_token' in config_dic['Twitter']:
+            bearer_token = config_dic['Twitter']['bearer_token']
+
+    if 'Facebook' in config_dic:
+        if 'token_file' in config_dic['Facebook']:
+            fb_token_file = config_dic['Facebook']['token_file']
+
+
+    if not (consumer_key and consumer_secret and access_token_key and access_token_secret and bearer_token):
+        logger.debug('social_config_load(): twitter configuration incomplete')
+        sys.exit(0)
+
+    if not fb_token_file:
+        logger.debug('social_config_load(): facebook configuration incomplete')
+        sys.exit(0)
+
+    logger.debug('social_config_load() ended.')
+    return (consumer_key, consumer_secret, access_token_key, access_token_secret, bearer_token, fb_token_file)
