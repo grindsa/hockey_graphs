@@ -70,7 +70,7 @@ def convert_graph(logger, url, data, file_name):
 
     headers = {'Content-Type': 'application/json'}
     try:
-        api_response = requests.post(url=url, data=data, headers=headers, verify=False, timeout=15)
+        api_response = requests.post(url=url, data=data, headers=headers, verify=False, timeout=30)
         # pylint: disable=R1705
         if api_response.ok and api_response.content:
             logger.debug('We got something useful back. Lets dump it into a file')
@@ -298,8 +298,8 @@ def fbook_it(logger, matchinfo_dic_, img_list_, season_id, match_id):
     # pylint: disable=R0914
     logger.debug('fbook_it()')
 
-    # load rebound and break interval from config file
-    (_consumer_key, _consumer_secret, _oauth_token, _oauth_token_secret, fb_token_file) = _config_load(LOGGER)
+    # load twitter credentials from config file
+    (_consumer_key, _consumer_secret, _access_token_key, _access_token_secret, _bearer_token, fb_token_file) = social_config_load(logger, cfg_file=os.path.dirname(__file__)+'/'+'hockeygraphs.cfg')
 
     # get access token
     token_dic = json_load(fb_token_file)
@@ -351,6 +351,7 @@ if __name__ == '__main__':
     TMP_DIR = '/tmp'
 
     EXPORTER_HOST = 'http://192.168.124.1'
+    # EXPORTER_HOST = 'http://192.168.124.2'
     EXPORTER_PORT = 7801
 
     FILE_NAME = '/tmp/foo.json'
