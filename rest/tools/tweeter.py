@@ -363,8 +363,16 @@ if __name__ == '__main__':
     UTS = uts_now()
 
     if not SEASON_ID:
-        # get season_id
-        SEASON_ID = season_latest_get(LOGGER)
+        if MATCH_ID_LIST:
+
+            matchinfo_dic = match_info_get(LOGGER, MATCH_ID_LIST[0], None, ['season_id'])
+            if 'season_id' in matchinfo_dic:
+                SEASON_ID = matchinfo_dic['season_id']
+            else:
+                SEASON_ID = season_latest_get(LOGGER)
+        else:
+            # get season_id
+            SEASON_ID = season_latest_get(LOGGER)
 
     if not MATCH_ID_LIST:
         if INTERVAL:
