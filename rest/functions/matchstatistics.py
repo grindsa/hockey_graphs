@@ -578,13 +578,21 @@ def _prematchoverview_get(logger, request, uts_now, fkey, fvalue, matchinfo_dic,
 
     title = _('head-to-head')
 
-    delstat_dic = {'home': teamstatdel_get(logger, season_id, matchinfo_dic['home_team_id'])[0]['leagueallteamstats'], 'visitor': teamstatdel_get(logger, season_id, matchinfo_dic['visitor_team_id'])[0]['leagueallteamstats']}
+    # get prematch team stats
+    home_team_stat_dic = teamstatdel_get(logger, season_id, matchinfo_dic['home_team_id'])
+    visitor_team_stat_dic = teamstatdel_get(logger, season_id, matchinfo_dic['visitor_team_id'])
 
-    chart_data = prematchoverview_get(logger, request, fkey, fvalue, matchinfo_dic, teamstat_dic, delstat_dic, color_dic, playoff_start)
-    chart_data['title'] = title
+    if home_team_stat_dic and visitor_team_stat_dic:
+        delstat_dic = {'home': home_team_stat_dic[0]['leagueallteamstats'], 'visitor': visitor_team_stat_dic[0]['leagueallteamstats']}
 
-    if playoff_start and uts_now > playoff_start:
-        chart_data['subtitle'] = _('(Playoffs)')
+        chart_data = prematchoverview_get(logger, request, fkey, fvalue, matchinfo_dic, teamstat_dic, delstat_dic, color_dic, playoff_start)
+        chart_data['title'] = title
+
+        if playoff_start and uts_now > playoff_start:
+            chart_data['subtitle'] = _('(Playoffs)')
+
+    else:
+        chart_data = {}
 
     stat_entry = {
         'title': title,
