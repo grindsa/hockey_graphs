@@ -132,9 +132,9 @@ def create_cron_entries(logger, tzone):
                 shifts.minute.on(5)
 
                 # update twitter tags at 11:00pm
-                tag = cron.new(command=path+'/tag_fetcher.py -i 24 -b 4 --save /var/www/hockey_graphs/data', comment='update twitter tags', user='root')
-                tag.hour.on(23)
-                tag.minute.on(0)
+                # tag = cron.new(command=path+'/tag_fetcher.py -i 24 -b 4 --save /var/www/hockey_graphs/data', comment='update twitter tags', user='root')
+                # tag.hour.on(23)
+                # tag.minute.on(0)
 
                 # update teamstats at 11pm
                 # teamstats = cron.new(command=path+'/teamstat_load.py -i 24 --xgdata /var/www/hockey_graphs/rest/tools/conf/xg_model_data.json --xgweights /var/www/hockey_graphs/rest/tools/conf/xg_weights.json', comment='teamstats', user='root')
