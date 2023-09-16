@@ -124,6 +124,12 @@ class DelAppHelper():
                 'lastUpdate': 0}
         return self.api_post(self.mobile_api, data)
 
+    def gameschedule_get(self, year, league_id, team_id):
+        """ get season schedule for a single team """
+        self.logger.debug('DelAppHelper.gameschedule_get({0}:{1}:{2})\n'.format(year, league_id, team_id))
+        url = '{0}/league-team-matches/{1}/{2}/{3}.json'.format(self.del_api, year, league_id, team_id)
+        return requests.get(url, headers=self.headers, verify=False).json()
+
     def games_get(self, tournamentid=None):
         """ get games """
         self.logger.debug('DelAppHelper.games_get({0}) via mobile_api\n'.format(tournamentid))

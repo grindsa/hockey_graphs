@@ -7,7 +7,7 @@ import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir, os.path.pardir)))
 import argparse
-from rest.functions.helper import logger_setup, list2dic, uts_to_date_utc, uts_now
+from rest.functions.helper import logger_setup, list2dic, uts_to_date_utc, uts_now, json_store, json_load, date_to_uts_utc
 from rest.functions.match import match_add
 from rest.functions.season import season_latest_get, season_get
 from rest.functions.team import team_list_get
@@ -36,6 +36,7 @@ if __name__ == '__main__':
 
     # create pseudo-device for REST-API calls against mobile api
     DEVICE_ID = '00155d8aecc66666'
+    LEAGUE_ID = 1
 
     # get commandline arguments
     (DEBUG, SEASON_ID, TOURNAMENT_ID) = arg_parse()
@@ -53,26 +54,45 @@ if __name__ == '__main__':
         # get tournamentid based on season_id
         TOURNAMENT_ID = season_get(LOGGER, 'id', SEASON_ID, ['tournament'])
 
+    YEAR, _YEAR = season_get(LOGGER, 'id', SEASON_ID, ['name']).split('/', 1)
+
+
     # get team_list
     TEAM_DIC = list2dic(LOGGER, list(team_list_get(LOGGER, None, None, ['team_id', 'shortcut'])), 'shortcut')
 
+
+    SEASON_GAMES_DIC = {}
+
     with DelAppHelper(DEVICE_ID, DEBUG) as del_app_helper:
-        # get matches for a season
-        game_dic = del_app_helper.games_get(TOURNAMENT_ID)
-        for match in game_dic:
-            if match['homeTeam'] in TEAM_DIC and match['guestTeam'] in TEAM_DIC:
-                # skip past matches
-                if UTS_NOW <= match['dateTime']:
+
+        for team, team_info in TEAM_DIC.items():
+            try:
+                # game_dic = json_load('c:\\temp\\games\{0}.json'.format(team_info['team_id']))
+                game_dic = del_app_helper.gameschedule_get(YEAR, LEAGUE_ID, team_info['team_id'])
+
+                for match in game_dic['matches']:
+                    uts = date_to_uts_utc(match['start_date'], '%Y-%m-%d %H:%M:%S')
                     data_dic = {
-                        'home_team_id': TEAM_DIC[match['homeTeam']]['team_id'],
-                        'visitor_team_id': TEAM_DIC[match['guestTeam']]['team_id'],
-                        'date_uts': match['dateTime'],
-                        'date': uts_to_date_utc(match['dateTime'], '%Y-%m-%d'),
                         'season_id': SEASON_ID,
-                        'match_id': match['gameNumber']
+                        'match_id': match['id'],
+                        'home_team_id': match['home']['id'],
+                        'visitor_team_id': match['guest']['id'],
+                        'date_uts': uts,
+                        'date': uts_to_date_utc(uts, '%Y-%m-%d'),
                     }
-                    (match_id, created) = match_add(LOGGER, 'match_id', match['gameNumber'], data_dic)
-                    if created:
-                        LOGGER.debug('match_created({0})'.format(match_id))
+
+                    if match['id'] not in SEASON_GAMES_DIC:
+                        SEASON_GAMES_DIC[match['id']] = data_dic
                     else:
-                        LOGGER.debug('match_updated({0})'.format(match_id))
+                        print('game: {0} exists in dictionary. Ignoring...'.format(match['id']))
+
+            except Exception:
+                LOGGER.error('No schedule for team: {0}'.format(team))
+
+    for id, match_data in SEASON_GAMES_DIC.items():
+        (match_id, created) = match_add(LOGGER, 'match_id', id, match_data)
+        if created:
+            LOGGER.debug('match_created({0})'.format(match_id))
+        else:
+            LOGGER.debug('match_updated({0})'.format(match_id))
+
