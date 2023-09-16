@@ -90,9 +90,11 @@ if __name__ == '__main__':
                 LOGGER.error('No schedule for team: {0}'.format(team))
 
     for id, match_data in SEASON_GAMES_DIC.items():
-        (match_id, created) = match_add(LOGGER, 'match_id', id, match_data)
-        if created:
-            LOGGER.debug('match_created({0})'.format(match_id))
-        else:
-            LOGGER.debug('match_updated({0})'.format(match_id))
+
+        if UTS_NOW <= match_data['uts']:
+            (match_id, created) = match_add(LOGGER, 'match_id', id, match_data)
+            if created:
+                LOGGER.debug('match_created({0})'.format(match_id))
+            else:
+                LOGGER.debug('match_updated({0})'.format(match_id))
 
