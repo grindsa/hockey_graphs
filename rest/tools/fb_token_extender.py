@@ -68,7 +68,7 @@ if __name__ == '__main__':
     # unix timestamp
     UTS = uts_now()
 
-    URL = "https://graph.facebook.com/v10.0/oauth/access_token"
+    URL = "https://graph.facebook.com/v18.0/oauth/access_token"
 
     data_dic = {
         'grant_type': 'fb_exchange_token',

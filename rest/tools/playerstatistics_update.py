@@ -30,14 +30,14 @@ def _update_faceoff_data(logger, season_id, match_id, faceoff_list, ):
 
     for player_id in player_dic:
         playerstat_dic = playerstatistics_single_get(logger, season_id, player_id, ['faceoff'])
-        playerstat_dic[match_id] = player_dic[player_id]
+        playerstat_dic[str(match_id)] = player_dic[player_id]
 
         # _result = playerstatistics_single_add(logger, season_id, player_id, {'faceoff': playerstat_dic})
         output_dic[player_id] = {'faceoff': playerstat_dic}
 
     return output_dic
 
-def _update_shot_data(logger, match_id, matchinfo_dic, periodevent_list, roster_list, shift_list, shot_list):
+def _update_shot_data(logger, season_id, match_id, matchinfo_dic, periodevent_list, roster_list, shift_list, shot_list):
     """ update shoot data in playerstatistics """
     logger.debug('_update_shot_data: {0}'.format(match_id))
 
@@ -45,46 +45,39 @@ def _update_shot_data(logger, match_id, matchinfo_dic, periodevent_list, roster_
     player_shot_dic = gameplayercorsi_get(logger, shot_list, shift_list, periodevent_list, matchinfo_dic, roster_list, five_filter=False)
     player_shot5v5_dic = gameplayercorsi_get(logger, shot_list, shift_list, periodevent_list, matchinfo_dic, roster_list, five_filter=True)
 
-    _avg_dic = {}
+    shot_dic = {}
+
+    # create hash
+    for team, player_dic in player_shot_dic.items():
+        for player, summary in player_dic.items():
+            if not summary['player_id'] in shot_dic:
+                shot_dic[summary['player_id']] = {'shot_list': []}
+            shot_dic[summary['player_id']]['shots_for'] = summary['shots']
+            shot_dic[summary['player_id']]['shots_against'] = summary['shots_against']
+            if 'assist' in summary:
+                shot_dic[summary['player_id']]['assist'] = summary['assist']
+            if 'goal' in summary:
+                shot_dic[summary['player_id']]['goal'] = summary['goal']
+
+            if team in player_shot5v5_dic and player in player_shot5v5_dic[team]:
+                shot_dic[summary['player_id']]['shots_for_5v5'] = player_shot5v5_dic[team][player]['shots']
+                shot_dic[summary['player_id']]['shots_against_5v5'] = player_shot5v5_dic[team][player]['shots_against']
+
+
+    for shot in shot_list:
+        player_id = shot.pop('player')
+        shot_dic[player_id]['shot_list'].append(shot)
+
 
     output_dic = {}
-    for team in player_shot_dic:
+    for player_id, shot_data in shot_dic.items():
+        playerstat_dic = playerstatistics_single_get(logger, season_id, player_id, ['shots'])
+        playerstat_dic[str(match_id)] = shot_data
 
-        if team == 'home_team':
-            team_id = matchinfo_dic['home_team_id']
-            oteam_id = matchinfo_dic['visitor_team_id']
-        else:
-            oteam_id = matchinfo_dic['home_team_id']
-            team_id = matchinfo_dic['visitor_team_id']
+        output_dic[player_id] = {'shots': playerstat_dic}
 
-        if team not in _avg_dic:
-            _avg_dic[team] = {'shots_for': 0, 'shots_against': 0, 'shots_for_5v5': 0, 'shots_against_5v5': 0, 'cnt': 0}
+    return output_dic
 
-        for player in player_shot_dic[team]:
-            if player_shot_dic[team][player]['player_id'] not in shot_dic:
-                shot_dic[player_shot_dic[team][player]['player_id']] = {'team_id': team_id, 'oteam_id': oteam_id}
-
-            shot_dic[player_shot_dic[team][player]['player_id']]['shots_for'] =  player_shot_dic[team][player]['shots']
-            shot_dic[player_shot_dic[team][player]['player_id']]['shots_against'] = player_shot_dic[team][player]['shots_against']
-            shot_dic[player_shot_dic[team][player]['player_id']]['shots_for_5v5'] = player_shot5v5_dic[team][player]['shots']
-            shot_dic[player_shot_dic[team][player]['player_id']]['shots_against_5v5'] = player_shot5v5_dic[team][player]['shots_against']
-
-            # count sums
-            _avg_dic[team]['cnt'] += 1
-            _avg_dic[team]['shots_for'] += player_shot_dic[team][player]['shots']
-            _avg_dic[team]['shots_against'] += player_shot_dic[team][player]['shots_against']
-            _avg_dic[team]['shots_for_5v5'] += player_shot5v5_dic[team][player]['shots']
-            _avg_dic[team]['shots_against_5v5'] += player_shot5v5_dic[team][player]['shots_against']
-
-    for team in player_shot_dic:
-        for player in player_shot_dic[team]:
-            shot_dic[player_shot_dic[team][player]['player_id']]['shots_for_avg'] = round(_avg_dic[team]['shots_for']/_avg_dic[team]['cnt'], 2)
-            shot_dic[player_shot_dic[team][player]['player_id']]['shots_against_avg'] = round(_avg_dic[team]['shots_against']/_avg_dic[team]['cnt'], 2)
-            shot_dic[player_shot_dic[team][player]['player_id']]['shots_for_5v5_avg'] = round(_avg_dic[team]['shots_for_5v5']/_avg_dic[team]['cnt'], 2)
-            shot_dic[player_shot_dic[team][player]['player_id']]['shots_against_5v5_avg'] = round(_avg_dic[team]['shots_against_5v5']/_avg_dic[team]['cnt'], 2)
-
-    for player_id in shot_dic:
-        playerstatistics_add(logger, match_id, player_id, shot_dic[player_id])
 
 def _update_toi_data(logger, season_id, match_id, matchinfo_dic, shift_list, playerstat_dic):
     """ update toi data in playerstatistics """
@@ -120,7 +113,7 @@ def _update_toi_data(logger, season_id, match_id, matchinfo_dic, shift_list, pla
 
     for player_id in toi_dic:
         playerstat_dic = playerstatistics_single_get(logger, season_id, player_id, ['toi'])
-        playerstat_dic[match_id] = toi_dic[player_id]
+        playerstat_dic[str(match_id)] = toi_dic[player_id]
 
         output_dic[player_id] = {'toi': playerstat_dic}
 
@@ -203,14 +196,18 @@ if __name__ == '__main__':
         periodevent_list = periodevent_get(LOGGER, 'match', match_id, ['period_event'])
         roster_list = roster_get(LOGGER, 'match', match_id, ['roster'])
         shift_list = shift_get(LOGGER, 'match', match_id, ['shift'])
-        shot_list = shot_list_get(LOGGER, 'match', match_id, ['timestamp', 'match_shot_resutl_id', 'real_date', 'team_id', 'player__first_name', 'player__last_name', 'zone', 'coordinate_x', 'coordinate_y', 'player__jersey'])
+        shot_list = shot_list_get(LOGGER, 'match', match_id, ['timestamp', 'match_shot_resutl_id', 'team_id', 'player', 'zone', 'coordinate_x', 'coordinate_y'])
         faceoff_list = faceoff_get(LOGGER, 'match', match_id, ['faceoff'])
 
         if shift_list:
             # update toi
             toi_dic = _update_toi_data(LOGGER, SEASON_ID, match_id, matchinfo_dic, shift_list, playerstat_dic)
+
+        if shot_list:
             # update shots
-            # _update_shot_data(LOGGER, match_id, matchinfo_dic, periodevent_list, roster_list, shift_list, shot_list)
+            shot_dic =  _update_shot_data(LOGGER, SEASON_ID, match_id, matchinfo_dic, periodevent_list, roster_list, shift_list, shot_list)
+
+
 
         if faceoff_list:
             faceoff_dic = _update_faceoff_data(LOGGER, SEASON_ID, match_id, faceoff_list)
@@ -219,6 +216,10 @@ if __name__ == '__main__':
         for player_id in toi_dic:
             if player_id in faceoff_dic:
                 toi_dic[player_id].update(faceoff_dic[player_id])
+            if player_id in shot_dic:
+                toi_dic[player_id].update(shot_dic[player_id])
 
-        from pprint import pprint
-        pprint(toi_dic)
+
+        # update database
+        for player_id, data_dic in toi_dic.items():
+            playerstatistics_single_add(LOGGER, SEASON_ID, player_id, data_dic=data_dic)
