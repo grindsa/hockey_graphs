@@ -67,11 +67,11 @@ if __name__ == '__main__':
 
         for team, team_info in TEAM_DIC.items():
             try:
-                # game_dic = json_load('c:\\temp\\games\{0}.json'.format(team_info['team_id']))
-                game_dic = del_app_helper.gameschedule_get(YEAR, LEAGUE_ID, team_info['team_id'])
+                game_dic = json_load('c:\\temp\\games\{0}.json'.format(team_info['team_id']))
+                # game_dic = del_app_helper.gameschedule_get(YEAR, LEAGUE_ID, team_info['team_id'])
 
                 for match in game_dic['matches']:
-                    uts = date_to_uts_utc(match['start_date'], '%Y-%m-%d %H:%M:%S')
+                    uts = date_to_uts_utc(match['start_date'], '%Y-%m-%d %H:%M:%S') - 7200
                     data_dic = {
                         'season_id': SEASON_ID,
                         'match_id': match['id'],
