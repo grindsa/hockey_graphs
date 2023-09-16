@@ -46,11 +46,12 @@ if __name__ == '__main__':
     result = req.json()
     name = result['name']
     user_id = result['id']
+    print('AccessToken:', ACCESS_TOKEN)
 
-    print('name: {0}\nuser_id: {1}'.format(user_id, name))
+    print('zser_id: {0}\nname: {1}'.format(user_id, name))
 
     # get access-rights
-    ACC_URL = "https://graph.facebook.com/v10.0/{0}/accounts".format(user_id)
+    ACC_URL = "https://graph.facebook.com/v11.0/{0}/accounts/insights".format(user_id)
 
     req = requests.get(ACC_URL, params=data_dic)
     result = req.json()

@@ -258,12 +258,13 @@ def facebook_post(logger, group_list, message, image_list, access_token):
         for img in image_list:
             files = {'source': (img, open(img, 'rb'), 'image/png')}
             # image upload without publishing
-            try:
-                req = requests.post(photo_url, data={'access_token': access_token, 'published': False}, files=files)
-                # in case of successful image upload add image-id to list
-                id_list.append(req.json()['id'])
-            except BaseException as err_:
-                print('err', err_)
+            # try:
+            req = requests.post(photo_url, data={'access_token': access_token, 'published': False}, files=files)
+            print(req.json())
+            #    # in case of successful image upload add image-id to list
+            #    id_list.append(req.json()['id'])
+            #except BaseException as err_:
+            #    print('err', err_)
 
         # append images to post, add message and put into to FB
         if id_list:
