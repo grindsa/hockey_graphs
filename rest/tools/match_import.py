@@ -90,7 +90,7 @@ if __name__ == '__main__':
 
     for id, match_data in SEASON_GAMES_DIC.items():
 
-        if UTS_NOW <= match_data['uts']:
+        if UTS_NOW <= match_data['date_uts']:
             (match_id, created) = match_add(LOGGER, 'match_id', id, match_data)
             if created:
                 LOGGER.debug('match_created({0})'.format(match_id))
