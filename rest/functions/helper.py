@@ -239,21 +239,21 @@ def list_sumup(logger, input_list, filter_values, reverse=False):
 
 def shot_leaffan_sync(shot, ltime, ldate):
     """ keep shot sync with leaffan.net """
-    (mday, _time) = shot['real_date'].split(' ', 2)
-    if ltime <= shot['timestamp']:
-        # usually seonds in match should always increase.. if not - this is a mistake and hould be skippt
-        ltime = shot['timestamp']
-        ldate = mday
-        process_shot = True
-    elif abs(ltime - shot['timestamp']) < 300:
-        # consider in game corrections
-        process_shot = True
-        # ldate = mday
-    elif ldate == mday:
-        # consider corrections on same date but outside of match
-        process_shot = True
-    else:
-        process_shot = False
+    #(mday, _time) = shot['real_date'].split(' ', 2)
+    #if ltime <= shot['timestamp']:
+    #    # usually seonds in match should always increase.. if not - this is a mistake and hould be skippt
+    #    ltime = shot['timestamp']
+    #    ldate = mday
+    #    process_shot = True
+    #elif abs(ltime - shot['timestamp']) < 300:
+    #    # consider in game corrections
+    #    process_shot = True
+    #    # ldate = mday
+    #elif ldate == mday:
+    #    # consider corrections on same date but outside of match
+    process_shot = True
+    #else:
+    #    process_shot = False
 
     return (process_shot, ltime, ldate)
 

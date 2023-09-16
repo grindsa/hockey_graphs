@@ -31,6 +31,8 @@ def _playerstats_process(logger, match_id_, period, home_dic_, visitor_dic_, for
     if period == 'K' and not playerstat_list:
         logger.debug('covering cornercase and set period to "3"')
         period = '3'
+    elif period == 'KN' and not playerstat_list:
+        period = 'P'
 
     # overwrite period if force option has been set
     if force:
@@ -78,12 +80,11 @@ def shots_process(logger, match_dic):
     logger.debug('shots_process()')
     # get list of players
     player_list = player_list_get(LOGGER, None, None, ['player_id'])
-
     for shot in match_dic['shots']:
         # add player if not exists
         if shot['player_id'] not in player_list:
             logger.debug('create_player: {0}, {1}, {2}, {3}'.format(shot['player_id'], shot['first_name'], shot['last_name'], shot['jersey']))
-            player_id = player_add(logger, 'player_id', shot['player_id'], {'player_id': shot['player_id'], 'first_name': shot['first_name'], 'last_name': shot['last_name'], 'jersey': shot['jersey']})
+            player_id = player_add(logger, 'player_id', shot['player_id'], {'player_id': shot['player_id'], 'first_name': shot['first_name'], 'last_name': shot['last_name'], 'jersey': shot['jersey'], 'team_id': shot['team_id']})
             player_list.append(player_id)
 
         # add shot
@@ -98,7 +99,8 @@ def shots_process(logger, match_dic):
             'timestamp': shot['time'],
             'coordinate_x': shot['coordinate_x'],
             'coordinate_y': shot['coordinate_y'],
-            'real_date': shot['real_date'],
+            'real_date': 'bump',
+            # 'real_date': shot['real_date'],
             'polygon': shot['polygon'],
             'zone': zone,
         }
@@ -230,6 +232,22 @@ def _path_check_create(logger, path):
     logger.debug('_path_check({0})'.format(path))
     pathlib.Path(path).mkdir(parents=True, exist_ok=True)
 
+def mock_teamstats_get(logger, player_stat_dic):
+    logger.debug('mock_teamstats_get({0})')
+    stat_dic = {
+        'goals': 0,
+        'shotsAttempts': 0,
+        'shotsOnGoal': 0,
+        'shotsBlocked': 0,
+        'saves': 0,
+        'faceOffsWon': 0,
+        'ppCount': 0,
+        'ppGoals': 0,
+        'penaltyMinutes': 0,
+        'shotEfficiency': 0
+    }
+    return stat_dic
+
 if __name__ == '__main__':
 
     (DEBUG, SEASON_ID, MATCH_LIST, ADDSHIFTS, OPENMATCHES, PASTMATCHES, INTERVAL, SAVE, HGS_DATA, GITREPO, FORCE) = arg_parse()
@@ -284,7 +302,6 @@ if __name__ == '__main__':
             home_id = None
             visitor_id = None
             if 'actualTimeAlias' in gameheader_dic:
-
                 if 'teamInfo' in gameheader_dic and 'home' in gameheader_dic['teamInfo'] and 'id' in gameheader_dic['teamInfo']['home']:
                     home_id = gameheader_dic['teamInfo']['home']['id']
                 if 'teamInfo' in gameheader_dic and 'visitor' in gameheader_dic['teamInfo'] and 'id' in gameheader_dic['teamInfo']['visitor']:
@@ -297,7 +314,6 @@ if __name__ == '__main__':
                     _playerstats_process(LOGGER, match_id, period, home_dic, visitor_dic, FORCE)
                 except BaseException:
                     LOGGER.error('ERROR: playerstats_get() failed.')
-
             # get and store periodevents
             try:
                 event_dic = del_app_helper.periodevents_get(match_id)
@@ -314,8 +330,8 @@ if __name__ == '__main__':
 
             try:
                 # get teamstat
-                thome_dic = del_app_helper.teamstats_get(match_id, home_id)
-                tvisitor_dic = del_app_helper.teamstats_get(match_id, visitor_id)
+                thome_dic = mock_teamstats_get(LOGGER, home_dic)
+                tvisitor_dic = mock_teamstats_get(LOGGER, visitor_dic)
                 teamstat_add(LOGGER, 'match_id', match_id, {'match_id': match_id, 'home': thome_dic, 'visitor': tvisitor_dic})
             except BaseException:
                 LOGGER.error('ERROR: teamstats_get() failed.')
@@ -333,24 +349,25 @@ if __name__ == '__main__':
             try:
                 # delete shots for the match to cope with renumbering (rember EBBvBHV in 12/20)
                 shot_delete(LOGGER, 'match_id', match_id)
-                if ADDSHIFTS:
-                    LOGGER.debug('get shots from API')
+
+                #if ADDSHIFTS:
+                #    LOGGER.debug('get shots from API')
                     # get shots from api
-                    shots_dic = del_app_helper.shots_get(match_id)
-                    try:
-                        if not shots_dic['match']['shots'][0]['real_date']:
-                            LOGGER.debug('real_date is missing! fallback to mobile api')
-                            shots_mobile_dic = del_app_helper.gamesituations_extended_get(TOURNAMENT_ID, match_id)
-                            shots_dic = shots_convert(LOGGER, match_id, shots_mobile_dic, gameheader_dic)
-                    except Exceptiona as err_:
-                        LOGGER.debug('real_date check failed! falling back to mobile api')
-                        shots_mobile_dic = del_app_helper.gamesituations_extended_get(TOURNAMENT_ID, match_id)
-                        shots_dic = shots_convert(LOGGER, match_id, shots_mobile_dic, gameheader_dic)
-                else:
-                    LOGGER.debug('get shots from mobile API')
-                    # get shots from mobile_api and convert them into the format we need
-                    shots_mobile_dic = del_app_helper.gamesituations_extended_get(TOURNAMENT_ID, match_id)
-                    shots_dic = shots_convert(LOGGER, match_id, shots_mobile_dic, gameheader_dic)
+                shots_dic = del_app_helper.shots_get(match_id)
+                    #try:
+                    #    if not shots_dic['match']['shots'][0]['real_date']:
+                    #        LOGGER.debug('real_date is missing! fallback to mobile api')
+                    #        shots_mobile_dic = del_app_helper.gamesituations_extended_get(TOURNAMENT_ID, match_id)
+                    #        shots_dic = shots_convert(LOGGER, match_id, shots_mobile_dic, gameheader_dic)
+                    #except Exception as err_:
+                    #    LOGGER.debug('real_date check failed! falling back to mobile api')
+                    #    shots_mobile_dic = del_app_helper.gamesituations_extended_get(TOURNAMENT_ID, match_id)
+                    #    shots_dic = shots_convert(LOGGER, match_id, shots_mobile_dic, gameheader_dic)
+                #else:
+                #    LOGGER.debug('get shots from mobile API')
+                #    # get shots from mobile_api and convert them into the format we need
+                #    shots_mobile_dic = del_app_helper.gamesituations_extended_get(TOURNAMENT_ID, match_id)
+                #    shots_dic = shots_convert(LOGGER, match_id, shots_mobile_dic, gameheader_dic)
                 if shots_dic:
                     shots_process(LOGGER, shots_dic['match'])
 
@@ -365,8 +382,8 @@ if __name__ == '__main__':
                 json_store('{0}/{1}'.format(MATCH_DIR, 'player-stats-guest.json'), visitor_dic)
                 json_store('{0}/{1}'.format(MATCH_DIR, 'period-events.json'), event_dic)
                 json_store('{0}/{1}'.format(MATCH_DIR, 'roster.json'), roster_dic)
-                json_store('{0}/{1}'.format(MATCH_DIR, 'team-stats-home.json'), thome_dic)
-                json_store('{0}/{1}'.format(MATCH_DIR, 'team-stats-guest.json'), tvisitor_dic)
+                # json_store('{0}/{1}'.format(MATCH_DIR, 'team-stats-home.json'), thome_dic)
+                # json_store('{0}/{1}'.format(MATCH_DIR, 'team-stats-guest.json'), tvisitor_dic)
                 json_store('{0}/{1}'.format(MATCH_DIR, 'shots.json'), shots_dic)
                 if ADDSHIFTS:
                     json_store('{0}/{1}'.format(MATCH_DIR, 'shifts.json'), shift_dic)
