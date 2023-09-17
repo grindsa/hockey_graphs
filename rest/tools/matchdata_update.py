@@ -393,7 +393,7 @@ if __name__ == '__main__':
                 teamstat_add(LOGGER, 'match_id', match_id, {'match_id': match_id, 'home': thome_dic, 'visitor': tvisitor_dic})
             except BaseException:
                 LOGGER.error('ERROR: teamstats_get() failed.')
-            sys.exit(0)
+
             if ADDSHIFTS:
                 # get shifts if required
                 shift_dic = del_app_helper.shifts_get(match_id)
