@@ -237,6 +237,8 @@ def _mock_teamstats_get(logger, player_stat_dic, pnlt_cnt_dic):
     logger.debug('mock_teamstats_get({0})')
     stat_dic = {
         'goals': 0,
+        'ppGoals': 0,
+        'shGoals': 0,
         'shotsAttempts': 0,
         'shotsOnGoal': 0,
         'shotsMissed': 0,
@@ -245,10 +247,11 @@ def _mock_teamstats_get(logger, player_stat_dic, pnlt_cnt_dic):
         'saves': 0,
         'faceOffsWon': 0,
         'faceoffsCount': 0,
+        'faceOffsWonPercent': 0,
         'ppCount': 0,
-        'ppGoals': 0,
         'penaltyMinutes': 0,
-
+        'powerPlaySeconds': 0,
+        'shCount': 0,
     }
 
     for player in player_stat_dic:
@@ -256,6 +259,7 @@ def _mock_teamstats_get(logger, player_stat_dic, pnlt_cnt_dic):
             stat_dic['goals'] += player['statistics']['goals']['away']
             stat_dic['goals'] += player['statistics']['goals']['home']
             stat_dic['ppGoals'] += player['statistics']['ppGoals']
+            stat_dic['shGoals'] += player['statistics']['shGoals']
             stat_dic['penaltyMinutes'] += player['statistics']['penaltyMinutes']
             stat_dic['shotsAttempts'] += player['statistics']['shotsAttempts']
             stat_dic['shotsOnGoal'] += player['statistics']['shotsOnGoal']['away']
@@ -291,7 +295,11 @@ def _enrich_teamstats(logger, team_dic, oteam_dic):
     team_dic['saves'] = oteam_dic['shotsOnGoal'] - oteam_dic['goals']
     team_dic['savesPercent'] = pctg_float_get(oteam_dic['shotsOnGoal'] - oteam_dic['goals'], oteam_dic['shotsOnGoal'], 2)
     team_dic['shotEfficiency'] = pctg_float_get(team_dic['goals'], team_dic['shotsOnGoal'], 2)
+    team_dic['faceOffsWonPercent'] = pctg_float_get(team_dic['faceOffsWon'], team_dic['faceoffsCount'], 2)
+    team_dic['ppEfficiency'] = pctg_float_get(team_dic['ppGoals'], team_dic['ppCount'], 2)
 
+    # some dumb numbers
+    team_dic['shEfficiency'] = 0
     return team_dic
 
 if __name__ == '__main__':
@@ -385,7 +393,7 @@ if __name__ == '__main__':
                 teamstat_add(LOGGER, 'match_id', match_id, {'match_id': match_id, 'home': thome_dic, 'visitor': tvisitor_dic})
             except BaseException:
                 LOGGER.error('ERROR: teamstats_get() failed.')
-
+            sys.exit(0)
             if ADDSHIFTS:
                 # get shifts if required
                 shift_dic = del_app_helper.shifts_get(match_id)

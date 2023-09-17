@@ -10,7 +10,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.
 from delapphelper import DelAppHelper
 from rest.functions.season import season_get, season_latest_get
 from rest.functions.helper import logger_setup, uts_now, uts_to_date_utc, age_calculate, datestr_to_date, deviation_avg_get, position_get, region_get
-# from rest.functions.team import team_list_get
+from rest.functions.team import team_list_get
 from rest.functions.teamstatdel import teamstatdel_add, teamstatdel_get
 
 
@@ -43,8 +43,11 @@ if __name__ == '__main__':
     SEASON_ID = season_latest_get(LOGGER)
     DELSEASON_NAME = season_get(LOGGER, 'id', SEASON_ID, ['delname'])
 
-    # TEAM_ID_LIST = team_list_get(LOGGER, None, None, ['team_id'])
     TEAM_ID_LIST = teamstatdel_get(LOGGER, SEASON_ID, None, vlist=['team'])
+    # Fall back for first meach in season
+    if not TEAM_ID_LIST:
+        LOGGER.debug('no team list in teamstat_del table query all teams we have...')
+        TEAM_ID_LIST = team_list_get(LOGGER, None, None, ['team_id'])
 
     with DelAppHelper('0101030405', DEBUG) as del_app_helper:
 
