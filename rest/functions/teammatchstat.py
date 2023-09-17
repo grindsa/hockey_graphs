@@ -17,7 +17,7 @@ from rest.functions.shift import shift_get
 from rest.functions.shot import shot_list_get, rebound_breaks_get
 from rest.functions.xg import shotlist_process, xgf_calculate, xgscore_get
 
-def teammatchstat_add(logger, match_dic, xg_data_dic, xg_weights_dic):
+def teammatchstat_add(logger, match_dic, xg_data_dic):
     """ add team to database """
     # pylint: disable=R0914
     logger.debug('teammatchstat_add()')
@@ -55,13 +55,13 @@ def teammatchstat_add(logger, match_dic, xg_data_dic, xg_weights_dic):
         goaliepull_dic = goaliepull_get(logger, team, periodevent_list)
 
         # xgf xga calculation
-        xgf_dic = {}
-        if xg_data_dic and xg_weights_dic and shot_list_5v5:
-            # we also need the XGMODEL_DIC to check if we have the shotcoordinates in our structure
-            (shotstat_dic, _goal_dic) = shotlist_process(logger, shot_list_5v5, xg_data_dic, rebound_interval, break_interval)
-            # lets apply the magic algorithm to estimate xGF
-            playerxgf_dic = xgf_calculate(logger, shotstat_dic, xg_weights_dic)
-            xgf_dic = xgscore_get(logger, playerxgf_dic)
+        # xf_dic = {}
+        # xg_data_dic and xg_weights_dic and shot_list_5v5:
+        #   # we also need the XGMODEL_DIC to check if we have the shotcoordinates in our structure
+        #    (shotstat_dic, _goal_dic) = shotlist_process(logger, shot_list_5v5, xg_data_dic, rebound_interval, break_interval)
+        #    # lets apply the magic algorithm to estimate xGF
+        #    playerxgf_dic = xgf_calculate(logger, shotstat_dic, xg_weights_dic)
+        #    xgf_dic = xgscore_get(logger, playerxgf_dic)
 
         game_header = gameheader_get(logger, 'match_id', match_id, ['gameheader'])
         points = points_get(logger, team, game_header)
@@ -121,9 +121,10 @@ def teammatchstat_add(logger, match_dic, xg_data_dic, xg_weights_dic):
             'goals_wogoalie_for': goaliepull_dic['goals_wogoalie_for']
         }
 
-        if xgf_dic:
-            data_dic['xgoals_for'] = xgf_dic[team]
-            data_dic['xgoals_against'] = xgf_dic[o_team]
+        if team_id in xg_data_dic:
+            logger.debug('teammatchstat_add(): add xg data (sum)')
+            data_dic['xgoals_for'] = xg_data_dic[team_id]['xgf']
+            data_dic['xgoals_against'] = xg_data_dic[team_id]['xga']
 
         try:
             # add teammatchstat

@@ -5,6 +5,7 @@ import sys
 import os
 import argparse
 import django
+import requests
 # we need this to load the django environment
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir, os.path.pardir)))
@@ -14,8 +15,10 @@ django.setup()
 # import project settings
 from rest.functions.helper import logger_setup, uts_now, json_load
 from rest.functions.match import openmatch_list_get, pastmatch_list_get, sincematch_list_get
-from rest.functions.season import season_latest_get
+from rest.functions.season import season_latest_get, season_get
 from rest.functions.teamstat import teamstat_get
+from rest.functions.team import team_dic_get
+from bs4 import BeautifulSoup
 from rest.functions.teammatchstat import teammatchstat_add
 
 def arg_parse():
@@ -64,6 +67,45 @@ def arg_parse():
 
     return(debug, season, match_list, addshifts, openmatches, pastmatches, interval, allmatches, xg_data, xg_weights)
 
+def xg_get(logger, season_id):
+    """ get XGF / XGA from DEL-Website """
+    logger.debug('xg_get()')
+    url = season_get(logger, 'id', season_id, ['delurl'])
+    logger.debug(url)
+
+    response = requests.get(url, verify=False, timeout=20)
+    html = response.text
+    soup = BeautifulSoup(html, 'lxml')
+    table = soup.find('table', attrs={'class':'table table-hover table-thead-color table-standings table-standings--full'})
+
+    xg_dic = {}
+
+    for row in table.findAll("tr"):
+
+        cols = row.findAll("td")
+        cols = [ele.text.strip() for ele in cols]
+        if len(cols) > 15:
+            xg_dic[cols[1]] = {'xgf': cols[15], 'xga': cols[16]}
+
+    return xg_dic
+
+def xg_update(logger, xg_dic, team_dic):
+    """ replace team names wiht ids"""
+    logger.debug('xg_update()')
+
+    xg_dic_new = {}
+    for team_name, xg_values in xg_dic.items():
+        team_match = False
+        for team, team_details in team_dic.items():
+            if team_details['team_name'] == team_name:
+                xg_dic_new[team] = xg_values
+                team_match = True
+                break
+        if not team_match:
+            logger.critical('xg_update(): mapping incomplete...!')
+
+    return xg_dic_new
+
 if __name__ == '__main__':
 
     # get variables
@@ -98,12 +140,12 @@ if __name__ == '__main__':
         # update all statistics
         stat_list = teamstat_get(LOGGER)
 
-    XG_DATA_DIC = {}
-    XG_WEIGHTS_DIC = {}
-    if XG_DATA and XG_WEIGHTS:
-        XG_DATA_DIC = json_load(XG_DATA)
-        XG_WEIGHTS_DIC  = json_load(XG_WEIGHTS)
+    # get team dictionary
+    TEAM_DIC = team_dic_get(LOGGER, 'foo')
+
+    XG_DATA_DIC = xg_get(LOGGER, SEASON_ID)
+    XG_DATA_DIC = xg_update(LOGGER, XG_DATA_DIC, TEAM_DIC)
 
     for stat in stat_list:
         # get matchid and add data add function
-        teammatchstat_add(LOGGER, stat, XG_DATA_DIC, XG_WEIGHTS_DIC)
+        teammatchstat_add(LOGGER, stat, XG_DATA_DIC)

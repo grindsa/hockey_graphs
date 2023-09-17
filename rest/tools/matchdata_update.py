@@ -391,8 +391,8 @@ if __name__ == '__main__':
                 thome_dic = _enrich_teamstats(LOGGER, thome_dic, tvisitor_dic)
                 tvisitor_dic = _enrich_teamstats(LOGGER, tvisitor_dic, thome_dic)
                 teamstat_add(LOGGER, 'match_id', match_id, {'match_id': match_id, 'home': thome_dic, 'visitor': tvisitor_dic})
-            except BaseException:
-                LOGGER.error('ERROR: teamstats_get() failed.')
+            except BaseException as err:
+                LOGGER.error('ERROR: teamstats_get() failed: {0}'.format(err))
 
             if ADDSHIFTS:
                 # get shifts if required
