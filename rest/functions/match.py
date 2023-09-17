@@ -9,8 +9,22 @@ import django
 django.setup()
 from django.conf import settings
 from rest.models import Match
-from rest.functions.helper import url_build, pctg_get, min2sec, bg_image_select
+from rest.functions.helper import url_build, pctg_get, bg_image_select
+from rest.functions.shot import shot_list_get
 from rest.functions.teamstat import teamstat_get
+
+
+def consistency_check(logger, match_id):
+    """ check consistency of a match """
+    logger.debug(f'match_info_get({match_id})')
+    # default
+    result = False
+
+    shot_list = shot_list_get(logger, 'match_id', match_id, ['timestamp'])
+    if len(shot_list) > 0:
+        result = True
+
+    return result
 
 def match_info_get(logger, match_id, request, vlist=('date', 'date_uts', 'result', 'result_suffix', 'home_team_id', 'home_team__team_name', 'home_team__shortcut', 'home_team__logo', 'home_team__color_primary', 'home_team__color_secondary', 'home_team__color_tertiary', 'home_team__color_quaternary', 'home_team__color_penalty_primary', 'home_team__color_penalty_secondary', 'visitor_team_id', 'visitor_team__team_name', 'visitor_team__shortcut', 'visitor_team__logo', 'visitor_team__color_primary', 'visitor_team__color_secondary',  'visitor_team__color_tertiary', 'visitor_team__color_quaternary', 'visitor_team__color_penalty_primary', 'visitor_team__color_penalty_secondary', 'home_team__twitter_name', 'visitor_team__twitter_name', 'home_team__facebook_groups', 'visitor_team__facebook_groups', 'home_team__bg_images', 'visitor_team__bg_images', 'season_id')):
     """ get info for a specifc match_id """
@@ -24,7 +38,7 @@ def match_info_get(logger, match_id, request, vlist=('date', 'date_uts', 'result
     # change logo link
     try:
         base_url = url_build(request)
-    except BaseException as err:
+    except Exception:
         base_url = None
     match_dic['base_url'] = base_url
 
@@ -151,10 +165,10 @@ def matchstats_get(logger, match_id, color_dic={}, matchinfo_dic={}):
             }
         }
         if matchstat_dic['home']['shotsAttempts'] + matchstat_dic['visitor']['shotsAttempts'] > 0:
-            stat_dic['home_team']['puckpossession'] = "%.0f" % (matchstat_dic['home']['shotsAttempts'] * 100 / (matchstat_dic['home']['shotsAttempts'] + matchstat_dic['visitor']['shotsAttempts'])),
-            stat_dic['home_team']['puckpossession_pctg'] = pctg_get(matchstat_dic['home']['shotsAttempts'], (matchstat_dic['home']['shotsAttempts'] + matchstat_dic['visitor']['shotsAttempts'])),
-            stat_dic['visitor_team']['puckpossession'] = "%.0f" % (matchstat_dic['visitor']['shotsAttempts'] * 100 / (matchstat_dic['home']['shotsAttempts'] + matchstat_dic['visitor']['shotsAttempts'])),
-            stat_dic['visitor_team']['puckpossession_pctg'] = pctg_get(matchstat_dic['visitor']['shotsAttempts'], (matchstat_dic['home']['shotsAttempts'] + matchstat_dic['visitor']['shotsAttempts'])),
+            stat_dic['home_team']['puckpossession'] = "%.0f" % (matchstat_dic['home']['shotsAttempts'] * 100 / (matchstat_dic['home']['shotsAttempts'] + matchstat_dic['visitor']['shotsAttempts']))
+            stat_dic['home_team']['puckpossession_pctg'] = pctg_get(matchstat_dic['home']['shotsAttempts'], (matchstat_dic['home']['shotsAttempts'] + matchstat_dic['visitor']['shotsAttempts']))
+            stat_dic['visitor_team']['puckpossession'] = "%.0f" % (matchstat_dic['visitor']['shotsAttempts'] * 100 / (matchstat_dic['home']['shotsAttempts'] + matchstat_dic['visitor']['shotsAttempts']))
+            stat_dic['visitor_team']['puckpossession_pctg'] = pctg_get(matchstat_dic['visitor']['shotsAttempts'], (matchstat_dic['home']['shotsAttempts'] + matchstat_dic['visitor']['shotsAttempts']))
 
         else:
             stat_dic['home_team']['puckpossession'] = 0

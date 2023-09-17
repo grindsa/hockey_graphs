@@ -23,7 +23,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.
 from django.conf import settings
 # pylint: disable=E0401, C0413
 from rest.functions.helper import logger_setup, uts_now, uts_to_date_utc, config_load, json_load
-from rest.functions.match import match_info_get, untweetedmatch_list_get, match_add
+from rest.functions.match import match_info_get, untweetedmatch_list_get, match_add, consistency_check
 from rest.functions.season import season_latest_get
 from rest.functions.socialnetworkevent import twitter_login_v1, twitter_login_v2, twitter_image_upload, facebook_post, social_config_load, tweet_send
 from rest.functions.email import send_mail
@@ -342,6 +342,7 @@ def get_imagesize_dic(logger):
     logger.debug('get_imagesize_dic() ended with: {0}'.format(imagesize_dic.keys()))
     return imagesize_dic
 
+
 if __name__ == '__main__':
 
     (DEBUG, FAKE, REPLY, SEASON_ID, MATCH_ID_LIST, INTERVAL, FORCE) = arg_parse()
@@ -378,7 +379,12 @@ if __name__ == '__main__':
         if INTERVAL:
             MATCH_ID_LIST = untweetedmatch_list_get(LOGGER, SEASON_ID, UTS, INTERVAL*3600, ['match_id'], )
 
+    print(MATCH_ID_LIST)
     for match_id in MATCH_ID_LIST:
+
+        if not consistency_check(LOGGER, match_id):
+            LOGGER.error('consistency check failed for match_id: {0}'.format(match_id))
+            continue
 
         # IMGSIZE_DIC = {1: 49000, 2: 48500, 4: 55000, 5: 150000, 11: 30000, 12: 30000}
         # new image list due to wrong coordinates in shots.json
