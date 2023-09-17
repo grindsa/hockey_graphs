@@ -12,7 +12,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir, os.path.pardir)))
 from rest.functions.faceoff import faceoff_add
 from rest.functions.gameheader import gameheader_add
-from rest.functions.helper import logger_setup, uts_now, json_store, uts_to_date_utc
+from rest.functions.helper import logger_setup, uts_now, json_store, uts_to_date_utc, pctg_float_get
 from rest.functions.match import openmatch_list_get, match_add, pastmatch_list_get, sincematch_list_get, match_info_get
 from rest.functions.periodevent import periodevent_add
 from rest.functions.player import player_list_get, player_add
@@ -232,21 +232,67 @@ def _path_check_create(logger, path):
     logger.debug('_path_check({0})'.format(path))
     pathlib.Path(path).mkdir(parents=True, exist_ok=True)
 
-def mock_teamstats_get(logger, player_stat_dic):
+def _mock_teamstats_get(logger, player_stat_dic, pnlt_cnt_dic):
+    """ mock teamstats to be compatibile wit del.org """
     logger.debug('mock_teamstats_get({0})')
     stat_dic = {
         'goals': 0,
         'shotsAttempts': 0,
         'shotsOnGoal': 0,
+        'shotsMissed': 0,
         'shotsBlocked': 0,
+        'shotEfficiency': 0,
         'saves': 0,
         'faceOffsWon': 0,
+        'faceoffsCount': 0,
         'ppCount': 0,
         'ppGoals': 0,
         'penaltyMinutes': 0,
-        'shotEfficiency': 0
+
     }
+
+    for player in player_stat_dic:
+        if 'statistics' in player:
+            stat_dic['goals'] += player['statistics']['goals']['away']
+            stat_dic['goals'] += player['statistics']['goals']['home']
+            stat_dic['ppGoals'] += player['statistics']['ppGoals']
+            stat_dic['penaltyMinutes'] += player['statistics']['penaltyMinutes']
+            stat_dic['shotsAttempts'] += player['statistics']['shotsAttempts']
+            stat_dic['shotsOnGoal'] += player['statistics']['shotsOnGoal']['away']
+            stat_dic['shotsOnGoal'] += player['statistics']['shotsOnGoal']['home']
+            stat_dic['shotsMissed'] += player['statistics']['shotsMissed']
+            stat_dic['shotsBlocked'] += player['statistics']['shotsBlocked']
+            stat_dic['faceOffsWon'] += player['statistics']['faceoffsWin']
+            stat_dic['faceoffsCount'] += player['statistics']['faceoffsCount']
+
+            if player['id'] in pnlt_cnt_dic:
+                stat_dic['ppCount'] += pnlt_cnt_dic[player['id']]
+        else:
+            print('no playerstatistics found')
     return stat_dic
+
+def _get_penalties_count(logger, period_events_dic):
+    """ get penalty counter """
+    logger.debug('get_penalties_count()')
+    penalty_dic = {}
+    for period in period_events_dic:
+        for event in period_events_dic[period]:
+            if event['type'] == 'penalty':
+                if event['data']['disciplinedPlayer']['playerId'] not in penalty_dic:
+                    penalty_dic[event['data']['disciplinedPlayer']['playerId']] = 0
+
+                penalty_dic[event['data']['disciplinedPlayer']['playerId']] += 1
+
+    return penalty_dic
+
+def _enrich_teamstats(logger, team_dic, oteam_dic):
+    """ enrich teamstats """
+    logger.debug('_enrich_teamstats()')
+    team_dic['saves'] = oteam_dic['shotsOnGoal'] - oteam_dic['goals']
+    team_dic['savesPercent'] = pctg_float_get(oteam_dic['shotsOnGoal'] - oteam_dic['goals'], oteam_dic['shotsOnGoal'], 2)
+    team_dic['shotEfficiency'] = pctg_float_get(team_dic['goals'], team_dic['shotsOnGoal'], 2)
+
+    return team_dic
 
 if __name__ == '__main__':
 
@@ -320,6 +366,7 @@ if __name__ == '__main__':
                 periodevent_add(LOGGER, 'match_id', match_id, {'match_id': match_id, 'period_event': event_dic})
             except BaseException:
                 LOGGER.error('ERROR: periodevents_get() failed.')
+                event_dic = {}
 
             try:
                 # get and store rosters
@@ -330,12 +377,14 @@ if __name__ == '__main__':
 
             try:
                 # get teamstat
-                thome_dic = mock_teamstats_get(LOGGER, home_dic)
-                tvisitor_dic = mock_teamstats_get(LOGGER, visitor_dic)
+                pnlt_cnt_dic = _get_penalties_count(LOGGER, event_dic)
+                thome_dic = _mock_teamstats_get(LOGGER, home_dic, pnlt_cnt_dic)
+                tvisitor_dic = _mock_teamstats_get(LOGGER, visitor_dic, pnlt_cnt_dic)
+                thome_dic = _enrich_teamstats(LOGGER, thome_dic, tvisitor_dic)
+                tvisitor_dic = _enrich_teamstats(LOGGER, tvisitor_dic, thome_dic)
                 teamstat_add(LOGGER, 'match_id', match_id, {'match_id': match_id, 'home': thome_dic, 'visitor': tvisitor_dic})
             except BaseException:
                 LOGGER.error('ERROR: teamstats_get() failed.')
-
 
             if ADDSHIFTS:
                 # get shifts if required
