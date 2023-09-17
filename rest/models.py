@@ -10,6 +10,7 @@ class Season(models.Model):
     tournament = models.IntegerField(default=0)
     delname = models.IntegerField(default=0)
     playoffstart = models.IntegerField(default=0)
+    delurl = models.CharField(max_length=100, blank=True)
     def __str__(self):
         return self.name
 
