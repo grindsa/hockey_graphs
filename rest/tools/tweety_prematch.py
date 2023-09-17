@@ -25,7 +25,7 @@ from django.conf import settings
 from rest.functions.helper import logger_setup, uts_now, uts_to_date_utc, config_load, json_load
 from rest.functions.match import match_info_get, futurematch_list_get, match_add, matchinfo_list_get
 from rest.functions.season import season_latest_get
-from rest.functions.socialnetworkevent import twitter_login, twitter_image_upload, facebook_post
+from rest.functions.socialnetworkevent import twitter_login_v1, twitter_login_v2, twitter_image_upload, tweet_send, facebook_post, social_config_load
 from rest.functions.email import send_mail
 
 def _config_load(logger, cfg_file=os.path.dirname(__file__)+'/'+'hockeygraphs.cfg'):
@@ -183,23 +183,23 @@ def twitter_it(logger, matchinfo_dic_, img_list_, season_id, match_id_):
     tags = '#{0}vs{1} #{0}{1} #bot1337'.format(matchinfo_dic_['home_team__shortcut'].upper(), matchinfo_dic_['visitor_team__shortcut'].upper())
 
     # load rebound and break interval from config file
-    (consumer_key, consumer_secret, oauth_token, oauth_token_secret, _fb_token_file) = _config_load(LOGGER)
+    (consumer_key, consumer_secret, access_token_key, access_token_secret, bearer_token, _fb_token_file) = social_config_load(logger, cfg_file=os.path.dirname(__file__)+'/'+'hockeygraphs.cfg')
 
     match_date = uts_to_date_utc(matchinfo_dic_['date_uts'], '%d.%m.%Y')
     text = 'Hier ein paar Pre-Game Stats zum Spiel {0} gg. {1}. am {2}...'.format(matchinfo_dic_['home_team__shortcut'].upper(), matchinfo_dic['visitor_team__shortcut'].upper(), match_date)
 
     # LogIn
-    twitter_uploader = twitter_login(logger, consumer_key, consumer_secret, oauth_token, oauth_token_secret, 'upload.twitter.com')
-    # upload images
-    id_list = twitter_image_upload(logger, twitter_uploader, img_list_)
+    twitter_v1 = twitter_login_v1(logger, consumer_key, consumer_secret, access_token_key, access_token_secret, bearer_token)
 
-    # image ids (currently just one but you never know)
-    id_string = '{0}'.format(id_list[0])
+    # upload images
+    id_list = twitter_image_upload(logger, twitter_v1, img_list_)
+
     # login
-    twitter_api = twitter_login(logger, consumer_key, consumer_secret, oauth_token, oauth_token_secret)
+    twitter_api = twitter_login_v2(logger, consumer_key, consumer_secret, access_token_key, access_token_secret)
     tweet_text = '{0} {1}'.format(text, tags)
+
     # send tweet
-    result = twitter_api.statuses.update(status=tweet_text, media_ids=id_string)
+    result = tweet_send(logger, twitter_api=twitter_api, tweet_text=tweet_text, id_list=[id_list[0]])
 
     # store tweetid in datebase for later lookup
     tweet_id = result['id']
@@ -211,8 +211,8 @@ def fbook_it(logger, matchinfo_dic_, img_list_, season_id, match_id):
     # pylint: disable=R0914
     logger.debug('fbook_it()')
 
-    # load rebound and break interval from config file
-    (_consumer_key, _consumer_secret, _oauth_token, _oauth_token_secret, fb_token_file) = _config_load(LOGGER)
+    # load twitter credentials from config file
+    (_consumer_key, _consumer_secret, _access_token_key, _access_token_secret, _bearer_token, fb_token_file) = social_config_load(logger, cfg_file=os.path.dirname(__file__)+'/'+'hockeygraphs.cfg')
 
     # get access token
     token_dic = json_load(fb_token_file)
