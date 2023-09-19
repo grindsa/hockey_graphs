@@ -172,9 +172,9 @@ def create_cron_entries(logger, tzone):
                 teamstats.hour.on(3, 9, 15)
                 teamstats.minute.on(5)
 
-                ndtag = cron.new(command=path+'/tag_fetcher.py -i 24 -b 4 --save /var/www/hockey_graphs/data', comment='update twitter tags', user='root')
-                ndtag.hour.on(3)
-                ndtag.minute.on(0)
+                # ndtag = cron.new(command=path+'/tag_fetcher.py -i 24 -b 4 --save /var/www/hockey_graphs/data', comment='update twitter tags', user='root')
+                # ndtag.hour.on(3)
+                # ndtag.minute.on(0)
 
                 message = '{0}, {1}'.format(message, yesterday)
 
