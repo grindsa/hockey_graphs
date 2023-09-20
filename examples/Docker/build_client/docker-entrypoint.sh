@@ -24,6 +24,9 @@ if [ $1 = "deploy" ]; then
     # compile locales
     ssh -i id_ed25519 hockeygraphs@hockeygraphs.dynamop.de 'python3 manage.py compilemessages'
 
+    # update delwebstat_scraper
+    ssh -i id_ed25519 hockeygraphs@hockeygraphs.dynamop.de 'pip3 install delstat_scraper --upgrade'
+
     # restart prod
     ssh -i id_ed25519 hockeygraphs@hockeygraphs.dynamop.de sudo '/etc/init.d/apache2 restart'
 
