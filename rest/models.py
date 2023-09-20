@@ -147,7 +147,9 @@ class Teamstatdel(models.Model):
     team = models.ForeignKey(Team, on_delete=models.CASCADE)
     leagueallteamstats = jsonfield.JSONField(default=dict)
     agestats = jsonfield.JSONField(default=dict)
+    delwebstats = jsonfield.JSONField(default=dict)
     stats_updated = models.CharField(max_length=25, blank=True)
+    delwebstats_updated = models.CharField(max_length=25, blank=True)
 
 class Teamstat(models.Model):
     """ teamstatistics from del """
