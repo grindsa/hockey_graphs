@@ -60,7 +60,7 @@ def prematchoverview_get(logger, request, fkey, fvalue, matchinfo_dic, teamstat_
             prematch_dic['{0}_bilance'.format(team)] = delstat_dic[team]['bilance']
             prematch_dic['{0}_last10'.format(team)] = delstat_dic[team]['last10']
 
-    prematchoverview_dic = _pmoshotdata_get(logger, [matchinfo_dic['home_team_id'], matchinfo_dic['visitor_team_id']], teamstat_dic)
+    prematchoverview_dic = _pmoshotdata_get(logger, [matchinfo_dic['home_team_id'], matchinfo_dic['visitor_team_id']], teamstat_dic, delstat_dic)
     for team_id in prematchoverview_dic:
         if team_id == matchinfo_dic['home_team_id']:
             team = 'home'
@@ -74,7 +74,7 @@ def prematchoverview_get(logger, request, fkey, fvalue, matchinfo_dic, teamstat_
 
     return prematch_dic
 
-def _pmoshotdata_get(logger, team_list, teamstat_dic):
+def _pmoshotdata_get(logger, team_list, teamstat_dic, delstat_dic):
     """ get prematch overview data """
     logger.debug('_pmoshotdata_get()')
 
@@ -92,8 +92,15 @@ def _pmoshotdata_get(logger, team_list, teamstat_dic):
         # corsi
         teamstat_sum_dic[team_id]['corsi_pctg'] = pctg_float_get(tmp_dic['sum_shots_for_5v5'], tmp_dic['sum_shots_for_5v5'] + tmp_dic['sum_shots_against_5v5'], 1)
         # pdo
-        teamstat_sum_dic[team_id]['sh_pctg'] = pctg_float_get(tmp_dic['sum_goals_for'], tmp_dic['sum_shots_ongoal_for'], 1)
-        teamstat_sum_dic[team_id]['sv_pctg'] = pctg_float_get(tmp_dic['sum_saves'], tmp_dic['sum_shots_ongoal_against'], 1)
+        if team_id == int(delstat_dic['home']['teamId']):
+            sum_goals_for = tmp_dic['sum_goals_for'] - delstat_dic['home']['shootoutWins']['home'] - delstat_dic['home']['shootoutWins']['away']
+            sum_saves = tmp_dic['sum_saves'] + delstat_dic['home']['shootoutLosses']['home'] + delstat_dic['home']['shootoutLosses']['away']
+        elif team_id == int(delstat_dic['visitor']['teamId']):
+            sum_goals_for = tmp_dic['sum_goals_for'] - delstat_dic['visitor']['shootoutWins']['home'] - delstat_dic['visitor']['shootoutWins']['away']
+            sum_saves = tmp_dic['sum_saves'] + delstat_dic['visitor']['shootoutLosses']['home'] + delstat_dic['visitor']['shootoutLosses']['away']
+
+        teamstat_sum_dic[team_id]['sh_pctg'] = pctg_float_get(sum_goals_for, tmp_dic['sum_shots_ongoal_for'], 1)
+        teamstat_sum_dic[team_id]['sv_pctg'] = pctg_float_get(sum_saves, tmp_dic['sum_shots_ongoal_against'], 1)
         teamstat_sum_dic[team_id]['pdo'] = "%.1f" % (teamstat_sum_dic[team_id]['sh_pctg'] + teamstat_sum_dic[team_id]['sv_pctg'])
 
     return teamstat_sum_dic
