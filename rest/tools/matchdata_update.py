@@ -289,12 +289,33 @@ def _get_penalties_count(logger, period_events_dic):
 
     return penalty_dic
 
-def _enrich_teamstats(logger, team_dic, oteam_dic):
+def _enrich_teamstats(logger, team, team_dic, oteam_dic, game_header):
     """ enrich teamstats """
-    logger.debug('_enrich_teamstats()')
-    team_dic['saves'] = oteam_dic['shotsOnGoal'] - oteam_dic['goals']
-    team_dic['savesPercent'] = pctg_float_get(oteam_dic['shotsOnGoal'] - oteam_dic['goals'], oteam_dic['shotsOnGoal'], 2)
-    team_dic['shotEfficiency'] = pctg_float_get(team_dic['goals'], team_dic['shotsOnGoal'], 2)
+    logger.debug('_enrich_teamstats({0})'.format(team))
+
+    if game_header['actualTimeAlias'] == 'KN':
+        # homewin in penalty remove one goal
+        if team == 'home' and game_header['results']['score']['shootout']['score_home'] == 1:
+            goals = team_dic['goals'] -1
+        # visitor win in penalty remove one goal
+        elif team == 'visitor' and game_header['results']['score']['shootout']['score_guest'] == 1:
+            goals = team_dic['goals'] -1
+        else:
+            goals = team_dic['goals']
+
+        if team == 'home' and game_header['results']['score']['shootout']['score_guest'] == 1:
+            ogoals = oteam_dic['goals'] -1
+        elif team == 'visitor' and game_header['results']['score']['shootout']['score_home'] == 1:
+            ogoals = oteam_dic['goals'] -1
+        else:
+            ogoals = oteam_dic['goals']
+    else:
+        goals = team_dic['goals']
+        ogoals = oteam_dic['goals']
+
+    team_dic['saves'] = oteam_dic['shotsOnGoal'] - ogoals
+    team_dic['savesPercent'] = pctg_float_get(oteam_dic['shotsOnGoal'] - ogoals, oteam_dic['shotsOnGoal'], 2)
+    team_dic['shotEfficiency'] = pctg_float_get(goals, team_dic['shotsOnGoal'], 2)
     team_dic['faceOffsWonPercent'] = pctg_float_get(team_dic['faceOffsWon'], team_dic['faceoffsCount'], 2)
     team_dic['ppEfficiency'] = pctg_float_get(team_dic['ppGoals'], team_dic['ppCount'], 2)
 
@@ -388,8 +409,8 @@ if __name__ == '__main__':
                 pnlt_cnt_dic = _get_penalties_count(LOGGER, event_dic)
                 thome_dic = _mock_teamstats_get(LOGGER, home_dic, pnlt_cnt_dic)
                 tvisitor_dic = _mock_teamstats_get(LOGGER, visitor_dic, pnlt_cnt_dic)
-                thome_dic = _enrich_teamstats(LOGGER, thome_dic, tvisitor_dic)
-                tvisitor_dic = _enrich_teamstats(LOGGER, tvisitor_dic, thome_dic)
+                thome_dic = _enrich_teamstats(LOGGER, 'home', thome_dic, tvisitor_dic, gameheader_dic)
+                tvisitor_dic = _enrich_teamstats(LOGGER, 'visitor', tvisitor_dic, thome_dic, gameheader_dic)
                 teamstat_add(LOGGER, 'match_id', match_id, {'match_id': match_id, 'home': thome_dic, 'visitor': tvisitor_dic})
             except BaseException as err:
                 LOGGER.error('ERROR: teamstats_get() failed: {0}'.format(err))
