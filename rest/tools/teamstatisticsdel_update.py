@@ -49,7 +49,7 @@ if __name__ == '__main__':
         LOGGER.debug('no team list in teamstat_del table query all teams we have...')
         TEAM_ID_LIST = team_list_get(LOGGER, None, None, ['team_id'])
 
-    with DelAppHelper('0101030405', DEBUG) as del_app_helper:
+    with DelAppHelper(DEBUG, cfg_file=os.path.dirname(__file__) + '/' + 'delapphelper.cfg') as del_app_helper:
 
         if SEASON_ID and DELSEASON_NAME and TEAM_ID_LIST:
             for team_id in TEAM_ID_LIST:

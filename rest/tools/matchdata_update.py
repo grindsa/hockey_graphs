@@ -366,7 +366,7 @@ if __name__ == '__main__':
         elif INTERVAL:
             MATCH_LIST = sincematch_list_get(LOGGER, SEASON_ID, UTS, INTERVAL*3600, ['match_id'], )
 
-    with DelAppHelper(None, DEBUG) as del_app_helper:
+    with DelAppHelper(DEBUG, cfg_file=os.path.dirname(__file__) + '/' + 'delapphelper.cfg') as del_app_helper:
         for match_id in MATCH_LIST:
             LOGGER.debug('process match: {0}'.format(match_id))
 

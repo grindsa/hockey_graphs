@@ -55,7 +55,7 @@ if __name__ == '__main__':
             match_list = value_from_list_filter(LOGGER, matchday_list[TODAY]['matches'], 'match_id')
 
     # match_list = [1807, 1808]
-    with DelAppHelper(None, DEBUG) as del_app_helper:
+    with DelAppHelper(DEBUG, cfg_file=os.path.dirname(__file__) + '/' + 'delapphelper.cfg') as del_app_helper:
         for match_id in match_list:
             # get shifts and update db
             shift_dic = del_app_helper.shifts_get(match_id)

@@ -138,6 +138,19 @@ def teammatchstat_add(logger, match_dic, xg_data_dic):
     logger.debug('teammatchstat_add() ended with: {0}'.format(result_list))
     return result_list
 
+def teammatchstatistics_add(logger, match_id, team_id, data_dic):
+
+    try:
+        # add teammatchstat
+        obj, _created = Teammatchstat.objects.update_or_create(match_id=match_id, team_id=team_id, defaults=data_dic)
+        obj.save()
+        result = obj.id
+    except BaseException as err_:
+        logger.critical('ERROR in teammatchstat_add(): {0}'.format(err_))
+        result = None
+
+    return result
+
 def teammatchstats_get(logger, fkey=None, fvalue=None, vlist=None):
     """ get info for a specifc match_id """
     logger.debug('teammatchstat_get({0}:{1})'.format(fkey, fvalue))

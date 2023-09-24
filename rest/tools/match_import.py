@@ -63,7 +63,7 @@ if __name__ == '__main__':
 
     SEASON_GAMES_DIC = {}
 
-    with DelAppHelper(DEVICE_ID, DEBUG) as del_app_helper:
+    with DelAppHelper(DEBUG, cfg_file=os.path.dirname(__file__) + '/' + 'delapphelper.cfg') as del_app_helper:
 
         for team, team_info in TEAM_DIC.items():
             try:
