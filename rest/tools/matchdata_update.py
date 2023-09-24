@@ -282,10 +282,15 @@ def _get_penalties_count(logger, period_events_dic):
     for period in period_events_dic:
         for event in period_events_dic[period]:
             if event['type'] == 'penalty':
-                if event['data']['disciplinedPlayer']['playerId'] not in penalty_dic:
-                    penalty_dic[event['data']['disciplinedPlayer']['playerId']] = 0
-
-                penalty_dic[event['data']['disciplinedPlayer']['playerId']] += 1
+                if event['data']['disciplinedPlayer']:
+                    if event['data']['disciplinedPlayer']['playerId'] not in penalty_dic:
+                        penalty_dic[event['data']['disciplinedPlayer']['playerId']] = 0
+                    penalty_dic[event['data']['disciplinedPlayer']['playerId']] += 1
+                else:
+                    if 0 not in penalty_dic:
+                        penalty_dic[0] = 0
+                    # team penalties
+                    penalty_dic[0] += 1
 
     return penalty_dic
 
@@ -404,16 +409,16 @@ if __name__ == '__main__':
             except BaseException:
                 LOGGER.error('ERROR: roster_get() failed.')
 
-            try:
+            #try:
                 # get teamstat
-                pnlt_cnt_dic = _get_penalties_count(LOGGER, event_dic)
-                thome_dic = _mock_teamstats_get(LOGGER, home_dic, pnlt_cnt_dic)
-                tvisitor_dic = _mock_teamstats_get(LOGGER, visitor_dic, pnlt_cnt_dic)
-                thome_dic = _enrich_teamstats(LOGGER, 'home', thome_dic, tvisitor_dic, gameheader_dic)
-                tvisitor_dic = _enrich_teamstats(LOGGER, 'visitor', tvisitor_dic, thome_dic, gameheader_dic)
-                teamstat_add(LOGGER, 'match_id', match_id, {'match_id': match_id, 'home': thome_dic, 'visitor': tvisitor_dic})
-            except BaseException as err:
-                LOGGER.error('ERROR: teamstats_get() failed: {0}'.format(err))
+            pnlt_cnt_dic = _get_penalties_count(LOGGER, event_dic)
+            thome_dic = _mock_teamstats_get(LOGGER, home_dic, pnlt_cnt_dic)
+            tvisitor_dic = _mock_teamstats_get(LOGGER, visitor_dic, pnlt_cnt_dic)
+            thome_dic = _enrich_teamstats(LOGGER, 'home', thome_dic, tvisitor_dic, gameheader_dic)
+            tvisitor_dic = _enrich_teamstats(LOGGER, 'visitor', tvisitor_dic, thome_dic, gameheader_dic)
+            teamstat_add(LOGGER, 'match_id', match_id, {'match_id': match_id, 'home': thome_dic, 'visitor': tvisitor_dic})
+            #except BaseException as err:
+            #    LOGGER.error('ERROR: teamstats_get() failed: {0}'.format(err))
 
             if ADDSHIFTS:
                 # get shifts if required
