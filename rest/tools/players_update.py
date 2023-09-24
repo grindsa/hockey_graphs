@@ -33,7 +33,7 @@ if __name__ == '__main__':
     TEAM_DIC = team_dic_get(LOGGER, None)
     SEASON_ID = 5
 
-    with DelAppHelper(None, DEBUG) as del_app_helper:
+    with DelAppHelper(DEBUG, cfg_file=os.path.dirname(__file__) + '/' + 'delapphelper.cfg') as del_app_helper:
         for season_year in SEASON_YEAR_LIST:
             for league in LEAGUE_LIST:
                 for team_id in TEAM_DIC:
