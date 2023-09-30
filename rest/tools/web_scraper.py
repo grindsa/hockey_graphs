@@ -12,7 +12,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.
 # from django.conf import settings
 # pylint: disable=E0401, C0413
 from rest.functions.helper import logger_setup, uts_now, uts_to_date_utc, list2dic  # , json_load  # nopep8
-from rest.functions.match import match_info_get  # nopep8
+from rest.functions.match import match_info_get, sincematch_list_get  # nopep8
 from rest.functions.season import season_latest_get  # nopep8
 from rest.functions.team import team_list_get  # nopep8
 from rest.functions.teamstatdel import teamstatdel_add, teamstatdel_get  # nopep8
@@ -155,6 +155,10 @@ if __name__ == '__main__':
     if not SEASON_ID:
         # get season_id
         SEASON_ID = season_latest_get(LOGGER)
+
+    if not MATCH_ID_LIST:
+        if INTERVAL:
+            MATCH_ID_LIST = sincematch_list_get(LOGGER, SEASON_ID, UTS_NOW, INTERVAL*3600, ['match_id'], )
 
     # get team_list
     TEAM_DIC = list2dic(LOGGER, list(team_list_get(LOGGER, None, None, ['team_id', 'team_name'])), 'team_name')
