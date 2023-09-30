@@ -169,6 +169,7 @@ if __name__ == '__main__':
 
     if SAVE_PATH:
         SAVE_DATE = uts_to_date_utc(UTS_NOW, '%Y-%m-%d')
+        LOGGER.debug(f'saving: {SAVE_PATH}\webscrap-teamstats{SAVE_DATE}.json')
         json_store(file_name_=f'{SAVE_PATH}\webscrap-teamstats{SAVE_DATE}.json', data_=DELWEBSTAT_DIC)
 
     for match_id in MATCH_ID_LIST:
