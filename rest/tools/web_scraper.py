@@ -5,11 +5,12 @@ import os
 import sys
 import argparse
 from delstats import DelStats
+from wa_hack_cli import simple_send
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir, os.path.pardir)))
 # import project settings
 # pylint: disable=C0413
-# from django.conf import settings
+from django.conf import settings
 # pylint: disable=E0401, C0413
 from rest.functions.helper import logger_setup, uts_now, uts_to_date_utc, list2dic, json_store # , json_load  # nopep8
 from rest.functions.match import match_info_get, sincematch_list_get  # nopep8
@@ -172,6 +173,8 @@ if __name__ == '__main__':
         LOGGER.debug(f'saving: {SAVE_PATH}/webscrap-teamstats{SAVE_DATE}.json')
         json_store(file_name_=f'{SAVE_PATH}/webscrap-teamstats{SAVE_DATE}.json', data_=DELWEBSTAT_DIC)
 
+
+    message = f'*hockey_graphs: Scrapstats:* {DATE}\n'
     for match_id in MATCH_ID_LIST:
         LOGGER.debug(f'process match_id: {match_id}')
         matchinfo_dic = match_info_get(LOGGER, match_id, None, ['result_suffix', 'result', 'home_team_id', 'home_team__shortcut', 'visitor_team_id', 'visitor_team__shortcut'])
@@ -182,9 +185,18 @@ if __name__ == '__main__':
             LOGGER.debug(f'process team_id: {team_id}')
             teamstat_list = teamstatdel_get(LOGGER, SEASON_ID, team_id, ['delwebstats'])
             delstat_dic = matchstats_get(LOGGER, FORCE, teamstat_list[-1], DELWEBSTAT_DIC[team_id])
-
             if delstat_dic:
                 # add matchstats
                 _id = teammatchstatistics_add(LOGGER, match_id, team_id, delstat_dic)
                 # store originial values for tracking
                 _id = teamstatdel_add(LOGGER, SEASON_ID, team_id, {'delwebstats': DELWEBSTAT_DIC[team_id], 'delwebstats_updated': DATE})
+
+            message = f'{message}match_id:{match_id}|team_id: {team_id}|delstat_dic: {bool(delstat_dic)}\n'
+
+
+    # send notification via whatsapp
+    if(hasattr(settings, 'WA_ADMIN_NUMBER') and hasattr(settings, 'WA_SRV') and hasattr(settings, 'WA_PORT')):
+        try:
+            simple_send(settings.WA_SRV, settings.WA_PORT, settings.WA_ADMIN_NUMBER, message)
+        except BaseException:
+            pass

@@ -147,6 +147,11 @@ def create_cron_entries(logger, tzone):
                 teamstats.hour.on(23)
                 teamstats.minute.on(5)
 
+                # update teamstatsdel at 11pm
+                teamstats_scrap = cron.new(command=path+'/web_scraper.py  -d -i 24 --save /var/www/hockey_graphs/hgs_data/scrap_stats', comment='scrapstats', user='root')
+                teamstats_scrap.hour.on(23)
+                teamstats_scrap.minute.on(15)
+
                 # update fbook group at 11pm
                 # teamstats = cron.new(command=path+'/tweet_summary.py', comment='matchday summary into facebook hockeygraphs', # user='root')
                 # teamstats.hour.on(23)
