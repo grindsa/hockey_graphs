@@ -11,7 +11,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.
 # pylint: disable=C0413
 # from django.conf import settings
 # pylint: disable=E0401, C0413
-from rest.functions.helper import logger_setup, uts_now, uts_to_date_utc, list2dic  # , json_load  # nopep8
+from rest.functions.helper import logger_setup, uts_now, uts_to_date_utc, list2dic, json_store # , json_load  # nopep8
 from rest.functions.match import match_info_get, sincematch_list_get  # nopep8
 from rest.functions.season import season_latest_get  # nopep8
 from rest.functions.team import team_list_get  # nopep8
@@ -28,6 +28,7 @@ def arg_parse():
     mlist = parser.add_mutually_exclusive_group()
     mlist.add_argument('--matchlist', help='list of del matchids', default=[])
     mlist.add_argument('-i', '--interval', help='previous matches during last x hours', default=0)
+    parser.add_argument('--save', help='store json report', default=None)
     args = parser.parse_args()
 
     # default settings
@@ -39,6 +40,7 @@ def arg_parse():
     matchlist = args.matchlist
     interval = int(args.interval)
     force = args.force
+    save_path = args.save
 
     # process matchlist
     try:
@@ -53,7 +55,7 @@ def arg_parse():
         print('either -i or --matchlist parameter must be specified')
         sys.exit(0)
 
-    return debug, season, match_list, interval, force
+    return debug, season, match_list, interval, force, save_path
 
 
 def delsite_scrap(debug, logger, team_dic):
@@ -144,7 +146,7 @@ def matchstats_get(logger, force, db_dic, web_dic):
 
 if __name__ == '__main__':
 
-    (DEBUG, SEASON_ID, MATCH_ID_LIST, INTERVAL, FORCE) = arg_parse()
+    (DEBUG, SEASON_ID, MATCH_ID_LIST, INTERVAL, FORCE, SAVE_PATH) = arg_parse()
 
     # initialize logger
     LOGGER = logger_setup(DEBUG)
@@ -164,6 +166,10 @@ if __name__ == '__main__':
     TEAM_DIC = list2dic(LOGGER, list(team_list_get(LOGGER, None, None, ['team_id', 'team_name'])), 'team_name')
 
     DELWEBSTAT_DIC = delsite_scrap(DEBUG, LOGGER, TEAM_DIC)
+
+    if SAVE_PATH:
+        SAVE_DATE = uts_to_date_utc(UTS_NOW, '%Y-%m-%d')
+        json_store(file_name_=f'{SAVE_PATH}\webscrap-teamstats{SAVE_DATE}.json', data_=DELWEBSTAT_DIC)
 
     for match_id in MATCH_ID_LIST:
         matchinfo_dic = match_info_get(LOGGER, match_id, None, ['result_suffix', 'result', 'home_team_id', 'home_team__shortcut', 'visitor_team_id', 'visitor_team__shortcut'])
