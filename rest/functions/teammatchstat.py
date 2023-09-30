@@ -139,7 +139,7 @@ def teammatchstat_add(logger, match_dic, xg_data_dic):
     return result_list
 
 def teammatchstatistics_add(logger, match_id, team_id, data_dic):
-
+    logger.debug('teammatchstat_get({0}:{1})'.format(match_id, team_id))
     try:
         # add teammatchstat
         obj, _created = Teammatchstat.objects.update_or_create(match_id=match_id, team_id=team_id, defaults=data_dic)
