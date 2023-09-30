@@ -172,11 +172,13 @@ if __name__ == '__main__':
         json_store(file_name_=f'{SAVE_PATH}\webscrap-teamstats{SAVE_DATE}.json', data_=DELWEBSTAT_DIC)
 
     for match_id in MATCH_ID_LIST:
+        LOGGER.debug(f'process match_id: {match_id}')
         matchinfo_dic = match_info_get(LOGGER, match_id, None, ['result_suffix', 'result', 'home_team_id', 'home_team__shortcut', 'visitor_team_id', 'visitor_team__shortcut'])
 
         team_list = [matchinfo_dic['home_team_id'], matchinfo_dic['visitor_team_id']]
 
         for team_id in team_list:
+            LOGGER.debug(f'process team_id: {team_id}')
             teamstat_list = teamstatdel_get(LOGGER, SEASON_ID, team_id, ['delwebstats'])
             delstat_dic = matchstats_get(LOGGER, FORCE, teamstat_list[-1], DELWEBSTAT_DIC[team_id])
 
