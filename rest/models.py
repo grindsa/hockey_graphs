@@ -208,6 +208,15 @@ class Teammatchstat(models.Model):
     goals_en_for = models.IntegerField(default=0)
     goals_en_against = models.IntegerField(default=0)
     goals_wogoalie_for = models.IntegerField(default=0)
+    passes_successful = models.IntegerField(default=0)
+    passes_total = models.IntegerField(default=0)
+    pcw = models.IntegerField(default=0)
+    pcl = models.IntegerField(default=0)
+    puck_possession = models.IntegerField(default=0)
+    dist = models.IntegerField(default=0)
+    control_dist = models.IntegerField(default=0)
+    control_dist_fw = models.IntegerField(default=0)
+
 
 class Xg(models.Model):
     """ table to store Xg model """

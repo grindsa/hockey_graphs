@@ -97,8 +97,8 @@ class TeamAdmin(admin.ModelAdmin):
 
 class TeamstatdelAdmin(admin.ModelAdmin):
     """ teamstatdel admin """
-    fields = ['season', 'team', 'leagueallteamstats', 'stats_updated']
-    list_display = ['season', 'team', 'leagueallteamstats', 'stats_updated']
+    fields = ['season', 'team', 'leagueallteamstats', 'stats_updated', 'delwebstats', 'delwebstats_updated']
+    list_display = ['season', 'team', 'leagueallteamstats', 'stats_updated', 'delwebstats', 'delwebstats_updated']
     ordering = ['season', 'team']
 
 class TeamstatAdmin(admin.ModelAdmin):
@@ -109,7 +109,7 @@ class TeamstatAdmin(admin.ModelAdmin):
 
 class TeammatchstatAdmin(admin.ModelAdmin):
     """ admin class for teammatchstat """
-    fields = ['match', 'team', 'goals_for', 'goals_for_5v5', 'goals_wogoalie_for', 'goals_against', 'goals_against_5v5', 'goals_pp', 'goals_pp_against', 'goals_sh', 'goals_en_for', 'goals_en_against', 'xgoals_for', 'xgoals_against', 'shots_for', 'shots_for_5v5', 'shots_ongoal_for', 'shots_ongoal_for_5v5', 'shots_ongoal_pctg', 'shots_against', 'shots_against_5v5', 'shots_ongoal_against', 'shots_ongoal_against_5v5', 'saves', 'saves_pctg', 'faceoffswon', 'faceoffslost', 'faceoffswon_pctg', 'penaltyminutes_drawn', 'penaltyminutes_taken', 'powerplayseconds', 'rebounds_for', 'rebounds_against', 'goals_rebound_for', 'goals_rebound_against', 'breaks_for', 'breaks_against', 'goals_break_for', 'goals_break_against', 'ppcount', 'shcount', 'points', 'goalie_own_pull', 'goalie_other_pull', 'goalie_own_pulltime']
+    fields = ['match', 'team', 'goals_for', 'goals_for_5v5', 'goals_wogoalie_for', 'goals_against', 'goals_against_5v5', 'goals_pp', 'goals_pp_against', 'goals_sh', 'goals_en_for', 'goals_en_against', 'xgoals_for', 'xgoals_against', 'shots_for', 'shots_for_5v5', 'shots_ongoal_for', 'shots_ongoal_for_5v5', 'shots_ongoal_pctg', 'shots_against', 'shots_against_5v5', 'shots_ongoal_against', 'shots_ongoal_against_5v5', 'saves', 'saves_pctg', 'faceoffswon', 'faceoffslost', 'faceoffswon_pctg', 'penaltyminutes_drawn', 'penaltyminutes_taken', 'powerplayseconds', 'rebounds_for', 'rebounds_against', 'goals_rebound_for', 'goals_rebound_against', 'breaks_for', 'breaks_against', 'goals_break_for', 'goals_break_against', 'ppcount', 'shcount', 'points', 'goalie_own_pull', 'goalie_other_pull', 'goalie_own_pulltime', 'passes_successful', 'passes_total', 'pcw', 'pcl', 'puck_possession', 'dist', 'control_dist', 'control_dist_fw']
     list_display = ['match', 'team', 'goals_for', 'goals_for_5v5', 'goals_wogoalie_for', 'goals_against', 'goals_against_5v5', 'goals_pp', 'goals_pp_against', 'goals_sh', 'shots_for', 'shots_for_5v5', 'shots_ongoal_for', 'shots_ongoal_for_5v5', 'shots_ongoal_pctg', 'shots_against', 'shots_against_5v5', 'shots_ongoal_against', 'shots_ongoal_against_5v5', 'saves', 'saves_pctg', 'faceoffswon', 'faceoffslost', 'faceoffswon_pctg', 'penaltyminutes_drawn', 'penaltyminutes_taken', 'powerplayseconds', 'rebounds_for', 'rebounds_against', 'goals_rebound_for', 'goals_rebound_against', 'breaks_for', 'breaks_against', 'goals_break_for', 'goals_break_against', 'ppcount', 'shcount', 'points', 'goalie_own_pull', 'goalie_other_pull', 'goalie_own_pulltime']
     ordering = ['match_id', 'team_id']
 
