@@ -20,7 +20,7 @@ if __name__ == '__main__':
 
     # season to scan
     # SEASON_YEAR_LIST = [2019, 2020]
-    SEASON_YEAR_LIST = [2022]
+    SEASON_YEAR_LIST = [2023]
 
     # league (1-regular, 3-playoff)
     # 1 - for DEL Regular season

@@ -169,8 +169,8 @@ if __name__ == '__main__':
             MATCH_LIST = match_list_get(LOGGER, 'season', SEASON_ID, ['match_id'])
 
     for match_id in MATCH_LIST:
-        LOGGER.debug('processing match: {0}'.format(match_id))
 
+        LOGGER.debug('processing match: {0}'.format(match_id))
         # we need some match_information
         matchinfo_dic = match_info_get(LOGGER, match_id, None)
         playerstat_dic = playerstat_get(LOGGER, 'match', match_id, ['home', 'visitor'])

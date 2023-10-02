@@ -142,6 +142,7 @@ static/rest_framework
 static/drf-yasg
 static/admin
 rest/tools/hockeygraphs.cfg
+rest/tools/delapphelper.cfg
 rest/tools/dev_helper.py
 rest/tools/regression_tester.py
 hockey_graphs/urls.py
