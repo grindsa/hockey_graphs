@@ -26,12 +26,15 @@ from delapphelper import DelAppHelper
 
 def _playerstats_process(logger, match_id_, period, home_dic_, visitor_dic_, force=False):
     """ update match with result and finish flag """
-    playerstat_list = playerstat_get(logger, 'match_id', match_id_)
+    logger.debug('_playerstats_process({0})'.format(period))
 
+    playerstat_list = playerstat_get(logger, 'match_id', match_id_)
     if period == 'K' and not playerstat_list:
         logger.debug('covering cornercase and set period to "3"')
         period = '3'
     elif period == 'KN' and not playerstat_list:
+        period = 'P'
+    elif period == 'KP' and not playerstat_list:
         period = 'P'
 
     # overwrite period if force option has been set
@@ -53,7 +56,6 @@ def _playerstats_process(logger, match_id_, period, home_dic_, visitor_dic_, for
 
         homestat_dic[period] = home_dic_
         visitorstat_dic[period] = visitor_dic_
-
         playerstat_add(LOGGER, 'match_id', match_id_, {'match_id': match_id_, 'home': homestat_dic, 'visitor': visitorstat_dic})
 
 def _match_update(logger, match_id_, header_dic):
@@ -394,6 +396,7 @@ if __name__ == '__main__':
                     _playerstats_process(LOGGER, match_id, period, home_dic, visitor_dic, FORCE)
                 except BaseException:
                     LOGGER.error('ERROR: playerstats_get() failed.')
+
             # get and store periodevents
             try:
                 event_dic = del_app_helper.periodevents_get(match_id)
