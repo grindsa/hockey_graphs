@@ -114,6 +114,7 @@ class Playerstatistics(models.Model):
     toi_sh = models.IntegerField(default=0)
     faceoffswon = models.IntegerField(default=0)
     faceofflost = models.IntegerField(default=0)
+    line = models.IntegerField(default=0)
 
 class Gameheader(models.Model):
     """ gameheader json from del """

@@ -44,14 +44,14 @@ def playerstatistics_fetch(logger, request, season_id=None, player_id=None):
         #result.append(_playerheatmap_get(logger, _('Shot attempts'), 'subtitle', ismobile, fake_matchinfo_dic, shot_list))
 
         (playerstatistics_list, playerstatistics_dic) = playerstatistics_get(logger, match_list, player_id, request)
-        from pprint import pprint
-        pprint(playerstatistics_list)
+        #from pprint import pprint
+        #pprint(playerstatistics_list)
         # get matchstatistics
         #result.append(banana_chart1_create(logger, 'title1'))
         #result.append(banana_chart2_create(logger, 'title2'))
 
 
-        pass
+        #pass
     else:
         result = {'error': 'Please specify a season and player'}
 

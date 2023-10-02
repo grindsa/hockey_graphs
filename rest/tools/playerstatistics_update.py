@@ -115,6 +115,16 @@ def arg_parse():
 
     return debug, season, match_list, openmatches, pastmatches, interval, allmatches
 
+def line_lookup(roster_list_, player_id):
+    """ lookup line """
+
+    line_number = 0
+    for roster in roster_list_:
+        if roster['playerId'] == player_id:
+            line_number = roster['roster'][1]
+            break
+
+    return line_number
 
 if __name__ == '__main__':
 
@@ -164,9 +174,12 @@ if __name__ == '__main__':
             SHOT_DIC = _update_shot_data(LOGGER, match_id, matchinfo_dic_, periodevent_list, roster_list, shift_list, shot_list)
 
         for team in ['home', 'visitor']:
+
             for _period, player_list in playerstat_dic[team].items():
                 for player in player_list:
                     if not player['position'] == 'GK':
+
+                        line = line_lookup(roster_list[team].values(), player['id'])
                         data_dic = {
                             'match_id': match_id,
                             'player_id': player['id'],
@@ -184,6 +197,7 @@ if __name__ == '__main__':
                             'toi': player['statistics']['timeOnIce'],
                             'toi_pp': player['statistics']['timeOnIcePP'],
                             'toi_sh': player['statistics']['timeOnIceSH'],
+                            'line': line
                         }
                         if player['id'] in SHOT_DIC:
                             data_dic['shots_for'] = SHOT_DIC[player['id']]['shots_for']
