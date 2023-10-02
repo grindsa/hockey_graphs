@@ -590,7 +590,7 @@ def rebound_breaks_get(logger, shot_list, matchinfo_dic):
 
 def _rebound_sumup(logger, teamstat_dic):
     """ sum up faceoff statistics """
-    logger.debug('_faceoff_sumup()')
+    logger.debug('_rebound_sumup()')
 
     update_amount = 0
     teamstat_sum_dic = {}
