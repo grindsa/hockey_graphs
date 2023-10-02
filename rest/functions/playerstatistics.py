@@ -120,13 +120,13 @@ def playerstatistics_single_get(logger, season_id=None, player_id=None,  vlist=(
 
     return playerstat_dic
 
-def playerstatistics_single_add(logger, season_id=None, player_id=None, data_dic={}):
+def playerstatistics_single_add(logger, season_id=None, player_id=None, match_id=None, data_dic={}):
     """ add playerstat to database """
     logger.debug('playerstatistics_single_add({0}:{1})'.format(season_id, player_id, data_dic))
 
     try:
         # add playerstatistics
-        obj, _created = Playerstatistics.objects.update_or_create(season_id=season_id, player_id=player_id, defaults=data_dic)
+        obj, _created = Playerstatistics.objects.update_or_create(season_id=season_id, player_id=player_id, match_id=match_id, defaults=data_dic)
         obj.save()
         result = obj.id
     except BaseException as err_:

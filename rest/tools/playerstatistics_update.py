@@ -193,4 +193,4 @@ if __name__ == '__main__':
 
                         if player['id'] in TOI_DIC and 'toi' in TOI_DIC[player['id']]:
                             data_dic['toi_per_period'] = TOI_DIC[player['id']]['toi']
-                        playerstatistics_single_add(LOGGER, SEASON_ID, player['id'], data_dic=data_dic)
+                        playerstatistics_single_add(LOGGER, SEASON_ID, player['id'], match_id, data_dic=data_dic)
