@@ -11,6 +11,7 @@ class Season(models.Model):
     delname = models.IntegerField(default=0)
     playoffstart = models.IntegerField(default=0)
     delurl = models.CharField(max_length=100, blank=True)
+    u23year = models.IntegerField(default=0)
     def __str__(self):
         return self.name
 
