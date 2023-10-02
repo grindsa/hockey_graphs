@@ -63,20 +63,7 @@ def _update_shot_data(logger, season_id, match_id, matchinfo_dic, periodevent_li
                 shot_dic[summary['player_id']]['shots_for_5v5'] = player_shot5v5_dic[team][player]['shots']
                 shot_dic[summary['player_id']]['shots_against_5v5'] = player_shot5v5_dic[team][player]['shots_against']
 
-
-    for shot in shot_list:
-        player_id = shot.pop('player')
-        shot_dic[player_id]['shot_list'].append(shot)
-
-
-    output_dic = {}
-    for player_id, shot_data in shot_dic.items():
-        playerstat_dic = playerstatistics_single_get(logger, season_id, player_id, ['shots'])
-        playerstat_dic[str(match_id)] = shot_data
-
-        output_dic[player_id] = {'shots': playerstat_dic}
-
-    return output_dic
+    return shot_dic
 
 
 def _update_toi_data(logger, season_id, match_id, matchinfo_dic, shift_list, playerstat_dic):
@@ -103,21 +90,15 @@ def _update_toi_data(logger, season_id, match_id, matchinfo_dic, shift_list, pla
                     toi_dic[player_id] = {'team_id': team_id, 'oteam_id': oteam_id, 'toi': {}, 'toi_pp': 0, 'toi_pk': 0}
                 toi_dic[player_id]['toi'][period] = period_toi_dic[team][period][player_id]
 
-
     # add toi_pp and toi_sh
-    toipppk_dic = toipppk_get(logger, matchinfo_dic, playerstat_dic, 'id')
-    for team in toipppk_dic:
-        for player_id in toipppk_dic[team]:
-            toi_dic[player_id]['toi_pk'] = toipppk_dic[team][player_id]['pk']
-            toi_dic[player_id]['toi_pp'] = toipppk_dic[team][player_id]['pp']
+    #toipppk_dic = toipppk_get(logger, matchinfo_dic, playerstat_dic, 'id')
+    #for team in toipppk_dic:
+    #    for player_id in toipppk_dic[team]:
+    #        toi_dic[player_id]['toi_pk'] = toipppk_dic[team][player_id]['pk']
+    #        toi_dic[player_id]['toi_pp'] = toipppk_dic[team][player_id]['pp']
 
-    for player_id in toi_dic:
-        playerstat_dic = playerstatistics_single_get(logger, season_id, player_id, ['toi'])
-        playerstat_dic[str(match_id)] = toi_dic[player_id]
 
-        output_dic[player_id] = {'toi': playerstat_dic}
-
-    return output_dic
+    return toi_dic
 
 
 def arg_parse():
@@ -199,27 +180,65 @@ if __name__ == '__main__':
         shot_list = shot_list_get(LOGGER, 'match', match_id, ['timestamp', 'match_shot_resutl_id', 'team_id', 'player', 'zone', 'coordinate_x', 'coordinate_y'])
         faceoff_list = faceoff_get(LOGGER, 'match', match_id, ['faceoff'])
 
+        toi_dic = {}
+        shot_dic = {}
         if shift_list:
             # update toi
             toi_dic = _update_toi_data(LOGGER, SEASON_ID, match_id, matchinfo_dic, shift_list, playerstat_dic)
 
         if shot_list:
-            # update shots
             shot_dic =  _update_shot_data(LOGGER, SEASON_ID, match_id, matchinfo_dic, periodevent_list, roster_list, shift_list, shot_list)
 
+        for team in ['home', 'visitor']:
+            # print(matchinfo_dic)
+            for period, player_list in playerstat_dic[team].items():
+                for player in player_list:
+                    if not player['position'] == 'GK':
+                        data_dic = {
+                            'match_id': match_id,
+                            'player_id': player['id'],
+                            'team_id': matchinfo_dic[f'{team}_team_id'],
+                            'season_id': SEASON_ID,
+                            'assists':  player['statistics']['assists']['away'] + player['statistics']['assists']['home'],
+                            'faceoffswon':  player['statistics']['faceoffsWin'],
+                            'faceofflost':  player['statistics']['faceoffsLosses'],
+                            'games':  player['statistics']['games'],
+                            'goals':  player['statistics']['goals']['away'] + player['statistics']['goals']['home'],
+                            'penaltyminutes':  player['statistics']['penaltyMinutes'],
+                            'shifts': player['statistics']['shifts'],
+                            'shots_ongoal':  player['statistics']['shotsOnGoal']['away'] + player['statistics']['shotsOnGoal']['home'],
+                            'shots': player['statistics']['shotsAttempts'],
+                            'toi': player['statistics']['timeOnIce'],
+                            'toi_pp': player['statistics']['timeOnIcePP'],
+                            'toi_sh': player['statistics']['timeOnIceSH'],
+                        }
+                        if player['id'] in shot_dic:
+                            data_dic['shots_for'] = shot_dic[player['id']]['shots_for']
+                            data_dic['shots_for_5v5'] = shot_dic[player['id']]['shots_for_5v5']
+                            data_dic['shots_against'] = shot_dic[player['id']]['shots_against']
+                            data_dic['shots_against_5v5'] = shot_dic[player['id']]['shots_against_5v5']
+
+                        if player['id'] in toi_dic and 'toi' in toi_dic[player['id']]:
+                            data_dic['toi_per_period'] = toi_dic[player['id']]['toi']
+                        playerstatistics_single_add(LOGGER, SEASON_ID, player['id'], data_dic=data_dic)
 
 
-        if faceoff_list:
-            faceoff_dic = _update_faceoff_data(LOGGER, SEASON_ID, match_id, faceoff_list)
+        #    # update shots
+        #shot_dic =  _update_shot_data(LOGGER, SEASON_ID, match_id, matchinfo_dic, periodevent_list, roster_list, shift_list, shot_list)
+        # pprint(shot_dic)
 
 
-        for player_id in toi_dic:
-            if player_id in faceoff_dic:
-                toi_dic[player_id].update(faceoff_dic[player_id])
-            if player_id in shot_dic:
-                toi_dic[player_id].update(shot_dic[player_id])
+       # if faceoff_list:
+       #     faceoff_dic = _update_faceoff_data(LOGGER, SEASON_ID, match_id, faceoff_list)
+
+
+        #for player_id in toi_dic:
+        #    if player_id in faceoff_dic:
+        #        toi_dic[player_id].update(faceoff_dic[player_id])
+        #    if player_id in shot_dic:
+        #        toi_dic[player_id].update(shot_dic[player_id])
 
 
         # update database
-        for player_id, data_dic in toi_dic.items():
-            playerstatistics_single_add(LOGGER, SEASON_ID, player_id, data_dic=data_dic)
+        #for player_id, data_dic in toi_dic.items():
+        #

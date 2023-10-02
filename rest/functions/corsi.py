@@ -98,15 +98,16 @@ def gameplayercorsi_get(logger, shot_list, shift_list, periodevent_list, matchin
                     against_team = 'home_team'
                     for_team = 'visitor_team'
                 if shot['timestamp'] in soi_dic['home_team'] and shot['timestamp'] in soi_dic['visitor_team']:
-                    for player in soi_dic[for_team][shot['timestamp']]['player_list']:
-                        if player not in player_corsi_dic[for_team]:
-                            player_corsi_dic[for_team][player] = {'shots': 0, 'shots_against': 0, 'name': player}
-                        player_corsi_dic[for_team][player]['shots'] += 1
-
-                    for player in soi_dic[against_team][shot['timestamp']]['player_list']:
-                        if player not in player_corsi_dic[against_team]:
-                            player_corsi_dic[against_team][player] = {'shots': 0, 'shots_against': 0, 'name': player}
-                        player_corsi_dic[against_team][player]['shots_against'] += 1
+                    if 'player_list' in  soi_dic[for_team][shot['timestamp']]:
+                        for player in soi_dic[for_team][shot['timestamp']]['player_list']:
+                            if player not in player_corsi_dic[for_team]:
+                                player_corsi_dic[for_team][player] = {'shots': 0, 'shots_against': 0, 'name': player}
+                            player_corsi_dic[for_team][player]['shots'] += 1
+                    if 'player_list' in  soi_dic[against_team][shot['timestamp']]:
+                        for player in soi_dic[against_team][shot['timestamp']]['player_list']:
+                            if player not in player_corsi_dic[against_team]:
+                                player_corsi_dic[against_team][player] = {'shots': 0, 'shots_against': 0, 'name': player}
+                            player_corsi_dic[against_team][player]['shots_against'] += 1
 
         player_corsi_dic = _rosterinformation_add(logger, player_corsi_dic, toi_dic, scorer_dic, roster_list)
     else:
