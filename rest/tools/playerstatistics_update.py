@@ -20,13 +20,13 @@ from rest.functions.shift import shift_get, toifromshifts_get  # nopep8
 from rest.functions.shot import shot_list_get  # nopep8
 
 
-def _update_shot_data(logger, match_id_, matchinfo_dic, periodevent_list_, roster_list_, shift_list_):
+def _update_shot_data(logger, match_id_, matchinfo_dic, periodevent_list_, roster_list_, shift_list_, shot_list_):
     """ update shoot data in playerstatistics """
     logger.debug(f'_update_shot_data: {match_id_}')
 
     shot_dic = {}
-    player_shot_dic = gameplayercorsi_get(logger, shift_list_, shift_list, periodevent_list_, matchinfo_dic, roster_list_, five_filter=False)
-    player_shot5v5_dic = gameplayercorsi_get(logger, shift_list_, shift_list, periodevent_list_, matchinfo_dic, roster_list_, five_filter=True)
+    player_shot_dic = gameplayercorsi_get(logger, shot_list_, shift_list_, periodevent_list_, matchinfo_dic, roster_list_, five_filter=False)
+    player_shot5v5_dic = gameplayercorsi_get(logger, shot_list_, shift_list_, periodevent_list_, matchinfo_dic, roster_list_, five_filter=True)
 
     shot_dic = {}
 
@@ -42,7 +42,7 @@ def _update_shot_data(logger, match_id_, matchinfo_dic, periodevent_list_, roste
             if 'goal' in summary:
                 shot_dic[summary['player_id']]['goal'] = summary['goal']
 
-            if _team in player_shot5v5_dic and player in player_shot5v5_dic[_team]:
+            if _team in player_shot5v5_dic and player_ in player_shot5v5_dic[_team]:
                 shot_dic[summary['player_id']]['shots_for_5v5'] = player_shot5v5_dic[_team][player_]['shots']
                 shot_dic[summary['player_id']]['shots_against_5v5'] = player_shot5v5_dic[_team][player_]['shots_against']
 
@@ -66,11 +66,11 @@ def _update_toi_data(logger, _season_id, match_id_, matchinfo_dic, shift_list_, 
             oteam_id = matchinfo_dic['home_team_id']
             team_id = matchinfo_dic['visitor_team_id']
 
-        for period in period_toi_dic[team]:
-            for player_id in period_toi_dic[team][period]:
+        for period in period_toi_dic[_team]:
+            for player_id in period_toi_dic[_team][period]:
                 if player_id not in toi_dic:
                     toi_dic[player_id] = {'team_id': team_id, 'oteam_id': oteam_id, 'toi': {}, 'toi_pp': 0, 'toi_pk': 0}
-                toi_dic[player_id]['toi'][period] = period_toi_dic[team][period][player_id]
+                toi_dic[player_id]['toi'][period] = period_toi_dic[_team][period][player_id]
 
     return toi_dic
 
@@ -161,7 +161,7 @@ if __name__ == '__main__':
             TOI_DIC = _update_toi_data(LOGGER, SEASON_ID, match_id, matchinfo_dic_, shift_list, playerstat_dic)
 
         if shot_list:
-            SHOT_DIC = _update_shot_data(LOGGER, match_id, matchinfo_dic_, periodevent_list, roster_list, shift_list)
+            SHOT_DIC = _update_shot_data(LOGGER, match_id, matchinfo_dic_, periodevent_list, roster_list, shift_list, shot_list)
 
         for team in ['home', 'visitor']:
             for _period, player_list in playerstat_dic[team].items():
