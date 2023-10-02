@@ -10,6 +10,7 @@ from rest.functions.helper import logger_setup
 from rest.functions.team import team_dic_get
 from rest.functions.player import player_add, playerperseason_add
 from delapphelper import DelAppHelper
+from rest.functions.season import season_latest_get
 
 if __name__ == '__main__':
 
@@ -31,7 +32,7 @@ if __name__ == '__main__':
 
     # get list of teams
     TEAM_DIC = team_dic_get(LOGGER, None)
-    SEASON_ID = 5
+    SEASON_ID = season_latest_get(LOGGER)
 
     with DelAppHelper(DEBUG, cfg_file=os.path.dirname(__file__) + '/' + 'delapphelper.cfg') as del_app_helper:
         for season_year in SEASON_YEAR_LIST:
