@@ -134,3 +134,4 @@ def playerstatistics_single_add(logger, season_id=None, player_id=None, match_id
         result = None
     logger.debug('playerstatistics_single_add({0}:{1}) ended with {2}'.format(season_id, player_id, result))
     return result
+

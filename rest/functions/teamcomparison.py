@@ -12,10 +12,11 @@ from rest.functions.faceoff import faceoff_overview_get, faceoffs_updates_get
 from rest.functions.faceoffcharts import faceoff_overview_chart
 from rest.functions.age import age_overview_get, league_agestats_get
 from rest.functions.agecharts import age_overviewchart_get, league_agechart_get
-from rest.functions.helper import mobile_check, language_get
+from rest.functions.helper import mobile_check, language_get, uts_now, uts_to_date_utc
 from rest.functions.comment import comment_get
 from rest.functions.pdo import pdo_breakdown_data_get, pdo_overview_data_get, breakdown_updates_get, overview_updates_get, ppg_data_get, ppg_updates_get
 from rest.functions.pdocharts import pdo_breakdown_chart, pdo_overview_chart, ppg_chart_get
+from rest.functions.playerstat import u23_toi_get
 from rest.functions.season import seasonid_get
 from rest.functions.shotcharts import pace_chart_get, shotrates_chart_get, shotshare_chart_get, rebound_overview_chart, break_overview_chart
 from rest.functions.pppk import pppk_data_get, discipline_updates_get, goaliepull_data, goaliepullendata_get, goaliepullen_updates_get, scoreendata_get, scoreen_updates_get
@@ -26,6 +27,7 @@ from rest.functions.team import team_dic_get, teams_per_season_get
 from rest.functions.teammatchstat import teammatchstats_get
 from rest.functions.teamstatdel import teamstatdel_get
 from rest.functions.teamstat import teamstat_dic_get
+from rest.functions.toicharts import u23_toi_chart
 from rest.functions.heatmap import teamcomparison_hmdata_get, teamcomparison_updates_get
 from rest.functions.heatmapcharts import teamcomparison_chart_get
 from rest.functions.xg import xgfa_data_get, xgfa_updates_get, gfxgf_updates_get, dgf_updates_get
@@ -97,10 +99,37 @@ def teamcomparison_get(logger, request, fkey=None, fvalue=None):
     # age statistics
     result.extend(_age_statistics_get(logger, ismobile, teamstatdel_dic, teamstatdel_ly_dic, teams_dic))
 
+    # u23 stats
+    stat_entry = _u23_toi_stats(logger, ismobile, season_id, teams_dic)
+    if stat_entry:
+        result.extend(stat_entry)
+
     return result
+
+
+def _u23_toi_stats(logger, ismobile, season_id, teams_dic):
+    """ prepare u23 stats """
+    logger.debug('_u23_stats()')
+
+    stat_entry_list = []
+    u23_toi_dic = u23_toi_get(logger, season_id, teams_dic)
+
+    if u23_toi_dic:
+        title =  _('U23 players - Average Time on Ice per Match')
+        sub_title = _('Date:') + f" {uts_to_date_utc(uts_now(), '%d.%m.%Y')}"
+        stat_entry = {
+            'title': title,
+            'chart': u23_toi_chart(logger, title, sub_title, ismobile, u23_toi_dic.values()),
+            'updates': []
+        }
+
+        stat_entry_list.append(stat_entry)
+
+    return stat_entry_list
 
 def _age_statistics_get(logger, ismobile, teamstatdel_dic, teamstatdel_ly_dic, teams_dic):
     """ prepare age_statistics """
+    logger.debug('_age_statistics_get()')
 
     stat_entry_list = []
 

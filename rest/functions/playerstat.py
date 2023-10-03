@@ -13,6 +13,7 @@ from rest.functions.helper import list2dic, url_build
 from rest.functions.lineup import lineup_sort
 from rest.functions.shot import shotpersecondlist_get
 from rest.functions.timeline import skatersonice_get, penalties_include
+from rest.functions.player import u23_player_list_get
 
 def _matchupmatrix_initialize(logger, lineup_dic):
     """ add team to database """
@@ -75,33 +76,24 @@ def playerstatistics_add(logger, match_id, player_id, data_dic):
     logger.debug('playerstatistics_add()) ended with {0}'.format(result))
     return result
 
-def playerstatistics_get(logger, match_list, player_id, request, vlist=('match_id', 'player_id', 'team_id', 'oteam_id', 'shots_for', 'shots_for_avg', 'shots_for_5v5', 'shots_for_5v5_avg', 'shots_against', 'shots_against_avg', 'shots_against_5v5', 'shots_against_5v5_avg', 'toi', 'toi_pp', 'toi_pk', 'team__team_name', 'team__shortcut', 'team__logo', 'team__team_name', 'oteam__shortcut', 'oteam__logo')):
-    """ get info for a specifc match_id """
-    logger.debug('playerstatistics_get({0})'.format(player_id))
+def playerstatistics_get(logger, fkey=None, fvalue=None, vlist=('season_id', 'match_id', 'player_id', 'player__first_name', 'player__last_name', 'player__team__shortcut', 'shots', 'goals', 'toi', 'toi_per_period', 'toi_pp', 'toi_sh', 'line')):
+    """ query player(s) from database based with optional filtering """
+    logger.debug('playerstatistics_get({0})'.format(fkey))
     try:
-        if len(vlist) == 1:
-            playerstatistics_list = list(Playerstatistics.objects.filter(player_id=player_id, match_id__in=match_list).order_by('match_id').values_list(vlist[0], flat=True))
+        if fkey:
+            if len(vlist) == 1:
+                player_list = Playerstatistics.objects.filter(**{fkey: fvalue}).order_by('player_id').values_list(vlist[0], flat=True)
+            else:
+                player_list = Playerstatistics.objects.filter(**{fkey: fvalue}).order_by('player_id').values(*vlist)
         else:
-            playerstatistics_list = list(Playerstatistics.objects.filter(player_id=player_id, match_id__in=match_list).order_by('match_id').values(*vlist))
-    except BaseException as err:
-        playerstatistics_list = {}
-
-    # change logo link
-    try:
-        base_url = url_build(request.META)
-    except BaseException:
-        base_url = None
-
-    for match in playerstatistics_list:
-        if 'oteam__logo' in match:
-            match['oteam_logo'] = '{0}{1}{2}'.format(base_url, settings.STATIC_URL, match['oteam__logo'])
-        if 'team__logo' in match:
-            match['team_logo'] = '{0}{1}{2}'.format(base_url, settings.STATIC_URL, match['team__logo'])
-
-    # convert2dict
-    playerstatistics_dic = list2dic(logger, playerstatistics_list, 'match_id')
-
-    return playerstatistics_list, playerstatistics_dic
+            if len(vlist) == 1:
+                player_list = Playerstatistics.objects.all().order_by('player_id').values_list(vlist[0], flat=True)
+            else:
+                player_list = Playerstatistics.objects.all().order_by('player_id').values(*vlist)
+    except BaseException as err_:
+        logger.critical('playerstatistics_get in player_list_get(): {0}'.format(err_))
+        player_list = []
+    return list(player_list)
 
 def playerstat_add(logger, fkey, fvalue, data_dic):
     """ add team to database """
@@ -210,3 +202,48 @@ def matchupmatrix_get(logger, matchinfo_dic, shot_list, shift_list, roster_list,
     matchup_matrix = _matchupmatrix_gen(logger, shotpersec_list, soi_dic, lineup_dic, player_dic, five_filter=five_filter)
 
     return(lineup_dic, matchup_matrix, plotline_dic)
+
+def u23_toi_get(logger, season_id, teams_dic):
+    """get u23 to data """
+    logger.debug('u23_toi_get()')
+
+    u23_player_dic = u23_player_list_get(logger, season_id=season_id)
+    u23_player_list = list(u23_player_dic.keys())
+    player_match_list = playerstatistics_get(logger, 'player__in', u23_player_list, vlist=('season_id', 'match_id', 'player_id', 'player__first_name', 'player__last_name', 'player__nationality', 'player__team_id', 'player__team__shortcut', 'player__jersey', 'shifts', 'toi', 'toi_per_period', 'toi_pp', 'toi_sh', 'line'))
+
+    # aggregate data
+    playerstat_dic = {}
+    for pmatch in player_match_list:
+        # if pmatch['toi_per_period']:
+        if pmatch['toi'] and pmatch['player__nationality'] == 'GER':
+            # fix inconsitenceies
+            #if pmatch['toi'] == 0:
+            #    for period, value in pmatch['toi_per_period'].items():
+            #        pmatch['toi'] += value
+
+            if pmatch['player_id'] not in playerstat_dic:
+                playerstat_dic[pmatch['player_id']] = {'player_id': pmatch['player_id'], 'first_name': pmatch['player__first_name'], 'games': 0, 'last_name': pmatch['player__last_name'], 'shifts': 0, 'toi': 0, 'toi_pp': 0, 'toi_sh': 0, 'toi_per_period': {'1': 0, '2': 0, '3': 0, '4': 0}, 'line': []}
+            playerstat_dic[pmatch['player_id']]['team_shortcut'] = pmatch['player__team__shortcut']
+            playerstat_dic[pmatch['player_id']]['team_logo'] = teams_dic[pmatch['player__team_id']]['team_logo']
+            playerstat_dic[pmatch['player_id']]['team_id'] = pmatch['player__team_id']
+            playerstat_dic[pmatch['player_id']]['jersey'] = pmatch['player__jersey']
+            playerstat_dic[pmatch['player_id']]['games'] += 1
+            playerstat_dic[pmatch['player_id']]['shifts'] += pmatch['shifts']
+            playerstat_dic[pmatch['player_id']]['toi'] += pmatch['toi']
+            playerstat_dic[pmatch['player_id']]['toi_pp'] += pmatch['toi_pp']
+            playerstat_dic[pmatch['player_id']]['toi_sh'] += pmatch['toi_sh']
+            playerstat_dic[pmatch['player_id']]['line'].append(pmatch['line'])
+            for period, value in pmatch['toi_per_period'].items():
+                playerstat_dic[pmatch['player_id']]['toi_per_period'][period] += value
+
+    # calulate *per games*
+    for player_id in playerstat_dic:
+        playerstat_dic[player_id]['shifts_pg'] = round(playerstat_dic[player_id]['shifts']/playerstat_dic[player_id]['games'], 0)
+        playerstat_dic[player_id]['toi_pg'] = round(playerstat_dic[player_id]['toi']/playerstat_dic[player_id]['games'], 0)
+        playerstat_dic[player_id]['toi_pp_pg'] = round(playerstat_dic[player_id]['toi_pp']/playerstat_dic[player_id]['games'], 0)
+        playerstat_dic[player_id]['toi_sh_pg'] = round(playerstat_dic[player_id]['toi_sh']/playerstat_dic[player_id]['games'], 0)
+        playerstat_dic[player_id]['toi_per_period_pg'] = {}
+        for period, value in playerstat_dic[player_id]['toi_per_period'].items():
+            playerstat_dic[player_id]['toi_per_period_pg'][period] = round(value/playerstat_dic[player_id]['games'], 0)
+
+    return playerstat_dic

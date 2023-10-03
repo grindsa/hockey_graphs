@@ -86,14 +86,6 @@ class PlayerStatisticsViewSet(viewsets.ViewSet):
         response = Response(result, status=status.HTTP_200_OK)
         return response
 
-    #def retrieve(self, request, pk=None):
-    #    """ filter matches for a single matchday """
-    #    print(pk)
-    #    set_language(LOGGER, request)
-    #    result = playerstatistics_get(LOGGER, request, fkey='player_id', fvalue=pk)
-    #    response = Response(result, status=status.HTTP_200_OK)
-    #    return response
-
 
 class TeamComparisonViewSet(viewsets.ViewSet):
     """ view for matchdays """

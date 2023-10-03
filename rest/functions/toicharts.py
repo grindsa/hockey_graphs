@@ -2,6 +2,7 @@
 """ time on ice charts """
 # pylint: disable=E0401
 from rest.functions.chartparameters import chartstyle, credit, exporting, responsive_y1, title, subtitle, legend, font_size, variables_get, responsive_y1_nolabel
+from rest.functions.chartparameters import chart_color1, chart_color2, chart_color3, chart_color6
 
 def gametoichart_create(logger, ctitle, csubtitle, ismobile, toi_dic, bar_color1, bar_color2, bar_color3, bar_color4, toi_check):
     # pylint: disable=E0602
@@ -25,7 +26,7 @@ def gametoichart_create(logger, ctitle, csubtitle, ismobile, toi_dic, bar_color1
     for period in toi_dic:
         if period not in y_dic:
             y_dic[period] = []
-            
+
         for player_name in sorted(x_list):
             if player_name in toi_dic[period]:
                 # y_dic[period].append('{0:02d}:{1:02d}'.format(*divmod(shifts_dic['ebb'][period][player_name], 60)))
@@ -201,4 +202,79 @@ def gametoipppkchart_create(logger, ctitle, csubtitle, ismobile, toi_dic, color_
             {'name': _('Time in Penalty killing'), 'data': pk_list, 'color': color_secondary},
         ]
     }
+    return chart_options
+
+
+def u23_toi_chart(logger, ctitle, csubtitle, ismobile, u23_toi_list):
+    """ create u23 toi chart """
+    logger.debug('gametoipppkchart_create()')
+
+    variable_dic = variables_get(ismobile)
+
+    series_dic = {'player': [], 'toi': [], 'toi_pp': [], 'toi_sh': []}
+
+    for player in sorted(u23_toi_list, key=lambda i: i['toi_pg'], reverse=True):
+        series_dic['player'].append(f'<span>{player["first_name"][0]}. {player["last_name"]} <img src="{player["team_logo"]}" alt="{player["team_shortcut"]}" width="15" height="15"></span>')
+        # series_dic['player'].append(f"{player['first_name'][0]}. {player['last_name']}")
+        series_dic['toi'].append({'y': round(player['toi_pg']/60, 3), 'label': '{0:02d}:{1:02d}'.format(*divmod(int(player['toi_pg']), 60))})
+        series_dic['toi_pp'].append({'y': round(player['toi_pp_pg']/60, 3), 'label': '{0:02d}:{1:02d}'.format(*divmod(int(player['toi_pp_pg']), 60))})
+        series_dic['toi_sh'].append({'y': round(player['toi_sh_pg']/60, 3), 'label': '{0:02d}:{1:02d}'.format(*divmod(int(player['toi_sh_pg']), 60))})
+
+    chart_options = {
+        'chart': {
+            'type': 'bar',
+            'height': '200%',
+            'alignTicks': 0,
+            'style': chartstyle()
+        },
+
+        'exporting': exporting(filename=ctitle),
+        'title': title(ctitle, variable_dic['title_size'], decoration=True),
+        'subtitle': subtitle(csubtitle, variable_dic['subtitle_size']),
+        'credits': credit(),
+        'legend': legend(),
+
+        'plotOptions': {
+            'series': {
+                'states': {'inactive': {'opacity': 1}},
+                'dataLabels': {
+                    'enabled': 0,
+                    'useHTML': 0,
+                    'style': {'fontSize': font_size, 'textOutline': 0, 'color': '#ffffff', 'fontWeight': 0}
+                }
+            }
+        },
+
+        'tooltip': {
+            'enabled': True,
+            'shared': 1,
+            'useHTML': 1,
+            'headerFormat': '<span style="font-size: %s"><b>{point.x}</b></span><br/>' % font_size,
+            'pointFormat': '<span style="color:{point.color}">\u25CF</span> <span style="font-size: %s">{series.name}: {point.label} %s</span><br/>' % (font_size, 'min')
+        },
+
+        'xAxis': {
+            'categories': series_dic['player'],
+            'title': title('', font_size),
+            'labels': {'useHTML': 1, 'align': 'right'},
+            # 'labels': {'style': {'fontSize': font_size}},
+        },
+
+        'yAxis': {
+            'title': title(_('Time on Ice'), font_size),
+            'reversedStacks': 0,
+            'tickInterval': 1,
+            'maxPadding': 0.1,
+            'labels': {'style': {'fontSize': font_size},},
+        },
+
+
+        'series': [
+            # pylint: disable=E0602
+            {'name': _('Avg. Time on Ice'), 'marker': {'symbol': 'square'}, 'data': series_dic['toi'], 'color': chart_color3},
+            {'name': _('Avg. Time on Ice - Power-Play'), 'marker': {'symbol': 'square'}, 'data': series_dic['toi_pp'], 'color': chart_color1},
+            {'name': _('Avg. Time on Ice - Short-Handed'), 'marker': {'symbol': 'square'}, 'data': series_dic['toi_sh'], 'color': chart_color2},
+        ]
+    }
+
     return chart_options

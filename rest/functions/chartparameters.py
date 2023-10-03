@@ -2,7 +2,7 @@
 """ common parameters and functions across all charts """
 # pylint: disable=C0103
 import math
-
+from rest.functions.helper import uts_now, uts_to_date_utc, language_get
 # size
 font_size = '10px'
 font_size_mobile = '8px'
@@ -46,7 +46,7 @@ hm_color_list = ['#a90c38', '#c11b39', '#e54444', '#ec4f4a', '#e06f5b', '#f98973
 
 twitter_color = '#1DA1F2'
 
-def credit(text='©2022 GrindSa (https://hockeygraphs.dynamop.de)', href='https://hockeygraphs.dynamop.de'):
+def credit(text='©2023 GrindSa (https://hockeygraphs.dynamop.de)', href='https://hockeygraphs.dynamop.de'):
     """ add credits """
     return {'text': text, 'href': href}
 
