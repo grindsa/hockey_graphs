@@ -78,6 +78,7 @@ class Player(models.Model):
     height = models.IntegerField(default=0)
     birthdate = models.CharField(max_length=10, blank=True, null=True)
     position = models.CharField(max_length=5, blank=True, null=True)
+    nationality = models.CharField(max_length=5, blank=True)
     team = models.ForeignKey(Team, on_delete=models.CASCADE)
     def __str__(self):
         return self.last_name

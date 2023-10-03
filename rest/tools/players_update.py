@@ -52,6 +52,7 @@ if __name__ == '__main__':
                                 'height': player['height'],
                                 'birthdate': player['dateOfBirth'],
                                 'position': player['position'],
+                                'nationality': player['nationalityShort'],
                                 'team_id': team_id
                             }
                             pid = player_add(LOGGER, 'player_id', player['id'], data_dic)
