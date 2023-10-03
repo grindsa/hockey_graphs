@@ -19,8 +19,8 @@ class PeriodeventAdmin(admin.ModelAdmin):
 
 class PlayerAdmin(admin.ModelAdmin):
     """ player admin """
-    fields = ['player_id', 'first_name', 'last_name', 'jersey', 'stick', 'height', 'weight', 'team']
-    list_display = ['player_id', 'first_name', 'last_name', 'jersey', 'stick', 'height', 'weight', 'team']
+    fields = ['player_id', 'first_name', 'last_name', 'birthdate', 'jersey', 'stick', 'height', 'weight', 'team', 'nationality']
+    list_display = ['player_id', 'first_name', 'last_name', 'birthdate', 'jersey', 'stick', 'height', 'weight', 'team', 'nationality']
     ordering = ['player_id']
 
 class PlayerperseasonAdmin(admin.ModelAdmin):
