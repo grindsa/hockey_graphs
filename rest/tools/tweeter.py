@@ -289,9 +289,9 @@ def twitter_it(logger, matchinfo_dic_, img_list_, season_id, match_id_, reply_):
 
     # 2nd post
     if id_str:
-        result = tweet_send(logger, twitter_api=twitter_api, tweet_text=tweet_text, id_list=id_string_reply, in_reply_to=id_str)
+        result = tweet_send(logger, twitter_api=twitter_api, tweet_text=text_reply, id_list=id_string_reply, in_reply_to=id_str)
     else:
-        result = tweet_send(logger, twitter_api=twitter_api, tweet_text=tweet_text, id_list=id_string_reply)
+        result = tweet_send(logger, twitter_api=twitter_api, tweet_text=text_reply, id_list=id_string_reply)
 
 def fbook_it(logger, matchinfo_dic_, img_list_, season_id, match_id):
     """ facebook post """
