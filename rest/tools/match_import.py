@@ -70,7 +70,8 @@ if __name__ == '__main__':
                 game_dic = del_app_helper.gameschedule_get(YEAR, LEAGUE_ID, team_info['team_id'])
 
                 for match in game_dic['matches']:
-                    uts = date_to_uts_utc(match['start_date'], '%Y-%m-%d %H:%M:%S') - 7200
+                    # uts = date_to_uts_utc(match['start_date'], '%Y-%m-%d %H:%M:%S') - 7200
+                    uts = date_to_uts_utc(match['start_date'], '%Y-%m-%d %H:%M:%S') - 3600
                     data_dic = {
                         'season_id': SEASON_ID,
                         'match_id': match['id'],
@@ -80,10 +81,10 @@ if __name__ == '__main__':
                         'date': uts_to_date_utc(uts, '%Y-%m-%d'),
                     }
 
-                    if match['id'] not in SEASON_GAMES_DIC:
-                        SEASON_GAMES_DIC[match['id']] = data_dic
-                    else:
-                        print('game: {0} exists in dictionary. Ignoring...'.format(match['id']))
+                    # if match['id'] not in SEASON_GAMES_DIC:
+                    SEASON_GAMES_DIC[match['id']] = data_dic
+                    #else:
+                    #     print('game: {0} exists in dictionary. Ignoring...'.format(match['id']))
 
             except Exception:
                 LOGGER.error('No schedule for team: {0}'.format(team))
