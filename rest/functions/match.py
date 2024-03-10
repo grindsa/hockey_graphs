@@ -92,6 +92,7 @@ def match_add(logger, fkey, fvalue, data_dic):
     except BaseException as err_:
         logger.critical('error in match_add(): {0}'.format(err_))
         result = None
+        created = None
     logger.debug('match_add({0}:{1}) ended with {2}'.format(fkey, fvalue, result))
     return (result, created)
 
