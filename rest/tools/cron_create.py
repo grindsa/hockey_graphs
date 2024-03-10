@@ -143,7 +143,7 @@ def create_cron_entries(logger, tzone):
                 teamstats.minute.on(5)
 
                 # update teamstatsdel at 11pm
-                teamstats = cron.new(command=path+'/teamstatisticsdel_update.py -d -l 1', comment='teamstatsdel', user='root')
+                teamstats = cron.new(command=path+'/teamstatisticsdel_update.py -d -l 3', comment='teamstatsdel', user='root')
                 teamstats.hour.on(23)
                 teamstats.minute.on(5)
 
